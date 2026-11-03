@@ -428,13 +428,13 @@ public class SesionEntrenamientoController {
     }
 
     @Operation(summary = "Kilos movidos por semana (GP-216)",
-            description = "Para «Tu progreso» de Inicio: una entrada por semana, de «semanas» seguidas " +
+            description = "Para «Tu progreso» de Inicio y «Kilos movidos» de Progreso: una entrada por semana, de «semanas» seguidas " +
                     "desde «desde», también las de cero. La semana de una sesión es la de su inicio y " +
                     "los kilos usan la definición de GP-011. El lunes lo manda la app en su hora local.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Kilos de cada semana, en orden",
                     content = @Content(schema = @Schema(implementation = VolumenSemanalDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Semanas fuera de 1 a 12",
+            @ApiResponse(responseCode = "400", description = "Semanas fuera de 1 a 104",
                     content = @Content(schema = @Schema(implementation = Response.class))),
             @ApiResponse(responseCode = "403", description = "No es tu usuario ni eres ADMIN",
                     content = @Content(schema = @Schema(implementation = Response.class)))

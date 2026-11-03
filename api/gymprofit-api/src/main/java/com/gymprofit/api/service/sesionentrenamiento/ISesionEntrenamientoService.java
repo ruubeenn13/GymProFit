@@ -112,7 +112,7 @@ public interface ISesionEntrenamientoService {
      *
      * @param usuarioId dueño de las sesiones (se comprueba la propiedad).
      * @param desde     lunes a las 00:00 de la primera semana, en la hora del usuario.
-     * @param semanas   de 1 a 12.
+     * @param semanas   de 1 a 104.
      */
     List<com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenSemanalDTO> getVolumenSemanal(
             Integer usuarioId, LocalDateTime desde, int semanas);
