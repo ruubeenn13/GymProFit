@@ -18,7 +18,7 @@ Una pantalla (activity, o pestaña de `MainActivity`) y la carpeta de su diseño
 ## Abrir la pantalla
 Con `TrampolinActivity` (exportada solo en debug):
 `adb shell am start -n com.gymprofit.app/es.pmdm.gymprofit.depuracion.TrampolinActivity --es destino <Clase> [--ei extra valor]`
-`MainActivity` no se lanza con `am start` directo (no exportada): se pasa por el trampolín con `--es destino MainActivity`. Las pestañas llevan `--ei nav_tab N` (0 Inicio, 1 Entrenar, 2 Nutrición, 3 Progreso). En Git Bash usa `MSYS_NO_PATHCONV=1`. Comprueba con `dumpsys activity activities | grep topResumedActivity` que la pantalla pedida está arriba y espera a que acabe de cargar antes de medir.
+`MainActivity` no se lanza con `am start` directo (no exportada): se pasa por el trampolín con `--es destino MainActivity`. Las pestañas llevan `--ei nav_tab N` (0 Inicio, 1 Entrenar, 2 Nutrición, 3 Progreso). Las listas completas de Progreso (GP-216, lote 4) son `--es destino SeccionProgresoActivity --ei seccion_progreso N` (0 Récords, 1 Logros, 2 Medidas, 3 Historial). En Git Bash usa `MSYS_NO_PATHCONV=1`. Comprueba con `dumpsys activity activities | grep topResumedActivity` que la pantalla pedida está arriba y espera a que acabe de cargar antes de medir.
 
 ## Las cuatro combinaciones
 | # | Idioma | Tema | Letra |
@@ -42,6 +42,8 @@ adb shell am broadcast -a es.pmdm.gymprofit.MEDIR -p com.gymprofit.app --es etiq
 adb logcat -d -s MEDIDOR
 ```
 Las líneas `TAP` con la marca `<48` son zonas por debajo de 48 dp; las que no llevan nombre accesible, también fallo. Las `TXT` dan el tamaño en sp equivalente: con letra 1,3 un texto que no crece está fijado en dp. Antes de cada medida: `adb logcat -c`. `am force-stop` (necesario para editar las prefs) vacía `enabled_accessibility_services`: vuelve a activar el servicio (y `accessibility_enabled 1`) tras cada reinicio de la app y antes de medir. Usa la línea `=== INICIO <etiqueta>` para separar medidas. El medidor no ve lo que queda bajo el pliegue, ni tras desplazar: para esa zona usa `android layout --pretty` (salida en cp1252, no UTF-8). Mide cada combinación y cuida que el log corresponda a la pantalla pedida (la difusión encola y puede medir otra). `android layout --pretty` sirve para contrastar nombres y límites.
+
+**Cambio de tema o idioma de toda la pantalla con el medidor encendido (GP-219b).** `MedidorAccesibilidad` corre dentro del proceso de la app y, al encenderse, puede repintar la pantalla con el tema o el idioma del sistema. Si con él encendido cambian el tema o el idioma de toda la pantalla, no lo des por alto: confírmalo con TalkBack real (`com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService`, con `accessibility_enabled 1`, y captura) antes. Si con TalkBack no pasa, es de la herramienta y no un fallo; dilo aparte.
 
 ## Comparar
 - Con el PNG del diseño de la carpeta (`Read` lo muestra). Mira jerarquía, espaciado, color, estados, textos.
