@@ -87,4 +87,12 @@ public class HistorialSesionesTest {
         assertEquals("2026-09-20T18:00:00", HistorialSesiones.primeraFecha(l));
         assertEquals(null, HistorialSesiones.primeraFecha(Collections.emptyList()));
     }
+
+    @Test
+    public void unaTerminadaSinFechaNoEsLaPrimera() {
+        List<SesionEntrenamiento> l = Arrays.asList(
+                terminada(1, "2026-10-03T18:00:00", true),
+                terminada(2, null, true));
+        assertEquals("2026-10-03T18:00:00", HistorialSesiones.primeraFecha(l));
+    }
 }

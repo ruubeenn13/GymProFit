@@ -56,7 +56,6 @@ public final class KilosMovidos {
     public static int semanas(int periodo, @Nullable String primeraIso, String hoy) {
         if (periodo > 0) return Math.min(periodo, TOPE_SEMANAS);
         int dias = TiempoRelativo.diasEntre(lunesDe(primeraIso), lunesDe(hoy));
-        if (dias < 0) return 1;
         return Math.max(1, Math.min(TOPE_SEMANAS, dias / 7 + 1));
     }
 

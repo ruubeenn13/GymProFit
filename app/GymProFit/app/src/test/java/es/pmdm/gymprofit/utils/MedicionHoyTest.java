@@ -32,6 +32,33 @@ public class MedicionHoyTest {
         assertFalse(MedicionHoy.esDeHoy(medicion("2026-11-02T23:59:00"), "2026-11-03"));
         assertFalse(MedicionHoy.esDeHoy(null, "2026-11-03"));
         assertFalse(MedicionHoy.esDeHoy(medicion(null), "2026-11-03"));
+        assertFalse("una fecha corta no revienta", MedicionHoy.esDeHoy(medicion("2026"), "2026-11-03"));
+    }
+
+    @Test
+    public void laCopiaLlevaTodasLasMedidas() {
+        MedicionCorporal m = medicion("2026-11-02T08:00:00");
+        m.setAltura(178);
+        m.setGrasaCorporal(18.5);
+        m.setMasaMuscular(35);
+        m.setPecho(100);
+        m.setBrazos(36);
+        m.setPiernas(58);
+        Map<String, Object> b = MedicionHoy.copiaDe(m, 7);
+        assertEquals(BigDecimal.valueOf(178.0), b.get("altura"));
+        assertEquals(BigDecimal.valueOf(18.5), b.get("grasaCorporal"));
+        assertEquals(BigDecimal.valueOf(35.0), b.get("masaMuscular"));
+        assertEquals(BigDecimal.valueOf(100.0), b.get("pecho"));
+        assertEquals(BigDecimal.valueOf(36.0), b.get("brazos"));
+        assertEquals(BigDecimal.valueOf(58.0), b.get("piernas"));
+        assertEquals(10, b.size());
+    }
+
+    @Test
+    public void unasNotasVaciasNoSeCopian() {
+        MedicionCorporal m = medicion("2026-11-02T08:00:00");
+        m.setNotas("");
+        assertFalse(MedicionHoy.copiaDe(m, 7).containsKey("notas"));
     }
 
     @Test
