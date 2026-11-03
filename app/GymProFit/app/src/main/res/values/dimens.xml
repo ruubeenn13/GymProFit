@@ -83,6 +83,13 @@
     <dimen name="separacion_pestana">36dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>
+    <!-- Logros de Progreso (GP-216, lote 4, tablero 16): medallón de 72 con borde de 3 y su
+         icono de 34, en una columna de 120. La línea del peso de «Tu cuerpo», 90 de alto. -->
+    <dimen name="logro_carrusel_ancho">120dp</dimen>
+    <dimen name="logro_medallon">72dp</dimen>
+    <dimen name="logro_medallon_borde">3dp</dimen>
+    <dimen name="logro_medallon_icono">34dp</dimen>
+    <dimen name="linea_peso_alto">90dp</dimen>
     <!-- Ancho de una tarjeta de carrusel (Inicio, «Lo que te encaja» en Añadir). -->
     <dimen name="tarjeta_carrusel">220dp</dimen>
 

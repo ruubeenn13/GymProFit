@@ -48,4 +48,25 @@ public final class HistorialSesiones {
         Collections.sort(copia, MAS_RECIENTE_PRIMERO);
         return copia;
     }
+
+    /**
+     * Solo las terminadas, de la más reciente a la más antigua: las que cuentan en Progreso
+     * (GP-216, lote 4) para el resumen, el historial y el comienzo de «Todo».
+     */
+    @NonNull
+    public static List<SesionEntrenamiento> terminadas(@Nullable List<SesionEntrenamiento> sesiones) {
+        List<SesionEntrenamiento> r = new ArrayList<>();
+        for (SesionEntrenamiento s : masRecientePrimero(sesiones)) if (s.isCompletada()) r.add(s);
+        return r;
+    }
+
+    /** La fecha de inicio de la primera sesión terminada, o null si no hay ninguna. */
+    @Nullable
+    public static String primeraFecha(@Nullable List<SesionEntrenamiento> sesiones) {
+        List<SesionEntrenamiento> t = terminadas(sesiones);
+        for (int i = t.size() - 1; i >= 0; i--) {
+            if (t.get(i).getFechaInicio() != null) return t.get(i).getFechaInicio();
+        }
+        return null;
+    }
 }

@@ -18,11 +18,16 @@ import androidx.core.content.res.ResourcesCompat;
 import com.google.android.material.color.MaterialColors;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.KilosMovidos;
 import es.pmdm.gymprofit.utils.ProgresoSemanal;
 
 // ============================================================
-// BarrasKilosView — las barras de «Tu progreso» de Inicio (GP-216, tablero 13): los kilos movidos
-// en cada una de las últimas semanas, con su etiqueta debajo.
+// BarrasKilosView — las barras de «Tu progreso» de Inicio (GP-216, tablero 13) y de «Kilos movidos»
+// de Progreso (lote 4, tablero 16): los kilos movidos en cada semana, con su etiqueta debajo.
+//
+// Con muchas semanas («Todo», hasta 104) el hueco entre barras y sus esquinas se estrechan con
+// ellas, y las etiquetas van cada tantas barras como haga falta para no pisarse, contando hacia
+// atrás desde esta semana, que siempre lleva la suya (KilosMovidos.pasoEtiquetas).
 //
 // La semana en curso va en el naranja de la marca y las anteriores en el color de borde, que
 // llega a 3:1 contra la tarjeta (un gráfico no depende solo del color: la cifra de cada semana
@@ -46,6 +51,8 @@ public class BarrasKilosView extends android.view.View {
     private final float radioArriba;
     private final float radioAbajo;
     private final float separacionEtiqueta;
+    private final float aireEtiqueta;
+    private final float filoVacia;
     private final int colorPasadas;
     private final int colorActual;
 
@@ -59,6 +66,8 @@ public class BarrasKilosView extends android.view.View {
         radioArriba = r.getDimension(R.dimen.espacio_8);
         radioAbajo = r.getDimension(R.dimen.espacio_4);
         separacionEtiqueta = r.getDimension(R.dimen.espacio_8);
+        aireEtiqueta = r.getDimension(R.dimen.espacio_8);
+        filoVacia = r.getDimension(R.dimen.espacio_4) / 2f;
         colorPasadas = ContextCompat.getColor(context, R.color.gp_stroke);
         colorActual = MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary);
         pincelTexto.setTextAlign(Paint.Align.CENTER);
@@ -94,21 +103,33 @@ public class BarrasKilosView extends android.view.View {
     protected void onDraw(@NonNull Canvas canvas) {
         int n = kilos.length;
         if (n == 0) return;
-        float ancho = (getWidth() - getPaddingLeft() - getPaddingRight() - hueco * (n - 1)) / n;
+        float disponible = getWidth() - getPaddingLeft() - getPaddingRight();
+        // Con pocas semanas, el hueco de siempre; con muchas, los huecos no pasan del 30 % del ancho.
+        float entre = n > 1 ? Math.min(hueco, disponible * 0.3f / (n - 1)) : 0;
+        float ancho = (disponible - entre * (n - 1)) / n;
+        float arriba = Math.min(radioArriba, ancho / 2f), abajo = Math.min(radioAbajo, ancho / 2f);
+        float[] radios = {arriba, arriba, arriba, arriba, abajo, abajo, abajo, abajo};
+        float anchoEtiqueta = 0;
+        for (String e : etiquetas) if (e != null) anchoEtiqueta = Math.max(anchoEtiqueta, pincelTexto.measureText(e));
+        int paso = KilosMovidos.pasoEtiquetas(ancho + entre, anchoEtiqueta + aireEtiqueta);
         float x = getPaddingLeft();
         float baseTexto = altoBarras + separacionEtiqueta - pincelTexto.getFontMetrics().ascent;
         for (int i = 0; i < n; i++) {
             pincelBarra.setColor(i == n - 1 ? colorActual : colorPasadas);
             // Una semana sin entreno no dibuja barra, pero deja un filo de 2 dp para que se vea que existe.
-            float alto = Math.max(alturas[i] * altoBarras, 2 * getResources().getDisplayMetrics().density);
+            float alto = Math.max(alturas[i] * altoBarras, filoVacia);
             rect.set(x, altoBarras - alto, x + ancho, altoBarras);
-            float[] radios = {radioArriba, radioArriba, radioArriba, radioArriba,
-                    radioAbajo, radioAbajo, radioAbajo, radioAbajo};
             trazo.reset();
             trazo.addRoundRect(rect, radios, Path.Direction.CW);
             canvas.drawPath(trazo, pincelBarra);
-            if (i < etiquetas.length) canvas.drawText(etiquetas[i], x + ancho / 2f, baseTexto, pincelTexto);
-            x += ancho + hueco;
+            if (i < etiquetas.length && etiquetas[i] != null && KilosMovidos.llevaEtiqueta(i, n, paso)) {
+                // Centrada en su barra sin salirse de la vista (la de esta semana va pegada al borde).
+                float mitad = pincelTexto.measureText(etiquetas[i]) / 2f;
+                float centro = Math.max(getPaddingLeft() + mitad,
+                        Math.min(x + ancho / 2f, getWidth() - getPaddingRight() - mitad));
+                canvas.drawText(etiquetas[i], centro, baseTexto, pincelTexto);
+            }
+            x += ancho + entre;
         }
     }
 }

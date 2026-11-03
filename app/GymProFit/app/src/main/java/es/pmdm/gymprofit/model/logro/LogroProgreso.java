@@ -30,6 +30,14 @@ public class LogroProgreso {
         this.conseguido = conseguido;
     }
 
+    /** Para pruebas: con su avance y, si está conseguido, su fecha. */
+    public LogroProgreso(String tipo, boolean conseguido, String fechaObtenido, int progreso, int umbral) {
+        this(tipo, conseguido);
+        this.fechaObtenido = fechaObtenido;
+        this.progreso = progreso;
+        this.umbral = umbral;
+    }
+
     public int getLogroId() { return logroId; }
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }

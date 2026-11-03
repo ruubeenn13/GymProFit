@@ -1,157 +1,397 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  fragment_progreso — pestaña Progreso (GP-105), según 04-progreso.png.
-  Cabecera con el engranaje (Ajustes), el perfil, tres cifras y las pestañas
-  Récords · Logros · Medidas · Historial. La cabecera se desplaza con el contenido y
-  las pestañas se quedan arriba; debajo, la sección elegida.
+  fragment_progreso — pestaña Progreso en una sola pantalla (GP-216, lote 4, tablero 16).
+  De arriba abajo: cabecera con el avatar (abre Perfil y ajustes, como en las otras pestañas) ·
+  el resumen (sesiones, récords y logros) · «Kilos movidos» (4 sem. · 8 sem. · Todo, la cifra de
+  esta semana frente a la pasada y las barras de Inicio) · «Récords recientes» · «Logros» ·
+  «Tu cuerpo» (último peso, su cambio, la línea y el objetivo) · «Historial». Cada «Ver todo»
+  abre la lista completa en SeccionProgresoActivity. Cada sección lleva su bloque de estado
+  (cargando, error con «Reintentar», vacío) y no espera a las demás.
 -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollProgreso"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarProgreso"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/android:colorBackground"
-        app:elevation="0dp"
-        app:liftOnScroll="false">
+        android:orientation="vertical">
+
+        <LinearLayout style="@style/Widget.GymProFit.CabeceraPestana">
+
+            <TextView
+                style="@style/Widget.GymProFit.TituloPestana"
+                android:text="@string/progreso_titulo" />
+
+            <include
+                android:id="@+id/avatarCabecera"
+                layout="@layout/view_avatar"
+                android:layout_width="@dimen/avatar_cabecera"
+                android:layout_height="@dimen/avatar_cabecera"
+                android:layout_marginStart="@dimen/espacio_8" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_scrollFlags="scroll">
+            android:paddingStart="@dimen/margen_pantalla"
+            android:paddingTop="@dimen/espacio_24"
+            android:paddingEnd="@dimen/margen_pantalla"
+            android:paddingBottom="@dimen/espacio_24">
 
-            <LinearLayout style="@style/Widget.GymProFit.CabeceraPestana">
+            <!-- Resumen -->
+            <include
+                android:id="@+id/estadoResumen"
+                layout="@layout/view_estado" />
 
-                <TextView
-                    style="@style/Widget.GymProFit.TituloPestana"
-                    android:text="@string/progreso_titulo" />
-
-                <include
-                    android:id="@+id/avatarCabecera"
-                layout="@layout/view_avatar"
-                    android:layout_width="@dimen/avatar_cabecera"
-                    android:layout_height="@dimen/avatar_cabecera"
-                    android:layout_marginStart="@dimen/espacio_8" />
-            </LinearLayout>
-
-            <!-- Perfil -->
             <LinearLayout
-                android:id="@+id/filaPerfil"
+                android:id="@+id/filaCifras"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="8dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="4dp">
-
-                <include
-                    android:id="@+id/avatarProgreso"
-                    layout="@layout/view_avatar"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="14dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tvNombrePerfil"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/text_title"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
-
-                    <TextView
-                        android:id="@+id/tvSubPerfil"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:textSize="@dimen/text_caption"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Tres cifras -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="14dp"
-                android:orientation="horizontal">
+                android:visibility="gone">
 
                 <include
                     android:id="@+id/cifraSesiones"
                     layout="@layout/view_cifra_progreso"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1" />
 
                 <include
                     android:id="@+id/cifraRecords"
                     layout="@layout/view_cifra_progreso"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp" />
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:layout_weight="1" />
 
                 <include
                     android:id="@+id/cifraLogros"
                     layout="@layout/view_cifra_progreso"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- Kilos movidos -->
+            <LinearLayout
+                android:id="@+id/seccionKilos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_pestana"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+
+                    <TextView
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                        android:text="@string/progreso_kilos_titulo" />
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp" />
+                    android:layout_marginTop="@dimen/titulo_a_contenido">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/espacio_16">
+
+                        <es.pmdm.gymprofit.ui.widget.SelectorPildora
+                            android:id="@+id/selectorKilos"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:selectorElegida="1"
+                            app:selectorNombreGrupo="@string/selector_grupo_periodo"
+                            app:selectorNombres="@array/selector_periodos_semanas_nombres"
+                            app:selectorOpciones="@array/selector_periodos_semanas" />
+
+                        <include
+                            android:id="@+id/estadoKilos"
+                            layout="@layout/view_estado" />
+
+                        <LinearLayout
+                            android:id="@+id/bloqueKilosProgreso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_16"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:id="@+id/filaKilosSemana"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:baselineAligned="true"
+                                android:focusable="true"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvKilosSemana"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:importantForAccessibility="no"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/espacio_8"
+                                    android:layout_weight="1"
+                                    android:importantForAccessibility="no"
+                                    android:text="@string/progreso_kilos_semana"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+                                <TextView
+                                    android:id="@+id/tvKilosAvance"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/espacio_8"
+                                    android:importantForAccessibility="no"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                            </LinearLayout>
+
+                            <es.pmdm.gymprofit.ui.widget.BarrasKilosView
+                                android:id="@+id/barrasKilosProgreso"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_12" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Récords recientes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_pestana"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+
+                    <TextView
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                        android:text="@string/progreso_records_titulo" />
+
+                    <TextView
+                        android:id="@+id/enlaceRecords"
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Enlace"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/estadoRecords"
+                    layout="@layout/view_estado" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardRecords"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/titulo_a_contenido"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/listaRecords"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/espacio_4"
+                        android:paddingBottom="@dimen/espacio_4" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Logros -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_pestana"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+
+                    <TextView
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                        android:text="@string/seccion_logros" />
+
+                    <TextView
+                        android:id="@+id/enlaceLogros"
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Enlace"
+                        android:text="@string/progreso_ver_todos" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/estadoLogros"
+                    layout="@layout/view_estado" />
+
+                <HorizontalScrollView
+                    android:id="@+id/scrollLogros"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/titulo_a_contenido"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/listaLogros"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:divider="@drawable/sep_carrusel"
+                        android:orientation="horizontal"
+                        android:showDividers="middle" />
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <!-- Tu cuerpo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_pestana"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+
+                    <TextView
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                        android:text="@string/progreso_cuerpo_titulo" />
+
+                    <TextView
+                        android:id="@+id/enlaceApuntarPeso"
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Enlace"
+                        android:text="@string/progreso_apuntar_peso" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/estadoCuerpo"
+                    layout="@layout/view_estado" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardCuerpo"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/titulo_a_contenido"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/espacio_16">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:baselineAligned="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvPesoProgreso"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/espacio_8"
+                                android:layout_weight="1"
+                                android:text="@string/progreso_unidad_kg"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+                            <TextView
+                                android:id="@+id/tvCambioPeso"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/espacio_8"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <com.github.mikephil.charting.charts.LineChart
+                            android:id="@+id/chartPesoProgreso"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/linea_peso_alto"
+                            android:layout_marginTop="@dimen/espacio_8"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/tvObjetivoCuerpo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_8"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/tvAvisoPeso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_4"
+                            android:text="@string/progreso_aviso_peso"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Historial -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_pestana"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
+
+                    <TextView
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
+                        android:text="@string/seccion_historial" />
+
+                    <TextView
+                        android:id="@+id/enlaceHistorial"
+                        style="@style/Widget.GymProFit.CabeceraSeccion.Enlace"
+                        android:text="@string/inicio_ver_todo" />
+                </LinearLayout>
+
+                <include
+                    android:id="@+id/estadoHistorial"
+                    layout="@layout/view_estado" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardHistorial"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/titulo_a_contenido"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/listaHistorial"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/espacio_4"
+                        android:paddingBottom="@dimen/espacio_4" />
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </LinearLayout>
-
-        <!-- Pestañas de sección: se quedan arriba al desplazar. Van en un carril que se
-             desplaza en horizontal (GP-128): con sitio, fillViewport lo estira al ancho y
-             las pestañas se reparten iguales; a letra grande, miden lo que su texto y el
-             carril se desplaza en vez de recortarlas. -->
-        <HorizontalScrollView
-            android:id="@+id/carrilPestanasProgreso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="14dp"
-            android:fillViewport="true"
-            android:scrollbars="none"
-            android:requiresFadingEdge="horizontal"
-            android:fadingEdgeLength="24dp">
-
-        <LinearLayout
-            android:id="@+id/pestanasProgreso"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
-            android:padding="4dp"
-            android:background="@drawable/bg_pestanas_progreso">
-
-            <TextView android:id="@+id/secRecords" style="@style/Widget.GymProFit.PestanaSeccion" android:text="@string/seccion_records" />
-            <TextView android:id="@+id/secLogros" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_logros" />
-            <TextView android:id="@+id/secMedidas" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_medidas" />
-            <TextView android:id="@+id/secHistorial" style="@style/Widget.GymProFit.PestanaSeccion" android:layout_marginStart="4dp" android:text="@string/seccion_historial" />
-        </LinearLayout>
-        </HorizontalScrollView>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/contenedorSeccion"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

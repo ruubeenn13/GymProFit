@@ -205,6 +205,7 @@
         <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />
+        <activity android:name=".ui.activities.SeccionProgresoActivity" android:exported="false" />
         <activity android:name=".ui.activities.EjerciciosActivity" android:exported="false" />
 
         <!-- FileProvider para compartir/capturar la foto de perfil con la cámara -->

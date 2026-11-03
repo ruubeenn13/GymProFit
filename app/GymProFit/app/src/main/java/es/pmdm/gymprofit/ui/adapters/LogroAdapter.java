@@ -139,7 +139,7 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
      * «3 de 7 sesiones». El plural concuerda con el total, que es el que lleva el
      * sustantivo: «1 de 7 sesiones», no «1 de 7 sesión».
      */
-    static String textoProgreso(Context ctx, LogroProgreso logro) {
+    public static String textoProgreso(Context ctx, LogroProgreso logro) {
         return ctx.getResources().getQuantityString(pluralDe(logro.getMetrica()),
                 logro.getUmbral(), logro.getProgreso(), logro.getUmbral());
     }
@@ -151,6 +151,16 @@ public class LogroAdapter extends RecyclerView.Adapter<LogroAdapter.ViewHolder> 
         if ("EJERCICIOS_REALIZADOS".equals(metrica)) return R.plurals.logro_progreso_ejercicios;
         if ("OBJETIVOS_COMPLETADOS".equals(metrica)) return R.plurals.logro_progreso_objetivos;
         return R.plurals.logro_progreso_pasos;
+    }
+
+    /**
+     * El glifo de un logro: relleno si está conseguido, en contorno si no. También lo usa el
+     * carrusel de Progreso (GP-216, lote 4).
+     */
+    @DrawableRes
+    public static int glifo(@androidx.annotation.Nullable String tipo, boolean conseguido) {
+        Glifos g = glifosDe(tipo);
+        return conseguido ? g.relleno : g.contorno;
     }
 
     // Glifos del tipo, o el trofeo si el tipo es desconocido o no viene.

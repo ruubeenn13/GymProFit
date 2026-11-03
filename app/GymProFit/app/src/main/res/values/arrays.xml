@@ -46,6 +46,23 @@
         <item>@string/rutinas_intermedio</item>
         <item>@string/rutinas_avanzado</item>
     </string-array>
+    <!-- 4 sem. · 8 sem. · Todo: la gráfica de la ficha del ejercicio y «Kilos movidos» de Progreso
+         (GP-216, lote 4). El nombre para TalkBack dice «semanas» entero. -->
+    <string-array name="selector_periodos_semanas">
+        <item>@string/detalle_periodo_4</item>
+        <item>@string/detalle_periodo_8</item>
+        <item>@string/detalle_periodo_todo</item>
+    </string-array>
+    <string-array name="selector_periodos_semanas_nombres">
+        <item>@string/detalle_periodo_4_nombre</item>
+        <item>@string/detalle_periodo_8_nombre</item>
+        <item>@string/detalle_periodo_todo</item>
+    </string-array>
+    <!-- Pestañas de la ficha del ejercicio. -->
+    <string-array name="selector_pestanas_ficha">
+        <item>@string/detalle_ejercicio_tab_progreso</item>
+        <item>@string/detalle_ejercicio_tab_como</item>
+    </string-array>
     <string-array name="selector_periodos">
         <item>@string/stats_periodo_semana</item>
         <item>@string/stats_periodo_mes</item>

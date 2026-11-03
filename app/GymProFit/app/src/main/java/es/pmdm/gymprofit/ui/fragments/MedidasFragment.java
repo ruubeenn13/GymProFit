@@ -40,6 +40,7 @@ import es.pmdm.gymprofit.network.MedicionApi;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.utils.MedicionHoy;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.Numeros;
@@ -528,21 +529,10 @@ public class MedidasFragment extends BaseFragment {
         return m.getFecha().substring(0, 10).equals(fechaCutoff(0));
     }
 
-    // Cuerpo para crear la medición de hoy clonando los valores actuales de la última.
+    // Cuerpo para crear la medición de hoy clonando los valores actuales de la última
+    // (MedicionHoy, que comparte con «Apuntar peso» de Progreso).
     private Map<String, Object> clonarUltima() {
-        Map<String, Object> body = new HashMap<>();
-        body.put("usuarioId", prefsManager.getUsuarioId());
-        if (ultimaMedicion.getPeso() > 0)          body.put("peso", BigDecimal.valueOf(ultimaMedicion.getPeso()));
-        if (ultimaMedicion.getAltura() > 0)        body.put("altura", BigDecimal.valueOf(ultimaMedicion.getAltura()));
-        if (ultimaMedicion.getGrasaCorporal() != null && ultimaMedicion.getGrasaCorporal() > 0) body.put("grasaCorporal", BigDecimal.valueOf(ultimaMedicion.getGrasaCorporal()));
-        if (ultimaMedicion.getMasaMuscular() > 0)  body.put("masaMuscular", BigDecimal.valueOf(ultimaMedicion.getMasaMuscular()));
-        if (ultimaMedicion.getCintura() > 0)       body.put("cintura", BigDecimal.valueOf(ultimaMedicion.getCintura()));
-        if (ultimaMedicion.getPecho() > 0)         body.put("pecho", BigDecimal.valueOf(ultimaMedicion.getPecho()));
-        if (ultimaMedicion.getBrazos() > 0)        body.put("brazos", BigDecimal.valueOf(ultimaMedicion.getBrazos()));
-        if (ultimaMedicion.getPiernas() > 0)       body.put("piernas", BigDecimal.valueOf(ultimaMedicion.getPiernas()));
-        if (ultimaMedicion.getNotas() != null && !ultimaMedicion.getNotas().isEmpty())
-            body.put("notas", ultimaMedicion.getNotas());
-        return body;
+        return MedicionHoy.copiaDe(ultimaMedicion, prefsManager.getUsuarioId());
     }
 
     // Callback común: recarga la pantalla al terminar (éxito) o muestra el error.

@@ -60,4 +60,31 @@ public class HistorialSesionesTest {
         assertEquals("la de entrada no se reordena", Integer.valueOf(1), Integer.valueOf(l.get(0).getId()));
         assertEquals(0, HistorialSesiones.masRecientePrimero(null).size());
     }
+
+    private static SesionEntrenamiento terminada(int id, String inicio, boolean completada) {
+        SesionEntrenamiento s = sesion(id, inicio);
+        s.setCompletada(completada);
+        return s;
+    }
+
+    @Test
+    public void lasTerminadasSonSoloLasCompletadasYEnOrden() {
+        // Progreso (GP-216, lote 4) cuenta y enseña solo las terminadas.
+        List<SesionEntrenamiento> l = Arrays.asList(
+                terminada(1, "2026-10-01T18:00:00", true),
+                terminada(2, "2026-10-05T18:00:00", false),
+                terminada(3, "2026-10-03T18:00:00", true));
+        assertEquals(Arrays.asList(3, 1), ids(HistorialSesiones.terminadas(l)));
+        assertEquals(0, HistorialSesiones.terminadas(null).size());
+    }
+
+    @Test
+    public void laPrimeraFechaEsLaDeLaTerminadaMasAntigua() {
+        List<SesionEntrenamiento> l = Arrays.asList(
+                terminada(1, "2026-10-03T18:00:00", true),
+                terminada(2, "2026-09-01T18:00:00", false),   // sin terminar: no cuenta
+                terminada(3, "2026-09-20T18:00:00", true));
+        assertEquals("2026-09-20T18:00:00", HistorialSesiones.primeraFecha(l));
+        assertEquals(null, HistorialSesiones.primeraFecha(Collections.emptyList()));
+    }
 }
