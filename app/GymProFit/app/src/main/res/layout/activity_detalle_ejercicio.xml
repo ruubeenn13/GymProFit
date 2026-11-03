@@ -163,27 +163,18 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Pestañas -->
-            <LinearLayout
+            <!-- Pestañas: el selector de la app con semántica de pestañas (GP-224, lote 4 de GP-216). -->
+            <es.pmdm.gymprofit.ui.widget.SelectorPildora
+                android:id="@+id/selectorPestanasFicha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
                 android:layout_marginTop="@dimen/espacio_24"
                 android:layout_marginEnd="@dimen/margen_pantalla"
-                android:background="@drawable/bg_pestanas_progreso"
-                android:orientation="horizontal"
-                android:padding="4dp">
-
-                <TextView
-                    android:id="@+id/btnTabProgreso"
-                    style="@style/Widget.GymProFit.PestanaFicha"
-                    android:text="@string/detalle_ejercicio_tab_progreso" />
-
-                <TextView
-                    android:id="@+id/btnTabComo"
-                    style="@style/Widget.GymProFit.PestanaFicha"
-                    android:text="@string/detalle_ejercicio_tab_como" />
-            </LinearLayout>
+                app:selectorElegida="0"
+                app:selectorNombreGrupo="@string/detalle_pestanas_a11y"
+                app:selectorOpciones="@array/selector_pestanas_ficha"
+                app:selectorPestanas="true" />
 
             <!-- Tu progreso -->
             <LinearLayout
@@ -238,29 +229,15 @@
                             android:layout_height="170dp"
                             android:layout_marginTop="@dimen/espacio_8" />
 
-                        <LinearLayout
-                            android:id="@+id/periodos"
+                        <es.pmdm.gymprofit.ui.widget.SelectorPildora
+                            android:id="@+id/selectorPeriodo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/espacio_8"
-                            android:orientation="horizontal"
-                            android:weightSum="3">
-
-                            <TextView
-                                android:id="@+id/btnPeriodo4"
-                                style="@style/Widget.GymProFit.PeriodoFicha"
-                                android:text="@string/detalle_periodo_4" />
-
-                            <TextView
-                                android:id="@+id/btnPeriodo8"
-                                style="@style/Widget.GymProFit.PeriodoFicha"
-                                android:text="@string/detalle_periodo_8" />
-
-                            <TextView
-                                android:id="@+id/btnPeriodoTodo"
-                                style="@style/Widget.GymProFit.PeriodoFicha"
-                                android:text="@string/detalle_periodo_todo" />
-                        </LinearLayout>
+                            app:selectorElegida="1"
+                            app:selectorNombreGrupo="@string/selector_grupo_periodo"
+                            app:selectorNombres="@array/selector_periodos_semanas_nombres"
+                            app:selectorOpciones="@array/selector_periodos_semanas" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

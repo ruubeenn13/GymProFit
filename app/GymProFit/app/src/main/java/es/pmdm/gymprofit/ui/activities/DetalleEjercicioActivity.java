@@ -53,6 +53,8 @@ import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PasosEjercicio;
+import es.pmdm.gymprofit.ui.widget.SelectorPildora;
+import es.pmdm.gymprofit.utils.KilosMovidos;
 import es.pmdm.gymprofit.utils.PeriodoProgreso;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ProximaVez;
@@ -106,7 +108,8 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     @Nullable private List<PuntoProgresion> progresion;
     private int periodoSemanas = 8;
 
-    private View panelProgreso, panelComo, btnTabProgreso, btnTabComo;
+    private View panelProgreso, panelComo;
+    private SelectorPildora selectorPestanas, selectorPeriodo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,19 +216,15 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     private void configurarPestanas() {
         panelProgreso = findViewById(R.id.panelProgreso);
         panelComo = findViewById(R.id.panelComo);
-        btnTabProgreso = findViewById(R.id.btnTabProgreso);
-        btnTabComo = findViewById(R.id.btnTabComo);
-        btnTabProgreso.setOnClickListener(v -> elegirPestana(true));
-        btnTabComo.setOnClickListener(v -> elegirPestana(false));
-        // Cada pestaña dice que lo es y si está elegida (el estado lo lee del propio selected).
-        rol(btnTabProgreso, getString(R.string.nav_rol_pestana), null);
-        rol(btnTabComo, getString(R.string.nav_rol_pestana), null);
+        // El selector de la app con semántica de pestañas: «pestaña, 1 de 2, seleccionada».
+        selectorPestanas = findViewById(R.id.selectorPestanasFicha);
+        selectorPestanas.setAlElegir(i -> elegirPestana(i == 0));
         elegirPestana(true);
     }
 
     private void elegirPestana(boolean progreso) {
-        btnTabProgreso.setSelected(progreso);
-        btnTabComo.setSelected(!progreso);
+        int i = progreso ? 0 : 1;
+        if (selectorPestanas.getElegida() != i) selectorPestanas.setElegida(i, false);
         panelProgreso.setVisibility(progreso ? View.VISIBLE : View.GONE);
         panelComo.setVisibility(progreso ? View.GONE : View.VISIBLE);
     }
@@ -367,43 +366,23 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
 
     // ── Gráfica ─────────────────────────────────────────────────────────────
 
+    // 4 sem. · 8 sem. · Todo en el selector de la app (GP-224); las semanas de cada uno, las de
+    // «Kilos movidos» de Progreso.
     private void configurarPeriodos() {
-        View[] botones = {findViewById(R.id.btnPeriodo4), findViewById(R.id.btnPeriodo8), findViewById(R.id.btnPeriodoTodo)};
-        int[] semanas = {4, 8, 0};
-        for (int i = 0; i < botones.length; i++) {
-            final int s = semanas[i];
-            rol(botones[i], null, android.widget.RadioButton.class.getName());
-            botones[i].setOnClickListener(v -> {
-                periodoSemanas = s;
-                pintarGrafica();
-            });
-        }
-    }
-
-    // El rol y el estado de un botón que no es de Material: pestaña (roleDescription) o una opción
-    // de un grupo (RadioButton); los dos dicen si están elegidos.
-    private static void rol(View v, @Nullable String rol, @Nullable String clase) {
-        androidx.core.view.ViewCompat.setAccessibilityDelegate(v, new androidx.core.view.AccessibilityDelegateCompat() {
-            @Override
-            public void onInitializeAccessibilityNodeInfo(View host,
-                                                          androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
-                super.onInitializeAccessibilityNodeInfo(host, info);
-                if (rol != null) info.setRoleDescription(rol);
-                if (clase != null) {
-                    info.setClassName(clase);
-                    info.setCheckable(true);
-                    info.setChecked(host.isSelected());
-                } else {
-                    info.setSelected(host.isSelected());
-                }
-            }
+        selectorPeriodo = findViewById(R.id.selectorPeriodo);
+        selectorPeriodo.setAlElegir(i -> {
+            periodoSemanas = KilosMovidos.PERIODOS[i];
+            pintarGrafica();
         });
     }
 
+    // La elegida, sin moverla si ya lo está: al tocar, la píldora ya viaja sola.
     private void marcarPeriodo() {
-        findViewById(R.id.btnPeriodo4).setSelected(periodoSemanas == 4);
-        findViewById(R.id.btnPeriodo8).setSelected(periodoSemanas == 8);
-        findViewById(R.id.btnPeriodoTodo).setSelected(periodoSemanas == 0);
+        for (int i = 0; i < KilosMovidos.PERIODOS.length; i++) {
+            if (KilosMovidos.PERIODOS[i] == periodoSemanas && selectorPeriodo.getElegida() != i) {
+                selectorPeriodo.setElegida(i, false);
+            }
+        }
     }
 
     /**
