@@ -102,14 +102,17 @@ public class TarjetaEstadosTest {
                         && foco.contains("if (r.getId(i) != android.R.id.mask) return false;"));
         // Cuarta pasada: alrededor de una fila medio escondida el anillo se pintaba sobre la cabecera;
         // la última tarjeta de un carrusel a sangre perdía un lado; el tabulador saltaba a «Volver».
-        assertTrue("recortado a lo que se ve de sus listas", foco.contains("capa.recortarA(visible(v));")
-                && foco.contains("c.clipRect(zona);"));
-        assertTrue("el carrusel llega hasta su relleno", foco.contains("mostrarEnCarrusel(ahora, fuera);")
+        assertTrue("recortado a lo que se ve de sus listas, solo en el eje en que se desplaza cada una",
+                foco.contains("capa.recortarA(visible(v));") && foco.contains("c.clipRect(zona);")
+                        && foco.contains("if (eje == EJE_X) {") && foco.contains("if (a instanceof HorizontalScrollView) return EJE_X;"));
+        assertTrue("el carrusel llega hasta su relleno", foco.contains("mostrarEnCarrusel(v, m);")
                 && foco.contains("h.scrollBy(r.right + fuera - der, 0);"));
         String historial = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "fragments", "HistorialFragment.java")));
-        assertTrue("la siguiente sesión ya está dispuesta al buscar el foco",
-                historial.contains("protected void calculateExtraLayoutSpace("));
-        assertTrue("se desplaza a la vista con el anillo entero", foco.contains("ahora.requestRectangleOnScreen("));
+        assertTrue("sin filas dispuestas fuera de la vista: el foco volvía a ellas desde «Volver» (quinta pasada)",
+                !historial.contains("calculateExtraLayoutSpace("));
+        assertTrue("se desplaza a la vista con el anillo entero, también por dentro, y otra vez tras el layout",
+                foco.contains("int m = Math.max(0, fuera(v));") && foco.contains("v.requestRectangleOnScreen(")
+                        && foco.contains("enfocada.post(() -> {"));
         assertTrue("con el radio de la tarjeta", foco.contains("((MaterialCardView) v).getRadius()"));
         assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")
                 && foco.contains("v instanceof NestedScrollView") && foco.contains("v instanceof HorizontalScrollView")

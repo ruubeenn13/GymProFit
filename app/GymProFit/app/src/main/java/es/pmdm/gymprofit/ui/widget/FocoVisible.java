@@ -49,9 +49,12 @@ import es.pmdm.gymprofit.R;
 // 2 dp hacia dentro de su borde. Con relleno (el «+» de la barra) va por fuera: por dentro quedaba a
 // 2,3:1 sobre el naranja (cuarta pasada). El avatar (ShapeableImageView, sobre una foto), por fuera.
 // Al ganar el foco, lo enfocado se desplaza a la vista con el anillo entero: un carrusel a sangre lo
-// dejaba pegado al borde de la pantalla, con un lado del anillo fuera. Y el anillo se recorta a lo
-// que se ve de las listas que lo contienen: alrededor de una fila medio escondida se pintaba encima
-// de la cabecera y de las barras del sistema (cuarta pasada).
+// dejaba pegado al borde de la pantalla, con un lado del anillo fuera. Se pide también tras el
+// siguiente layout: con el teclado abierto, el scroll aplazaba su desplazamiento y la petición
+// llegaba antes (quinta pasada). Y el anillo se recorta a lo que se ve de las listas que lo
+// contienen, solo en el eje en que se desplaza cada una: alrededor de una fila medio escondida se
+// pintaba encima de la cabecera (cuarta pasada), y recortar también el otro eje dejaba sin arriba ni
+// abajo las tarjetas de los carruseles (quinta pasada).
 // En modo táctil no hay anillo: al tocar la pantalla se quita.
 // ============================================================
 public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeListener,
@@ -98,13 +101,13 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         decor.getOverlay().add(capa);
         decor.getViewTreeObserver().addOnPreDrawListener(this);
         colocar();
-        // Que se vea entera con su anillo: el scroll que la contiene se desplaza lo que haga falta.
-        int fuera = fuera(ahora);
-        if (fuera > 0) {
-            ahora.requestRectangleOnScreen(new android.graphics.Rect(-fuera, -fuera,
-                    ahora.getWidth() + fuera, ahora.getHeight() + fuera), true);
-            mostrarEnCarrusel(ahora, fuera);
-        }
+        // Que se vea entera con su anillo (por dentro, la vista entera): el scroll que la contiene se
+        // desplaza lo que haga falta, ahora y otra vez tras el siguiente layout.
+        final View enfocada = ahora;
+        mostrar(enfocada);
+        enfocada.post(() -> {
+            if (enfocada == conAnillo) mostrar(enfocada);
+        });
     }
 
     @Override
@@ -152,6 +155,12 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
             if (r.getId(i) != android.R.id.mask) return false;
         }
         return true;
+    }
+
+    private static void mostrar(View v) {
+        int m = Math.max(0, fuera(v));
+        v.requestRectangleOnScreen(new android.graphics.Rect(-m, -m, v.getWidth() + m, v.getHeight() + m), true);
+        mostrarEnCarrusel(v, m);
     }
 
     // HorizontalScrollView no se desplaza más allá del borde de su contenido aunque tenga relleno: la
@@ -218,14 +227,14 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         return Math.min(v.getResources().getDimension(R.dimen.radio_chip), Math.min(w, h) / 2f);
     }
 
-    // Lo que se ve de la vista en la ventana: la intersección de lo visible de cada lista o scroll
-    // que la contiene (en coordenadas de la ventana). Sin ninguno, la ventana entera.
+    // Lo que se ve de la vista en la ventana (en coordenadas de la ventana): cada lista o scroll que la
+    // contiene recorta solo en el eje en que se desplaza. Sin ninguno, la ventana entera.
     private android.graphics.Rect visible(View v) {
         android.graphics.Rect r = new android.graphics.Rect(0, 0, decor.getWidth(), decor.getHeight());
         for (ViewParent p = v.getParent(); p instanceof View && p != decor; p = p.getParent()) {
             View a = (View) p;
-            if (!(a instanceof ScrollView || a instanceof NestedScrollView || a instanceof HorizontalScrollView
-                    || a instanceof RecyclerView)) continue;
+            int eje = eje(a);
+            if (eje == 0) continue;
             android.graphics.Rect suyo = new android.graphics.Rect(a.getScrollX(), a.getScrollY(),
                     a.getScrollX() + a.getWidth(), a.getScrollY() + a.getHeight());
             try {
@@ -233,9 +242,41 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
             } catch (IllegalArgumentException e) {
                 continue;
             }
-            if (!r.intersect(suyo)) r.setEmpty();
+            int[] z = recortar(new int[]{ r.left, r.top, r.right, r.bottom },
+                    new int[]{ suyo.left, suyo.top, suyo.right, suyo.bottom }, eje);
+            r.set(z[0], z[1], z[2], z[3]);
         }
         return r;
+    }
+
+    static final int EJE_X = 1, EJE_Y = 2;
+
+    /**
+     * Recorta la zona {@code r} (izquierda, arriba, derecha, abajo) a la de un contenedor, solo en el
+     * eje en que este se desplaza: un carrusel recorta los lados, una lista vertical arriba y abajo.
+     * Sin solaparse, una zona vacía (todo a 0).
+     */
+    static int[] recortar(int[] r, int[] suyo, int eje) {
+        int[] z = r.clone();
+        if (eje == EJE_X) {
+            z[0] = Math.max(z[0], suyo[0]);
+            z[2] = Math.min(z[2], suyo[2]);
+        } else if (eje == EJE_Y) {
+            z[1] = Math.max(z[1], suyo[1]);
+            z[3] = Math.min(z[3], suyo[3]);
+        }
+        return z[0] < z[2] && z[1] < z[3] ? z : new int[4];
+    }
+
+    /** En qué eje se desplaza un contenedor: EJE_X, EJE_Y o 0 si no se desplaza. */
+    static int eje(View a) {
+        if (a instanceof HorizontalScrollView) return EJE_X;
+        if (a instanceof ScrollView || a instanceof NestedScrollView) return EJE_Y;
+        if (a instanceof RecyclerView) {
+            RecyclerView.LayoutManager lm = ((RecyclerView) a).getLayoutManager();
+            return lm != null && lm.canScrollHorizontally() ? EJE_X : EJE_Y;
+        }
+        return 0;
     }
 
     /** El anillo recortado a una zona: lo que asoma de una lista no se pinta sobre la cabecera. */
