@@ -119,13 +119,29 @@ class VolumenSemanalTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("el usuario ajeno → 403; semanas fuera de 1 a 12 → 400")
+    @DisplayName("el tope: 104 semanas (dos años, «Todo» de Progreso), con la primera y la última en su sitio")
+    void tope_de_104_semanas() throws Exception {
+        guardar(owner, "2024-09-25T18:00:00", press, 50, 10);  // semana 0: 500
+        guardar(owner, "2026-09-16T18:00:00", press, 60, 10);  // semana 103: 600
+
+        JsonNode r = semanas(owner, "desde=2024-09-23T00:00:00&semanas=104");
+
+        assertThat(r).hasSize(104);
+        assertThat(r.get(0).get("inicio").asText()).startsWith("2024-09-23");
+        assertThat(r.get(0).get("volumenKg").asDouble()).isEqualTo(500);
+        assertThat(r.get(103).get("inicio").asText()).startsWith("2026-09-14");
+        assertThat(r.get(103).get("volumenKg").asDouble()).isEqualTo(600);
+        assertThat(r.get(52).get("volumenKg").asDouble()).isZero();
+    }
+
+    @Test
+    @DisplayName("el usuario ajeno → 403; semanas fuera de 1 a 104 → 400")
     void ajeno_y_limites() throws Exception {
         pedir(attacker, "GET /sesiones/usuario/" + owner.getId() + "/volumen-semanal?desde=" + LUNES + "&semanas=6")
                 .andExpect(status().isForbidden());
         pedir(owner, "GET /sesiones/usuario/" + owner.getId() + "/volumen-semanal?desde=" + LUNES + "&semanas=0")
                 .andExpect(status().isBadRequest());
-        pedir(owner, "GET /sesiones/usuario/" + owner.getId() + "/volumen-semanal?desde=" + LUNES + "&semanas=13")
+        pedir(owner, "GET /sesiones/usuario/" + owner.getId() + "/volumen-semanal?desde=" + LUNES + "&semanas=105")
                 .andExpect(status().isBadRequest());
     }
 

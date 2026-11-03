@@ -724,8 +724,12 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         return porResumen == null ? java.math.BigDecimal.ZERO : porResumen;
     }
 
-    /** Tope de semanas que se pueden pedir de una vez (tres meses largos). */
-    static final int MAX_SEMANAS_VOLUMEN = 12;
+    /**
+     * Tope de semanas que se pueden pedir de una vez: dos años. «Todo» en los kilos de
+     * Progreso (GP-216, lote 4) pide desde la semana de la primera sesión, hasta este tope.
+     * Las consultas son tres pase lo que pase; solo crece la lista de vuelta.
+     */
+    static final int MAX_SEMANAS_VOLUMEN = 104;
 
     /**
      * Kilos movidos por semana, para las barras de «Tu progreso» (GP-216).
