@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.ui.adapters;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,10 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
 
         h.tvDuracion.setText(context.getString(R.string.sesiones_min, s.getDuracionMinutos()));
 
+        // TalkBack lee la tarjeta de una vez: fecha, rutina y duración (DEC-019). La papelera
+        // sigue aparte, con su propio nombre.
+        h.itemView.setContentDescription(TextUtils.join(", ",
+                new CharSequence[]{h.tvFecha.getText(), h.tvRutina.getText(), h.tvDuracion.getText()}));
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(s));
         if (clickListener != null) {
             h.itemView.setOnClickListener(v -> clickListener.onClick(s, v));

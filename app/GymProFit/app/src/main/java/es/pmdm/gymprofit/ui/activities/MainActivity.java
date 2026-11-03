@@ -340,26 +340,26 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    // Lleva a la sección de Progreso que pida el intent (notificaciones).
+    // Lleva a la sección de Progreso que pida el intent (notificaciones). Se consume: una
+    // recreación con el mismo intent no la vuelve a abrir.
     private void aplicarDestino(Intent intent) {
         if (!intent.hasExtra(NavTabs.EXTRA_SECCION_PROGRESO)) return;
-        irAProgreso(intent.getIntExtra(NavTabs.EXTRA_SECCION_PROGRESO, ProgresoFragment.RECORDS));
+        int seccion = intent.getIntExtra(NavTabs.EXTRA_SECCION_PROGRESO, ProgresoFragment.RECORDS);
+        intent.removeExtra(NavTabs.EXTRA_SECCION_PROGRESO);
+        irAProgreso(seccion);
     }
 
-    /** Va a Progreso y enseña una de sus secciones (ProgresoFragment.RECORDS…HISTORIAL). */
+    /**
+     * Va a Progreso y abre encima la lista completa de una de sus secciones
+     * (ProgresoFragment.RECORDS…HISTORIAL, GP-216 lote 4): atrás vuelve a Progreso.
+     */
     public void irAProgreso(int seccion) {
-        irATab(NavTabs.PROGRESO);
-        pager.post(() -> {
-            ProgresoFragment p = progreso();
-            if (p != null) p.mostrarSeccion(seccion, false);
-        });
+        abrirSeccionProgreso(seccion, false);
     }
 
-    @Nullable
-    private ProgresoFragment progreso() {
-        // FragmentStateAdapter etiqueta cada página como «f» + su id, que es la posición.
-        Fragment f = getSupportFragmentManager().findFragmentByTag("f" + NavTabs.PROGRESO);
-        return f instanceof ProgresoFragment ? (ProgresoFragment) f : null;
+    private void abrirSeccionProgreso(int seccion, boolean abrirPeso) {
+        irATab(NavTabs.PROGRESO);
+        startActivity(SeccionProgresoActivity.intent(this, seccion, abrirPeso));
     }
 
     // ── Hoja del «+» ──────────────────────────────────────────────────────────
@@ -519,14 +519,10 @@ public class MainActivity extends BaseActivity {
         startActivity(i);
     }
 
-    // Anotar peso o medidas → Progreso › Medidas con el diálogo del peso abierto.
+    // Anotar peso o medidas → Medidas, encima de Progreso, con el diálogo del peso abierto.
     private void accionPeso() {
         cerrarAcciones();
-        irATab(NavTabs.PROGRESO);
-        pager.post(() -> {
-            ProgresoFragment p = progreso();
-            if (p != null) p.mostrarSeccion(ProgresoFragment.MEDIDAS, true);
-        });
+        abrirSeccionProgreso(ProgresoFragment.MEDIDAS, true);
     }
 
     // Al abrir Inicio, «¿Te avisamos?» a la cuenta a la que no se le ha preguntado en este

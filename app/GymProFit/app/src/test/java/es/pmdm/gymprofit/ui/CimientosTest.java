@@ -222,6 +222,9 @@ public class CimientosTest {
                 {"layout/dialog_seguir_programa.xml", "chipsMinutos"},
                 {"layout/activity_ficha_alimento.xml", "grupoUnidad"},
                 {"layout/activity_anadir_alimento.xml", "pestanasAnadir"},
+                {"layout/activity_detalle_ejercicio.xml", "selectorPestanasFicha"},
+                {"layout/activity_detalle_ejercicio.xml", "selectorPeriodo"},
+                {"layout/fragment_progreso.xml", "selectorKilos"},
                 {"layout/activity_tus_datos.xml", "grupoSexo"},
                 {"layout/activity_tus_datos.xml", "grupoActividad"},
                 {"layout/activity_tus_datos.xml", "grupoNivel"},
@@ -240,8 +243,10 @@ public class CimientosTest {
                 assertFalse("sobra " + n, n.startsWith("sel_unidad_") || n.equals("view_boton_conectado.xml"));
                 if (!n.endsWith(".xml")) continue;
                 String x = leer(f);
+                // Y desde el lote 4 de GP-216, las pestañas y periodos propios de Progreso y de la ficha.
                 for (String resto : new String[]{"MaterialButtonToggleGroup", "GrupoConectado", "BotonConectado",
-                        "sel_unidad_", "ui.alta.SelectorPildora"}) {
+                        "sel_unidad_", "ui.alta.SelectorPildora", "PestanaSeccion", "PestanaFicha", "PeriodoFicha",
+                        "bg_pestanas_progreso", "bg_pestana_seccion", "bg_pestana_ficha", "bg_periodo_ficha"}) {
                     assertFalse(RES.relativize(f) + " usa " + resto, x.contains(resto));
                 }
             }

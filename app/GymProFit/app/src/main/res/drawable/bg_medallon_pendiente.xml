@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_medallon_pendiente — el medallón de un logro por conseguir en Progreso (GP-216, lote 4):
+     la superficie de tarjeta con el borde de 3 dp en gp_stroke (3:1). Trazo continuo y no
+     discontinuo como el tablero: el borde discontinuo no está en el sistema (hueco 11). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="?attr/colorSurface" />
+    <stroke
+        android:width="@dimen/logro_medallon_borde"
+        android:color="@color/gp_stroke" />
+</shape>

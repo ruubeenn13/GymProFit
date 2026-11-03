@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_logro_carrusel — un logro en el carrusel de Progreso (GP-216, lote 4, tablero 16):
+  el medallón de 72 dp (dorado si está conseguido, con borde si no), su nombre y debajo
+  «Conseguido» o lo que lleva («3 de 7 sesiones»). Abre la lista de logros.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/logro_carrusel_ancho"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/espacio_4"
+    android:paddingBottom="@dimen/espacio_4">
+
+    <FrameLayout
+        android:id="@+id/medallonLogro"
+        android:layout_width="@dimen/logro_medallon"
+        android:layout_height="@dimen/logro_medallon"
+        android:background="@drawable/bg_medallon_pendiente">
+
+        <ImageView
+            android:id="@+id/ivLogro"
+            android:layout_width="@dimen/logro_medallon_icono"
+            android:layout_height="@dimen/logro_medallon_icono"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvNombreLogro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:gravity="center_horizontal"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+        android:textColor="?attr/colorOnSurface"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvEstadoLogro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_4"
+        android:gravity="center_horizontal"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+</LinearLayout>

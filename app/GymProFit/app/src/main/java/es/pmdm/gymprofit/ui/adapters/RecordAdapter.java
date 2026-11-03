@@ -117,6 +117,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // «hace 2 días · antes 82,5 kg × 10»; lo que falte, no se escribe (GP-105).
         String cuando = TiempoRelativo.texto(ctx, r.getFecha());
         String anterior = Marcas.anteriorSolo(ctx, r);
+        // La marca anterior no se parte entre líneas («82,5 kg ×» y «10» debajo), como en Progreso.
+        if (anterior != null) anterior = anterior.replace(' ', ' ');
         String detalle = cuando == null ? (anterior == null ? "" : ctx.getString(R.string.record_antes, anterior))
                 : anterior == null ? cuando : ctx.getString(R.string.record_hace_antes, cuando, anterior);
         h.tvDetalle.setText(detalle);

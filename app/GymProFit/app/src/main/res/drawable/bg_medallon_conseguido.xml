@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_medallon_conseguido — el medallón de un logro conseguido en Progreso (GP-216, lote 4):
+     contenedor dorado con el borde de 3 dp en gp_gold (lo conseguido es dorado, DEC-018). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/gp_gold_container" />
+    <stroke
+        android:width="@dimen/logro_medallon_borde"
+        android:color="@color/gp_gold" />
+</shape>

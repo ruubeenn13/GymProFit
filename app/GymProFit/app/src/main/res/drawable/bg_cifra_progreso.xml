@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- bg_cifra_progreso — cada una de las tres cifras de Progreso (GP-105): radio 16 y borde del tema. -->
+<!-- bg_cifra_progreso — cada una de las tres cifras de Progreso (GP-105; tokens desde GP-216, lote 4):
+     tarjeta pequeña (radio 20) con el borde de la tarjeta estándar, que en oscuro no existe. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="16dp" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
     <solid android:color="?attr/colorSurface" />
-    <stroke android:width="1dp" android:color="?attr/colorOutline" />
+    <stroke android:width="@dimen/tarjeta_borde" android:color="@color/gp_tarjeta_borde" />
 </shape>

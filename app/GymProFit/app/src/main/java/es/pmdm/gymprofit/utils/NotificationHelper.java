@@ -106,10 +106,10 @@ public class NotificationHelper {
         enviar(ctx, CANAL_PUSH, ctx.getString(R.string.notif_canal_push), notifId, builder);
     }
 
-    // Abre Progreso en su sección, con Inicio debajo (GP-097, GP-105): la sección vive
-    // en la pestaña Progreso de MainActivity, y atrás desde una pestaña vuelve a Inicio
-    // antes de salir. Con la app abierta se reutiliza la misma MainActivity
-    // (onNewIntent) en vez de apilar otra.
+    // Abre la lista de su sección encima de Progreso, con Inicio debajo (GP-097, GP-216
+    // lote 4): MainActivity va a la pestaña Progreso y abre SeccionProgresoActivity; atrás
+    // vuelve a Progreso, y desde una pestaña a Inicio antes de salir. Con la app abierta
+    // se reutiliza la misma MainActivity (onNewIntent) en vez de apilar otra.
     private static PendingIntent enProgreso(Context ctx, int seccion, int requestCode) {
         Intent intent = new Intent(ctx, MainActivity.class)
                 .putExtra(NavTabs.EXTRA_TAB, NavTabs.PROGRESO)

@@ -90,9 +90,9 @@ public interface SesionApi {
     Call<List<VolumenMuscular>> getVolumenMuscularDesde(@Path("usuarioId") int usuarioId,
                                                         @Query("desde") String desde);
 
-    // Kilos movidos por semana (GP-216, «Tu progreso» de Inicio): «semanas» seguidas desde el
+    // Kilos movidos por semana (GP-216, «Tu progreso» de Inicio y «Kilos movidos» de Progreso): «semanas» seguidas desde el
     // lunes «desde» (00:00 en la hora local, «yyyy-MM-ddTHH:mm:ss»), una entrada por semana,
-    // también las de cero, en orden. De 1 a 12 semanas.
+    // también las de cero, en orden. De 1 a 104 semanas (desde el lote 4).
     @GET("sesiones/usuario/{usuarioId}/volumen-semanal")
     Call<List<VolumenSemanal>> getVolumenSemanal(@Path("usuarioId") int usuarioId,
                                                  @Query("desde") String desde,

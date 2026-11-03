@@ -131,6 +131,8 @@
     <style name="Widget.GymProFit.CabeceraSeccion.Enlace" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/seccion_enlace_alto</item>
+        <!-- Un enlace corto («See all») medía 42 dp de ancho: 48 como mínimo también a lo ancho (DEC-019). -->
+        <item name="android:minWidth">@dimen/zona_tactil</item>
         <item name="android:gravity">center_vertical|end</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
@@ -227,35 +229,6 @@
         <item name="chipStrokeWidth">@dimen/tarjeta_borde</item>
         <item name="chipStrokeColor">?attr/colorOutlineVariant</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <!-- ══ Pestañas y periodos de la ficha del ejercicio (GP-216, tablero 30) ═══════
-         Pestaña: 44 dp, mitad del carril cada una, elegida en el contenedor naranja.
-         Periodo: 40 dp, un tercio cada uno, elegido en superficie 2. Se marcan con selected. -->
-    <style name="Widget.GymProFit.PestanaFicha" parent="">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:gravity">center</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:background">@drawable/bg_pestana_ficha</item>
-        <item name="android:textColor">@color/texto_pestana_ficha</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="Widget.GymProFit.PeriodoFicha" parent="">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:gravity">center</item>
-        <item name="android:clickable">true</item>
-        <item name="android:focusable">true</item>
-        <item name="android:background">@drawable/bg_periodo_ficha</item>
-        <item name="android:textColor">@color/texto_periodo_ficha</item>
-        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 

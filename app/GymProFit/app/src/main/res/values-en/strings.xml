@@ -217,6 +217,10 @@
     <string name="detalle_periodo_4">4 wks</string>
     <string name="detalle_periodo_8">8 wks</string>
     <string name="detalle_periodo_todo">All</string>
+    <string name="detalle_periodo_sin_sesiones">No sessions in these weeks. Try “%1$s.”</string>
+    <string name="detalle_periodo_4_nombre">4 weeks</string>
+    <string name="detalle_periodo_8_nombre">8 weeks</string>
+    <string name="detalle_pestanas_a11y">Exercise sections</string>
     <string name="detalle_periodo_a11y">Period: %1$s</string>
     <string name="detalle_ejercicio_sin_datos">You haven\'t done this exercise yet. Once you do, you\'ll see how you progress here.</string>
     <string name="detalle_ejercicio_ultimas_veces">Your last sessions</string>
@@ -828,8 +832,6 @@
     <!-- GP-105 · Progreso y Ajustes -->
     <string name="progreso_titulo">Progress</string>
     <string name="ajustes_titulo">Settings</string>
-    <string name="progreso_usuario">@%1$s</string>
-    <string name="progreso_avatar_a11y">Profile photo. Tap to change it</string>
     <plurals name="progreso_sesiones">
         <item quantity="one">session</item>
         <item quantity="other">sessions</item>
@@ -843,7 +845,6 @@
         <item quantity="other">badges</item>
     </plurals>
     <string name="progreso_cifra_a11y">%1$s %2$s</string>
-    <string name="progreso_secciones_a11y">Progress sections</string>
     <string name="seccion_records">Records</string>
     <string name="seccion_logros">Badges</string>
     <string name="seccion_medidas">Measures</string>
@@ -2362,4 +2363,46 @@
     <string name="selector_grupo_metrica">Measurement</string>
     <string name="selector_grupo_rango">Range</string>
     <string name="selector_grupo_minutos">Minutes per session</string>
+    <!-- Progress on a single screen (GP-216, batch 4, board 16) -->
+    <string name="progreso_resumen_vacio">Your first workout starts filling this in: sessions, records and achievements.</string>
+    <string name="progreso_resumen_error">Couldn\'t load your summary.</string>
+    <string name="progreso_kilos_titulo">Kilos moved</string>
+    <string name="progreso_kilos_semana">kg this week</string>
+    <string name="progreso_kilos_de_la_pasada">%1$d %% of last week</string>
+    <string name="progreso_kilos_de_la_pasada_a11y">%1$d %% of last week\'s kilos</string>
+    <string name="progreso_kilos_sube_a11y">%1$d %% more than last week</string>
+    <string name="progreso_kilos_cifra_a11y">%1$s kilos this week</string>
+    <string name="progreso_kilos_resumen_a11y">Kilos moved per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
+    <string name="progreso_kilos_vacio">Once you finish your first workout, you\'ll see the kilos you move each week here.</string>
+    <string name="progreso_kilos_error">Couldn\'t load your kilos.</string>
+    <string name="progreso_records_titulo">Recent records</string>
+    <plurals name="progreso_ver_records">
+        <item quantity="one">See the record</item>
+        <item quantity="other">See all %1$d</item>
+    </plurals>
+    <string name="progreso_record_antes">%1$s · before %2$s</string>
+    <string name="progreso_records_vacio">No records yet. The first one comes with your first workout.</string>
+    <string name="progreso_records_error">Couldn\'t load your records.</string>
+    <string name="progreso_ver_todos">See all</string>
+    <string name="progreso_marca_tiempo_a11y">%1$s hold time</string>
+    <string name="progreso_logros_vacio">Your first workout earns your first achievement.</string>
+    <string name="progreso_logros_error">Couldn\'t load your achievements.</string>
+    <string name="progreso_cuerpo_titulo">Your body</string>
+    <string name="progreso_apuntar_peso">Log weight</string>
+    <string name="progreso_unidad_kg">kg</string>
+    <plurals name="progreso_cambio_peso">
+        <item quantity="one">%1$s kg in %2$d week</item>
+        <item quantity="other">%1$s kg in %2$d weeks</item>
+    </plurals>
+    <plurals name="progreso_linea_peso_a11y">
+        <item quantity="one">Weight from %1$s to %2$s kilos in %3$d week</item>
+        <item quantity="other">Weight from %1$s to %2$s kilos in %3$d weeks</item>
+    </plurals>
+    <string name="progreso_peso_a11y">Your weight, %1$s kilos</string>
+    <string name="progreso_objetivo">Goal: %1$s</string>
+    <string name="progreso_aviso_peso">We\'ll remind you if a month goes by without weighing in</string>
+    <string name="progreso_ver_medidas">See your measurements</string>
+    <string name="progreso_cuerpo_vacio">Log your weight to see how it changes here.</string>
+    <string name="progreso_cuerpo_error">Couldn\'t load your measurements.</string>
+    <string name="progreso_historial_vacio">You haven\'t finished a workout yet. The first one will show up here.</string>
 </resources>

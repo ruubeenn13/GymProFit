@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_fila_progreso — una fila de «Récords recientes» o de «Historial» en Progreso (GP-216,
+  lote 4, tablero 16): icono en su círculo, el nombre, una línea de apoyo y, a la derecha, la
+  marca en dorado (récord) o la flecha (sesión). La fila es la «Fila de lista» de Cimientos.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Fila">
+
+    <ImageView
+        android:id="@+id/ivIconoFila"
+        style="@style/Widget.GymProFit.Fila.Icono" />
+
+    <LinearLayout style="@style/Widget.GymProFit.Fila.Textos">
+
+        <TextView
+            android:id="@+id/tvTituloFila"
+            style="@style/Widget.GymProFit.Fila.Titulo"
+            android:layout_width="match_parent" />
+
+        <TextView
+            android:id="@+id/tvApoyoFila"
+            style="@style/Widget.GymProFit.Fila.Apoyo"
+            android:layout_width="match_parent" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvValorFila"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+        android:textColor="@color/gp_gold_text"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/ivFlechaFila"
+        android:layout_width="@dimen/espacio_24"
+        android:layout_height="@dimen/espacio_24"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_chevron_right"
+        android:visibility="gone"
+        app:tint="?attr/colorOnSurfaceVariant" />
+</LinearLayout>
