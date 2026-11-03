@@ -52,6 +52,8 @@ Viven en `.claude/skills`, instaladas con `npx skills add … --copy` y registra
 
 No basta con que compile (DEC-022). Una tarea está hecha cuando: funciona, no rompe lo existente, cubre carga/error/vacío/éxito, contempla los casos límite, **trae tests nuevos si trae código nuevo**, es accesible, está en ES y EN, se ve bien en claro y oscuro, y no deja deuda innecesaria.
 
+Un test nuevo solo cuenta si se ha visto fallar: se escribe antes del código o se comprueba quitando lo que prueba.
+
 Que los tests existentes sigan en verde no significa que lo nuevo esté probado.
 
 ## Commits
