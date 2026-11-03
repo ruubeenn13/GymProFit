@@ -215,6 +215,7 @@
     <string name="detalle_periodo_4">4 sem.</string>
     <string name="detalle_periodo_8">8 sem.</string>
     <string name="detalle_periodo_todo">Todo</string>
+    <string name="detalle_periodo_sin_sesiones">Sin sesiones en estas semanas. Prueba con «%1$s».</string>
     <string name="detalle_periodo_4_nombre">4 semanas</string>
     <string name="detalle_periodo_8_nombre">8 semanas</string>
     <string name="detalle_pestanas_a11y">Secciones del ejercicio</string>
@@ -2421,6 +2422,7 @@
     <string name="progreso_records_vacio">Aún no tienes récords. El primero llega con tu primer entreno.</string>
     <string name="progreso_records_error">No se han podido cargar tus récords.</string>
     <string name="progreso_ver_todos">Ver todos</string>
+    <string name="progreso_marca_tiempo_a11y">%1$s de tiempo</string>
     <string name="progreso_logros_vacio">Tu primer entreno te da tu primer logro.</string>
     <string name="progreso_logros_error">No se han podido cargar tus logros.</string>
     <string name="progreso_cuerpo_titulo">Tu cuerpo</string>

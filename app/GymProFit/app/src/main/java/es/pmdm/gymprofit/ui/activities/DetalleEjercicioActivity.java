@@ -393,6 +393,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     private void pintarGrafica() {
         View card = findViewById(R.id.cardProgresion);
         LineChart chart = findViewById(R.id.chartProgresion);
+        TextView vacia = findViewById(R.id.tvProgresionVacia);
         if (progresion == null) return;
 
         boolean hayPeso = false, hayTiempo = false;
@@ -436,11 +437,18 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             etiquetas.add(fechaCorta(fechas.get(i)));
         }
         if (entradas.isEmpty()) {
+            // Ninguna sesión en el período: se dice, en la gráfica y a TalkBack, en vez de dejar
+            // la tarjeta en blanco con la descripción del período anterior (DEC-019, DEC-022).
+            // Un TextView y no el «sin datos» de la gráfica, que no parte líneas.
             chart.clear();
-            chart.invalidate();
+            chart.setVisibility(View.GONE);
+            vacia.setText(getString(R.string.detalle_periodo_sin_sesiones, getString(R.string.detalle_periodo_todo)));
+            vacia.setVisibility(View.VISIBLE);
             pintarDelta(null);
             return;
         }
+        vacia.setVisibility(View.GONE);
+        chart.setVisibility(View.VISIBLE);
 
         ChartStyler.styleLine(chart, new ValueFormatter() {
             @Override
@@ -588,6 +596,10 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             // Subir, en verde; bajar, neutro: una sesión más floja no es un fallo (DEC-055).
             dif.setTextColor(mas ? ContextCompat.getColor(this, R.color.gp_success)
                     : color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+            // El verde va sobre su contenedor, como en el tablero 30: sobre la superficie 2 se
+            // quedaba en 4,27:1 en claro; sobre gp_success_container da 4,55:1.
+            dif.setBackgroundTintList(mas ? android.content.res.ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.gp_success_container)) : null);
         }
         pintarBarras(v.findViewById(R.id.barrasVez), t, porTiempo);
         return v;

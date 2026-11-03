@@ -131,6 +131,8 @@
     <style name="Widget.GymProFit.CabeceraSeccion.Enlace" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/seccion_enlace_alto</item>
+        <!-- Un enlace corto («See all») medía 42 dp de ancho: 48 como mínimo también a lo ancho (DEC-019). -->
+        <item name="android:minWidth">@dimen/zona_tactil</item>
         <item name="android:gravity">center_vertical|end</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>

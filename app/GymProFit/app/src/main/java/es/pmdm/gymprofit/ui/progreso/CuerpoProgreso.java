@@ -182,7 +182,8 @@ final class CuerpoProgreso {
         c.getXAxis().setEnabled(false);
         c.getAxisLeft().setEnabled(false);
         c.getAxisRight().setEnabled(false);
-        c.setExtraOffsets(0, 0, 0, 0);
+        // Aire de 6 dp: los puntos de los extremos salían cortados por la mitad.
+        c.setExtraOffsets(6, 6, 6, 6);
         c.setMinOffset(0);
         c.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
@@ -197,6 +198,9 @@ final class CuerpoProgreso {
         ds.setDrawFilled(false);
         ds.setHighlightEnabled(false);
         ds.setMode(LineDataSet.Mode.LINEAR);
+        int azul = androidx.core.content.ContextCompat.getColor(c.getContext(), R.color.gp_linea_peso);
+        ds.setColor(azul);
+        ds.setCircleColor(azul);
         c.setData(new LineData(ds));
         c.setVisibility(View.VISIBLE);
         c.invalidate();

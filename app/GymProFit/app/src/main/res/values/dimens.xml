@@ -80,6 +80,9 @@
     <!-- Margen lateral de pantalla, entre secciones (36 en las pestañas, 28 en las
          subpantallas) y del título de sección a su contenido. -->
     <dimen name="margen_pantalla">20dp</dimen>
+    <!-- Para que un carrusel dentro de una columna con margen_pantalla llegue a los bordes
+         (Logros de Progreso): margen negativo y el mismo relleno, con clipToPadding="false". -->
+    <dimen name="margen_pantalla_fuera">-20dp</dimen>
     <dimen name="separacion_pestana">36dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>

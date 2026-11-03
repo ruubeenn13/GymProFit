@@ -371,6 +371,14 @@
     <!-- ── Dialogs M3 con esquinas y superficie de la app ──────────────────── -->
     <style name="ThemeOverlay.GymProFit.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="colorSurface">@color/gp_surface</item>
+        <!-- Material 3 pinta el diálogo con los contenedores de superficie, que el tema no define:
+             salía lavanda (#ECE6F0) en claro y gris violáceo en oscuro (GP-216, lote 4). -->
+        <item name="colorSurfaceContainerLow">@color/gp_surface</item>
+        <item name="colorSurfaceContainer">@color/gp_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/gp_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/gp_surface_2</item>
+        <!-- Y sin la elevación tonal, que le sumaba un 11 % de naranja (como el calendario). -->
+        <item name="elevationOverlayEnabled">false</item>
         <item name="dialogCornerRadius">22dp</item>
     </style>
 

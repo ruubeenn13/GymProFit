@@ -229,6 +229,18 @@
                             android:layout_height="170dp"
                             android:layout_marginTop="@dimen/espacio_8" />
 
+                        <!-- Ninguna sesión en el período elegido: ocupa el sitio de la gráfica. -->
+                        <TextView
+                            android:id="@+id/tvProgresionVacia"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_8"
+                            android:minHeight="170dp"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:visibility="gone" />
+
                         <es.pmdm.gymprofit.ui.widget.SelectorPildora
                             android:id="@+id/selectorPeriodo"
                             android:layout_width="match_parent"

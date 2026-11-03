@@ -57,7 +57,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                android:alpha="0.5"
+                app:tint="?attr/colorOnSurfaceVariant"
                 android:contentDescription="@string/sesiones_eliminar" />
 
         </LinearLayout>

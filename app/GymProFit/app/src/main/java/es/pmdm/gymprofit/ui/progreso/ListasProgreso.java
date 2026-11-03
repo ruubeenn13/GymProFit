@@ -140,7 +140,9 @@ final class ListasProgreso {
             valor.setText(marca);
             Marcas.iconoTiempo(valor, r);
             valor.setVisibility(View.VISIBLE);
-            fila.setContentDescription(nombre + ". " + (apoyo == null ? "" : apoyo + ". ") + marca);
+            // Un récord por tiempo dice que es un tiempo: el cronómetro solo se ve.
+            String marcaDicha = r.esDeTiempo() ? ctx.getString(R.string.progreso_marca_tiempo_a11y, marca) : marca;
+            fila.setContentDescription(nombre + ". " + (apoyo == null ? "" : apoyo + ". ") + marcaDicha);
             fila.setOnClickListener(v -> abrirEjercicio(r, v));
         }
     }
