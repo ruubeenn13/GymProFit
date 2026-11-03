@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `303c849` | feat(api): **los kilos por semana se piden hasta 104 semanas** (antes 12), para «Todo» en los kilos de Progreso (GP-216, lote 4); 105 o más, 400. |
 | `c6b0206` | fix(android): la píldora del selector mide lo que su opción al cambiar de opciones (en una ficha nueva salía más estrecha; lo vio la prueba del release en producción). |
 | `5daeb43` | fix(android): partir por sílabas sin el aviso de lint de constante equivocada. |
 | `1eecba8` | fix(android): en Tus datos la descripción de la actividad va bajo su rótulo (la larga aplastaba «Actividad física» hasta partirlo por letras). |
