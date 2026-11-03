@@ -217,7 +217,7 @@
     <string name="detalle_periodo_4">4 wks</string>
     <string name="detalle_periodo_8">8 wks</string>
     <string name="detalle_periodo_todo">All</string>
-    <string name="detalle_periodo_sin_sesiones">No sessions in these weeks. Try “%1$s”.</string>
+    <string name="detalle_periodo_sin_sesiones">No sessions in these weeks. Try “%1$s.”</string>
     <string name="detalle_periodo_4_nombre">4 weeks</string>
     <string name="detalle_periodo_8_nombre">8 weeks</string>
     <string name="detalle_pestanas_a11y">Exercise sections</string>
