@@ -60,7 +60,16 @@ public class HistorialFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         rvSesiones = findViewById(R.id.rvSesiones);
         tvVacio = findViewById(R.id.tvVacio);
-        rvSesiones.setLayoutManager(new LinearLayoutManager(requireContext()));
+        // Una pantalla más dispuesta por cada lado: con el teclado, la siguiente sesión aún no existía
+        // cuando se buscaba el foco y el tabulador saltaba a «Volver» a mitad de la lista (revisor, GP-228).
+        rvSesiones.setLayoutManager(new LinearLayoutManager(requireContext()) {
+            @Override
+            protected void calculateExtraLayoutSpace(@NonNull androidx.recyclerview.widget.RecyclerView.State estado,
+                                                     @NonNull int[] extra) {
+                extra[0] = getHeight();
+                extra[1] = getHeight();
+            }
+        });
     }
 
     @Override

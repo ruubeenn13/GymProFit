@@ -91,14 +91,24 @@ public class TarjetaEstadosTest {
         // 1,4:1 dentro de un botón relleno y no se distinguía en una tarjeta oscura (segunda pasada).
         assertTrue("por fuera, a 2 dp del borde", foco.contains("return porDentro(v) ? -Math.round(HUECO_DP * d) : Math.round(HUECO_DP * d) + ancho;")
                 && foco.contains("private static final int HUECO_DP = 2;"));
-        assertTrue("en la capa de la ventana, que no recorta ningún padre", foco.contains("decor.getOverlay().add(anillo);"));
+        assertTrue("en la capa de la ventana, que no recorta ningún padre", foco.contains("decor.getOverlay().add(capa);"));
         assertTrue("sigue a la vista", foco.contains("public boolean onPreDraw()"));
         // Tercera pasada: la flecha girada de Estadísticas tenía el anillo desplazado su tamaño; los
         // iconos sueltos lo sacaban de la pantalla; un carrusel a sangre dejaba un lado fuera.
         assertTrue("sin las transformaciones de la vista", foco.contains("decor.offsetDescendantRectToMyCoords(v, enDecor);")
                 && !foco.contains(".getLocationInWindow("));
-        assertTrue("por dentro en un icono suelto, no en el avatar",
-                foco.contains("return v instanceof ImageView && !(v instanceof ShapeableImageView);"));
+        assertTrue("por dentro en un icono suelto sin relleno; no en el avatar ni en el «+» relleno",
+                foco.contains("return v instanceof ImageView && !(v instanceof ShapeableImageView) && sinRelleno(v.getBackground());")
+                        && foco.contains("if (r.getId(i) != android.R.id.mask) return false;"));
+        // Cuarta pasada: alrededor de una fila medio escondida el anillo se pintaba sobre la cabecera;
+        // la última tarjeta de un carrusel a sangre perdía un lado; el tabulador saltaba a «Volver».
+        assertTrue("recortado a lo que se ve de sus listas", foco.contains("capa.recortarA(visible(v));")
+                && foco.contains("c.clipRect(zona);"));
+        assertTrue("el carrusel llega hasta su relleno", foco.contains("mostrarEnCarrusel(ahora, fuera);")
+                && foco.contains("h.scrollBy(r.right + fuera - der, 0);"));
+        String historial = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "fragments", "HistorialFragment.java")));
+        assertTrue("la siguiente sesión ya está dispuesta al buscar el foco",
+                historial.contains("protected void calculateExtraLayoutSpace("));
         assertTrue("se desplaza a la vista con el anillo entero", foco.contains("ahora.requestRectangleOnScreen("));
         assertTrue("con el radio de la tarjeta", foco.contains("((MaterialCardView) v).getRadius()"));
         assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")

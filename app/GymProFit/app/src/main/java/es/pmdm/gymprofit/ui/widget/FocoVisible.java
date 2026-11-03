@@ -43,12 +43,15 @@ import es.pmdm.gymprofit.R;
 //   - los campos de texto: su borde de foco, el de la app;
 //   - lo marcado con R.id.tag_anillo_propio (la pestaña de la barra, en su píldora, y las opciones
 //     del selector, que dibuja el suyo).
-// Un icono suelto (ImageView, ImageButton: «Volver», papeleras, el calendario de un campo) no tiene
-// texto que pisar, y por fuera el anillo se salía de la pantalla o cruzaba el borde de su campo
-// (revisor, tercera pasada): ahí va por dentro, 2 dp hacia dentro de su borde. El avatar
-// (ShapeableImageView, sobre una foto) lo lleva por fuera.
+// Un icono suelto sin relleno (ImageView o ImageButton con un fondo que solo es la capa de pulsado:
+// «Volver», papeleras, el calendario de un campo) no tiene texto que pisar, y por fuera el anillo se
+// salía de la pantalla o cruzaba el borde de su campo (revisor, tercera pasada): ahí va por dentro,
+// 2 dp hacia dentro de su borde. Con relleno (el «+» de la barra) va por fuera: por dentro quedaba a
+// 2,3:1 sobre el naranja (cuarta pasada). El avatar (ShapeableImageView, sobre una foto), por fuera.
 // Al ganar el foco, lo enfocado se desplaza a la vista con el anillo entero: un carrusel a sangre lo
-// dejaba pegado al borde de la pantalla, con un lado del anillo fuera.
+// dejaba pegado al borde de la pantalla, con un lado del anillo fuera. Y el anillo se recorta a lo
+// que se ve de las listas que lo contienen: alrededor de una fila medio escondida se pintaba encima
+// de la cabecera y de las barras del sistema (cuarta pasada).
 // En modo táctil no hay anillo: al tocar la pantalla se quita.
 // ============================================================
 public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeListener,
@@ -61,6 +64,7 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
 
     private final ViewGroup decor;
     private final GradientDrawable anillo = new GradientDrawable();
+    private final Recortado capa = new Recortado(anillo);
     private final android.graphics.Rect enDecor = new android.graphics.Rect();
     private final android.graphics.Rect donde = new android.graphics.Rect();
     @Nullable private View conAnillo;
@@ -90,14 +94,16 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         int ancho = ahora.getResources().getDimensionPixelSize(R.dimen.selector_anillo_foco);
         anillo.setStroke(ancho, colorAlrededor(ahora));
         donde.setEmpty();
-        decor.getOverlay().add(anillo);
+        capa.setBounds(0, 0, decor.getWidth(), decor.getHeight());
+        decor.getOverlay().add(capa);
         decor.getViewTreeObserver().addOnPreDrawListener(this);
         colocar();
         // Que se vea entera con su anillo: el scroll que la contiene se desplaza lo que haga falta.
         int fuera = fuera(ahora);
         if (fuera > 0) {
             ahora.requestRectangleOnScreen(new android.graphics.Rect(-fuera, -fuera,
-                    ahora.getWidth() + fuera, ahora.getHeight() + fuera), false);
+                    ahora.getWidth() + fuera, ahora.getHeight() + fuera), true);
+            mostrarEnCarrusel(ahora, fuera);
         }
     }
 
@@ -127,14 +133,41 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
 
     private void quitar() {
         if (conAnillo == null) return;
-        decor.getOverlay().remove(anillo);
+        decor.getOverlay().remove(capa);
         decor.getViewTreeObserver().removeOnPreDrawListener(this);
         conAnillo = null;
     }
 
-    /** Si el anillo va por dentro: un icono suelto, que no tiene texto que pisar. */
+    /** Si el anillo va por dentro: un icono suelto sin relleno, que no tiene texto que pisar. */
     static boolean porDentro(@NonNull View v) {
-        return v instanceof ImageView && !(v instanceof ShapeableImageView);
+        return v instanceof ImageView && !(v instanceof ShapeableImageView) && sinRelleno(v.getBackground());
+    }
+
+    // Un fondo que no pinta nada en reposo: ninguno, o una capa de pulsado sin más capas que su máscara.
+    private static boolean sinRelleno(@Nullable android.graphics.drawable.Drawable fondo) {
+        if (fondo == null) return true;
+        if (!(fondo instanceof android.graphics.drawable.RippleDrawable)) return false;
+        android.graphics.drawable.RippleDrawable r = (android.graphics.drawable.RippleDrawable) fondo;
+        for (int i = 0; i < r.getNumberOfLayers(); i++) {
+            if (r.getId(i) != android.R.id.mask) return false;
+        }
+        return true;
+    }
+
+    // HorizontalScrollView no se desplaza más allá del borde de su contenido aunque tenga relleno: la
+    // última tarjeta de un carrusel a sangre se quedaba pegada al borde de la pantalla. Se desplaza a
+    // mano lo que falte para ver el anillo entero (scrollBy sí llega hasta el relleno).
+    private static void mostrarEnCarrusel(View v, int fuera) {
+        for (ViewParent p = v.getParent(); p instanceof View; p = p.getParent()) {
+            if (!(p instanceof HorizontalScrollView)) continue;
+            HorizontalScrollView h = (HorizontalScrollView) p;
+            android.graphics.Rect r = new android.graphics.Rect(0, 0, v.getWidth(), v.getHeight());
+            h.offsetDescendantRectToMyCoords(v, r);
+            int izq = h.getScrollX(), der = izq + h.getWidth();
+            if (r.right + fuera > der) h.scrollBy(r.right + fuera - der, 0);
+            else if (r.left - fuera < izq) h.scrollBy(r.left - fuera - izq, 0);
+            return;
+        }
     }
 
     // Lo que el anillo sale del borde de la vista: hueco y trazo por fuera; por dentro, hacia dentro.
@@ -160,9 +193,10 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
             return;
         }
         int x = enDecor.left, y = enDecor.top;
+        capa.recortarA(visible(v));
         // Solo si se ha movido: invalidar en cada fotograma redibujaría la ventana sin parar.
         if (donde.left == x - fuera && donde.top == y - fuera && donde.width() == v.getWidth() + 2 * fuera
-                && donde.height() == v.getHeight() + 2 * fuera && anillo.getCallback() != null) return;
+                && donde.height() == v.getHeight() + 2 * fuera) return;
         donde.set(x - fuera, y - fuera, x + v.getWidth() + fuera, y + v.getHeight() + fuera);
         anillo.setBounds(donde);
         anillo.setCornerRadius(Math.max(0f, radio(v, d) + fuera));
@@ -182,6 +216,68 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         boolean cuadrado = Math.abs(w - h) <= 4 * d;
         if (cuadrado && w <= LADO_REDONDO_DP * d) return Math.min(w, h) / 2f;
         return Math.min(v.getResources().getDimension(R.dimen.radio_chip), Math.min(w, h) / 2f);
+    }
+
+    // Lo que se ve de la vista en la ventana: la intersección de lo visible de cada lista o scroll
+    // que la contiene (en coordenadas de la ventana). Sin ninguno, la ventana entera.
+    private android.graphics.Rect visible(View v) {
+        android.graphics.Rect r = new android.graphics.Rect(0, 0, decor.getWidth(), decor.getHeight());
+        for (ViewParent p = v.getParent(); p instanceof View && p != decor; p = p.getParent()) {
+            View a = (View) p;
+            if (!(a instanceof ScrollView || a instanceof NestedScrollView || a instanceof HorizontalScrollView
+                    || a instanceof RecyclerView)) continue;
+            android.graphics.Rect suyo = new android.graphics.Rect(a.getScrollX(), a.getScrollY(),
+                    a.getScrollX() + a.getWidth(), a.getScrollY() + a.getHeight());
+            try {
+                decor.offsetDescendantRectToMyCoords(a, suyo);
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+            if (!r.intersect(suyo)) r.setEmpty();
+        }
+        return r;
+    }
+
+    /** El anillo recortado a una zona: lo que asoma de una lista no se pinta sobre la cabecera. */
+    private static final class Recortado extends android.graphics.drawable.Drawable {
+        private final GradientDrawable dentro;
+        private final android.graphics.Rect zona = new android.graphics.Rect();
+
+        Recortado(GradientDrawable dentro) {
+            this.dentro = dentro;
+        }
+
+        void recortarA(android.graphics.Rect r) {
+            if (!zona.equals(r)) {
+                zona.set(r);
+                invalidateSelf();
+            }
+        }
+
+        @Override
+        public void draw(@NonNull android.graphics.Canvas c) {
+            if (zona.isEmpty()) return;
+            int guardado = c.save();
+            c.clipRect(zona);
+            dentro.draw(c);
+            c.restoreToCount(guardado);
+        }
+
+        @Override
+        public void setAlpha(int alfa) {
+            dentro.setAlpha(alfa);
+        }
+
+        @Override
+        public void setColorFilter(@Nullable android.graphics.ColorFilter f) {
+            dentro.setColorFilter(f);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 
     // El color del texto sobre lo que hay detrás de la vista: el colorOnSurface del padre.
