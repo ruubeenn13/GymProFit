@@ -97,6 +97,19 @@ public class CambioPesoTest {
     }
 
     @Test
+    public void unDiaConVariosPesosCuentaSoloElUltimoDeEseDia() {
+        // Como la línea (EjeFechas, el último del día): con cuatro pesajes el 21-9, el cambio se
+        // mide desde el de la noche y no desde el de la mañana (lo vio el revisor, GP-228).
+        CambioPeso.Resultado r = CambioPeso.de(Arrays.asList(
+                p("2026-11-03T10:00:00", 79.2),
+                p("2026-09-21T18:32:17.587", 78.5),
+                p("2026-09-21T18:32:17.503", 77.5),
+                p("2026-09-21T18:32:17.357", 75.5)));
+        assertEquals(0.7, r.cambio, 1e-9);
+        assertEquals("un punto por día, como la línea", 2, r.puntos.size());
+    }
+
+    @Test
     public void elCambioSeRedondeaAlDecimo() {
         CambioPeso.Resultado r = CambioPeso.de(Arrays.asList(
                 p("2026-11-02T08:00:00", 79.44),

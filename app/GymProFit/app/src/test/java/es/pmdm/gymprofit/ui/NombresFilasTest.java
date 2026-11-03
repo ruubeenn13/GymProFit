@@ -39,11 +39,23 @@ public class NombresFilasTest {
             String fila = m.group(1);
             filas.add(fila);
             boolean nombrada = codigo.contains("nombrar(R.id." + fila + ",")
-                    || codigo.contains("findViewById(R.id." + fila + ").setContentDescription(");
+                    || codigo.contains("findViewById(R.id." + fila + ").setContentDescription(")
+                    || Pattern.compile("View (\\w+) = findViewById\\(R\\.id\\." + fila + "\\);\\s+\\1\\.setContentDescription\\(")
+                            .matcher(codigo).find();
             if (!nombrada) sinNombre.add(fila);
         }
         assertTrue("se esperaban las filas de Medidas, y no se encontró ninguna", filas.size() >= 9);
         if (!sinNombre.isEmpty()) fail("Filas de Medidas sin nombre propio: " + sinNombre);
+    }
+
+    @Test
+    public void laGraficaDeMedidasSeDice() throws IOException {
+        // Una LineChart no es nada para TalkBack sin descripción (revisor, GP-228).
+        String codigo = leer(UI.resolve("fragments/MedidasFragment.java"));
+        assertTrue(codigo.contains("chartPeso.setContentDescription(getString(R.string.medicion_grafica_a11y"));
+        for (String tema : new String[]{ "values", "values-en" }) {
+            assertTrue(tema, leer(RES.resolve(tema + "/strings.xml")).contains("<string name=\"medicion_grafica_a11y\">"));
+        }
     }
 
     @Test

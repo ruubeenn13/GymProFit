@@ -93,7 +93,7 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
                 new CharSequence[]{h.tvFecha.getText(), h.tvRutina.getText(), h.tvDuracion.getText()}));
         // Cada papelera dice qué sesión borra (GP-227): «Borrar Full body B del 30 de septiembre».
         String dia = FechaUtils.fechaCorta(s.getFechaInicio(), idioma,
-                context.getString(R.string.reciente_fecha_patron));
+                context.getString(R.string.sesiones_eliminar_fecha_patron));
         h.btnEliminar.setContentDescription(dia == null
                 ? context.getString(R.string.sesiones_eliminar_a11y_sin_fecha, h.tvRutina.getText())
                 : context.getString(R.string.sesiones_eliminar_a11y, h.tvRutina.getText(), dia));

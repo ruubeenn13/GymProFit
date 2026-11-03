@@ -364,8 +364,26 @@ public class MedidasFragment extends BaseFragment {
 
         LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, requireContext());
+        // Un decimal en el eje como mucho: con 30 días salían «79,20 / 79,11» (revisor, GP-228).
+        chartPeso.getAxisLeft().setGranularity(0.1f);
+        chartPeso.getAxisLeft().setGranularityEnabled(true);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
+        // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019).
+        EjeFechas.Punto primero = puntos.get(0), ultimo = puntos.get(puntos.size() - 1);
+        chartPeso.setContentDescription(getString(R.string.medicion_grafica_a11y, getString(metrica == MET_GRASA ? R.string.medicion_label_grasa
+                        : metrica == MET_CINTURA ? R.string.medicion_label_cintura : R.string.perfil_peso),
+                valorDicho(metrica, primero.y), EjeFechas.etiqueta(primero.x, idioma, patron),
+                valorDicho(metrica, ultimo.y), EjeFechas.etiqueta(ultimo.x, idioma, patron)));
+    }
+
+    // Un valor de la gráfica como se dice: «79,2 kilos», «14,5 por ciento», «86 centímetros».
+    private String valorDicho(int metrica, double v) {
+        switch (metrica) {
+            case MET_GRASA:   return getString(R.string.medicion_a11y_por_ciento, NombreMedida.numero(v, idioma()));
+            case MET_CINTURA: return centimetros(v);
+            default:          return kilos(v);
+        }
     }
 
     // Valor de la métrica pedida para una medición (0 si no registrada).
@@ -462,7 +480,10 @@ public class MedidasFragment extends BaseFragment {
 
     // «Más detalles» o «Menos detalles», lo mismo que dice la fila, como un botón.
     private void nombrarMasDetalles() {
-        findViewById(R.id.rowMasDetalles).setContentDescription(tvMasDetalles.getText());
+        View fila = findViewById(R.id.rowMasDetalles);
+        fila.setContentDescription(tvMasDetalles.getText());
+        androidx.core.view.ViewCompat.setStateDescription(fila, getString(masDetallesAbierto
+                ? R.string.medicion_detalles_abiertos : R.string.medicion_detalles_cerrados));
     }
 
     @androidx.annotation.Nullable

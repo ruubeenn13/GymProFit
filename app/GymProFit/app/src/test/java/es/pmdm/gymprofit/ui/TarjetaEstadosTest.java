@@ -60,6 +60,24 @@ public class TarjetaEstadosTest {
     }
 
     @Test
+    public void lasFilasYLosIconosSueltosTienenLosMismosEstados() throws IOException {
+        // El resaltado gris de Material en las filas daba 1,18:1 en claro y 1,45:1 en oscuro
+        // (revisor, GP-228): el fondo pulsable del tema es el mismo de la tarjeta.
+        String temas = leer(RES.resolve("values/themes.xml"));
+        assertTrue(temas.contains("<item name=\"selectableItemBackground\">@drawable/fondo_pulsable</item>"));
+        assertTrue(temas.contains("<item name=\"selectableItemBackgroundBorderless\">@drawable/fondo_pulsable_redondo</item>"));
+        assertTrue(temas.contains("<item name=\"actionBarItemBackground\">@drawable/fondo_pulsable_redondo</item>"));
+        for (String d : new String[]{ "fondo_pulsable", "fondo_pulsable_redondo" }) {
+            String xml = leer(RES.resolve("drawable/" + d + ".xml"));
+            assertTrue(d + ": pulsado, la capa de la tarjeta", xml.contains("android:color=\"@color/tarjeta_capa\""));
+            assertTrue(d + ": con foco, el anillo", xml.contains("android:state_focused=\"true\"")
+                    && xml.contains("<stroke android:width=\"@dimen/selector_anillo_foco\" android:color=\"@color/gp_on_surface\""));
+        }
+        String main = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "activities", "MainActivity.java")));
+        assertTrue("la página del pager no se vela con el foco", main.contains("setDefaultFocusHighlightEnabled(false)"));
+    }
+
+    @Test
     public void elTextoSobreLaTarjetaPulsadaPasaCuatroYMedio() throws IOException {
         List<String> fallos = new ArrayList<>();
         String[] textos = { "gp_on_surface", "gp_text_secondary", "gp_primary" };

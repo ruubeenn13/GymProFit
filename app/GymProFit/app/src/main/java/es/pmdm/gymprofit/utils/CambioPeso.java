@@ -67,6 +67,12 @@ public final class CambioPeso {
             if (ultimo == null) ultimo = p;
             int dias = TiempoRelativo.diasEntre(p.fecha, ultimo.fecha);
             if (dias < 0 || dias > DIAS_VENTANA) continue;
+            // Un peso por día, el último de ese día, como la línea (EjeFechas): con varios el
+            // mismo día, el cambio no puede medirse desde uno que la línea no enseña (GP-228).
+            if (!ventana.isEmpty()
+                    && TiempoRelativo.diasEntre(p.fecha, ventana.get(ventana.size() - 1).fecha) == 0) {
+                continue;
+            }
             ventana.add(p);
         }
         if (ultimo == null) return null;

@@ -15,6 +15,11 @@
       hereden el rediseño sin tocar cada layout.
     -->
     <style name="Theme.GymProFit" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Fondo pulsable común (GP-227): capa del 10 % al pulsar y anillo de 2 dp con foco,
+             como la tarjeta y el selector. Lo usan filas, papeleras y «Volver». -->
+        <item name="selectableItemBackground">@drawable/fondo_pulsable</item>
+        <item name="selectableItemBackgroundBorderless">@drawable/fondo_pulsable_redondo</item>
+        <item name="actionBarItemBackground">@drawable/fondo_pulsable_redondo</item>
         <!-- Paleta M3 mapeada a los tokens gp_* -->
         <item name="colorPrimary">@color/gp_primary</item>
         <item name="colorOnPrimary">@color/gp_on_primary</item>

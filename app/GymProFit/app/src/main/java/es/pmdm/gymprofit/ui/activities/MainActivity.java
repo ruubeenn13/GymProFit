@@ -118,6 +118,12 @@ public class MainActivity extends BaseActivity {
 
         pager.setAdapter(new TabsAdapter(this));
         pager.setUserInputEnabled(false);
+        // El RecyclerView de dentro del pager toma el foco del teclado y Android le pinta su
+        // resaltado por defecto encima de toda la pestaña (revisor, GP-228): no es un control, así
+        // que sin resaltado; el foco se ve en lo que sí se pulsa (anillo de 2 dp, GP-227).
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            pager.getChildAt(0).setDefaultFocusHighlightEnabled(false);
+        }
         // Las cuatro vivas: cambiar de pestaña no re-infla; cada una recarga al volver.
         pager.setOffscreenPageLimit(NavTabs.TOTAL - 1);
         // Cada pestaña que se crea fuera de la vista nace ya apartada del foco.

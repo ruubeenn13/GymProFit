@@ -2405,7 +2405,7 @@
     <string name="progreso_kilos_titulo">Kilos movidos</string>
     <string name="progreso_kilos_semana">kg esta semana</string>
     <string name="progreso_kilos_de_la_pasada">el %1$d %% de la pasada</string>
-    <string name="progreso_kilos_sube" translatable="false">+%1$d %%</string>
+    <string name="progreso_kilos_sube">+%1$d %%</string>
     <string name="progreso_kilos_de_la_pasada_a11y">el %1$d %% de los kilos de la semana pasada</string>
     <string name="progreso_kilos_sube_a11y">un %1$d %% más que la semana pasada</string>
     <string name="progreso_kilos_cifra_a11y">%1$s kilos esta semana</string>
@@ -2446,7 +2446,7 @@
     <string name="progreso_cuerpo_error">No se han podido cargar tus medidas.</string>
     <string name="progreso_historial_vacio">Todavía no has terminado ningún entreno. El primero aparecerá aquí.</string>
 
-    <!-- GP-227: cada papelera del historial dice qué sesión borra. %1$s: la rutina; %2$s: la fecha con reciente_fecha_patron («30 de septiembre»). -->
+    <!-- GP-227: cada papelera del historial dice qué sesión borra. %1$s: la rutina; %2$s: la fecha con sesiones_eliminar_fecha_patron («30 de septiembre»). -->
     <string name="sesiones_eliminar_a11y">Borrar %1$s del %2$s</string>
     <string name="sesiones_eliminar_a11y_sin_fecha">Borrar %1$s</string>
     <!-- GP-228: un período entre dos fechas cortas. -->
@@ -2463,4 +2463,10 @@
         <item quantity="other">%s centímetros</item>
     </plurals>
     <string name="medicion_a11y_por_ciento">%1$s por ciento</string>
+    <!-- GP-228: la gráfica de Medidas para TalkBack. %1$s: la métrica; %2$s y %4$s: el valor con su unidad; %3$s y %5$s: la fecha corta. -->
+    <string name="medicion_grafica_a11y">%1$s: de %2$s el %3$s a %4$s el %5$s</string>
+    <string name="sesiones_eliminar_fecha_patron">d \'de\' MMMM</string>
+    <!-- GP-227: el estado de «Más detalles» de Medidas para TalkBack. -->
+    <string name="medicion_detalles_abiertos">Desplegados</string>
+    <string name="medicion_detalles_cerrados">Plegados</string>
 </resources>
