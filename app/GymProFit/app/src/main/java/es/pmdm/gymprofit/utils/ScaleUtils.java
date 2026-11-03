@@ -3,6 +3,8 @@ package es.pmdm.gymprofit.utils;
 import android.content.Context;
 import android.content.res.Configuration;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 // ============================================================
 // ScaleUtils — escala de fuente GLOBAL de la app.
 // Devuelve un contexto con un fontScale mayor para que TODO el texto se vea más
@@ -35,9 +37,20 @@ public final class ScaleUtils {
     // CONGELARÍA el modo (claro/oscuro) y el idioma en el momento del wrap, y al
     // recrear la Activity por cambio de tema/idioma se quedaría "pillado" con el
     // anterior. Con un override mínimo, uiMode y locale siguen vivos desde el base.
+    //
+    // El claro u oscuro de la app sí va en el override, y solo él (GP-216, lote 4). Si no,
+    // AppCompat lo pone cambiando a mano la configuración de los Resources de la pantalla
+    // cuando ya coinciden con los del proceso, y lo pierde en cuanto el proceso recibe la
+    // del sistema: al encender o apagar TalkBack, por ejemplo, lo que se pintaba después
+    // salía con los colores del claro dentro de la pantalla oscura. Un override se vuelve
+    // a aplicar encima de cada configuración nueva. No congela nada: cambiar el tema
+    // recrea las pantallas, y cada una lo vuelve a leer aquí.
     public static Context wrap(Context base) {
         Configuration override = new Configuration();
         override.fontScale = base.getResources().getConfiguration().fontScale * FONT_SCALE;
+        int tema = PreferencesManager.temaGuardado(base);
+        if (tema == AppCompatDelegate.MODE_NIGHT_YES) override.uiMode = Configuration.UI_MODE_NIGHT_YES;
+        else if (tema == AppCompatDelegate.MODE_NIGHT_NO) override.uiMode = Configuration.UI_MODE_NIGHT_NO;
         return base.createConfigurationContext(override);
     }
 }

@@ -133,6 +133,15 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public void saveTheme(int themeMode) { editor.putInt(KEY_THEME, themeMode); editor.apply(); }
     // Oscuro por defecto (rediseño atlético); el usuario puede forzar claro desde el menú.
     public int getTheme() { return prefs.getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES); }
+
+    /**
+     * El tema guardado sin montar el almacén cifrado: lo lee {@link ScaleUtils#wrap} en
+     * attachBaseContext de cada pantalla, antes de que exista la Activity.
+     */
+    public static int temaGuardado(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                .getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES);
+    }
     public void applyTheme() { AppCompatDelegate.setDefaultNightMode(getTheme()); }
 
     /** «Empezar el descanso al marcar una serie»: sí, de serie (GP-013). */
