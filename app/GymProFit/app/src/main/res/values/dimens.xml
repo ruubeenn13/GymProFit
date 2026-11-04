@@ -88,6 +88,10 @@
          sexta pasada). Relleno de 8 y el mismo margen negativo, para que el texto no se mueva. -->
     <dimen name="aire_anillo">8dp</dimen>
     <dimen name="aire_anillo_fuera">-8dp</dimen>
+    <!-- Arriba y abajo, entre filas apiladas (las macros), basta la mitad. Los márgenes negativos van
+         siempre lado a lado: android:layout_margin negativo se ignora. -->
+    <dimen name="aire_anillo_alto">4dp</dimen>
+    <dimen name="aire_anillo_alto_fuera">-4dp</dimen>
     <dimen name="separacion_pestana">36dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>

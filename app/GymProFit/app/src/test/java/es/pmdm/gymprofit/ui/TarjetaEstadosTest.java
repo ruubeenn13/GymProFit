@@ -166,9 +166,50 @@ public class TarjetaEstadosTest {
         java.util.regex.Matcher c = java.util.regex.Pattern
                 .compile("<LinearLayout[^>]*android:id=\"@\\+id/cabeceraPrograma\"[^>]*>").matcher(programa);
         assertTrue(c.find());
-        assertTrue("la cabecera del programa lleva aire y su margen negativo",
+        // Lado a lado: android:layout_margin negativo no se aplica (séptima pasada, el texto se movió 8 dp).
+        assertTrue("la cabecera del programa lleva aire y su margen negativo, lado a lado",
                 c.group().contains("android:padding=\"@dimen/aire_anillo\"")
-                        && c.group().contains("android:layout_margin=\"@dimen/aire_anillo_fuera\""));
+                        && c.group().contains("android:layout_marginStart=\"@dimen/aire_anillo_fuera\"")
+                        && c.group().contains("android:layout_marginTop=\"@dimen/aire_anillo_fuera\"")
+                        && c.group().contains("android:layout_marginEnd=\"@dimen/aire_anillo_fuera\"")
+                        && c.group().contains("android:layout_marginBottom=\"@dimen/aire_anillo_fuera\""));
+        // La fila de la macro: el aire de arriba y abajo también se devuelve, o la tarjeta crecía unos
+        // 5 dp (séptima pasada).
+        assertTrue(dimens.contains("<dimen name=\"aire_anillo_alto\">4dp</dimen>")
+                && dimens.contains("<dimen name=\"aire_anillo_alto_fuera\">-4dp</dimen>"));
+        assertTrue("arriba y abajo, 4 dp", macro.contains("android:paddingTop=\"@dimen/aire_anillo_alto\"")
+                && macro.contains("android:paddingBottom=\"@dimen/aire_anillo_alto\""));
+        m.reset();
+        while (m.find()) {
+            assertTrue("y lo devuelve abajo: " + m.group(),
+                    m.group().contains("android:layout_marginBottom=\"@dimen/aire_anillo_alto_fuera\""));
+        }
+    }
+
+    @Test
+    public void ningunMargenNegativoDondeAndroidLoIgnora() throws IOException {
+        // MarginLayoutParams solo aplica android:layout_margin, layout_marginHorizontal y
+        // layout_marginVertical si son 0 o más: uno negativo se ignora sin aviso. La cabecera de
+        // «Tu programa» llevaba layout_margin="-8dp" y su texto se movió 8 dp (revisor, séptima
+        // pasada). Los márgenes negativos van lado a lado (marginStart, marginTop…), que sí se aplican.
+        java.util.Set<String> negativos = new java.util.HashSet<>();
+        Matcher d = Pattern.compile("<dimen name=\"(\\w+)\">\\s*-[0-9.]+\\w*\\s*</dimen>")
+                .matcher(leer(RES.resolve("values/dimens.xml")));
+        while (d.find()) negativos.add(d.group(1));
+        Pattern atributo = Pattern.compile("android:layout_margin(Horizontal|Vertical)?=\"([^\"]+)\"");
+        List<String> mal = new ArrayList<>();
+        try (java.util.stream.Stream<Path> ficheros = Files.list(RES.resolve("layout"))) {
+            for (Path f : (Iterable<Path>) ficheros::iterator) {
+                Matcher a = atributo.matcher(leer(f));
+                while (a.find()) {
+                    String v = a.group(2);
+                    boolean negativo = v.startsWith("-")
+                            || (v.startsWith("@dimen/") && negativos.contains(v.substring(7)));
+                    if (negativo) mal.add(f.getFileName() + ": " + a.group());
+                }
+            }
+        }
+        assertTrue("márgenes negativos que Android ignora: " + mal, mal.isEmpty());
     }
 
     @Test
