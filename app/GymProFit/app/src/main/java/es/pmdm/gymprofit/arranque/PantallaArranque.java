@@ -120,6 +120,8 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private boolean splashFuera;
     private boolean salidaPendiente;
     private boolean montarPendiente;
+    @Nullable private CharSequence tituloAntes;
+    private final java.util.List<View> apartadas = new java.util.ArrayList<>();
     private boolean terminada;
 
     /**
@@ -155,10 +157,13 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         inflar();
         plan = PlanArranque.alTocar(tocado, quieto, this);
         splash.setKeepOnScreenCondition(() -> plan.mantenerSplash(SystemClock.uptimeMillis()));
-        // Se quita sin animación: debajo está la misma G en el mismo sitio. Sin esta escucha,
-        // Android funde su ventana de arranque con la de la app y la G se apaga y se vuelve
-        // a encender (medido en el emulador). La salida empieza aquí, cuando el splash ya no
-        // tapa nada: si empezara antes, correría escondida debajo.
+        // Se quita sin animación: debajo está la misma G en el mismo sitio. Medido en el
+        // emulador: sin esta escucha, la salida por defecto del sistema funde su ventana con la
+        // de la app y la G se apaga hasta un 30 % y vuelve, siempre. Con ella, Android pasa el
+        // splash a una copia dentro de la app que se quita aquí; si el hilo principal está
+        // ocupado en ese momento, la copia se ve un rato sin su icono. Por eso nada pesado
+        // coincide con este paso: Inicio se monta justo después (alQuitarseSplash). Con el
+        // emulador cargado (carga 10) aún se vieron 100–500 ms sin la G; con carga normal, no.
         splash.setOnExitAnimationListener(proveedor -> {
             proveedor.remove();
             // Al quitarse, la librería vuelve a poner las barras del tema: con la app en claro,
@@ -181,14 +186,33 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private void inflar() {
         Configuration noche = new Configuration(act.getResources().getConfiguration());
         noche.uiMode = (noche.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) | Configuration.UI_MODE_NIGHT_YES;
-        ContextThemeWrapper oscuro = new ContextThemeWrapper(act, R.style.ThemeOverlay_GymProFit_Arranque);
+        // El tema de la app entero (en noche resuelve al oscuro) y encima el overlay. Solo el
+        // overlay no basta: en Android 7 el tema base no se copia a unos recursos con otra
+        // configuración, y los componentes de Material se quedaban sin tema (se cerraba).
+        ContextThemeWrapper oscuro = new ContextThemeWrapper(act, R.style.Theme_GymProFit);
         oscuro.applyOverrideConfiguration(noche);
+        oscuro.getTheme().applyStyle(R.style.ThemeOverlay_GymProFit_Arranque, true);
 
         ViewGroup contenido = act.findViewById(android.R.id.content);
         raiz = (ViewGroup) LayoutInflater.from(oscuro).inflate(R.layout.view_arranque, contenido, false);
         fondo = new FondoArranque(ContextCompat.getColor(oscuro, R.color.gp_background));
         raiz.setBackground(fondo);
         contenido.addView(raiz);
+        // Lo de debajo (las pestañas, la barra) no existe para TalkBack ni para el teclado
+        // mientras está la pantalla de carga: TalkBack se iba a la pestaña «Inicio», que no se
+        // ve (revisor). Se devuelve al salir hacia Inicio.
+        for (int i = 0; i < contenido.getChildCount(); i++) {
+            View v = contenido.getChildAt(i);
+            if (v == raiz) continue;
+            v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+            if (v instanceof ViewGroup) ((ViewGroup) v).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            apartadas.add(v);
+        }
+        // Se traga los toques sin ser un control: pulsable, pedía un nombre (revisor).
+        raiz.setOnTouchListener((v, e) -> true);
+        // TalkBack dice el título de la ventana al abrirla: «Cargando GymProFit».
+        tituloAntes = act.getTitle();
+        act.setTitle(R.string.arranque_cargando);
 
         g = raiz.findViewById(R.id.vistaG);
         tvConectando = raiz.findViewById(R.id.tvConectando);
@@ -216,8 +240,6 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         barrasClarasAntes = barras.isAppearanceLightStatusBars();
         navegacionClaraAntes = barras.isAppearanceLightNavigationBars();
         barrasOscuras();
-
-        enfocar(g);
     }
 
     // Iconos claros en las barras del sistema, y sin el velo de contraste (claro en el tema claro).
@@ -346,7 +368,6 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private void alQuitarseSplash() {
         if (splashFuera) return;
         splashFuera = true;
-        enfocar(g);
         if (montarPendiente) {
             montarPendiente = false;
             anfitrion.montarInicio();
@@ -369,7 +390,9 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             case INICIO:
                 // Inicio acaba de montar sus pestañas: hasta que el hilo principal no respira,
                 // un fotograma dura más que la salida entera y no se vería.
-                cuandoHayaFluidez(this::salirAInicio);
+                // Con las animaciones quitadas no hay nada que ver: a Inicio sin esperar.
+                if (quieto) salirAInicio();
+                else cuandoHayaFluidez(this::salirAInicio);
                 return;
             default:
                 salirA(destino);
@@ -412,6 +435,11 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         Movimiento.sacarG(g, fondo::setApertura, () -> {
             ViewGroup padre = (ViewGroup) raiz.getParent();
             if (padre != null) padre.removeView(raiz);
+            for (View v : apartadas) {
+                v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+                if (v instanceof ViewGroup) ((ViewGroup) v).setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+            }
+            act.setTitle(tituloAntes);
             if (barras != null) {
                 barras.setAppearanceLightStatusBars(barrasClarasAntes);
                 barras.setAppearanceLightNavigationBars(navegacionClaraAntes);
@@ -487,7 +515,8 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             float centroG = g.getTop() + g.getHeight() / 2f;
             float centroHueco = bloqueError.getTop() + huecoGError.getTop() + huecoGError.getHeight() / 2f;
             Movimiento.moverG(g, centroHueco - centroG, (float) Movimiento.G_ERROR_DP / Movimiento.G_DP);
-            Movimiento.entrar(0, tvErrorTitulo, tvErrorTexto, btnReintentar);
+            // Cuando la G ya ha subido: si no, al subir pasaba por encima del título (revisor).
+            Movimiento.entrar(quieto ? 0 : Movimiento.G_SUBE, tvErrorTitulo, tvErrorTexto, btnReintentar);
             enfocar(tvErrorTitulo);
         });
     }

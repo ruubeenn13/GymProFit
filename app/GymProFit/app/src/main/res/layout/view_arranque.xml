@@ -9,15 +9,14 @@
   al mismo tamaño. huecoG marca la G visible (160 dp) para colgar «Conectando…» a 28 dp.
 
   En un error, la G sube al hueco de 72 dp del bloque de error (la mueve PantallaArranque)
-  y abajo sale «Reintentar». El fondo lo pinta FondoArranque, que se abre al salir.
+  y abajo sale «Reintentar». El fondo lo pinta FondoArranque, que se abre al salir. Los
+  toques los traga PantallaArranque sin hacerla pulsable (pulsable, pedía un nombre).
 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/arranque"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="false">
+    android:layout_height="match_parent">
 
     <Space
         android:id="@+id/huecoG"

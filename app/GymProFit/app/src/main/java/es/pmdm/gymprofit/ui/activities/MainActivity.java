@@ -151,6 +151,11 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         // el icono, el arranque decide; si no, las pestañas, como siempre.
         if (isFinishing()) return;
         if (PantallaArranque.esArranque(getIntent(), savedInstanceState)) {
+            // Sin la transición de entrada de todas las pantallas (deslizar con alfa de 0,6 a 1):
+            // al abrir desde el icono se sumaba al fundido del splash y la G se apagaba y volvía.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0);
+            }
             arranque = new PantallaArranque(this, this);
             arranque.iniciar(splash);
         } else {
