@@ -51,14 +51,18 @@ import es.pmdm.gymprofit.R;
 // Al ganar el foco, lo enfocado se desplaza a la vista con el anillo entero: un carrusel a sangre lo
 // dejaba pegado al borde de la pantalla, con un lado del anillo fuera. Se pide también tras el
 // siguiente layout: con el teclado abierto, el scroll aplazaba su desplazamiento y la petición
-// llegaba antes (quinta pasada). Y el anillo se recorta a lo que se ve de las listas que lo
+// llegaba antes (quinta pasada); y tras cada layout mientras el anillo esté puesto: el campo que
+// pierde el foco pide otro layout y el scroll volvía a alinear solo la vista, sin su anillo (la
+// valoración de Registrar sesión, sexta pasada). Y el anillo se recorta a lo que se ve de las listas que lo
 // contienen, solo en el eje en que se desplaza cada una: alrededor de una fila medio escondida se
 // pintaba encima de la cabecera (cuarta pasada), y recortar también el otro eje dejaba sin arriba ni
-// abajo las tarjetas de los carruseles (quinta pasada).
+// abajo las tarjetas de los carruseles (quinta pasada). Un carrusel deja fuera de sus lados el sitio
+// del anillo: sin relleno, su borde es el de la primera y la última tarjeta (sexta pasada).
 // En modo táctil no hay anillo: al tocar la pantalla se quita.
 // ============================================================
 public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeListener,
-        ViewTreeObserver.OnTouchModeChangeListener, ViewTreeObserver.OnPreDrawListener {
+        ViewTreeObserver.OnTouchModeChangeListener, ViewTreeObserver.OnPreDrawListener,
+        ViewTreeObserver.OnGlobalLayoutListener {
 
     /** Un botón cuadrado de hasta este lado (dp) es redondo: el anillo es un círculo. */
     private static final int LADO_REDONDO_DP = 64;
@@ -113,6 +117,7 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         capa.setBounds(0, 0, decor.getWidth(), decor.getHeight());
         decor.getOverlay().add(capa);
         decor.getViewTreeObserver().addOnPreDrawListener(this);
+        decor.getViewTreeObserver().addOnGlobalLayoutListener(this);
         colocar();
         // Que se vea entera con su anillo (por dentro, la vista entera): el scroll que la contiene se
         // desplaza lo que haga falta, ahora y otra vez tras el siguiente layout.
@@ -121,6 +126,12 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         enfocada.post(() -> {
             if (enfocada == conAnillo) mostrar(enfocada);
         });
+    }
+
+    /** Tras cada layout, lo enfocado vuelve a verse con su anillo: el scroll lo alinea sin él. */
+    @Override
+    public void onGlobalLayout() {
+        if (conAnillo != null) mostrar(conAnillo);
     }
 
     @Override
@@ -151,6 +162,7 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
         if (conAnillo == null) return;
         decor.getOverlay().remove(capa);
         decor.getViewTreeObserver().removeOnPreDrawListener(this);
+        decor.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         conAnillo = null;
     }
 
@@ -256,7 +268,7 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
                 continue;
             }
             int[] z = recortar(new int[]{ r.left, r.top, r.right, r.bottom },
-                    new int[]{ suyo.left, suyo.top, suyo.right, suyo.bottom }, eje);
+                    new int[]{ suyo.left, suyo.top, suyo.right, suyo.bottom }, eje, Math.max(0, fuera(v)));
             r.set(z[0], z[1], z[2], z[3]);
         }
         return r;
@@ -270,10 +282,20 @@ public final class FocoVisible implements ViewTreeObserver.OnGlobalFocusChangeLi
      * Sin solaparse, una zona vacía (todo a 0).
      */
     static int[] recortar(int[] r, int[] suyo, int eje) {
+        return recortar(r, suyo, eje, 0);
+    }
+
+    /**
+     * Como {@link #recortar(int[], int[], int)}, pero un carrusel deja {@code sitio} píxeles fuera de
+     * sus lados: lo que el anillo sale de la vista. Sin relleno, el borde de un carrusel es el de su
+     * primera y su última tarjeta, y recortar justo ahí se comía ese lado del anillo (Inicio, sexta
+     * pasada). Una lista vertical no deja sitio: arriba tiene la cabecera.
+     */
+    static int[] recortar(int[] r, int[] suyo, int eje, int sitio) {
         int[] z = r.clone();
         if (eje == EJE_X) {
-            z[0] = Math.max(z[0], suyo[0]);
-            z[2] = Math.min(z[2], suyo[2]);
+            z[0] = Math.max(z[0], suyo[0] - sitio);
+            z[2] = Math.min(z[2], suyo[2] + sitio);
         } else if (eje == EJE_Y) {
             z[1] = Math.max(z[1], suyo[1]);
             z[3] = Math.min(z[3], suyo[3]);

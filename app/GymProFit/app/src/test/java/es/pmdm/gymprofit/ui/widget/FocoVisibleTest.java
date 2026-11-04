@@ -45,6 +45,25 @@ public class FocoVisibleTest {
     }
 
     @Test
+    public void unCarruselSinRellenoDejaSitioAlAnilloEnSusLados() {
+        // «Tu día» y «Tus últimos entrenos» de Inicio no tienen relleno: su borde es el de la primera
+        // y la última tarjeta, y recortar justo ahí se comía ese lado del anillo (sexta pasada). El
+        // carrusel deja fuera de sus lados lo que el anillo sale de la vista (11 px).
+        int[] carrusel = { 53, 1500, 1027, 1900 };
+        assertArrayEquals(new int[]{ 42, 0, 1038, 2400 },
+                FocoVisible.recortar(VENTANA, carrusel, FocoVisible.EJE_X, 11));
+    }
+
+    @Test
+    public void unaListaVerticalNoDejaSitioArribaNiAbajo() {
+        // La lista del historial sí recorta justo en su borde: alrededor de una fila medio escondida,
+        // el anillo no se pinta sobre la cabecera (cuarta pasada).
+        int[] lista = { 42, 231, 1038, 2274 };
+        assertArrayEquals(new int[]{ 0, 231, 1080, 2274 },
+                FocoVisible.recortar(VENTANA, lista, FocoVisible.EJE_Y, 11));
+    }
+
+    @Test
     public void loQueNoSeDesplazaNoRecorta() {
         assertArrayEquals(VENTANA, FocoVisible.recortar(VENTANA, new int[]{ 10, 10, 20, 20 }, 0));
     }

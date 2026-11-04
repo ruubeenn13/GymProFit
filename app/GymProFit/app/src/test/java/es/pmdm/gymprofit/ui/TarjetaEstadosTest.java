@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -113,6 +114,16 @@ public class TarjetaEstadosTest {
         assertTrue("se desplaza a la vista con el anillo entero, también por dentro, y otra vez tras el layout",
                 foco.contains("int m = Math.max(0, fuera(v));") && foco.contains("v.requestRectangleOnScreen(")
                         && foco.contains("enfocada.post(() -> {"));
+        // Sexta pasada: con el teclado abierto, el campo que pierde el foco pide otro layout y el scroll
+        // vuelve a alinear solo la vista enfocada, sin su anillo (la valoración de Registrar sesión).
+        // Se vuelve a enseñar tras cada layout mientras el anillo esté puesto.
+        assertTrue("otra vez tras cada layout, no solo en el siguiente mensaje",
+                foco.contains("public void onGlobalLayout()") && foco.contains("if (conAnillo != null) mostrar(conAnillo);")
+                        && foco.contains("addOnGlobalLayoutListener(this)") && foco.contains("removeOnGlobalLayoutListener(this)"));
+        // Y un carrusel deja sitio al anillo fuera de sus lados: sin relleno, su borde es el de la
+        // primera y la última tarjeta (Inicio, sexta pasada).
+        assertTrue("el recorte de un carrusel deja el sitio del anillo",
+                foco.contains("recortar(new int[]{ r.left, r.top, r.right, r.bottom },") && foco.contains("eje, Math.max(0, fuera(v)));"));
         assertTrue("con el radio de la tarjeta", foco.contains("((MaterialCardView) v).getRadius()"));
         assertTrue("lo que se desplaza y los campos: sin anillo ni velo", foco.contains("v instanceof ScrollView")
                 && foco.contains("v instanceof NestedScrollView") && foco.contains("v instanceof HorizontalScrollView")
@@ -126,6 +137,38 @@ public class TarjetaEstadosTest {
         assertTrue("las opciones del selector llevan el suyo: no sale doble", selector.contains("o.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
         String barra = leer(JAVA.resolve(Paths.get("es", "pmdm", "gymprofit", "ui", "widget", "BarraNavegacion.java")));
         assertTrue("la pestaña lo lleva en su píldora", barra.contains("p.setTag(R.id.tag_anillo_propio, Boolean.TRUE);"));
+    }
+
+    @Test
+    public void losBloquesPulsablesSinRellenoDejanAireAlAnillo() throws IOException {
+        // La fila de cada macro de Nutrición y la cabecera de «Tu programa» no tenían relleno: el anillo
+        // iba a 2 dp del texto y sus esquinas cruzaban la «G» de «Gimnasio», el punto de la macro y
+        // «Te faltan» (revisor, sexta pasada). Llevan aire dentro y el mismo margen negativo fuera,
+        // para que el texto no se mueva.
+        String dimens = leer(RES.resolve("values/dimens.xml"));
+        assertTrue(dimens.contains("<dimen name=\"aire_anillo\">8dp</dimen>")
+                && dimens.contains("<dimen name=\"aire_anillo_fuera\">-8dp</dimen>"));
+        String macro = leer(RES.resolve("layout/view_macro_barra.xml"));
+        assertTrue("la fila de la macro lleva aire",
+                macro.contains("android:paddingStart=\"@dimen/aire_anillo\"") && macro.contains("android:paddingEnd=\"@dimen/aire_anillo\""));
+        String nutricion = leer(RES.resolve("layout/fragment_nutricion.xml"));
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("<include[^>]*layout=\"@layout/view_macro_barra\"[^>]*/>").matcher(nutricion);
+        int n = 0;
+        while (m.find()) {
+            n++;
+            assertTrue("y su margen negativo, para no mover el texto: " + m.group(),
+                    m.group().contains("android:layout_marginStart=\"@dimen/aire_anillo_fuera\"")
+                            && m.group().contains("android:layout_marginEnd=\"@dimen/aire_anillo_fuera\""));
+        }
+        assertEquals(3, n);
+        String programa = leer(RES.resolve("layout/view_tu_programa.xml"));
+        java.util.regex.Matcher c = java.util.regex.Pattern
+                .compile("<LinearLayout[^>]*android:id=\"@\\+id/cabeceraPrograma\"[^>]*>").matcher(programa);
+        assertTrue(c.find());
+        assertTrue("la cabecera del programa lleva aire y su margen negativo",
+                c.group().contains("android:padding=\"@dimen/aire_anillo\"")
+                        && c.group().contains("android:layout_margin=\"@dimen/aire_anillo_fuera\""));
     }
 
     @Test

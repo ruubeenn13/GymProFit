@@ -83,6 +83,11 @@
     <!-- Para que un carrusel dentro de una columna con margen_pantalla llegue a los bordes
          (Logros de Progreso): margen negativo y el mismo relleno, con clipToPadding="false". -->
     <dimen name="margen_pantalla_fuera">-20dp</dimen>
+    <!-- Aire de un bloque pulsable que no tiene relleno propio (la fila de una macro, la cabecera de
+         «Tu programa»): el anillo de foco iba a 2 dp del texto y sus esquinas lo cruzaban (GP-227,
+         sexta pasada). Relleno de 8 y el mismo margen negativo, para que el texto no se mueva. -->
+    <dimen name="aire_anillo">8dp</dimen>
+    <dimen name="aire_anillo_fuera">-8dp</dimen>
     <dimen name="separacion_pestana">36dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>

@@ -119,7 +119,7 @@
     <string name="perfil_objetivo">Goal</string>
 
     <!-- GENERAL -->
-    <string name="sin_registrar">Not registered</string>
+    <string name="sin_registrar">Nothing logged</string>
 
     <!-- DIALOGS -->
     <string name="dialog_cancelar">Cancel</string>
