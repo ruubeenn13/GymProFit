@@ -128,12 +128,14 @@ public class LoginActivity extends AppCompatActivity {
         ((android.widget.ImageView) aviso.findViewById(R.id.ivAviso)).setImageResource(R.drawable.ic_ms_lock);
         ((android.widget.TextView) aviso.findViewById(R.id.tvAviso)).setText(R.string.login_sesion_cerrada);
         aviso.setVisibility(android.view.View.VISIBLE);
-        if (estado != null) return;
         String ultima = prefsManager.getUltimaEntrada();
-        if (!ultima.isEmpty() && etUsuario.getText().length() == 0) {
-            etUsuario.setText(ultima);
+        if (estado == null && !ultima.isEmpty() && etUsuario.getText().length() == 0) etUsuario.setText(ultima);
+        // El foco y el teclado, también si la pantalla se recrea al aplicar el tema: con el
+        // oscuro, el de por defecto, se recreaba y el teclado no salía (revisor).
+        if (etUsuario.getText().length() > 0 && etPassword.getText().length() == 0) {
             etPassword.requestFocus();
-            getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            etPassword.post(() -> androidx.core.view.WindowCompat.getInsetsController(getWindow(), etPassword)
+                    .show(androidx.core.view.WindowInsetsCompat.Type.ime()));
         }
     }
 
@@ -143,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
         out.putBoolean(ESTADO_AVISO, findViewById(R.id.avisoSesionCerrada).getVisibility() == android.view.View.VISIBLE);
     }
 
-    // Las piezas de Entrar suben 16 dp y aparecen una tras otra (GP-223, la salida del arranque).
+    // Las piezas de Entrar suben 16 dp una tras otra (GP-223, la salida del arranque).
     private void entrarEnCascada() {
         java.util.List<android.view.View> piezas = new java.util.ArrayList<>();
         for (int id : new int[]{R.id.avisoSesionCerrada, R.id.tvTituloEntrar, R.id.tvTextoEntrar,
@@ -151,7 +153,8 @@ public class LoginActivity extends AppCompatActivity {
             android.view.View v = findViewById(id);
             if (v != null && v.getVisibility() == android.view.View.VISIBLE) piezas.add(v);
         }
-        es.pmdm.gymprofit.utils.Movimiento.cascada(piezas);
+        // Solo el desplazamiento: la aparición la hace el fundido de la ventana.
+        es.pmdm.gymprofit.utils.Movimiento.subirSinFundido(piezas, 16);
     }
 
     // Referencia los campos de texto del layout.

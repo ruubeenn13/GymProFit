@@ -120,6 +120,9 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private boolean splashFuera;
     private boolean salidaPendiente;
     private boolean montarPendiente;
+    // Inicio ya montado (sus pestañas existen), y «Conectando…» que esperaba a verse.
+    private boolean montado;
+    private boolean conectandoPendiente;
     @Nullable private CharSequence tituloAntes;
     private final java.util.List<View> apartadas = new java.util.ArrayList<>();
     private boolean terminada;
@@ -295,11 +298,25 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             // tiene el hilo principal ocupado cientos de ms, y si coincide con el traspaso del
             // splash se ve un hueco sin la G (medido en el emulador). Debajo de la G quieta no
             // se nota, y la salida espera a que Inicio respire (cuandoHayaFluidez).
-            if (splashFuera) anfitrion.montarInicio();
+            if (splashFuera) montar();
             else montarPendiente = true;
         }
         plan.decidido(SystemClock.uptimeMillis());
         programarTic();
+    }
+
+    private void montar() {
+        anfitrion.montarInicio();
+        montado = true;
+    }
+
+    // Montar Inicio cuando ya se haya dibujado un fotograma sin el splash: el que quita su
+    // copia. Si se montaba en el mismo paso, ese fotograma se retrasaba lo que tarda el
+    // montaje y lo último a la vista era la copia sin icono: la G desaparecía (revisor).
+    private void montarTrasUnFotograma() {
+        android.view.Choreographer.getInstance().postFrameCallback(t -> reloj.post(() -> {
+            if (!terminada) montar();
+        }));
     }
 
     private boolean hayRed() {
@@ -340,6 +357,12 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
 
     @Override
     public void mostrarConectando() {
+        // Con el splash aún encima (un móvil lento), TalkBack diría «Conectando» antes que
+        // «Cargando GymProFit», y no se vería: espera a que se vaya (revisor).
+        if (!splashFuera) {
+            conectandoPendiente = true;
+            return;
+        }
         tvConectando.setText(R.string.arranque_conectando);
         // TalkBack dice «Conectando», sin los puntos suspensivos; es región viva.
         tvConectando.setContentDescription(act.getString(R.string.arranque_conectando_a11y));
@@ -370,7 +393,11 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         splashFuera = true;
         if (montarPendiente) {
             montarPendiente = false;
-            anfitrion.montarInicio();
+            montarTrasUnFotograma();
+        }
+        if (conectandoPendiente) {
+            conectandoPendiente = false;
+            mostrarConectando();
         }
         if (salidaPendiente) {
             salidaPendiente = false;
@@ -389,10 +416,9 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
                 return;
             case INICIO:
                 // Inicio acaba de montar sus pestañas: hasta que el hilo principal no respira,
-                // un fotograma dura más que la salida entera y no se vería.
-                // Con las animaciones quitadas no hay nada que ver: a Inicio sin esperar.
-                if (quieto) salirAInicio();
-                else cuandoHayaFluidez(this::salirAInicio);
+                // un fotograma dura más que la salida entera y no se vería. También sin
+                // animaciones: sin esperar se veía Inicio vacío (revisor).
+                cuandoHayaFluidez(this::salirAInicio);
                 return;
             default:
                 salirA(destino);
@@ -414,10 +440,11 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             @Override
             public void doFrame(long ahoraNanos) {
                 if (terminada) return;
-                if (anterior > 0 && ahoraNanos - anterior < FOTOGRAMA_FLUIDO_NS) seguidos++;
+                // Hasta que Inicio no esté montado, no cuenta: aún falta lo pesado.
+                if (montado && anterior > 0 && ahoraNanos - anterior < FOTOGRAMA_FLUIDO_NS) seguidos++;
                 else seguidos = 0;
                 anterior = ahoraNanos;
-                if (seguidos >= 2 || SystemClock.uptimeMillis() >= limite) {
+                if (montado && (seguidos >= 2 || SystemClock.uptimeMillis() >= limite)) {
                     accion.run();
                 } else {
                     android.view.Choreographer.getInstance().postFrameCallback(this);
@@ -508,6 +535,8 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         tvErrorTexto.setText(sinRed ? R.string.arranque_sin_conexion_texto : R.string.arranque_no_conecta_texto);
         bloqueError.setVisibility(View.VISIBLE);
         btnReintentar.setVisibility(View.VISIBLE);
+        // La ventana se llama como el error: si TalkBack vuelve a ella, no dice «Cargando».
+        act.setTitle(tvErrorTitulo.getText());
         g.setContentDescription(null);
         g.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         // Cuando el bloque ya está medido, la G sube a su hueco de 72 dp.
@@ -526,6 +555,7 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         btnReintentar.setVisibility(View.GONE);
         g.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         g.setContentDescription(act.getString(R.string.arranque_cargando));
+        act.setTitle(R.string.arranque_cargando);
         Movimiento.moverG(g, 0f, 1f);
         enfocar(g);
         destino = null;

@@ -215,7 +215,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         if (desdeArranque) {
             // Desde el arranque sin red (GP-223): la sesión sube 40 dp mientras aparece.
             View contenido = ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-            Movimiento.entrarUna(contenido, 0, Movimiento.ENTRA, Movimiento.SESION_SUBE_DP);
+            // Solo el desplazamiento: la aparición la hace el fundido de la ventana.
+            Movimiento.subirSinFundido(java.util.Collections.singletonList(contenido), Movimiento.SESION_SUBE_DP);
         }
 
         // Lo que falte por pedir: los ejercicios de la rutina, si Android cerró la app

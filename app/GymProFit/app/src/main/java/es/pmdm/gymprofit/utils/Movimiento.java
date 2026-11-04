@@ -943,6 +943,24 @@ public final class Movimiento {
     }
 
     /**
+     * Lo que llega desde el arranque en otra pantalla (Entrar, la sesión en vivo): cada pieza
+     * sube {@code dp} en cascada (CASCADA cada CASCADA_ESCALON; con una sola pieza, ENTRA es
+     * lo mismo) pero sin fundido propio: aparece con el fundido de la ventana. Si también
+     * empezaran transparentes, el primer fotograma de la ventana sería su fondo vacío, claro
+     * con la app en claro (revisor, GP-223).
+     */
+    public static void subirSinFundido(@NonNull java.util.List<View> piezas, float dp) {
+        if (piezas.isEmpty() || quieto(piezas.get(0).getContext())) return;
+        float px = dp * piezas.get(0).getResources().getDisplayMetrics().density;
+        for (int i = 0; i < piezas.size(); i++) {
+            View v = piezas.get(i);
+            v.setTranslationY(px);
+            v.animate().translationY(0f).setStartDelay(i * CASCADA_ESCALON).setDuration(CASCADA)
+                    .setInterpolator(ENFATIZADA).start();
+        }
+    }
+
+    /**
      * La cascada de lo que llega tras el arranque (Inicio, Entrar): cada pieza sube 16 dp y
      * aparece, CASCADA cada CASCADA_ESCALON. Las piezas se pueden tocar desde el principio.
      */
