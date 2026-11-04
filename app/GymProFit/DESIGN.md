@@ -481,19 +481,27 @@ Lo que está en uso. Todo se tematiza por `Theme.GymProFit` (`values/themes.xml`
 ### Feedback
 - **Toast propio** con icono (`UIHelper.mostrarToastInfo|Exito|Error`, `layout/toast_custom.xml`), **Snackbar** de Material sobre `gp_surface_2` (`Widget.GymProFit.Snackbar`; con «Deshacer» en `gp_accion_inversa`) y **diálogo** M3 de 22 dp (`UIHelper.mostrarDialogo*`).
 - **Cargando, error y vacío** dentro del contenido: `VistaEstado` (`layout/view_estado.xml`); ver «Huecos».
+- **Aviso en superficie 2** (`layout/view_aviso_superficie.xml`, GP-223): arriba de la pantalla, en `gp_surface_2` con `radio_tarjeta_pequena`, icono de 24 dp en `colorOnSurfaceVariant` (decorativo) y texto de 14 sp; no se pulsa y es región viva. Lo usan Entrar con el candado («Tu sesión se ha cerrado…», cuando la sesión caduca al abrir la app o a mitad de uso) y la sesión en vivo con `cloud_off` («Sin conexión…», mientras no hay red).
+
+### El arranque (GP-223)
+- **Una sola pantalla de carga.** `MainActivity` es la de entrada (`Theme.GymProFit.Arranque`, API SplashScreen de `core-splashscreen`): el splash del sistema, en `ic_launcher_fondo` (#0B0C0E) también con la app en claro, como el icono, y con la G sin fondo de icono a 160 dp en un icono de 288 (`arranque_icono`), dentro del círculo de 192. Debajo, `PantallaArranque` pone `view_arranque` con la misma G (`VistaG`) en el mismo sitio y al mismo tamaño, centrada en la ventana entera, así que el cambio no se nota. Se infla con la configuración de noche y `ThemeOverlay.GymProFit.Arranque`: los colores son los del tema oscuro sin un hex a mano; los iconos de las barras pasan a claros mientras está.
+- **La G** (`drawable/g_arranque`, `g_arranque_inicial`, `g_arranque_animada`): dos trazados sacados con potrace de `drawable-night/logo.png`, el cuerpo en `logo_g_cuerpo` (#EBBB3D) y el trazo en `logo_g_trazo` (#FF6100), los colores del PNG. Fidelidad medida en el informe de GP-223.
+- **«Conectando…»**: Barlow a 15 sp (`text_arranque_estado`) en `gp_text_secondary` del oscuro (#A1A9B6), a 28 dp de la G (`espacio_28`), región viva («Conectando» para TalkBack).
+- **Errores** («Sin conexión», «No conseguimos conectar»): la G a 72 dp (`arranque_g_error`), el título en Barlow Condensed a 30 sp (`text_arranque_titulo`, `colorOnSurface`, encabezado, con el foco de TalkBack) y el texto en Barlow a 16 sp en `gp_text_secondary`, a 300 dp como mucho (`arranque_texto_max`); «Reintentar» abajo, `Widget.GymProFit.Button` de 52 dp (`arranque_boton_alto`) a `margen_pantalla` de los lados y 32 dp (`arranque_boton_abajo`) sobre la barra del sistema.
+- **El brillo**: una franja de `gp_arranque_brillo` (blanco al 40 %) recortada por la G con `SRC_ATOP` sobre una capa.
 
 ### Signature components
 - **Anillos de macros** (`ui/alta/AnilloMacros.java`, `ui/nutricion/AnilloDia.java`, `AnilloComida.java`): arcos por macro con los colores `gp_macro_*`; se cierran y se ponen verdes con el día completo.
 - **Mapa muscular** (`ui/widget/SiluetaMuscularView.java`, `body_silhouette`, `body_highlight`): silueta neutra y músculo en naranja.
 - **Hoja del «+»** y hojas inferiores: velo `gp_velo` y hoja que sube con `HOJA`.
 - **Marco del escáner** (`ui/nutricion/MarcoEscaner.java`): esquinas que pasan a verde al leer.
-- **Iconos:** Material Symbols Rounded, peso 400, 24 dp, 126 vectores `drawable/ic_ms_*` importados sin redibujar de `@material-symbols/svg-400`, teñidos por el tema; cada icono trae variante `_fill` para el estado activo. Los iconos anatómicos `ic_body_*` son propios.
+- **Iconos:** Material Symbols Rounded, peso 400, 24 dp, 128 vectores `drawable/ic_ms_*` importados sin redibujar de `@material-symbols/svg-400`, teñidos por el tema; cada icono trae variante `_fill` para el estado activo. Los iconos anatómicos `ic_body_*` son propios.
 
 ## Motion
 
 El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las pantallas piden un momento, no escriben milisegundos ni curvas (DEC-039). **Nativo**: animadores, interpoladores, vectores y la capa superpuesta de las vistas; ni Lottie ni librerías de animación (decidido el 22-10-2026). `MovimientoTest` lee la tabla de DEC-039 y el código y falla si los números no coinciden.
 
-**Curvas** (`Movimiento.java:48-56`; la estándar también en `res/interpolator/estandar.xml`):
+**Curvas** (`Movimiento.java:48-58`; la estándar también en `res/interpolator/estandar.xml`):
 
 | Curva | Valor | Para |
 |---|---|---|
@@ -502,8 +510,9 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 | `REBOTE` | `cubic-bezier(.34,1.56,.64,1)` | lo que salta |
 | `TIEMBLA` | `cubic-bezier(.36,.07,.19,.97)` | el error |
 | `LINEAL` | lineal | lo que gira |
+| `ACELERADA` | `cubic-bezier(.3,0,.8,.15)` | lo que sale y se va (la G del arranque, GP-223) |
 
-**Duraciones** (`Movimiento.java:62-160`, ms): `TOQUE` 120 · `RELLENO` 150 · `CHECK` 260 · `ICONO` 420 · `ENCIENDE` 380 · `ENTRA` 350 (+40 por escalón) · `CAPITULO` 450 · `LATIDO` 900 · `BARRA` 500 · `DESTELLO` 700 · `PILDORA` 320 · `DIA` 280 (+35) · `CIFRAS` 1200 · `HALO` 900 · `CARTA` 450 · `FILA` 300 (+100) · `BRILLO` 900 · `CIRCULO` 300 · `GIRO` 700 · `TRAZO` 420 · `TEMBLOR` 380 · `MENSAJE` 250 · `AVISO` 5000 · `TROFEO` 450 · `CHISPAS` 700 · `HUNDE` 70 · `VERDE` 120 · `CASCADA` 350 (+40) · `BARRIDO` 2400 · `ENCAJA` 200 · `HOJA` 450 · `PLIEGA` 180 · `CAE` 360 (+120) · `CORAZON` 450 · `RESALTA` 1400 · `SALE` 380 · `RECOLOCA` 250 · `CIFRA` 250 · `VELO` 250 · `SALTA_OK` 450 (+200) · `CIERRA` 600 · `PUNTO` 450 · `VASO` 450 · `RESPIRA` 1400 · `SUMA` 600 · `ORO` 900 · `BAJA` 250.
+**Duraciones** (`Movimiento.java:64-199`, ms): `TOQUE` 120 · `RELLENO` 150 · `CHECK` 260 · `ICONO` 420 · `ENCIENDE` 380 · `ENTRA` 350 (+40 por escalón) · `CAPITULO` 450 · `LATIDO` 900 · `BARRA` 500 · `DESTELLO` 700 · `PILDORA` 320 · `DIA` 280 (+35) · `CIFRAS` 1200 · `HALO` 900 · `CARTA` 450 · `FILA` 300 (+100) · `BRILLO` 900 · `CIRCULO` 300 · `GIRO` 700 · `TRAZO` 420 · `TEMBLOR` 380 · `MENSAJE` 250 · `AVISO` 5000 · `TROFEO` 450 · `CHISPAS` 700 · `HUNDE` 70 · `VERDE` 120 · `CASCADA` 350 (+40) · `BARRIDO` 2400 · `ENCAJA` 200 · `HOJA` 450 · `PLIEGA` 180 · `CAE` 360 (+120) · `CORAZON` 450 · `RESALTA` 1400 · `SALE` 380 · `RECOLOCA` 250 · `CIFRA` 250 · `VELO` 250 · `SALTA_OK` 450 (+200) · `CIERRA` 600 · `PUNTO` 450 · `VASO` 450 · `RESPIRA` 1400 · `SUMA` 600 · `ORO` 900 · `BAJA` 250 · `G_CUERPO` 450 · `G_TRAZO` 420 (tras `G_TRAZO_RETRASO` 280) · `G_ENTRADA` 700 · `G_SALE` 300 · `G_BRILLO` 1200 (cada `G_BRILLO_CADA` 1800) · `CONECTANDO` 200 · `G_SUBE` 350.
 
 **Momentos** (tabla completa en DEC-039; aquí el resumen por familia):
 
@@ -516,6 +525,9 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 | Error | 10 Error | temblar + mensaje |
 | Salida | 18 Copia de ayer, 20 Borrar y deshacer | estándar |
 | Descanso | 26 El descanso empieza y acaba (27 es la notificación del sistema) | enfatizada al subir, estándar al bajar, aro lineal |
+| Arranque (GP-223, filas sin número) | La G entra, La G sale, El brillo, «Conectando…», La G sube | estándar y rebote al entrar, acelerada al salir, estándar al subir |
+
+**El arranque** (GP-223). La G entra en el splash del sistema (`drawable/g_arranque_animada`, Android 12 o más; en las anteriores, quieta: `g_arranque`): el cuerpo gira de −90° a 0°, crece de 0,72 a 1 y aparece en `G_CUERPO` con la estándar; el trazo llega desde 18 dp arriba a la derecha (`G_TRAZO_DESDE_DP`, sobre una G de 160) y crece de 0,6 a 1 en `G_TRAZO` con el rebote, `G_TRAZO_RETRASO` después, con el pivote en el 74,9 % y el 20 % del logo; su opacidad va con la estándar, porque un `fillAlpha` por encima de 1 se sale del byte de alfa. Sus tiempos y curvas viven en `res/animator/g_*`, `res/interpolator/` y el tema, que no pueden pedir un momento: `GArranqueTest` los cruza con `Movimiento`. La entrada se ve entera (`G_ENTRADA`), salvo con «Quitar animaciones», y es lo único que el arranque espera. A 1 s sin destino, el brillo (`G_BRILLO`, cada `G_BRILLO_CADA`); a 3 s, «Conectando…» (`CONECTANDO`). La salida es la misma vaya a donde vaya: la G crece al 125 % (`G_SALE_ESCALA`) y se desvanece en `G_SALE` con la acelerada; hacia Inicio, el fondo se abre en círculo (`FondoArranque`) y Inicio entra en cascada (`Movimiento.cascada`, `CASCADA` cada `CASCADA_ESCALON`); hacia otra pantalla, la pantalla llega con un fundido (`anim/arranque_entra`, `ENTRA` con la enfatizada) sobre la de carga, que se queda quieta debajo (`anim/arranque_quieta`), y Entrar entra en cascada y la sesión en vivo sube 40 dp (`SESION_SUBE_DP`) con su aviso bajando 12 (`AVISO_BAJA_DP`). En un error, la G sube y pasa a 72 dp (`G_SUBE`, `G_ERROR_DP`).
 
 **Transiciones** (Material motion de Material 1.14, `utils/Transiciones.java`; filas sin número de DEC-039). Se piden con una línea desde el origen y el destino no sabe nada: `GymProFitApp` monta su lado de llegada al crearlo.
 
@@ -528,7 +540,7 @@ El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las
 
 Con «Quitar animaciones» nada de esto se mueve: `Transiciones` abre la pantalla sin transición de escena. `windowActivityTransitions` está activo en el tema, pero solo llegan con transición las pantallas que la piden; las hojas con `BottomSheetDialog` (alta, elegir rutina, seguir programa, elegir comida) llevan el atrás predictivo de Material. `res/anim/tab_*` se borraron: no las usaba nadie.
 
-**Hápticos** (`Movimiento.vibrar`, `Movimiento.java:174-197`; por `performHapticFeedback`, así que respetan el ajuste de vibración al tocar): `LIGERA` → `CLOCK_TICK` (elegir, «+», copiar); `MEDIA` → `CONTEXT_CLICK` (abrir capítulo); `EXITO` → `CONFIRM` en Android 11+ (`LONG_PRESS` antes): cuenta creada, récord, código leído, guardar plato, día completo (una vez al día); `ERROR` → `REJECT` en Android 11+ (`LONG_PRESS` antes).
+**Hápticos** (`Movimiento.vibrar`, `Movimiento.java:226-245`; por `performHapticFeedback`, así que respetan el ajuste de vibración al tocar): `LIGERA` → `CLOCK_TICK` (elegir, «+», copiar); `MEDIA` → `CONTEXT_CLICK` (abrir capítulo); `EXITO` → `CONFIRM` en Android 11+ (`LONG_PRESS` antes): cuenta creada, récord, código leído, guardar plato, día completo (una vez al día); `ERROR` → `REJECT` en Android 11+ (`LONG_PRESS` antes).
 
 **Reglas:**
 - Con «Quitar animaciones», todo en su estado final: se anima siempre *hacia* el estado final; lo que va en bucle pregunta a `Movimiento.quieto()` y se queda en su último fotograma. Las vibraciones se quedan.
@@ -558,7 +570,7 @@ Con «Quitar animaciones» nada de esto se mueve: `Transiciones` abre la pantall
 Lo que hoy es incoherente o no existe. Aquí no se arregla nada.
 
 1. **Estados de vacío, error y carga sin sistema (GP-064).** Existe `VistaEstado` (`layout/view_estado.xml`, `utils/VistaEstado.java`) y la usan 10 layouts, pero hay 8 pantallas con su propio vacío a mano (`activity_ejercicios`, `activity_programas`, `activity_resumen_sesion`, `fragment_entrenar`, `fragment_historial`, `fragment_logros`, `fragment_medidas`, `fragment_records`, con ids distintos: `tvVacio`, `tvEmpty`, `layoutVacio`, `layoutRutinasVacio`…). La carga es un `ProgressBar` redondo o un diálogo modal (`LoadingDialog`); no hay esqueletos. El error es sobre todo un toast (84 usos de toast frente a 5 de Snackbar), no un estado en pantalla.
-2. **Animaciones a mano sin sistema.** Fuera de `Movimiento` quedan duraciones y curvas escritas a pelo: `GuardaPlanActivity` (250 ms), `SplashActivity` (800 ms con `AccelerateDecelerateInterpolator`), `SemanaEjemplo` (220), `PasoPlanFragment` (700 con 1100 de retraso), `BarraNavegacion` (`config_shortAnimTime`, `DecelerateInterpolator`) y el deslizamiento entre pantallas en `res/anim/slide_*` (las `tab_*` ya se borraron). DEC-039 ya dice que las de antes del alta siguen con lo suyo hasta que se toquen.
+2. **Animaciones a mano sin sistema.** Fuera de `Movimiento` quedan duraciones y curvas escritas a pelo: `GuardaPlanActivity` (250 ms), `SemanaEjemplo` (220), `PasoPlanFragment` (700 con 1100 de retraso), `BarraNavegacion` (`config_shortAnimTime`, `DecelerateInterpolator`) y el deslizamiento entre pantallas en `res/anim/slide_*` (las `tab_*` ya se borraron). DEC-039 ya dice que las de antes del alta siguen con lo suyo hasta que se toquen.
 3. **Material motion y Expressive, a medias.** Ya están el contenedor que crece, el eje X, el atrás predictivo de las hojas propias, el botón que cambia de forma, el selector de opciones (que ocupa el sitio de los botones conectados) y el indicador de carga con forma (ver «Cimientos» y «Motion»). Faltan `MaterialFadeThrough` entre pestañas (se queda el fundido de GP-105 por decisión), Dynamic Color y el resto de variantes Expressive de Material 1.14.0. Detalles que quedan: el contenedor que crece no cubre los alimentos que se abren desde Comida, Escáner o Crear plato (solo Añadir), ni el «Ver» de la tarjeta de último récord de Inicio; el eje X de «seguir un programa» llega hasta el detalle, no hasta Entrenar.
 4. **Profi, en pocos sitios.** Desde GP-216 (lote 1) sale en Inicio (el bocadillo), en Tus datos y en Notificaciones (cuando falta el permiso), con `drawable-nodpi/profi_cara.webp`. Sigue pendiente en el alta, las pantallas vacías, los logros y «Tu semana». Profi solo va donde lo dibuja un tablero.
 5. **La escala de espaciado y de radios existe, pero no está aplicada a todos los layouts.** Los tokens están (ver «Cimientos»), pero los layouts anteriores siguen con márgenes sueltos (6, 10, 14…) hasta que GP-216 rehaga cada pantalla en su lote; los radios de tarjeta, botón, hoja y avatar sí están llevados a la escala. Las medidas «del lienzo» viven aún en estilos sueltos (`estilos_estructura.xml`, `estilos_alta.xml`).

@@ -181,6 +181,9 @@ dependencies {
     implementation libs.camera.lifecycle
     implementation libs.camera.view
     implementation libs.mlkit.barcode
+    // El arranque (GP-223): la API SplashScreen de Android 12 con su compatibilidad hacia atrás.
+    // Sin ella, Android pinta su propio splash y después entra el de la app: dos pantallas.
+    implementation libs.core.splashscreen
     testImplementation libs.junit
     // InstantTaskExecutorRule: LiveData síncrono en los tests del ViewModel (GP-016)
     testImplementation libs.core.testing

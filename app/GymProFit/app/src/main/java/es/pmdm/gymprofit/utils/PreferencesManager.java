@@ -37,6 +37,9 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String KEY_USUARIO_ID = "usuario_id";
     private static final String KEY_USERNAME = "username";
+    // El correo o usuario que se escribió al entrar (GP-223). Clave aparte a propósito: cerrarSesion()
+    // no la toca, así que sobrevive a una sesión caducada y Entrar sale ya escrito.
+    private static final String KEY_ULTIMA_ENTRADA = "ultima_entrada";
     private static final String KEY_NIVEL = "nivel_experiencia";
     private static final String KEY_OBJETIVO = "objetivo";
     private static final String KEY_SEXO = "sexo";
@@ -182,6 +185,35 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     // Borra solo los tokens del almacén cifrado (lo usa UtilREST al cerrar la sesión).
     public void borrarTokens() {
         securePrefs.edit().remove(KEY_TOKEN).remove(KEY_REFRESH_TOKEN).apply();
+    }
+
+    /**
+     * Apunta el correo o usuario con que se acaba de entrar (GP-223).
+     *
+     * <p>Vive aparte de la sesión: {@link #cerrarSesion()} no lo borra, porque también se
+     * llama cuando la sesión caduca (30 días sin abrir la app, la contraseña cambiada en
+     * otro sitio), y entonces Entrar lo enseña ya escrito. Se borra al cerrar sesión a
+     * propósito ({@link #olvidarUltimaEntrada()}) y al borrar la cuenta
+     * ({@link #borrarDatosLocales()}).
+     */
+    public void saveUltimaEntrada(@Nullable String identificador) {
+        if (identificador == null || identificador.trim().isEmpty()) return;
+        editor.putString(KEY_ULTIMA_ENTRADA, identificador.trim()).apply();
+    }
+
+    /** El correo o usuario con que se entró la última vez, o "" si no hay (GP-223). */
+    @NonNull
+    public String getUltimaEntrada() { return prefs.getString(KEY_ULTIMA_ENTRADA, ""); }
+
+    /** Cerrar sesión a propósito: Entrar ya no sugiere esa cuenta (GP-223). */
+    public void olvidarUltimaEntrada() { editor.remove(KEY_ULTIMA_ENTRADA).apply(); }
+
+    /**
+     * Si el cuestionario del alta está empezado sin cuenta (GP-223): el arranque vuelve a
+     * él, donde se dejó, en vez de a la bienvenida.
+     */
+    public boolean altaEmpezada() {
+        return getBorradorPaso() > 0 || !getBorradorObjetivo().isEmpty();
     }
 
     // Borra los datos de sesión (tokens cifrados, id y username) pero conserva

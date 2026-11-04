@@ -582,7 +582,7 @@ DEC-027 y DEC-014 no se relajan; lo único que cambia es **cómo se afirma el ai
 
 **Decisión.** El movimiento sale de `Movimiento` (`utils/Movimiento.java`) y de nada más: las pantallas piden un momento, no escriben milisegundos ni curvas.
 
-Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **estándar** `(.2,0,0,1)` para lo que cambia de sitio o de tamaño; **rebote** `(.34,1.56,.64,1)` para lo que salta; **temblor** `(.36,.07,.19,.97)` para el error. Y lineal para lo que gira.
+Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **estándar** `(.2,0,0,1)` para lo que cambia de sitio o de tamaño; **rebote** `(.34,1.56,.64,1)` para lo que salta; **temblor** `(.36,.07,.19,.97)` para el error. Y lineal para lo que gira. Desde GP-223, una quinta para lo que sale y se va: **acelerada** `cubic-bezier(.3,0,.8,.15)`.
 
 | Momento | Qué pasa | Duración y curva | Vibración |
 |---|---|---|---|
@@ -619,6 +619,11 @@ Cuatro curvas: **enfatizada** `cubic-bezier(.05,.7,.1,1)` para lo que entra; **e
 | — · Avanzar en un flujo | El alta (entre pasos y hacia «Guarda tu plan»), crear una rutina (datos, ejercicios, resumen) y seguir un programa (listado, detalle): la pantalla se va por el eje X y la siguiente llega por el mismo lado, 30 dp (eje X compartido; `Transiciones.avanzar`, `EJE_X`) | 300 estándar | — |
 | — · Atrás en una hoja propia | La hoja del «+» y la del plato guardado siguen al dedo del gesto de atrás hasta el 90 % de su tamaño, con las esquinas a 28 dp; al soltar, vuelven (si se cancela) o se van (si se confirma) (`AtrasHoja`, `ATRAS_SUELTA`) | 250 estándar | — |
 | — · El botón cambia de forma | «Empezar», «Hecho» y el «+» de la barra: las esquinas pasan de 26 a 12 dp al pulsar y vuelven al soltar (`BotonExpresivo`), con el tiempo del toque (`TOQUE`) | 120 estándar | — |
+| — · La G entra | El arranque (GP-223). En el splash del sistema, el cuerpo de la G gira de −90° a 0°, crece de 0,72 a 1 y aparece (`G_CUERPO`); el trazo naranja llega desde 18 dp arriba a la derecha, crece de 0,6 a 1 y aparece (`G_TRAZO`), algo después (`G_TRAZO_RETRASO`), con el pivote en el 74,9 % y el 20 % del logo. La entrada entera (`G_ENTRADA`) es lo único que el arranque espera, salvo con «Quitar animaciones» | 450 estándar · 420 rebote · 280 · 700 | — |
+| — · La G sale | Ya se sabe adónde ir: la G crece al 125 % y se desvanece (`G_SALE`) mientras el fondo se abre en círculo sobre Inicio. Inicio y Entrar entran en cascada desde 16 dp (`CASCADA`, `CASCADA_ESCALON`); la sesión en vivo sube 40 dp mientras aparece y su aviso baja 12 (`ENTRA`) | 300 acelerada · 350 enfatizada, cada 40 · 350 enfatizada | — |
+| — · El brillo | Si a 1 s aún no se sabe adónde ir, una franja de luz blanca al 40 %, recortada por la G, la cruza (`G_BRILLO`) y vuelve a empezar (`G_BRILLO_CADA`) | 1200 estándar · cada 1800 | — |
+| — · «Conectando…» | A los 3 s, el texto aparece bajo la G (`CONECTANDO`) | 200 enfatizada | — |
+| — · La G sube | En «Sin conexión» y «No conseguimos conectar», la G sube y pasa de 160 a 72 dp (`G_SUBE`) | 350 estándar | — |
 
 Material motion y Expressive (GP-210, paso 2, lote 1.8.0) añaden cuatro filas sin número —no salen del lienzo de la firma visual, que sigue su numeración—: tarjeta a detalle (`MaterialContainerTransform`), avanzar en un flujo (`MaterialSharedAxis` en X), atrás en una hoja propia (`AtrasHoja`) y el botón que cambia de forma (`BotonExpresivo`). El cambio entre pestañas se queda con el fundido de GP-105, y con «Quitar animaciones» ninguna de las cuatro se mueve: `Transiciones` abre la pantalla sin transición de escena y los animadores saltan a su final. Material 1.14 trae su propio cambio de forma de los botones, pero lo mueve con un resorte que no da los 120 ms; por eso lo hace `BotonExpresivo` con `TOQUE`.
 

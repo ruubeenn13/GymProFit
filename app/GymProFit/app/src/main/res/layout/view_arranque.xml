@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_arranque — la pantalla de carga del arranque (GP-223). La pone MainActivity encima de
+  todo y se infla con el tema oscuro (configuración de noche + ThemeOverlay.GymProFit.Arranque),
+  también con la app en claro: es la continuación del splash del sistema, que es oscuro.
+
+  La G va centrada en la ventana completa, de borde a borde, y con el mismo drawable de
+  288 dp que el splash: cuando el splash se quita, la G de debajo está en el mismo sitio y
+  al mismo tamaño. huecoG marca la G visible (160 dp) para colgar «Conectando…» a 28 dp.
+
+  En un error, la G sube al hueco de 72 dp del bloque de error (la mueve PantallaArranque)
+  y abajo sale «Reintentar». El fondo lo pinta FondoArranque, que se abre al salir.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/arranque"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="false">
+
+    <Space
+        android:id="@+id/huecoG"
+        android:layout_width="@dimen/arranque_g"
+        android:layout_height="@dimen/arranque_g"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvConectando"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_28"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:accessibilityLiveRegion="polite"
+        android:fontFamily="@font/barlow"
+        android:gravity="center"
+        android:textColor="@color/gp_text_secondary"
+        android:textSize="@dimen/text_arranque_estado"
+        android:visibility="invisible"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintWidth_max="@dimen/arranque_texto_max"
+        app:layout_constraintTop_toBottomOf="@id/huecoG"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/bloqueError"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintWidth_max="@dimen/arranque_texto_max"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnReintentar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Space
+            android:id="@+id/huecoGError"
+            android:layout_width="@dimen/arranque_g_error"
+            android:layout_height="@dimen/arranque_g_error" />
+
+        <TextView
+            android:id="@+id/tvErrorTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_24"
+            android:accessibilityHeading="true"
+            android:fontFamily="@font/barlow_condensed"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_arranque_titulo"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvErrorTexto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:fontFamily="@font/barlow"
+            android:gravity="center"
+            android:textColor="@color/gp_text_secondary"
+            android:textSize="@dimen/text_body" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnReintentar"
+        style="@style/Widget.GymProFit.Button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/arranque_boton_alto"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:layout_marginBottom="@dimen/arranque_boton_abajo"
+        android:text="@string/btn_reintentar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- La G, la última para quedar encima. Mismo tamaño y sitio que el icono del splash. -->
+    <es.pmdm.gymprofit.arranque.VistaG
+        android:id="@+id/vistaG"
+        android:layout_width="@dimen/arranque_icono"
+        android:layout_height="@dimen/arranque_icono"
+        android:contentDescription="@string/arranque_cargando"
+        android:src="@drawable/g_arranque"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

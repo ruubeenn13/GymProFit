@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La curva enfatizada de DEC-039, cubic-bezier(.05,.7,.1,1): la misma que Movimiento.ENFATIZADA. -->
+<pathInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:controlX1="0.05" android:controlY1="0.7" android:controlX2="0.1" android:controlY2="1" />

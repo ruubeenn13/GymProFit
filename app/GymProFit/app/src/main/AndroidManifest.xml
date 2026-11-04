@@ -2,7 +2,7 @@
 <!--
   AndroidManifest.xml — Manifiesto de la aplicación GymProFit
   Declara permisos, el FileProvider, todas las Activities de la app
-  y la Activity de arranque (SplashActivity) con su intent-filter LAUNCHER.
+  y la de entrada, MainActivity, con su intent-filter LAUNCHER y el tema del splash (GP-223).
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -152,10 +152,21 @@
             android:name=".ui.activities.CrearRutinaActivity"
             android:exported="false" />
         <!-- Navegación principal (GP-105): 1 Activity + ViewPager2 + 4 Fragments
-             (Inicio/Entrenar/Nutrición/Progreso) con la barra fija y el «+». -->
+             (Inicio/Entrenar/Nutrición/Progreso) con la barra fija y el «+».
+             Es también la de entrada (GP-223): el splash del sistema con la G y la pantalla
+             de carga, que decide adónde ir. Theme.GymProFit.Arranque pasa a Theme.GymProFit
+             al instalar el splash. Sustituye a SplashActivity, que pintaba un segundo splash
+             detrás del del sistema. -->
         <activity
             android:name=".ui.activities.MainActivity"
-            android:exported="false" />
+            android:exported="true"
+            android:theme="@style/Theme.GymProFit.Arranque">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activities.LoginActivity"
             android:exported="false" />
@@ -219,16 +230,6 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <!-- Activity de arranque (launcher), decide a qué pantalla redirigir según sesión -->
-        <activity
-            android:name=".ui.activities.SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

@@ -46,6 +46,13 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_PASSWORD_CAMBIADA = "password_cambiada";
     // El correo con que entrar, desde «Entrar con él» de «Guarda tu plan» (GP-103).
     public static final String EXTRA_USUARIO = "usuario";
+    /**
+     * Extra booleano: la sesión se cerró sola —30 días sin abrir la app, o la contraseña
+     * cambiada en otro sitio— y no a propósito (GP-223). Arriba sale el aviso, el correo o
+     * usuario con que se entró ya escrito y el foco en la contraseña.
+     */
+    public static final String EXTRA_SESION_CERRADA = "sesion_cerrada";
+    private static final String ESTADO_AVISO = "aviso_sesion_cerrada";
 
     private EditText etUsuario, etPassword;
     private PreferencesManager prefsManager;
@@ -83,6 +90,12 @@ public class LoginActivity extends AppCompatActivity {
         String usuario = getIntent().getStringExtra(EXTRA_USUARIO);
         if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
+        mostrarSesionCerrada(savedInstanceState);
+        // Desde el arranque, Entrar llega en cascada sobre el fundido (GP-223).
+        if (savedInstanceState == null && getIntent().getBooleanExtra(
+                es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false)) {
+            entrarEnCascada();
+        }
 
         // Una sola vez: al recrear la pantalla (cambio de tema) el extra seguiría ahí.
         if (getIntent().getBooleanExtra(EXTRA_CUENTA_DESACTIVADA, false)) {
@@ -100,6 +113,45 @@ public class LoginActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }
+    }
+
+    /**
+     * La sesión se cerró sola (GP-223): el aviso con el candado, el correo o usuario de la
+     * última vez ya escrito y el foco en la contraseña, con el teclado. El aviso se queda si
+     * la pantalla se recrea (cambio de tema o de idioma); el texto y el foco, una vez.
+     */
+    private void mostrarSesionCerrada(@androidx.annotation.Nullable Bundle estado) {
+        boolean cerrada = estado != null ? estado.getBoolean(ESTADO_AVISO, false)
+                : getIntent().getBooleanExtra(EXTRA_SESION_CERRADA, false);
+        if (!cerrada) return;
+        android.view.View aviso = findViewById(R.id.avisoSesionCerrada);
+        ((android.widget.ImageView) aviso.findViewById(R.id.ivAviso)).setImageResource(R.drawable.ic_ms_lock);
+        ((android.widget.TextView) aviso.findViewById(R.id.tvAviso)).setText(R.string.login_sesion_cerrada);
+        aviso.setVisibility(android.view.View.VISIBLE);
+        if (estado != null) return;
+        String ultima = prefsManager.getUltimaEntrada();
+        if (!ultima.isEmpty() && etUsuario.getText().length() == 0) {
+            etUsuario.setText(ultima);
+            etPassword.requestFocus();
+            getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@androidx.annotation.NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putBoolean(ESTADO_AVISO, findViewById(R.id.avisoSesionCerrada).getVisibility() == android.view.View.VISIBLE);
+    }
+
+    // Las piezas de Entrar suben 16 dp y aparecen una tras otra (GP-223, la salida del arranque).
+    private void entrarEnCascada() {
+        java.util.List<android.view.View> piezas = new java.util.ArrayList<>();
+        for (int id : new int[]{R.id.avisoSesionCerrada, R.id.tvTituloEntrar, R.id.tvTextoEntrar,
+                R.id.bloqueUsuario, R.id.bloqueClave, R.id.tvOlvidastePassword, R.id.btnEntrar}) {
+            android.view.View v = findViewById(id);
+            if (v != null && v.getVisibility() == android.view.View.VISIBLE) piezas.add(v);
+        }
+        es.pmdm.gymprofit.utils.Movimiento.cascada(piezas);
     }
 
     // Referencia los campos de texto del layout.
@@ -156,6 +208,8 @@ public class LoginActivity extends AppCompatActivity {
                 UtilREST.setToken(token);
                 UtilREST.setRefreshToken(refresh);
                 prefsManager.saveSesion(token, refresh);
+                // Lo que se escribió, correo o usuario: si la sesión caduca, Entrar sale con ello (GP-223).
+                prefsManager.saveUltimaEntrada(username);
                 prefsManager.saveUsername(user);
                 prefsManager.saveRol(rol);
 

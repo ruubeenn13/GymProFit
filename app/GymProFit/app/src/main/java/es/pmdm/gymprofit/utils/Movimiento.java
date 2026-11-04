@@ -54,6 +54,8 @@ public final class Movimiento {
     public static final Interpolator TIEMBLA = new PathInterpolator(0.36f, 0.07f, 0.19f, 0.97f);
     /** Lineal: lo que gira y los bucles con sus propios fotogramas. */
     public static final Interpolator LINEAL = new LinearInterpolator();
+    /** cubic-bezier(.3,0,.8,.15): lo que sale de la pantalla y se va (la G del arranque, GP-223). */
+    public static final Interpolator ACELERADA = new PathInterpolator(0.3f, 0f, 0.8f, 0.15f);
 
     // ── Duraciones (ms), por momento ────────────────────────────────────────
     // Los nombres son los de la tabla de DEC-039; MovimientoTest los cruza.
@@ -177,8 +179,37 @@ public final class Movimiento {
 
     /** Distancia del eje X compartido, en dp. */
     public static final int EJE_X_DP = 30;
+    /** — · La G entra (GP-223): el cuerpo gira de −90° a 0°, crece de 0,72 a 1 y aparece (estándar). */
+    public static final long G_CUERPO = 450;
+    /** — · La G entra: el trazo naranja llega desde arriba a la derecha, de 0,6 a 1, y aparece (rebote). */
+    public static final long G_TRAZO = 420;
+    /** — · La G entra: el trazo empieza cuando el cuerpo ya va avanzado. */
+    public static final long G_TRAZO_RETRASO = 280;
+    /** — · La G entra, entera (el retraso del trazo más el trazo): lo único que el arranque espera. */
+    public static final long G_ENTRADA = 700;
+    /** — · La G sale: crece al 125 % y se desvanece mientras el fondo se abre (acelerada). */
+    public static final long G_SALE = 300;
+    /** — · El brillo: la franja de luz cruza la G (estándar)… */
+    public static final long G_BRILLO = 1200;
+    /** …y vuelve a empezar con este ritmo. */
+    public static final long G_BRILLO_CADA = 1800;
+    /** — · «Conectando…» aparece bajo la G (enfatizada). */
+    public static final long CONECTANDO = 200;
+    /** — · En un error, la G sube y encoge a 72 dp (estándar). */
+    public static final long G_SUBE = 350;
     /** Hasta dónde sigue la hoja al dedo en el atrás predictivo: el 90 % de su tamaño. */
     public static final float ATRAS_ESCALA = 0.9f;
+    /** La G del arranque mide 160 dp: el tamaño del logo dentro del círculo de 192 dp del splash. */
+    public static final int G_DP = 160;
+    /** En un error, la G pasa a medir esto. */
+    public static final int G_ERROR_DP = 72;
+    /** De dónde llega el trazo: tantos dp a la derecha y tantos arriba, sobre una G de 160 dp. */
+    public static final int G_TRAZO_DESDE_DP = 18;
+    /** La G sale creciendo hasta aquí. */
+    public static final float G_SALE_ESCALA = 1.25f;
+    /** La sesión en vivo sube tanto al llegar desde el arranque; su aviso de sin red baja 12. */
+    public static final int SESION_SUBE_DP = 40;
+    public static final int AVISO_BAJA_DP = 12;
 
     // ── Vibraciones ─────────────────────────────────────────────────────────
 
@@ -844,6 +875,81 @@ public final class Movimiento {
             }
         });
         a.start();
+    }
+
+    // ── El arranque (GP-223) ────────────────────────────────────────────────
+
+    /** — · «Conectando…» aparece bajo la G (CONECTANDO, enfatizada). */
+    public static void aparecerConectando(@NonNull View texto) {
+        texto.animate().cancel();
+        texto.setVisibility(View.VISIBLE);
+        if (quieto(texto.getContext())) {
+            texto.setAlpha(1f);
+            return;
+        }
+        texto.setAlpha(0f);
+        texto.animate().alpha(1f).setStartDelay(0).setDuration(CONECTANDO).setInterpolator(ENFATIZADA).start();
+    }
+
+    /**
+     * — · La G sube (G_SUBE, estándar): se desplaza {@code dy} px y escala a {@code escala}.
+     * Al reintentar vuelve con los mismos tiempos (dy 0, escala 1).
+     */
+    public static void moverG(@NonNull View g, float dy, float escala) {
+        g.animate().cancel();
+        if (quieto(g.getContext())) {
+            g.setTranslationY(dy);
+            g.setScaleX(escala);
+            g.setScaleY(escala);
+            return;
+        }
+        g.animate().translationY(dy).scaleX(escala).scaleY(escala).setStartDelay(0)
+                .setDuration(G_SUBE).setInterpolator(ESTANDAR).start();
+    }
+
+    /**
+     * — · La G sale: crece hasta G_SALE_ESCALA y se desvanece (G_SALE, acelerada) mientras
+     * {@code fondo} va de 0 a 1 con el mismo tiempo (el fondo que se abre; null si no se
+     * abre). Con las animaciones quitadas, todo a su final al momento.
+     *
+     * @param alFinal lo que pasa cuando la G ya no se ve.
+     */
+    public static void sacarG(@NonNull View g, @Nullable Paso fondo, @NonNull Runnable alFinal) {
+        g.animate().cancel();
+        if (quieto(g.getContext())) {
+            g.setAlpha(0f);
+            if (fondo != null) fondo.en(1f);
+            alFinal.run();
+            return;
+        }
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(G_SALE);
+        a.setInterpolator(ACELERADA);
+        float desde = g.getScaleX();
+        a.addUpdateListener(an -> {
+            float t = (float) an.getAnimatedValue();
+            float escala = desde + (desde * G_SALE_ESCALA - desde) * t;
+            g.setScaleX(escala);
+            g.setScaleY(escala);
+            g.setAlpha(1f - t);
+            if (fondo != null) fondo.en(t);
+        });
+        a.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(Animator animation) {
+                alFinal.run();
+            }
+        });
+        a.start();
+    }
+
+    /**
+     * La cascada de lo que llega tras el arranque (Inicio, Entrar): cada pieza sube 16 dp y
+     * aparece, CASCADA cada CASCADA_ESCALON. Las piezas se pueden tocar desde el principio.
+     */
+    public static void cascada(@NonNull java.util.List<View> piezas) {
+        for (int i = 0; i < piezas.size(); i++) {
+            entrarUna(piezas.get(i), i * CASCADA_ESCALON, CASCADA, 16);
+        }
     }
 
     // Esquina de {@code hija} medida desde {@code padre}, que la contiene.

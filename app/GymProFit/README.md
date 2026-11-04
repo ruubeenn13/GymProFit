@@ -140,8 +140,8 @@ es.pmdm.gymprofit/
 ## Flujo de navegación
 
 ```
-SplashActivity
-     ↓ (sin sesión)
+MainActivity + PantallaArranque (el arranque, GP-223)
+     ↓ (sin sesión; con el alta a medias, AltaActivity donde se dejó)
 BienvenidaActivity ──«Ya tengo cuenta»──→ LoginActivity (correo o usuario)
      ↓ «Empezar»                               ↓ (cuenta sin onboarding)
 AltaActivity: objetivo → nivel → sobre ti → dónde → días → tu plan
@@ -171,7 +171,7 @@ HomeActivity (navegación inferior)
 
 | Activity | Descripción |
 |---|---|
-| `SplashActivity` | Launcher. Restaura token JWT → Home o Login. Con sesión, cruza el perfil con la API sin esperar (`PerfilRemoto.alArrancar`, GP-111/GP-129) |
+| `MainActivity` (arranque) | Launcher desde GP-223, con la API SplashScreen: el splash del sistema con la G y debajo la pantalla de carga (`arranque/PantallaArranque`). Decide adónde ir (`DecisionArranque`): bienvenida, alta, Inicio, «Sin conexión», la sesión en vivo sin red o Entrar; solo llama a la API para renovar la sesión caducada (`ApiClient.renovarAlArrancar`). Con sesión, cruza el perfil con la API (`PerfilRemoto.alArrancar`, GP-111/GP-129). En depuración, `--el depuracion_lento_ms N` fuerza el servidor lento |
 | `LoginActivity` | POST /auth/login. Guarda token, id, username, rol, y cruza el perfil con la API (`PerfilRemoto.alEntrar`) antes de marcar el onboarding |
 | `BienvenidaActivity` | Primera pantalla sin sesión (lote 1.5.1): demostración en bucle (`DemoBienvenida`), idioma, «Empezar» y «Ya tengo cuenta»; `GET /actuator/health` para despertar la API |
 | `AltaActivity` | Cuestionario del alta (GP-103) con fragmentos en `ui/alta/`: objetivo, nivel (en tres; Experto se enseña como Avanzado), «Sobre ti» con hojas, dónde, días y tiempo, y «Tu plan». Orden y reglas en `AltaPasos`; respuestas en el borrador de `PreferencesManager`. Con una cuenta sin onboarding, «Empezar» sube el perfil (`PerfilAlta`) y sigue el programa |
@@ -353,7 +353,7 @@ PUT    ejercicios/{id}/activar
 | Problema | Solución |
 |---|---|
 | `AsyncTask` deprecado | El profesor lo exige (UD06). No sustituir |
-| Token se pierde al matar el proceso | `SplashActivity` lo restaura con `UtilREST.setToken(token)` |
+| Token se pierde al matar el proceso | `UtilREST` lo lee del almacén cifrado cuando le falta (GP-091) |
 | PATCH no soportado nativamente en Android | Workaround con reflexión Java en `UtilREST` |
 | `optString()` devuelve `"null"` literal cuando el campo JSON es null | Resuelto en origen: `UtilJSONParser.safeStr()` usa `isNull()` antes de `optString()`. No filtrar en UI |
 | `peso` debe enviarse como Double, no String | `Double.parseDouble(str.replace(",", "."))` |

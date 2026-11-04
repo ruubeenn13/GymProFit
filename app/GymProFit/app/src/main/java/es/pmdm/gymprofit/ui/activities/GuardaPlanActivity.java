@@ -258,6 +258,7 @@ public class GuardaPlanActivity extends BaseActivity {
                 UtilREST.setToken(t.getToken());
                 UtilREST.setRefreshToken(t.getRefreshToken());
                 prefsManager.saveSesion(t.getToken(), t.getRefreshToken());
+                prefsManager.saveUltimaEntrada(texto(etCorreo));
                 prefsManager.saveUsername(t.getUsername());
                 prefsManager.saveRol(t.rolPrincipal());
                 pedirUsuario(t.getUsername());

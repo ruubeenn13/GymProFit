@@ -2485,4 +2485,14 @@
     <!-- GP-228 (revisor): lo que abre una tarjeta pulsable de Inicio o Entrenar. -->
     <string name="abrir_rutina_a11y">Abrir %1$s</string>
     <string name="abrir_resumen_a11y">Ver el resumen de %1$s</string>
+    <!-- GP-223: el arranque, Entrar cuando la sesión ya no vale y la sesión en vivo sin red. -->
+    <string name="arranque_cargando">Cargando GymProFit</string>
+    <string name="arranque_conectando">Conectando…</string>
+    <string name="arranque_conectando_a11y">Conectando</string>
+    <string name="arranque_sin_conexion_titulo">Sin conexión</string>
+    <string name="arranque_sin_conexion_texto">Comprueba la conexión y vuelve a intentarlo.</string>
+    <string name="arranque_no_conecta_titulo">No conseguimos conectar</string>
+    <string name="arranque_no_conecta_texto">El servidor tarda más de lo normal. Vuelve a intentarlo en un momento.</string>
+    <string name="login_sesion_cerrada">Tu sesión se ha cerrado. Por seguridad, vuelve a entrar: tus datos siguen ahí.</string>
+    <string name="envivo_sin_red">Sin conexión. Tu entreno se guarda en el móvil y se sube cuando vuelva la red.</string>
 </resources>

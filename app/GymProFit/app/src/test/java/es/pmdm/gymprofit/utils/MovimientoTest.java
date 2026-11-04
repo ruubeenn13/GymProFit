@@ -256,6 +256,39 @@ public class MovimientoTest {
     }
 
     @Test
+    public void elArranqueEstaEnLaTablaYEnElCodigo() throws IOException {
+        // GP-223: cinco filas sin número en DEC-039 —la G entra, la G sale, el brillo,
+        // «Conectando…» y la G sube— con los números de la ficha del arranque.
+        Map<String, Long> tabla = duracionesDeLaTabla();
+        Map<String, Long> codigo = duracionesDelCodigo();
+        String dec = decision();
+        for (String f : new String[]{"| — · La G entra", "| — · La G sale", "| — · El brillo",
+                "| — · «Conectando…»", "| — · La G sube"}) {
+            assertTrue("falta la fila «" + f + "» en DEC-039", dec.contains(f));
+        }
+        String[][] esperado = {
+                {"G_CUERPO", "450"}, {"G_TRAZO", "420"}, {"G_TRAZO_RETRASO", "280"}, {"G_ENTRADA", "700"},
+                {"G_SALE", "300"}, {"G_BRILLO", "1200"}, {"G_BRILLO_CADA", "1800"}, {"CONECTANDO", "200"},
+                {"G_SUBE", "350"}};
+        for (String[] e : esperado) {
+            assertTrue(e[0] + " no está en la tabla", tabla.containsKey(e[0]));
+            assertEquals(e[0], Long.valueOf(e[1]), codigo.get(e[0]));
+        }
+        // La entrada entera es el trazo, que empieza tarde y es lo último en llegar.
+        assertEquals(codigo.get("G_ENTRADA"),
+                Long.valueOf(codigo.get("G_TRAZO_RETRASO") + codigo.get("G_TRAZO")));
+    }
+
+    @Test
+    public void laCurvaAceleradaEsLaDeLaSalida() throws IOException {
+        // La quinta curva, para lo que sale (GP-223): la G que crece y se desvanece.
+        String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
+        assertTrue("ACELERADA en Movimiento",
+                codigo.contains("ACELERADA = new PathInterpolator(0.3f, 0f, 0.8f, 0.15f)"));
+        assertTrue("la acelerada en DEC-039", decision().contains("**acelerada** `cubic-bezier(.3,0,.8,.15)`"));
+    }
+
+    @Test
     public void lasCuatroCurvasSonLasDeLaDecision() throws IOException {
         String codigo = new String(Files.readAllBytes(CODIGO), StandardCharsets.UTF_8);
         String dec = decision();

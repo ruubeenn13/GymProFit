@@ -56,4 +56,20 @@ public final class AnimUtils {
             activity.overridePendingTransition(0, 0);
         }
     }
+
+    /**
+     * La pantalla que llega desde el arranque (GP-223) aparece con un fundido sobre la
+     * pantalla de carga, que se queda quieta debajo. Se llama desde dos sitios: en Android
+     * 14 o más, al crear la pantalla que llega (GymProFitApp, como el resto de transiciones);
+     * antes, quien la abre, justo después de startActivity.
+     */
+    public static void fundidoDesdeArranque(Activity activity) {
+        if (activity == null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN,
+                    R.anim.arranque_entra, R.anim.arranque_quieta);
+        } else {
+            activity.overridePendingTransition(R.anim.arranque_entra, R.anim.arranque_quieta);
+        }
+    }
 }
