@@ -194,9 +194,23 @@ dependencies {
     // Crashlytics: reporte automático de crashes en producción (versión por el BOM)
     implementation 'com.google.firebase:firebase-crashlytics'
 }
-// Los tests *WebTest leen ../../web (GP-201, GP-203, GP-205). Gradle no lo sabe y daba
-// la tarea de tests por al día cuando solo cambiaba la web: el test no se volvía a
-// ejecutar y un fallo nuevo pasaba en verde. Con la carpeta como entrada, se repiten.
+// Hay tests que leen ficheros como texto: los *WebTest leen ../../web (GP-201, GP-203,
+// GP-205); CimientosTest, PaletaContrasteTest y compañía leen res, el código Java y
+// DESIGN.md; MovimientoTest lee PRODUCT-DECISIONS.md; CategoriasTest, ElegirComidaTest y
+// CuentaPlatoTest leen el diseño de nutrición y dos ficheros de la API. Gradle no lo sabe: si solo cambiaba un layout o la
+// web, el classpath de los tests seguía igual, daba la tarea por al día y un fallo nuevo
+// pasaba en verde (GP-230). Con todo eso declarado como entrada, se repiten.
 tasks.withType(Test).configureEach {
-    inputs.dir(rootProject.file('../../web')).withPropertyName('web').withPathSensitivity(PathSensitivity.RELATIVE)
+    def relativa = { it.withPathSensitivity(PathSensitivity.RELATIVE) }
+    relativa(inputs.dir(rootProject.file('../../web')).withPropertyName('web'))
+    relativa(inputs.dir(file('src/main/res')).withPropertyName('recursos'))
+    relativa(inputs.dir(file('src/main/java')).withPropertyName('codigo'))
+    relativa(inputs.file(rootProject.file('DESIGN.md')).withPropertyName('design'))
+    relativa(inputs.file(rootProject.file('../../documentacion/PRODUCT-DECISIONS.md')).withPropertyName('decisiones'))
+    relativa(inputs.dir(rootProject.file('../../documentacion/diseno/2026-10-02-nutricion'))
+            .withPropertyName('disenoNutricion'))
+    relativa(inputs.files(
+            rootProject.file('../../api/gymprofit-api/src/main/java/com/gymprofit/api/controller/AlimentoController.java'),
+            rootProject.file('../../api/gymprofit-api/src/test/resources/platos/cuenta_plato_casos.csv'))
+            .withPropertyName('api'))
 }
