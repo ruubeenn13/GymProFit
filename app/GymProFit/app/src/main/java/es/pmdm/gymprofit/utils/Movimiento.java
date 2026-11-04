@@ -892,18 +892,19 @@ public final class Movimiento {
     }
 
     /**
-     * — · La G sube (G_SUBE, estándar): se desplaza {@code dy} px y escala a {@code escala}.
-     * Al reintentar vuelve con los mismos tiempos (dy 0, escala 1).
+     * — · La G sube (G_SUBE, estándar): va a la traslación {@code dx}, {@code dy} px y escala a
+     * {@code escala}. Al reintentar vuelve con los mismos tiempos a donde la dejó el traspaso.
      */
-    public static void moverG(@NonNull View g, float dy, float escala) {
+    public static void moverG(@NonNull View g, float dx, float dy, float escala) {
         g.animate().cancel();
         if (quieto(g.getContext())) {
+            g.setTranslationX(dx);
             g.setTranslationY(dy);
             g.setScaleX(escala);
             g.setScaleY(escala);
             return;
         }
-        g.animate().translationY(dy).scaleX(escala).scaleY(escala).setStartDelay(0)
+        g.animate().translationX(dx).translationY(dy).scaleX(escala).scaleY(escala).setStartDelay(0)
                 .setDuration(G_SUBE).setInterpolator(ESTANDAR).start();
     }
 

@@ -120,6 +120,8 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private boolean splashFuera;
     private boolean salidaPendiente;
     private boolean montarPendiente;
+    // Dónde y cómo de grande puso la G el traspaso (casada con el icono de la copia).
+    private float baseX, baseY;
     // Inicio ya montado (sus pestañas existen), y «Conectando…» que esperaba a verse.
     private boolean montado;
     private boolean conectandoPendiente;
@@ -160,14 +162,15 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         inflar();
         plan = PlanArranque.alTocar(tocado, quieto, this);
         splash.setKeepOnScreenCondition(() -> plan.mantenerSplash(SystemClock.uptimeMillis()));
-        // Se quita sin animación: debajo está la misma G en el mismo sitio. Medido en el
-        // emulador: sin esta escucha, la salida por defecto del sistema funde su ventana con la
-        // de la app y la G se apaga hasta un 30 % y vuelve, siempre. Con ella, Android pasa el
-        // splash a una copia dentro de la app que se quita aquí; si el hilo principal está
-        // ocupado en ese momento, la copia se ve un rato sin su icono. Por eso nada pesado
-        // coincide con este paso: Inicio se monta justo después (alQuitarseSplash). Con el
-        // emulador cargado (carga 10) aún se vieron 100–500 ms sin la G; con carga normal, no.
+        // El traspaso, a una réplica propia (decisión del propietario tras el revisor). Sin esta
+        // escucha, el sistema funde su ventana con la de la app y la G se atenúa en cada
+        // arranque. Con ella, Android pasa el splash a una copia cuyo icono animado (una
+        // superficie del sistema) no siempre se ve: la G desaparecía de 0 a 830 ms. Aquí, en el
+        // mismo paso, la pantalla de carga se pone encima de todo con su G estática (el último
+        // fotograma del AVD, con su mismo viewport) en los límites exactos del icono de la
+        // copia, y la copia se quita antes de pintarse. Desde aquí, todo pasa en la réplica.
         splash.setOnExitAnimationListener(proveedor -> {
+            pasarAEncima(proveedor.getIconView());
             proveedor.remove();
             // Al quitarse, la librería vuelve a poner las barras del tema: con la app en claro,
             // la de navegación salía clara sobre la pantalla oscura.
@@ -175,6 +178,56 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             alQuitarseSplash();
         });
         decidir();
+    }
+
+    /**
+     * Pone la pantalla de carga encima de todo (en la decoración de la ventana, por encima de
+     * la copia del splash y del contenido) y casa su G con el icono de la copia: el mismo
+     * centro en pantalla. El tamaño es el del icono del splash (288 dp, la caja de la G
+     * estática): en Android 12 o más, {@code iconView} mide solo el círculo de 192 dp y el
+     * icono se pinta a 288 a su alrededor; escalar a sus límites dejaba la G al 67 % unos
+     * fotogramas (medido a cámara lenta). Sin icono, o de tamaño 0, la G se queda donde la
+     * pone su layout: en el centro de la ventana.
+     */
+    private void pasarAEncima(@Nullable View icono) {
+        ViewGroup decor = (ViewGroup) act.getWindow().getDecorView();
+        ViewGroup padre = (ViewGroup) raiz.getParent();
+        if (padre != decor) {
+            if (padre != null) padre.removeView(raiz);
+            decor.addView(raiz, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+            // Fuera del contenido, lo que se aparta de TalkBack es el contenido entero.
+            View contenido = act.findViewById(android.R.id.content);
+            for (View v : apartadas) {
+                v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+                if (v instanceof ViewGroup) ((ViewGroup) v).setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+            }
+            apartadas.clear();
+            contenido.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+            if (contenido instanceof ViewGroup) {
+                ((ViewGroup) contenido).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            }
+            apartadas.add(contenido);
+        } else {
+            raiz.bringToFront();
+        }
+        if (icono == null || icono.getWidth() <= 0 || icono.getHeight() <= 0) return;
+        int[] enPantalla = new int[2];
+        icono.getLocationOnScreen(enPantalla);
+        float cx = enPantalla[0] + icono.getWidth() / 2f;
+        float cy = enPantalla[1] + icono.getHeight() / 2f;
+        // La réplica aún no se ha medido en su sitio nuevo: se casa justo antes de pintarla.
+        OneShotPreDrawListener.add(raiz, () -> {
+            int[] g0 = new int[2];
+            g.getLocationOnScreen(g0);
+            // Sin traslación ni escala: la posición del layout.
+            float gx = g0[0] - g.getTranslationX() + g.getWidth() / 2f;
+            float gy = g0[1] - g.getTranslationY() + g.getHeight() / 2f;
+            baseX = cx - gx;
+            baseY = cy - gy;
+            g.setTranslationX(baseX);
+            g.setTranslationY(baseY);
+        });
     }
 
     /** MainActivity se destruye: se deja de esperar a la API y al reloj. */
@@ -401,7 +454,9 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         }
         if (salidaPendiente) {
             salidaPendiente = false;
-            ejecutarSalida();
+            // Tras un fotograma con la réplica ya pintada en su sitio: si la salida empezaba en
+            // el mismo paso, su primer fotograma no tenía aún la G casada.
+            android.view.Choreographer.getInstance().postFrameCallback(t -> reloj.post(this::ejecutarSalida));
         }
     }
 
@@ -543,7 +598,7 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         OneShotPreDrawListener.add(bloqueError, () -> {
             float centroG = g.getTop() + g.getHeight() / 2f;
             float centroHueco = bloqueError.getTop() + huecoGError.getTop() + huecoGError.getHeight() / 2f;
-            Movimiento.moverG(g, centroHueco - centroG, (float) Movimiento.G_ERROR_DP / Movimiento.G_DP);
+            Movimiento.moverG(g, 0f, centroHueco - centroG, (float) Movimiento.G_ERROR_DP / Movimiento.G_DP);
             // Cuando la G ya ha subido: si no, al subir pasaba por encima del título (revisor).
             Movimiento.entrar(quieto ? 0 : Movimiento.G_SUBE, tvErrorTitulo, tvErrorTexto, btnReintentar);
             enfocar(tvErrorTitulo);
@@ -556,7 +611,7 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         g.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         g.setContentDescription(act.getString(R.string.arranque_cargando));
         act.setTitle(R.string.arranque_cargando);
-        Movimiento.moverG(g, 0f, 1f);
+        Movimiento.moverG(g, baseX, baseY, 1f);
         enfocar(g);
         destino = null;
         renovacion = null;

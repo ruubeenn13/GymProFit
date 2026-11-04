@@ -53,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
      */
     public static final String EXTRA_SESION_CERRADA = "sesion_cerrada";
     private static final String ESTADO_AVISO = "aviso_sesion_cerrada";
+    // El foco está en la contraseña y falta abrir el teclado (onWindowFocusChanged).
+    private boolean tecladoPendiente;
 
     private EditText etUsuario, etPassword;
     private PreferencesManager prefsManager;
@@ -134,9 +136,20 @@ public class LoginActivity extends AppCompatActivity {
         // oscuro, el de por defecto, se recreaba y el teclado no salía (revisor).
         if (etUsuario.getText().length() > 0 && etPassword.getText().length() == 0) {
             etPassword.requestFocus();
-            etPassword.post(() -> androidx.core.view.WindowCompat.getInsetsController(getWindow(), etPassword)
-                    .show(androidx.core.view.WindowInsetsCompat.Type.ime()));
+            tecladoPendiente = true;
         }
+    }
+
+    // El teclado se pide cuando la ventana ya tiene el foco: antes, Android lo ignora, y en
+    // oscuro (la pantalla se recrea al aplicar el tema) no salía nunca (revisor, GP-223).
+    @Override
+    public void onWindowFocusChanged(boolean conFoco) {
+        super.onWindowFocusChanged(conFoco);
+        if (!conFoco || !tecladoPendiente) return;
+        tecladoPendiente = false;
+        etPassword.requestFocus();
+        androidx.core.view.WindowCompat.getInsetsController(getWindow(), etPassword)
+                .show(androidx.core.view.WindowInsetsCompat.Type.ime());
     }
 
     @Override
