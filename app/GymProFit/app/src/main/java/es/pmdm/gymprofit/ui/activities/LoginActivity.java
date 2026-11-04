@@ -93,6 +93,9 @@ public class LoginActivity extends AppCompatActivity {
         if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
         mostrarSesionCerrada(savedInstanceState);
+        // Con el teclado, el título no queda a medias bajo el aviso (revisor, GP-223).
+        es.pmdm.gymprofit.ui.widget.TituloSinCortar.enganchar(findViewById(R.id.scrollEntrar),
+                findViewById(R.id.tvTituloEntrar), findViewById(R.id.tvTextoEntrar));
         // Desde el arranque, Entrar llega en cascada sobre el fundido (GP-223).
         if (savedInstanceState == null && getIntent().getBooleanExtra(
                 es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false)) {
@@ -132,11 +135,22 @@ public class LoginActivity extends AppCompatActivity {
         aviso.setVisibility(android.view.View.VISIBLE);
         String ultima = prefsManager.getUltimaEntrada();
         if (estado == null && !ultima.isEmpty() && etUsuario.getText().length() == 0) etUsuario.setText(ultima);
-        // El foco y el teclado, también si la pantalla se recrea al aplicar el tema: con el
-        // oscuro, el de por defecto, se recreaba y el teclado no salía (revisor).
+    }
+
+    // El foco y el teclado se deciden aquí, con el texto ya restaurado: en una recreación
+    // (el tema aplicado siendo Entrar la primera pantalla del proceso, o la vuelta tras morir
+    // el proceso) el campo del usuario recupera su texto en onRestoreInstanceState, después
+    // de onCreate, y antes se miraba vacío y no salía el teclado (revisor, GP-223).
+    @Override
+    protected void onPostCreate(@androidx.annotation.Nullable Bundle estado) {
+        super.onPostCreate(estado);
+        if (findViewById(R.id.avisoSesionCerrada).getVisibility() != android.view.View.VISIBLE) return;
         if (etUsuario.getText().length() > 0 && etPassword.getText().length() == 0) {
             etPassword.requestFocus();
             tecladoPendiente = true;
+            // En una recreación en el sitio (cambio de tema o de idioma) la ventana ya tiene
+            // el foco al montarse y onWindowFocusChanged no llega: se pide al montar.
+            getWindow().getDecorView().post(() -> { if (hasWindowFocus()) mostrarTeclado(); });
         }
     }
 
@@ -145,7 +159,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean conFoco) {
         super.onWindowFocusChanged(conFoco);
-        if (!conFoco || !tecladoPendiente) return;
+        if (conFoco) mostrarTeclado();
+    }
+
+    // Una sola vez: el foco a la contraseña y el teclado, si quedaban pendientes.
+    private void mostrarTeclado() {
+        if (!tecladoPendiente) return;
         tecladoPendiente = false;
         etPassword.requestFocus();
         androidx.core.view.WindowCompat.getInsetsController(getWindow(), etPassword)
