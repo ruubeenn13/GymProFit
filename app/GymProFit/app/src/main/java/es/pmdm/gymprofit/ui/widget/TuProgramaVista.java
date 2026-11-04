@@ -178,6 +178,8 @@ public class TuProgramaVista {
         empezar.setOnClickListener(v -> acciones.empezar(hoy));
         View bloque = raiz.findViewById(R.id.bloqueHoy);
         bloque.setOnClickListener(v -> acciones.abrirRutina(hoy, v));
+        // Pulsable, dice qué abre (revisor, GP-228).
+        bloque.setContentDescription(ctx.getString(R.string.abrir_rutina_a11y, hoy.getNombre()));
         bloque.setOnLongClickListener(v -> {
             acciones.menuRutina(v, hoy);
             return true;

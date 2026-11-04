@@ -119,7 +119,7 @@
     <string name="perfil_objetivo">Goal</string>
 
     <!-- GENERAL -->
-    <string name="sin_registrar">Not registered</string>
+    <string name="sin_registrar">Nothing logged</string>
 
     <!-- DIALOGS -->
     <string name="dialog_cancelar">Cancel</string>
@@ -237,7 +237,7 @@
     <string name="detalle_series_a11y">Sets: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, record</string>
     <string name="detalle_pista_subir">Next time, go up in weight: you hit %1$d reps on every set.</string>
-    <string name="detalle_progresion_a11y">%1$s per session, from %2$s to %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, best of each day, from %2$s to %3$s</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>
@@ -635,7 +635,7 @@
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
-    <string name="grafica_kg_fecha">%1$.1f\u00A0kg%2$s\n%3$s</string>
+    <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
     <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
     <string name="grafica_kg_fecha_simple">%1$.1f\u00A0kg\n%2$s</string>
@@ -2368,9 +2368,9 @@
     <string name="progreso_resumen_error">Couldn\'t load your summary.</string>
     <string name="progreso_kilos_titulo">Kilos moved</string>
     <string name="progreso_kilos_semana">kg this week</string>
-    <string name="progreso_kilos_de_la_pasada">%1$d %% of last week</string>
-    <string name="progreso_kilos_de_la_pasada_a11y">%1$d %% of last week\'s kilos</string>
-    <string name="progreso_kilos_sube_a11y">%1$d %% more than last week</string>
+    <string name="progreso_kilos_de_la_pasada">%1$d%% of last week</string>
+    <string name="progreso_kilos_de_la_pasada_a11y">%1$d%% of last week\'s kilos</string>
+    <string name="progreso_kilos_sube_a11y">%1$d%% more than last week</string>
     <string name="progreso_kilos_cifra_a11y">%1$s kilos this week</string>
     <string name="progreso_kilos_resumen_a11y">Kilos moved per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
     <string name="progreso_kilos_vacio">Once you finish your first workout, you\'ll see the kilos you move each week here.</string>
@@ -2405,4 +2405,40 @@
     <string name="progreso_cuerpo_vacio">Log your weight to see how it changes here.</string>
     <string name="progreso_cuerpo_error">Couldn\'t load your measurements.</string>
     <string name="progreso_historial_vacio">You haven\'t finished a workout yet. The first one will show up here.</string>
+
+    <!-- GP-227: each bin in the history says which session it deletes. %1$s: the routine; %2$s: the date with sesiones_eliminar_fecha_patron («September 30»). -->
+    <string name="sesiones_eliminar_a11y">Delete %1$s from %2$s</string>
+    <string name="sesiones_eliminar_a11y_sin_fecha">Delete %1$s</string>
+    <!-- GP-228: a period between two short dates. -->
+    <string name="fecha_rango">%1$s – %2$s</string>
+    <!-- GP-227: the name of each Measurements row, «Weight, 79.2 kilos». -->
+    <string name="medicion_fila_a11y">%1$s, %2$s</string>
+    <!-- %s: the number already formatted («79.2»); the quantity only picks singular or plural. -->
+    <plurals name="medicion_a11y_kilos">
+        <item quantity="one">%s kilo</item>
+        <item quantity="other">%s kilos</item>
+    </plurals>
+    <plurals name="medicion_a11y_centimetros">
+        <item quantity="one">%s centimeter</item>
+        <item quantity="other">%s centimeters</item>
+    </plurals>
+    <string name="medicion_a11y_por_ciento">%1$s percent</string>
+    <!-- GP-228: the Measurements chart for TalkBack. %1$s: the metric; %2$s and %4$s: the value with its unit; %3$s and %5$s: the short date. -->
+    <string name="medicion_grafica_a11y">%1$s: from %2$s on %3$s to %4$s on %5$s</string>
+    <string name="progreso_kilos_sube">+%1$d%%</string>
+    <string name="sesiones_eliminar_fecha_patron">MMMM d</string>
+    <string name="medicion_detalles_abiertos">Expanded</string>
+    <string name="medicion_detalles_cerrados">Collapsed</string>
+    <string name="medicion_grasa_valor">%1$s%%</string>
+    <string name="estadisticas_kcal_a11y">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal; goal, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_sin_objetivo">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal</string>
+    <string name="estadisticas_macros_a11y">Macro split: protein %1$s, carbs %2$s, fat %3$s</string>
+    <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
+    <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
+    <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
+    <string name="estadisticas_porcentaje">%1$d%%</string>
+    <string name="sesiones_fecha_elegir">Pick the date</string>
+    <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
+    <string name="abrir_rutina_a11y">Open %1$s</string>
+    <string name="abrir_resumen_a11y">See the summary of %1$s</string>
 </resources>

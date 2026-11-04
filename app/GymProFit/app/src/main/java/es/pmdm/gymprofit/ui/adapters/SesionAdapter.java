@@ -68,7 +68,9 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         SesionEntrenamiento s = items.get(position);
 
-        h.tvFecha.setText(s.getFechaInicio().isEmpty() ? "—" : FechaUtils.formatearFechaHora(s.getFechaInicio()));
+        java.util.Locale idioma = FechaUtils.localeDeLaApp(context);
+        String fecha = FechaUtils.formatearFechaHoraMedia(s.getFechaInicio(), idioma);
+        h.tvFecha.setText(fecha == null ? context.getString(R.string.sin_valor) : fecha);
 
         // Tres casos distintos, no dos (GP-057):
         //   rutinaId null            → entrenamiento libre, un estado válido del modelo
@@ -89,6 +91,12 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
         // sigue aparte, con su propio nombre.
         h.itemView.setContentDescription(TextUtils.join(", ",
                 new CharSequence[]{h.tvFecha.getText(), h.tvRutina.getText(), h.tvDuracion.getText()}));
+        // Cada papelera dice qué sesión borra (GP-227): «Borrar Full body B del 30 de septiembre».
+        String dia = FechaUtils.fechaCorta(s.getFechaInicio(), idioma,
+                context.getString(R.string.sesiones_eliminar_fecha_patron));
+        h.btnEliminar.setContentDescription(dia == null
+                ? context.getString(R.string.sesiones_eliminar_a11y_sin_fecha, h.tvRutina.getText())
+                : context.getString(R.string.sesiones_eliminar_a11y, h.tvRutina.getText(), dia));
         h.btnEliminar.setOnClickListener(v -> deleteListener.onDelete(s));
         if (clickListener != null) {
             h.itemView.setOnClickListener(v -> clickListener.onClick(s, v));

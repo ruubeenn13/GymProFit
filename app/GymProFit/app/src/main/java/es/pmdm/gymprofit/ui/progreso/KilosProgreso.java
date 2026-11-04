@@ -31,6 +31,7 @@ import es.pmdm.gymprofit.utils.KilosMovidos;
 import es.pmdm.gymprofit.utils.ProgresoSemanal;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.VistaEstado;
+import es.pmdm.gymprofit.utils.VistaKilos;
 
 // ============================================================
 // KilosProgreso — «Kilos movidos» de Progreso (GP-216, lote 4, tablero 16): el selector
@@ -40,7 +41,8 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 // Los kilos salen de GET /sesiones/usuario/{id}/volumen-semanal. «Todo» empieza en la semana de
 // la primera sesión, que se lee de la lista de sesiones que Progreso ya ha pedido (no se pide otra
 // vez), hasta el tope de 104 semanas. Cambiar de período pide solo los kilos. Una cuenta sin
-// ninguna sesión terminada ve el vacío y no el selector con barras a cero.
+// ninguna sesión terminada ve el vacío y no el selector con barras a cero; qué se enseña según lo
+// que ha llegado lo decide VistaKilos, probada en la JVM.
 // ============================================================
 final class KilosProgreso {
 
@@ -60,6 +62,8 @@ final class KilosProgreso {
     // El período y las semanas de lo que se ha pedido, para saber si lo que hay sirve.
     private int periodoPedido = -1;
     private int semanasPedidas;
+    // Ha llegado la respuesta de la última petición de kilos (la Fuente guarda la anterior mientras).
+    private boolean kilosAlDia;
     @Nullable private Fuente<List<SesionEntrenamiento>> sesiones;
 
     KilosProgreso(@NonNull Fragment fragment, @NonNull View raiz, int usuarioId, int periodoInicial,
@@ -93,77 +97,69 @@ final class KilosProgreso {
         pintar();
     }
 
+    // Pide los kilos si hace falta y pinta lo que diga VistaKilos con lo que ha llegado.
     private void pintar() {
         if (!fragment.isAdded()) return;
         boolean todo = KilosMovidos.PERIODOS[periodo] == 0;
-        // «Todo» necesita la primera sesión: sin la lista, espera o dice el fallo de la lista.
-        if (todo && (sesiones == null || !sesiones.lista())) {
-            mostrarEstado();
-            estado.cargando();
-            return;
+        VistaKilos.Llegada deSesiones = llegada(sesiones);
+        boolean sinEntrenos = sesiones != null && sesiones.ok()
+                && HistorialSesiones.terminadas(sesiones.dato()).isEmpty();
+        if (VistaKilos.pedirKilos(todo, deSesiones, sinEntrenos)) {
+            String hoy = TiempoRelativo.hoy();
+            int semanas = KilosMovidos.semanas(KilosMovidos.PERIODOS[periodo],
+                    todo ? HistorialSesiones.primeraFecha(sesiones.dato()) : null, hoy);
+            if (periodoPedido != periodo || semanasPedidas != semanas) {
+                periodoPedido = periodo;
+                semanasPedidas = semanas;
+                kilosAlDia = false;
+                kilos.pedir(sesionApi.getVolumenSemanal(usuarioId, KilosMovidos.desdeIso(hoy, semanas), semanas),
+                        fragment, () -> {
+                            kilosAlDia = true;
+                            pintar();
+                        });
+            }
         }
-        if (todo && sesiones.fallo()) {
-            mostrarEstado();
-            estado.error(VistaEstado.mensaje(fragment.requireContext(), R.string.progreso_kilos_error,
-                    sesiones.code(), sesiones.mensaje()), pedirSesiones);
-            return;
+        VistaKilos.Llegada deKilos = !kilosAlDia ? VistaKilos.Llegada.PENDIENTE : llegada(kilos);
+        boolean sinSemanas = kilos.dato() == null || kilos.dato().isEmpty();
+        VistaKilos.Que que = VistaKilos.decidir(todo, deSesiones, sinEntrenos, deKilos, sinSemanas);
+        selector.setVisibility(que == VistaKilos.Que.VACIO_CUENTA_NUEVA ? View.GONE : View.VISIBLE);
+        Context ctx = fragment.requireContext();
+        switch (que) {
+            case CARGANDO:
+                // Con barras ya pintadas (otro período), se quedan hasta que llegue lo nuevo.
+                if (raiz.findViewById(R.id.bloqueKilosProgreso).getVisibility() != View.VISIBLE) estado.cargando();
+                break;
+            case ERROR_SESIONES:
+                mostrarEstado();
+                estado.error(VistaEstado.mensaje(ctx, R.string.progreso_kilos_error,
+                        sesiones.code(), sesiones.mensaje()), pedirSesiones);
+                break;
+            case ERROR_KILOS:
+                mostrarEstado();
+                estado.error(VistaEstado.mensaje(ctx, R.string.progreso_kilos_error, kilos.code(), kilos.mensaje()),
+                        this::pedir);
+                break;
+            case VACIO_CUENTA_NUEVA:
+            case VACIO:
+                mostrarEstado();
+                estado.vacio(R.string.progreso_kilos_vacio);
+                break;
+            case BARRAS:
+                pintarBarras(ctx, kilos.dato());
+                break;
         }
-        if (cuentaNueva()) {
-            pintarVacioCuentaNueva();
-            return;
-        }
-        selector.setVisibility(View.VISIBLE);
-
-        String hoy = TiempoRelativo.hoy();
-        int semanas = KilosMovidos.semanas(KilosMovidos.PERIODOS[periodo],
-                todo ? HistorialSesiones.primeraFecha(sesiones.dato()) : null, hoy);
-        if (periodoPedido != periodo || semanasPedidas != semanas) {
-            periodoPedido = periodo;
-            semanasPedidas = semanas;
-            if (raiz.findViewById(R.id.bloqueKilosProgreso).getVisibility() != View.VISIBLE) estado.cargando();
-            kilos.pedir(sesionApi.getVolumenSemanal(usuarioId, KilosMovidos.desdeIso(hoy, semanas), semanas),
-                    fragment, this::pintarKilos);
-            return;
-        }
-        pintarKilos();
     }
 
-    // Una cuenta sin entrenos: el vacío, sin selector ni barras a cero.
-    private boolean cuentaNueva() {
-        return sesiones != null && sesiones.ok() && HistorialSesiones.terminadas(sesiones.dato()).isEmpty();
-    }
-
-    private void pintarVacioCuentaNueva() {
-        selector.setVisibility(View.GONE);
-        mostrarEstado();
-        estado.vacio(R.string.progreso_kilos_vacio);
+    private static VistaKilos.Llegada llegada(@Nullable Fuente<?> f) {
+        if (f == null || !f.lista()) return VistaKilos.Llegada.PENDIENTE;
+        return f.fallo() ? VistaKilos.Llegada.FALLO : VistaKilos.Llegada.OK;
     }
 
     private void mostrarEstado() {
         raiz.findViewById(R.id.bloqueKilosProgreso).setVisibility(View.GONE);
     }
 
-    private void pintarKilos() {
-        if (!fragment.isAdded() || !kilos.lista()) return;
-        // Los kilos se piden a la vez que las sesiones: si llegan después y la cuenta no tiene
-        // entrenos, no pintan ocho semanas a cero encima del vacío (lo vio el release, lote 4).
-        if (cuentaNueva()) {
-            pintarVacioCuentaNueva();
-            return;
-        }
-        Context ctx = fragment.requireContext();
-        if (kilos.fallo()) {
-            mostrarEstado();
-            estado.error(VistaEstado.mensaje(ctx, R.string.progreso_kilos_error, kilos.code(), kilos.mensaje()),
-                    this::pedir);
-            return;
-        }
-        List<VolumenSemanal> semanas = kilos.dato() == null ? new ArrayList<>() : kilos.dato();
-        if (semanas.isEmpty()) {
-            mostrarEstado();
-            estado.vacio(R.string.progreso_kilos_vacio);
-            return;
-        }
+    private void pintarBarras(Context ctx, List<VolumenSemanal> semanas) {
         estado.oculto();
         raiz.findViewById(R.id.bloqueKilosProgreso).setVisibility(View.VISIBLE);
 

@@ -118,6 +118,11 @@
                 android:id="@+id/cabeceraPrograma"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/aire_anillo_fuera"
+                android:layout_marginTop="@dimen/aire_anillo_fuera"
+                android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                android:layout_marginBottom="@dimen/aire_anillo_fuera"
+                android:padding="@dimen/aire_anillo"
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="vertical">

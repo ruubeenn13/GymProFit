@@ -205,7 +205,7 @@
     <string name="medicion_registrar_primera">Registrar medición</string>
     <string name="nutricion_estadisticas">Estadísticas</string>
     <string name="detalle_progresion_titulo">Peso máximo</string>
-    <string name="detalle_progresion_pr">PR</string>
+    <string name="detalle_progresion_pr">récord</string>
     <string name="detalle_progresion_titulo_tiempo">Mejor tiempo</string>
     <string name="detalle_progresion_titulo_reps">Más repeticiones</string>
     <string name="detalle_progresion_peso_maximo">Peso máximo</string>
@@ -235,7 +235,7 @@
     <string name="detalle_series_a11y">Series: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, récord</string>
     <string name="detalle_pista_subir">La próxima vez, sube el peso: ya llegaste a las %1$d repeticiones en todas las series.</string>
-    <string name="detalle_progresion_a11y">%1$s por sesión, de %2$s a %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, la mejor marca de cada día, del %2$s al %3$s</string>
     <string name="stats_periodo_semana">Semana</string>
     <string name="stats_periodo_mes">Mes</string>
     <string name="stats_kpi_media">Media kcal/día</string>
@@ -652,7 +652,7 @@
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
-    <string name="grafica_kg_fecha">%1$.1f\u00A0kg%2$s\n%3$s</string>
+    <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
     <string name="grafica_pct_fecha">%1$.1f %%\n%2$s</string>
     <string name="grafica_kg_fecha_simple">%1$.1f\u00A0kg\n%2$s</string>
@@ -2405,7 +2405,7 @@
     <string name="progreso_kilos_titulo">Kilos movidos</string>
     <string name="progreso_kilos_semana">kg esta semana</string>
     <string name="progreso_kilos_de_la_pasada">el %1$d %% de la pasada</string>
-    <string name="progreso_kilos_sube" translatable="false">+%1$d %%</string>
+    <string name="progreso_kilos_sube">+%1$d %%</string>
     <string name="progreso_kilos_de_la_pasada_a11y">el %1$d %% de los kilos de la semana pasada</string>
     <string name="progreso_kilos_sube_a11y">un %1$d %% más que la semana pasada</string>
     <string name="progreso_kilos_cifra_a11y">%1$s kilos esta semana</string>
@@ -2445,4 +2445,44 @@
     <string name="progreso_cuerpo_vacio">Apunta tu peso y aquí verás cómo cambia.</string>
     <string name="progreso_cuerpo_error">No se han podido cargar tus medidas.</string>
     <string name="progreso_historial_vacio">Todavía no has terminado ningún entreno. El primero aparecerá aquí.</string>
+
+    <!-- GP-227: cada papelera del historial dice qué sesión borra. %1$s: la rutina; %2$s: la fecha con sesiones_eliminar_fecha_patron («30 de septiembre»). -->
+    <string name="sesiones_eliminar_a11y">Borrar %1$s del %2$s</string>
+    <string name="sesiones_eliminar_a11y_sin_fecha">Borrar %1$s</string>
+    <!-- GP-228: un período entre dos fechas cortas. -->
+    <string name="fecha_rango">%1$s – %2$s</string>
+    <!-- GP-227: el nombre de cada fila de Medidas, «Peso, 79,2 kilos». -->
+    <string name="medicion_fila_a11y">%1$s, %2$s</string>
+    <!-- %s: el número ya formateado («79,2»); la cantidad solo decide singular o plural. -->
+    <plurals name="medicion_a11y_kilos">
+        <item quantity="one">%s kilo</item>
+        <item quantity="other">%s kilos</item>
+    </plurals>
+    <plurals name="medicion_a11y_centimetros">
+        <item quantity="one">%s centímetro</item>
+        <item quantity="other">%s centímetros</item>
+    </plurals>
+    <string name="medicion_a11y_por_ciento">%1$s por ciento</string>
+    <!-- GP-228: la gráfica de Medidas para TalkBack. %1$s: la métrica; %2$s y %4$s: el valor con su unidad; %3$s y %5$s: la fecha corta. -->
+    <string name="medicion_grafica_a11y">%1$s: de %2$s el %3$s a %4$s el %5$s</string>
+    <string name="sesiones_eliminar_fecha_patron">d \'de\' MMMM</string>
+    <!-- GP-227: el estado de «Más detalles» de Medidas para TalkBack. -->
+    <string name="medicion_detalles_abiertos">Desplegados</string>
+    <string name="medicion_detalles_cerrados">Plegados</string>
+    <!-- GP-228: la grasa de Medidas con el % como se escribe en español, separado. -->
+    <string name="medicion_grasa_valor">%1$s %%</string>
+    <!-- GP-228 (revisor): Estadísticas de nutrición. %1$s y %2$s: primera y última fecha; %3$s y %4$s: la menor y la mayor; %5$s: el objetivo. -->
+    <string name="estadisticas_kcal_a11y">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal; objetivo, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_sin_objetivo">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal</string>
+    <string name="estadisticas_macros_a11y">Reparto de macros: proteína %1$s, carbohidratos %2$s, grasa %3$s</string>
+    <string name="estadisticas_mapa_a11y">Días en objetivo: %1$d. Fuera: %2$d. Sin datos: %3$d</string>
+    <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>
+    <string name="estadisticas_periodo_vacio">No hay comidas apuntadas en estas fechas.</string>
+    <string name="estadisticas_porcentaje">%1$d %%</string>
+    <string name="sesiones_fecha_elegir">Elegir la fecha</string>
+    <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
+    <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>
+    <!-- GP-228 (revisor): lo que abre una tarjeta pulsable de Inicio o Entrenar. -->
+    <string name="abrir_rutina_a11y">Abrir %1$s</string>
+    <string name="abrir_resumen_a11y">Ver el resumen de %1$s</string>
 </resources>

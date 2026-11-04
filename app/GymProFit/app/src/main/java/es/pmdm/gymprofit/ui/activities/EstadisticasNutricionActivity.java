@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.ui.activities;
 
-import android.graphics.Color;
+
+import androidx.core.content.ContextCompat;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
@@ -34,6 +35,8 @@ import es.pmdm.gymprofit.model.comida.ResumenDiarioNutricion;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
+import es.pmdm.gymprofit.utils.EjeFechas;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -56,13 +59,11 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private TextView tvMacrosVacia;
     private GridLayout gridHeatmap;
 
-    // Colores del donut de macros (proteína / carbohidratos / grasa): 3 tonos distintos.
-    private static final int[] MACRO_COLORS = {
-            Color.parseColor("#FF6A00"), Color.parseColor("#2DD4BF"), Color.parseColor("#A78BFA")
-    };
-    // Heatmap de adherencia: en objetivo (verde) / fuera (ámbar); sin datos = surface del tema.
-    private static final int COLOR_ON  = Color.parseColor("#22C55E");
-    private static final int COLOR_OFF = Color.parseColor("#FFB300");
+    // Colores del sistema (GP-228, revisor): los macros con gp_macro_* (antes, hex a fuego con el
+    // naranja de lo pulsable para la proteína); el mapa, «en objetivo» en gp_success y «fuera» en
+    // gp_stroke, neutro (un día fuera no es un fallo, DEC-055); «sin datos», solo el contorno.
+    private int[] coloresMacros;
+    private int colorOn, colorOff, colorSinDatos;
 
     // Inicio de la ventana temporal actual (para recorrer día a día en el heatmap).
     private long windowStartMillis;
@@ -73,6 +74,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     // Longitud del periodo en días (7 = semana, 30 = mes) y desplazamiento hacia atrás
     // en periodos (0 = actual, 1 = anterior, ...). El objetivo diario de kcal del perfil.
     private int lenDias = 7;
+    // El primer día del período (ISO) y las dos fechas cortas que lo delimitan, para el eje y TalkBack.
+    private String inicioIso = "";
+    private String inicioPeriodo = "", finPeriodo = "";
 
     // Semana (0) o mes (1) en el selector: 7 o 30 días.
     private int diasDelPeriodo() {
@@ -118,11 +122,16 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         gridHeatmap  = findViewById(R.id.gridHeatmap);
         btnNext      = findViewById(R.id.btnNext);
 
+        coloresMacros = new int[]{ ContextCompat.getColor(this, R.color.gp_macro_proteinas),
+                ContextCompat.getColor(this, R.color.gp_macro_carbos), ContextCompat.getColor(this, R.color.gp_macro_grasas) };
+        colorOn = ContextCompat.getColor(this, R.color.gp_success);
+        colorOff = ContextCompat.getColor(this, R.color.gp_stroke);
+        colorSinDatos = colorOff;
+
         // Swatches de la leyenda del heatmap.
-        int colorNone = getColorTema(com.google.android.material.R.attr.colorSurfaceVariant);
-        pintarSwatch(R.id.legNone, colorNone);
-        pintarSwatch(R.id.legOff, COLOR_OFF);
-        pintarSwatch(R.id.legOn, COLOR_ON);
+        findViewById(R.id.legNone).setBackground(celda(colorSinDatos, false, dp(4)));
+        pintarSwatch(R.id.legOff, colorOff);
+        pintarSwatch(R.id.legOn, colorOn);
         // Sin objetivo no hay «en objetivo» ni «fuera»: la leyenda no aplica.
         if (!conObjetivo) ((View) findViewById(R.id.legOn).getParent()).setVisibility(View.GONE);
 
@@ -148,7 +157,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         btnNext.setVisibility(offset > 0 ? View.VISIBLE : View.INVISIBLE);
 
         SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        SimpleDateFormat corta = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        // En el idioma de la app (GP-228): «28 sept – 4 oct» / «Sep 28 – Oct 4».
+        SimpleDateFormat corta = new SimpleDateFormat(getString(R.string.inicio_fecha_corta_patron),
+                FechaUtils.localeDeLaApp(this));
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_YEAR, -offset * lenDias);
@@ -160,7 +171,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         String inicioCorta = corta.format(cal.getTime());
         windowStartMillis = cal.getTimeInMillis();
 
-        tvPeriodo.setText(inicioCorta + " – " + finCorta);
+        tvPeriodo.setText(getString(R.string.fecha_rango, inicioCorta, finCorta));
+        inicioIso = inicio;
+        inicioPeriodo = inicioCorta;
+        finPeriodo = finCorta;
 
         int usuarioId = prefs.getUsuarioId();
         comidaApi.getResumen(usuarioId, inicio, fin).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
@@ -193,37 +207,48 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         int media = diasReg > 0 ? Math.round(suma / (float) diasReg) : 0;
         int adherencia = diasReg > 0 ? Math.round(enObjetivo * 100f / diasReg) : 0;
 
-        tvMedia.setText(String.valueOf(media));
-        tvDias.setText(String.valueOf(diasReg));
-        tvObjetivo.setText(conObjetivo ? String.valueOf(enObjetivo) : getString(R.string.sin_valor));
-        tvAdherencia.setText(conObjetivo ? adherencia + "%" : getString(R.string.sin_valor));
+        // Un período sin comidas: el vacío, sin ceros (DESIGN.md); los números, en el idioma de la app.
+        java.text.NumberFormat nf = java.text.NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(this));
+        String nada = getString(R.string.sin_valor);
+        tvMedia.setText(diasReg > 0 ? nf.format(media) : nada);
+        tvDias.setText(diasReg > 0 ? nf.format(diasReg) : nada);
+        tvObjetivo.setText(conObjetivo && diasReg > 0 ? nf.format(enObjetivo) : nada);
+        tvAdherencia.setText(conObjetivo && diasReg > 0 ? getString(R.string.estadisticas_porcentaje, adherencia) : nada);
 
         renderMacros(lista);
         construirHeatmap(lista);
 
         if (lista.isEmpty()) {
             chartKcal.setVisibility(View.GONE);
+            // Una cuenta con comidas en otras semanas no «aún no ha registrado comidas».
+            tvVacia.setText(R.string.estadisticas_periodo_vacio);
             tvVacia.setVisibility(View.VISIBLE);
             return;
         }
         chartKcal.setVisibility(View.VISIBLE);
         tvVacia.setVisibility(View.GONE);
 
+        // Un hueco por día del período (GP-228, revisor): con solo los días con comidas, una semana
+        // de 7 días enseñaba 4 barras y un mes con una sola, una barra de medio ancho. La x es el día
+        // desde el primero del período, y la etiqueta, su fecha corta en el idioma de la app.
+        final Long dia0 = EjeFechas.dia(inicioIso);
+        final java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
+        final String patron = getString(R.string.inicio_fecha_corta_patron);
         List<BarEntry> entradas = new ArrayList<>();
-        final List<String> etiquetas = new ArrayList<>();
-        for (int i = 0; i < lista.size(); i++) {
-            ResumenDiarioNutricion r = lista.get(i);
-            entradas.add(new BarEntry(i, r.getCalorias()));
-            etiquetas.add(fechaCorta(r.getFecha()));
+        for (ResumenDiarioNutricion r : lista) {
+            Long d = EjeFechas.dia(r.getFecha());
+            if (d == null || dia0 == null) continue;
+            entradas.add(new BarEntry(d - dia0, r.getCalorias()));
         }
 
         ChartStyler.styleBar(chartKcal, new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                int idx = Math.round(value);
-                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+                return dia0 == null ? "" : EjeFechas.etiqueta(dia0 + value, idioma, patron);
             }
         });
+        chartKcal.getXAxis().setAxisMinimum(-0.5f);
+        chartKcal.getXAxis().setAxisMaximum(lenDias - 0.5f);
 
         // Línea de objetivo de kcal.
         chartKcal.getAxisLeft().removeAllLimitLines();
@@ -238,18 +263,38 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         }
 
         // Tooltip: kcal + fecha.
-        chartKcal.setMarker(new ChartMarker(this, (e, h) -> {
-            int idx = Math.round(e.getX());
-            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
-            return getString(R.string.grafica_kcal_fecha, (int) e.getY(), fecha);
-        }));
+        chartKcal.setMarker(new ChartMarker(this, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
+                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron))));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
         ChartStyler.styleBarDataSet(ds, this);
         BarData data = new BarData(ds);
         data.setBarWidth(0.6f);
+        // El eje empieza en 0 y llega al objetivo: desde el mínimo, 139 kcal parecían diez veces 135 y la
+        // línea del objetivo caía fuera (revisor, GP-228). Cifras enteras, en el idioma de la app.
+        int maxKcal = 0, minKcal = Integer.MAX_VALUE;
+        for (ResumenDiarioNutricion r : lista) {
+            maxKcal = Math.max(maxKcal, r.getCalorias());
+            minKcal = Math.min(minKcal, r.getCalorias());
+        }
+        chartKcal.getAxisLeft().setAxisMinimum(0f);
+        chartKcal.getAxisLeft().setAxisMaximum(Math.max(maxKcal, conObjetivo ? objetivoKcal : 0) * 1.1f);
+        chartKcal.getAxisLeft().setGranularity(1f);
+        chartKcal.getAxisLeft().setGranularityEnabled(true);
+        chartKcal.getAxisLeft().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return nf.format(Math.round(value));
+            }
+        });
         chartKcal.setData(data);
         chartKcal.invalidate();
+        // Las barras no son nada para TalkBack sin descripción (DEC-019).
+        chartKcal.setContentDescription(conObjetivo
+                ? getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal))
+                : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal)));
     }
 
     // Donut del reparto de macros (gramos totales de proteína/carbohidratos/grasa del periodo).
@@ -263,6 +308,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
         if (prot + carb + grasa <= 0) {
             chartMacros.setVisibility(View.GONE);
+            // Con comidas en otras fechas no es «aún no has registrado comidas» (revisor, GP-228).
+            tvMacrosVacia.setText(R.string.estadisticas_periodo_vacio);
             tvMacrosVacia.setVisibility(View.VISIBLE);
             return;
         }
@@ -275,10 +322,15 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
 
         ChartStyler.stylePie(chartMacros);
-        chartMacros.setCenterText(getString(R.string.unidad_g_redondeado, prot + carb + grasa));
+        // El total es la suma de lo que se enseña redondeado: 12 + 52 + 12 no puede decir 77.
+        chartMacros.setCenterText(getString(R.string.unidad_g_redondeado,
+                (double) (Math.round(prot) + Math.round(carb) + Math.round(grasa))));
 
         PieDataSet ds = new PieDataSet(entradas, "");
-        ChartStyler.stylePieDataSet(ds, MACRO_COLORS, this);
+        ChartStyler.stylePieDataSet(ds, coloresMacros, this);
+        // Blanco sobre los macros de claro y casi negro sobre los de oscuro (el blanco sobre el
+        // turquesa daba 1,86:1).
+        ds.setValueTextColor(ContextCompat.getColor(this, R.color.gp_texto_sobre_macro));
         PieData data = new PieData(ds);
         data.setValueFormatter(new ValueFormatter() {
             @Override
@@ -288,6 +340,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         });
         chartMacros.setData(data);
         chartMacros.invalidate();
+        chartMacros.setContentDescription(getString(R.string.estadisticas_macros_a11y,
+                getString(R.string.unidad_g_redondeado, prot), getString(R.string.unidad_g_redondeado, carb),
+                getString(R.string.unidad_g_redondeado, grasa)));
     }
 
     // Construye el heatmap: una celda por día del periodo, coloreada según si ese día
@@ -302,8 +357,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
             }
         }
 
-        int colorNone = getColorTema(com.google.android.material.R.attr.colorSurfaceVariant);
         double margen = objetivoKcal * 0.15;
+        int enObjetivo = 0, fuera = 0, sinDatos = 0;
         int cell = (int) dp(30), margin = (int) dp(3);
 
         SimpleDateFormat iso = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -313,17 +368,16 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         for (int i = 0; i < lenDias; i++) {
             Integer kcal = porFecha.get(iso.format(cal.getTime()));
             int color;
-            if (kcal == null) color = colorNone;
+            if (kcal == null) { color = colorSinDatos; sinDatos++; }
             // Sin objetivo (GP-103), un día con comidas es solo eso: registrado.
-            else if (!conObjetivo) color = getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant);
-            else if (Math.abs(kcal - objetivoKcal) <= margen) color = COLOR_ON;
-            else color = COLOR_OFF;
+            else if (!conObjetivo) { color = getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant); enObjetivo++; }
+            else if (Math.abs(kcal - objetivoKcal) <= margen) { color = colorOn; enObjetivo++; }
+            else { color = colorOff; fuera++; }
 
             View v = new View(this);
-            GradientDrawable bg = new GradientDrawable();
-            bg.setColor(color);
-            bg.setCornerRadius(dp(6));
-            v.setBackground(bg);
+            // «Sin datos» es solo el contorno: no se distingue solo por el color.
+            v.setBackground(celda(color, kcal != null, dp(6)));
+            v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
             GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
             lp.width = cell;
@@ -333,6 +387,19 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
+        // El mapa entero para TalkBack: cuántos días hay de cada (DEC-019).
+        gridHeatmap.setContentDescription(conObjetivo
+                ? getString(R.string.estadisticas_mapa_a11y, enObjetivo, fuera, sinDatos)
+                : getString(R.string.estadisticas_mapa_a11y_sin_objetivo, enObjetivo, sinDatos));
+    }
+
+    // Una celda del mapa: rellena con su color o, sin datos, solo el contorno.
+    private GradientDrawable celda(int color, boolean rellena, float radio) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(radio);
+        if (rellena) bg.setColor(color);
+        else bg.setStroke(Math.max(1, Math.round(dp(1))), color);
+        return bg;
     }
 
     // Pinta un cuadradito de la leyenda con el color indicado.
@@ -345,12 +412,6 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
     private float dp(float v) {
         return v * getResources().getDisplayMetrics().density;
-    }
-
-    // Fecha ISO ("yyyy-MM-dd...") → etiqueta corta "dd/MM".
-    private String fechaCorta(String isoStr) {
-        if (isoStr == null || isoStr.length() < 10) return "";
-        return isoStr.substring(8, 10) + "/" + isoStr.substring(5, 7);
     }
 
     // Resuelve un color del tema.

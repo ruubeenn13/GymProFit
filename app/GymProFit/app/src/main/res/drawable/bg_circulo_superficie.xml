@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   bg_circulo_superficie — círculo del color de superficie elevada (#252A31 en oscuro):
-  iconos de la hoja del «+», botones redondos de cabecera y «+» de cada comida.
+  iconos de la hoja del «+», botones redondos de cabecera y «+» de cada comida. Pulsado, la capa
+  del 10 % (tarjeta_capa); con foco, el anillo de FocoVisible (GP-227).
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/tarjeta_capa">
     <item>
         <shape android:shape="oval">
             <solid android:color="?attr/colorSurfaceVariant" />

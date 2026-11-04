@@ -11,6 +11,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:paddingStart="@dimen/aire_anillo"
+    android:paddingTop="@dimen/aire_anillo_alto"
+    android:paddingEnd="@dimen/aire_anillo"
+    android:paddingBottom="@dimen/aire_anillo_alto"
     android:focusable="true">
 
     <LinearLayout

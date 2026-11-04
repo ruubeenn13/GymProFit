@@ -72,6 +72,26 @@ public class LogrosProgresoTest {
                 conseguido("SIN_FECHA", null),
                 conseguido("CON_FECHA", "2026-01-01T00:00:00")));
         assertEquals(Arrays.asList("CON_FECHA", "SIN_FECHA"), tipos(r));
+        // Y llegue en el orden que llegue.
+        r = LogrosProgreso.elegir(Arrays.asList(
+                conseguido("CON_FECHA", "2026-01-01T00:00:00"),
+                conseguido("SIN_FECHA", null)));
+        assertEquals(Arrays.asList("CON_FECHA", "SIN_FECHA"), tipos(r));
+    }
+
+    @Test
+    public void comoMuchoDosEmpezados() {
+        List<LogroProgreso> r = LogrosProgreso.elegir(Arrays.asList(
+                pendiente("A", 1, 10), pendiente("B", 5, 10), pendiente("C", 9, 10)));
+        assertEquals(Arrays.asList("C", "B"), tipos(r));
+    }
+
+    @Test
+    public void unLogroSinUmbralNoSale() {
+        // Umbral 0 (no debería llegar): no se divide por cero ni se pone delante de todos.
+        List<LogroProgreso> r = LogrosProgreso.elegir(Arrays.asList(
+                pendiente("RARO", 3, 0), pendiente("DEDICADO", 3, 30)));
+        assertEquals(Arrays.asList("DEDICADO"), tipos(r));
     }
 
     @Test

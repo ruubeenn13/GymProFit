@@ -164,6 +164,8 @@ public class SelectorPildora extends FrameLayout {
             o.setAllCaps(false);
             o.setClickable(true);
             o.setFocusable(true);
+            // Su anillo de foco lo dibuja la opción (capa()); FocoVisible no pone otro encima.
+            o.setTag(R.id.tag_anillo_propio, Boolean.TRUE);
             o.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.animator.toque));
             o.setForeground(capa(relleno));
             final int indice = i;

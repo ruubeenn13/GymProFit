@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- view_cifra_progreso — una cifra de Progreso (GP-105): el número y, debajo, qué es. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="12dp"
-    android:focusable="true"
+    android:screenReaderFocusable="true"
+    tools:targetApi="p"
     android:background="@drawable/bg_cifra_progreso">
 
     <TextView

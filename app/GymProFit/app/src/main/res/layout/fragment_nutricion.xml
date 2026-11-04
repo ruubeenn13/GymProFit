@@ -194,6 +194,11 @@
                         android:id="@+id/filaKcal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/aire_anillo_fuera"
+                        android:layout_marginTop="@dimen/aire_anillo_fuera"
+                        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                        android:layout_marginBottom="@dimen/aire_anillo_fuera"
+                        android:padding="@dimen/aire_anillo"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:focusable="true">
@@ -328,21 +333,30 @@
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp" />
+                        android:layout_marginStart="@dimen/aire_anillo_fuera"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                        android:layout_marginBottom="@dimen/aire_anillo_alto_fuera" />
 
                     <include
                         android:id="@+id/macroCarbos"
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp" />
+                        android:layout_marginStart="@dimen/aire_anillo_fuera"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                        android:layout_marginBottom="@dimen/aire_anillo_alto_fuera" />
 
                     <include
                         android:id="@+id/macroGrasas"
                         layout="@layout/view_macro_barra"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp" />
+                        android:layout_marginStart="@dimen/aire_anillo_fuera"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                        android:layout_marginBottom="@dimen/aire_anillo_alto_fuera" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

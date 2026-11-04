@@ -14,5 +14,12 @@
     <!-- Cómo dejaron el XML y el adapter cada campo de una serie, para volver a ponerlos
          en fila después de apilarlos. Ver CamposSerie. -->
     <item name="campos_serie_guardado" type="id"/>
+    <!-- La vista dibuja su propio anillo de foco (la pestaña de la barra, en su píldora; las
+         opciones del selector). FocoVisible no le pone otro. -->
+    <item name="tag_anillo_propio" type="id"/>
+    <!-- La ventana ya escucha el foco para el anillo. Ver FocoVisible. -->
+    <item name="tag_foco_tarjeta" type="id"/>
+    <!-- Si la raíz de una pestaña era enfocable antes de apartarla del foco. Ver MainActivity. -->
+    <item name="tag_enfocable_original" type="id"/>
 
 </resources>

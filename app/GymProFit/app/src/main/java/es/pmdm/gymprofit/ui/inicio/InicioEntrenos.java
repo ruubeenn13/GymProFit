@@ -13,13 +13,9 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.color.MaterialColors;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
@@ -34,7 +30,6 @@ import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.utils.ExtraEntreno;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HistorialSesiones;
-import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
@@ -134,7 +129,7 @@ public final class InicioEntrenos {
     }
 
     private void rellenar(View tarjeta, SesionEntrenamiento s) {
-        String cuando = cuando(fragment.requireContext(), s.getFechaInicio());
+        String cuando = FechaUtils.diaRelativo(fragment.requireContext(), s.getFechaInicio());
         String rutina = s.getRutinaNombre() != null ? s.getRutinaNombre() : fragment.getString(R.string.hecho_hoy_libre);
         ((TextView) tarjeta.findViewById(R.id.tvEntrenoCuando)).setText(cuando);
         ((TextView) tarjeta.findViewById(R.id.tvEntrenoRutina)).setText(rutina);
@@ -221,35 +216,6 @@ public final class InicioEntrenos {
         Intent intent = new Intent(fragment.requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", s.getId());
         Transiciones.abrirTarjeta(fragment.requireActivity(), tarjeta, intent);
-    }
-
-    /**
-     * «Hoy», «Ayer · martes», «Lunes», «Jueves pasado» o, pasadas dos semanas, «12 oct». Lo usan
-     * también las filas de Historial de Progreso (GP-216, lote 4).
-     *
-     * @return vacío si la fecha no se entiende o es futura.
-     */
-    public static String cuando(@NonNull android.content.Context ctx, @Nullable String iso) {
-        Locale idioma = FechaUtils.localeDeLaApp(ctx);
-        int dias = TiempoRelativo.diasEntre(iso, TiempoRelativo.hoy());
-        if (dias < 0 || iso == null || iso.length() < 10) return "";
-        Calendar c = Calendar.getInstance();
-        c.set(Integer.parseInt(iso.substring(0, 4)), Integer.parseInt(iso.substring(5, 7)) - 1,
-                Integer.parseInt(iso.substring(8, 10)));
-        Date dia = c.getTime();
-        String diaSemana = mayuscula(new SimpleDateFormat("EEEE", idioma).format(dia), idioma);
-        if (dias == 0) return ctx.getString(R.string.tiempo_hoy_mayuscula);
-        // En español los días y los meses van en minúscula dentro de una frase; en inglés, siempre en mayúscula.
-        String enFrase = "es".equals(idioma.getLanguage()) ? diaSemana.toLowerCase(idioma) : diaSemana;
-        if (dias == 1) return ctx.getString(R.string.hoy_toca_separador,
-                ctx.getString(R.string.tiempo_ayer_mayuscula), enFrase);
-        if (dias < 7) return diaSemana;
-        if (dias < 14) return ctx.getString(R.string.inicio_dia_pasado, enFrase);
-        return mayuscula(new SimpleDateFormat(ctx.getString(R.string.inicio_fecha_corta_patron), idioma).format(dia), idioma);
-    }
-
-    private static String mayuscula(String s, Locale idioma) {
-        return s.isEmpty() ? s : s.substring(0, 1).toUpperCase(idioma) + s.substring(1);
     }
 
     /** Para quien necesita saber cuántos récords tuvo la última sesión terminada de la lista. */

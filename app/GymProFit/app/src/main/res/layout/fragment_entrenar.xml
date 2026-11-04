@@ -134,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:contentDescription="@string/btn_empezar_sin_rutina"
+                android:contentDescription="@string/entrenar_entreno_libre_a11y"
                 android:focusable="true">
 
                 <LinearLayout

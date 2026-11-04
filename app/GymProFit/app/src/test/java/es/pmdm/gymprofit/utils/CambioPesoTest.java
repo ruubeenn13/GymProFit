@@ -77,6 +77,39 @@ public class CambioPesoTest {
     }
 
     @Test
+    public void lasSemanasSeRedondeanALaMasCercana() {
+        // 17 días son 2,4 semanas → 2; 18 días, 2,6 → 3.
+        assertEquals(2, CambioPeso.de(Arrays.asList(
+                p("2026-11-02T08:00:00", 80.0), p("2026-10-16T08:00:00", 81.0))).semanas);
+        assertEquals(3, CambioPeso.de(Arrays.asList(
+                p("2026-11-02T08:00:00", 80.0), p("2026-10-15T08:00:00", 81.0))).semanas);
+    }
+
+    @Test
+    public void unaMedicionPosteriorAlUltimoNoCuenta() {
+        // La lista llega desordenada: la del 5 va detrás de la del 2, que se toma por el último.
+        CambioPeso.Resultado r = CambioPeso.de(Arrays.asList(
+                p("2026-11-02T08:00:00", 79.4),
+                p("2026-11-05T08:00:00", 70.0),
+                p("2026-10-26T08:00:00", 79.9)));
+        assertEquals(-0.5, r.cambio, 1e-9);
+        assertEquals(2, r.puntos.size());
+    }
+
+    @Test
+    public void unDiaConVariosPesosCuentaSoloElUltimoDeEseDia() {
+        // Como la línea (EjeFechas, el último del día): con cuatro pesajes el 21-9, el cambio se
+        // mide desde el de la noche y no desde el de la mañana (lo vio el revisor, GP-228).
+        CambioPeso.Resultado r = CambioPeso.de(Arrays.asList(
+                p("2026-11-03T10:00:00", 79.2),
+                p("2026-09-21T18:32:17.587", 78.5),
+                p("2026-09-21T18:32:17.503", 77.5),
+                p("2026-09-21T18:32:17.357", 75.5)));
+        assertEquals(0.7, r.cambio, 1e-9);
+        assertEquals("un punto por día, como la línea", 2, r.puntos.size());
+    }
+
+    @Test
     public void elCambioSeRedondeaAlDecimo() {
         CambioPeso.Resultado r = CambioPeso.de(Arrays.asList(
                 p("2026-11-02T08:00:00", 79.44),

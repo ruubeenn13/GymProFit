@@ -9,6 +9,7 @@
   (cargando, error con «Reintentar», vacío) y no espera a las demás.
 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollProgreso"
     android:layout_width="match_parent"
@@ -134,8 +135,10 @@
                                 android:id="@+id/filaKilosSemana"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:baselineAligned="true"
-                                android:focusable="true"
+                                android:baselineAligned="false"
+                                android:gravity="bottom"
+                                android:screenReaderFocusable="true"
+                                tools:targetApi="p"
                                 android:orientation="horizontal">
 
                                 <TextView

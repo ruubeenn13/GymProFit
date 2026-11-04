@@ -39,7 +39,6 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.ui.fragments.ProgresoFragment;
-import es.pmdm.gymprofit.ui.inicio.InicioEntrenos;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HistorialSesiones;
@@ -255,7 +254,7 @@ final class ListasProgreso {
             View fila = fila(lista, R.drawable.ic_ms_check, R.drawable.bg_fila_icono_hecho, R.color.gp_success);
             String rutina = s.getRutinaNombre() != null ? s.getRutinaNombre() : ctx.getString(R.string.hecho_hoy_libre);
             String apoyo = ctx.getString(R.string.duracion_min, s.getDuracionMinutos());
-            String cuando = InicioEntrenos.cuando(ctx, s.getFechaInicio());
+            String cuando = FechaUtils.diaRelativo(ctx, s.getFechaInicio());
             if (!cuando.isEmpty()) apoyo = ctx.getString(R.string.hoy_toca_separador, cuando, apoyo);
             Double kilos = kilosSesion.get(s.getId());
             if (kilos != null && kilos > 0) {

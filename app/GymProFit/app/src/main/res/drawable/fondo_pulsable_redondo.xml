@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fondo pulsable redondo (?attr/selectableItemBackgroundBorderless del tema, GP-227): para
+  iconos sueltos (papeleras, «Volver»). Pulsado, la capa del 10 % de gp_on_surface en un círculo;
+  con foco, el anillo de 2 dp de FocoVisible.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item android:id="@android:id/mask">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>

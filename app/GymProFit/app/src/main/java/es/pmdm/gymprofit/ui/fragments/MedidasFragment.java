@@ -31,6 +31,8 @@ import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.GrasaReciente;
 import es.pmdm.gymprofit.utils.ChartStyler;
+import es.pmdm.gymprofit.utils.EjeFechas;
+import es.pmdm.gymprofit.utils.NombreMedida;
 import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.usuario.Usuario;
@@ -134,6 +136,7 @@ public class MedidasFragment extends BaseFragment {
             // acordarse de arrastrarlo a cada traducción.
             tvMasDetalles.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
                     masDetallesAbierto ? R.drawable.ic_ms_keyboard_arrow_up : R.drawable.ic_ms_keyboard_arrow_down, 0);
+            nombrarMasDetalles();
         });
 
         // Sin FAB: registrar la primera medición desde el estado vacío; el resto se
@@ -314,8 +317,9 @@ public class MedidasFragment extends BaseFragment {
         if (chipsRango.getElegida() == 0) corte = fechaCutoff(30);
         else if (chipsRango.getElegida() == 1) corte = fechaCutoff(90);
 
-        List<Entry> entradas = new ArrayList<>();
-        final List<String> etiquetas = new ArrayList<>();
+        // Por fecha y no por orden (GP-228): la x es el día, uno por día (el último del día).
+        List<String> fechas = new ArrayList<>();
+        List<Float> valores = new ArrayList<>();
         for (int i = historial.size() - 1; i >= 0; i--) {
             MedicionCorporal m = historial.get(i);
             double v = valorMetrica(m, metrica);
@@ -324,9 +328,14 @@ public class MedidasFragment extends BaseFragment {
                 String f = m.getFecha();
                 if (f == null || f.length() < 10 || f.substring(0, 10).compareTo(corte) < 0) continue;
             }
-            entradas.add(new Entry(entradas.size(), (float) v));
-            etiquetas.add(fechaCorta(m.getFecha()));
+            fechas.add(m.getFecha());
+            valores.add((float) v);
         }
+        final List<EjeFechas.Punto> puntos = EjeFechas.porDia(fechas, valores, EjeFechas.DelDia.ULTIMO);
+        List<Entry> entradas = new ArrayList<>();
+        for (EjeFechas.Punto pt : puntos) entradas.add(new Entry(pt.x, pt.y));
+        final Locale idioma = FechaUtils.localeDeLaApp(requireContext());
+        final String patron = getString(R.string.inicio_fecha_corta_patron);
 
         tvGraficaTitulo.setText(tituloMetrica(metrica));
 
@@ -344,22 +353,37 @@ public class MedidasFragment extends BaseFragment {
         ChartStyler.styleLine(chartPeso, new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                int idx = Math.round(value);
-                return (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
+                return EjeFechas.llevaEtiqueta(value, puntos) ? EjeFechas.etiqueta(value, idioma, patron) : "";
             }
         });
 
         // Tooltip: valor + unidad + fecha del punto tocado.
         chartPeso.setMarker(new ChartMarker(requireContext(), (e, h) -> {
-            int idx = Math.round(e.getX());
-            String fecha = (idx >= 0 && idx < etiquetas.size()) ? etiquetas.get(idx) : "";
-            return getString(formatoTooltip, e.getY(), fecha);
+            return getString(formatoTooltip, e.getY(), EjeFechas.etiqueta(e.getX(), idioma, patron));
         }));
 
         LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, requireContext());
+        // Un decimal en el eje como mucho: con 30 días salían «79,20 / 79,11» (revisor, GP-228).
+        chartPeso.getAxisLeft().setGranularity(0.1f);
+        chartPeso.getAxisLeft().setGranularityEnabled(true);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
+        // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019).
+        EjeFechas.Punto primero = puntos.get(0), ultimo = puntos.get(puntos.size() - 1);
+        chartPeso.setContentDescription(getString(R.string.medicion_grafica_a11y, getString(metrica == MET_GRASA ? R.string.medicion_label_grasa
+                        : metrica == MET_CINTURA ? R.string.medicion_label_cintura : R.string.perfil_peso),
+                valorDicho(metrica, primero.y), EjeFechas.etiqueta(primero.x, idioma, patron),
+                valorDicho(metrica, ultimo.y), EjeFechas.etiqueta(ultimo.x, idioma, patron)));
+    }
+
+    // Un valor de la gráfica como se dice: «79,2 kilos», «14,5 por ciento», «86 centímetros».
+    private String valorDicho(int metrica, double v) {
+        switch (metrica) {
+            case MET_GRASA:   return getString(R.string.medicion_a11y_por_ciento, NombreMedida.numero(v, idioma()));
+            case MET_CINTURA: return centimetros(v);
+            default:          return kilos(v);
+        }
     }
 
     // Valor de la métrica pedida para una medición (0 si no registrada).
@@ -387,12 +411,6 @@ public class MedidasFragment extends BaseFragment {
         return String.format(Locale.US, "%tF", c);
     }
 
-    // Convierte una fecha ISO ("yyyy-MM-ddTHH:mm:ss") a etiqueta corta "dd/MM" para el eje X.
-    private String fechaCorta(String iso) {
-        if (iso == null || iso.length() < 10) return "";
-        return iso.substring(8, 10) + "/" + iso.substring(5, 7);
-    }
-
     // Oculta el scroll de datos y muestra el mensaje de "sin mediciones".
     private void mostrarVacio() {
         if (!isAdded()) return;
@@ -414,13 +432,15 @@ public class MedidasFragment extends BaseFragment {
 
         if (ultimaMedicion.getFecha() != null && !ultimaMedicion.getFecha().isEmpty()) {
             tvFechaUltima.setText(getString(R.string.medicion_fecha_ultima,
-                    FechaUtils.formatearFechaHora(ultimaMedicion.getFecha())));
+                    FechaUtils.formatearFechaHoraMedia(ultimaMedicion.getFecha(),
+                            FechaUtils.localeDeLaApp(requireContext()))));
         }
 
         tvPesoVal.setText(ultimaMedicion.getPeso() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getPeso()) : anadir);
         tvGrasaVal.setText(ultimaMedicion.getGrasaCorporal() != null && ultimaMedicion.getGrasaCorporal() > 0
-                ? String.format(Locale.getDefault(), "%.1f%%", ultimaMedicion.getGrasaCorporal()) : anadir);
+                ? getString(R.string.medicion_grasa_valor,
+                        String.format(idioma(), "%.1f", ultimaMedicion.getGrasaCorporal())) : anadir);
         tvMusculoVal.setText(ultimaMedicion.getMasaMuscular() > 0
                 ? getString(R.string.unidad_kg_decimal, ultimaMedicion.getMasaMuscular()) : anadir);
         tvCinturaVal.setText(ultimaMedicion.getCintura() > 0
@@ -433,6 +453,54 @@ public class MedidasFragment extends BaseFragment {
                 ? getString(R.string.unidad_cm_decimal, ultimaMedicion.getPiernas()) : anadir);
         tvNotasVal.setText(ultimaMedicion.getNotas() != null && !ultimaMedicion.getNotas().isEmpty()
                 ? ultimaMedicion.getNotas() : anadir);
+        nombrarFilas();
+    }
+
+    // Cada fila con su nombre (GP-227): «Peso, 79,2 kilos» en vez de leer «79,2 kg» letra a letra.
+    // Sin valor, el nombre del campo y lo que dice la fila («Peso, Añadir»).
+    private void nombrarFilas() {
+        MedicionCorporal m = ultimaMedicion;
+        Double grasa = m.getGrasaCorporal();
+        nombrar(R.id.rowPeso, R.string.perfil_peso, kilos(m.getPeso()));
+        nombrar(R.id.rowGrasa, R.string.medicion_label_grasa, grasa != null && grasa > 0
+                ? getString(R.string.medicion_a11y_por_ciento, NombreMedida.numero(grasa, idioma())) : null);
+        nombrar(R.id.rowMusculo, R.string.medicion_label_musculo, kilos(m.getMasaMuscular()));
+        nombrar(R.id.rowCintura, R.string.medicion_label_cintura, centimetros(m.getCintura()));
+        nombrar(R.id.rowPecho, R.string.medicion_label_pecho, centimetros(m.getPecho()));
+        nombrar(R.id.rowBrazos, R.string.medicion_label_brazos, centimetros(m.getBrazos()));
+        nombrar(R.id.rowPiernas, R.string.medicion_label_piernas, centimetros(m.getPiernas()));
+        nombrar(R.id.rowNotas, R.string.medicion_label_notas,
+                m.getNotas() != null && !m.getNotas().isEmpty() ? m.getNotas() : null);
+        nombrarMasDetalles();
+    }
+
+    private void nombrar(int fila, int campo, @androidx.annotation.Nullable String valor) {
+        findViewById(fila).setContentDescription(getString(R.string.medicion_fila_a11y, getString(campo),
+                valor != null ? valor : getString(R.string.medicion_anadir)));
+    }
+
+    // «Más detalles» o «Menos detalles», lo mismo que dice la fila, como un botón.
+    private void nombrarMasDetalles() {
+        View fila = findViewById(R.id.rowMasDetalles);
+        fila.setContentDescription(tvMasDetalles.getText());
+        androidx.core.view.ViewCompat.setStateDescription(fila, getString(masDetallesAbierto
+                ? R.string.medicion_detalles_abiertos : R.string.medicion_detalles_cerrados));
+    }
+
+    @androidx.annotation.Nullable
+    private String kilos(double v) {
+        return v > 0 ? getResources().getQuantityString(R.plurals.medicion_a11y_kilos,
+                NombreMedida.cantidad(v), NombreMedida.numero(v, idioma())) : null;
+    }
+
+    @androidx.annotation.Nullable
+    private String centimetros(double v) {
+        return v > 0 ? getResources().getQuantityString(R.plurals.medicion_a11y_centimetros,
+                NombreMedida.cantidad(v), NombreMedida.numero(v, idioma())) : null;
+    }
+
+    private Locale idioma() {
+        return FechaUtils.localeDeLaApp(requireContext());
     }
 
     // Diálogo estilizado (InputDialog) para editar un campo numérico y guardarlo.
@@ -441,7 +509,7 @@ public class MedidasFragment extends BaseFragment {
     private void editarCampoNumerico(String campo, String label, double valorActual) {
         if (ultimaMedicion == null) return;
 
-        String inicial = valorActual > 0 ? String.format(Locale.getDefault(), "%.2f", valorActual) : null;
+        String inicial = valorActual > 0 ? String.format(FechaUtils.localeDeLaApp(requireContext()), "%.2f", valorActual) : null;
         InputDialog.numerico(requireActivity(), label, getString(R.string.dialogo_nuevo_valor), inicial, unidadDe(campo), valor -> {
             if (valor.isEmpty()) {
                 if ("peso".equals(campo)) {

@@ -8,6 +8,22 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `f4bc2da` | fix(android): octava pasada del revisor: la fila de kcal de Nutrición deja aire al anillo de foco (a letra 1,3 la tocaba) (GP-227). |
+| `03f3279` | fix(android): séptima pasada del revisor en el grupo B: el margen negativo de la cabecera de «Tu programa» va lado a lado (`layout_margin` negativo se ignora, y un test lo vigila en todos los layouts) y la tarjeta de macros no crece (GP-227). |
+| `811b90a` | fix(android): sexta pasada del revisor en el grupo B: el anillo de foco entero en los carruseles sin relleno de Inicio y en la valoración de Registrar sesión con el teclado abierto; aire para el anillo en las filas de macros y la cabecera de «Tu programa»; «Nothing logged» en inglés (GP-227). |
+| `87e8108` | fix(android): un carrusel no es una parada del teclado: el foco pasa a su primera tarjeta (GP-227). |
+| `d96e6f6` | fix(android): quinta pasada del revisor en el grupo B: el anillo de foco se recorta solo en el eje de cada lista, lo enfocado se desplaza a la vista también con el teclado abierto y con el anillo por dentro, y el historial no dispone filas fuera de la vista (GP-227). |
+| `d58ad38` | fix(android): cuarta pasada del revisor en el grupo B: el anillo no se pinta sobre la cabecera ni las barras del sistema, el «+» de la barra lo lleva por fuera y la última tarjeta de un carrusel lo enseña entero (GP-227). |
+| `a9bccda` | fix(android): tercera pasada del revisor en el grupo B: el anillo en su sitio en vistas giradas, por dentro en los iconos sueltos sin relleno, y lo enfocado se desplaza a la vista con el anillo entero (GP-227). |
+| `ad5ec2e` | fix(android): segunda pasada del revisor en el grupo B: **el anillo de foco va por fuera**, a 2 dp del borde y en el color del texto de lo que hay detrás; Estadísticas enseña un hueco por día del período (GP-227, GP-228). |
+| `32de8d8` | fix(android): primera pasada del revisor en la ficha, Registrar sesión, Estadísticas, Inicio, Entrenar y Nutrición: **un solo anillo de foco para todo lo pulsable** (`FocoVisible`); Estadísticas con el eje de calorías desde 0, sus gráficas con nombre para TalkBack y los colores de los macros del sistema (GP-227, GP-228). |
+| `16a1a11` | fix(android): tercera pasada del revisor en Progreso: el anillo de los enlaces entero y el de la barra alrededor de la píldora (GP-227). |
+| `bfebd8b` | fix(android): segunda pasada del revisor en Progreso: «Volver» con anillo, aire en los enlaces y ningún TAB en pestañas que no se ven (GP-227). |
+| `2c3aa0b` | fix(android): primera pasada del revisor en Progreso y sus listas: la gráfica de Medidas con nombre, el foco de las filas visible y «Tu cuerpo» cuenta un pesaje por día (GP-228, GP-227). |
+| `29743f1` | feat(android): **fechas en el idioma de la app** (`FechaUtils`, una sola regla de días relativos), **gráficas por fecha** (`EjeFechas`) y **tarjetas con capa del 10 % y anillo de foco**; nombres para TalkBack en Medidas y en las papeleras del historial (GP-228, GP-227). |
+| `b09366e` | docs(reglas): un test nuevo solo cuenta si se ha visto fallar. |
+| `eae1bc8` | fix(android): los tests del lote 4 se ven fallar (59 mutaciones, 18 cubiertas de nuevo) y el vacío de «Kilos movidos» tiene su test. |
+| `decae6b` | Fusión del PR #74: **GP-216, lote 4, app** (Progreso en una pantalla y la ficha con el selector). Sin versión ni etiqueta. |
 | `8311d31` | fix(android): una cuenta nueva ve el vacío de «Kilos movidos» y no ocho semanas a cero (lo vio la prueba del release). |
 | `9c551c5` | fix(android): el carrusel de Logros también se toca y se arrastra en sus bordes (cuarta pasada del revisor). |
 | `ac61a6f` | fix(android): el carrusel de Logros de Progreso llega a los bordes de la pantalla sin cortar la última tarjeta (tercera pasada del revisor). |

@@ -110,6 +110,25 @@ public class KilosMovidosTest {
         assertEquals(16, KilosMovidos.pasoEtiquetas(3f, 48f));
         // Justo lo que cabe no salta a la siguiente.
         assertEquals(2, KilosMovidos.pasoEtiquetas(24f, 48f));
+        // Ni cuando la división en float se pasa por una milésima: 1,7 × 3 / 1,7 da 3,0000002.
+        assertEquals(3, KilosMovidos.pasoEtiquetas(1.7f, 1.7f * 3));
+        // Lo que no cabe entero salta a la siguiente: 40 / 24 = 1,67 → cada 2.
+        assertEquals(2, KilosMovidos.pasoEtiquetas(24f, 40f));
+    }
+
+    @Test
+    public void sinAnchoDeCeldaSoloLaEtiquetaDeEstaSemana() {
+        int paso = KilosMovidos.pasoEtiquetas(0f, 48f);
+        assertEquals(Integer.MAX_VALUE, paso);
+        assertTrue(KilosMovidos.llevaEtiqueta(7, 8, paso));
+        assertFalse(KilosMovidos.llevaEtiqueta(0, 8, paso));
+        // Una vista aún sin medir puede dar un ancho negativo: tampoco hay sitio.
+        assertEquals(Integer.MAX_VALUE, KilosMovidos.pasoEtiquetas(-3f, 48f));
+    }
+
+    @Test
+    public void conPasoCeroNingunaEtiqueta() {
+        assertFalse(KilosMovidos.llevaEtiqueta(7, 8, 0));
     }
 
     @Test

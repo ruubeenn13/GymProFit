@@ -1068,6 +1068,8 @@ public class NutricionFragment extends BaseFragment {
             });
         }
         celda.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        // Once paradas del teclado sin nombre (revisor, GP-228): con teclado se usa «+ Vaso».
+        celda.setFocusable(false);
         return celda;
     }
 
@@ -1316,7 +1318,7 @@ public class NutricionFragment extends BaseFragment {
 
     private int fondoPulsableSinBorde() {
         TypedValue tv = new TypedValue();
-        requireContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackgroundBorderless, tv, true);
+        requireContext().getTheme().resolveAttribute(androidx.appcompat.R.attr.selectableItemBackgroundBorderless, tv, true);
         return tv.resourceId;
     }
 
