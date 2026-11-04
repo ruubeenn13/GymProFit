@@ -42,6 +42,9 @@ public class VistaG extends AppCompatImageView {
     @Nullable private ValueAnimator brillo;
     /** Dónde va la franja, de 0 (fuera por la izquierda) a 1 (fuera por la derecha); -1 si no hay. */
     private float posicion = -1f;
+    /** Si se pidió el brillo y no se ha parado; y por dónde iba su ciclo al soltarse de la ventana. */
+    private boolean pedido;
+    private long enCiclo;
 
     public VistaG(@NonNull Context context) { this(context, null); }
 
@@ -53,7 +56,14 @@ public class VistaG extends AppCompatImageView {
 
     /** Empieza el brillo en bucle. Si ya está, no hace nada. */
     public void empezarBrillo() {
-        if (brillo != null) return;
+        pedido = true;
+        arrancarBrillo(0L);
+    }
+
+    // El animador, desde {@code desde} ms del ciclo. Fuera de la ventana no corre: lo
+    // arranca onAttachedToWindow si sigue pedido.
+    private void arrancarBrillo(long desde) {
+        if (brillo != null || !isAttachedToWindow()) return;
         // Un solo animador lineal de un ciclo entero: el cruce ocupa los primeros G_BRILLO
         // con la estándar y el resto del ciclo la franja está fuera.
         brillo = ValueAnimator.ofFloat(0f, 1f);
@@ -67,20 +77,41 @@ public class VistaG extends AppCompatImageView {
             invalidate();
         });
         brillo.start();
+        if (desde > 0) brillo.setCurrentPlayTime(desde);
     }
 
-    /** Para el brillo y deja la G limpia. */
+    /** Para el brillo, lo olvida y deja la G limpia. */
     public void pararBrillo() {
+        pedido = false;
+        cancelarBrillo();
+    }
+
+    private void cancelarBrillo() {
         if (brillo != null) brillo.cancel();
         brillo = null;
         posicion = -1f;
         invalidate();
     }
 
+    /** Si el brillo está cruzando la G ahora mismo (su animador en marcha). */
+    public boolean brillando() {
+        return brillo != null && brillo.isStarted();
+    }
+
+    // Fuera de la ventana el animador se para, pero el brillo sigue pedido: en el traspaso del
+    // splash la pantalla de carga cambia de padre y la G vuelve a la ventana en el mismo paso.
+    // Al volver se retoma donde iba, sin saltar al principio del ciclo.
     @Override
     protected void onDetachedFromWindow() {
-        pararBrillo();
+        enCiclo = brillo != null ? brillo.getCurrentPlayTime() % Movimiento.G_BRILLO_CADA : 0L;
+        cancelarBrillo();
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (pedido) arrancarBrillo(enCiclo);
     }
 
     @Override

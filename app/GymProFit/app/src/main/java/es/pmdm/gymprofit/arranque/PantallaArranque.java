@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
 import android.os.SystemClock;
+import android.os.Trace;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.splashscreen.SplashScreenViewProvider;
 import androidx.core.view.OneShotPreDrawListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -89,8 +91,6 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         void trasArranque();
     }
 
-    // Lo más que se espera a que el sistema diga que su splash se ha ido.
-    private static final long ESPERA_SPLASH_MS = 600;
     // Lo más que la salida hacia Inicio espera a que el hilo principal respire, y qué es un
     // fotograma a tiempo (dos de 60 Hz).
     private static final long ESPERA_FLUIDEZ_MS = 1000;
@@ -101,6 +101,7 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private final PreferencesManager prefs;
     private final Handler reloj = new Handler(Looper.getMainLooper());
     private final Runnable tic = this::alTic;
+    private final Runnable ticTraspaso = this::alTicTraspaso;
     private final long lentoDepuracion;
     private final boolean quieto;
 
@@ -113,6 +114,9 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     private boolean barrasClarasAntes, navegacionClaraAntes, contrasteAntes;
 
     private PlanArranque plan;
+    // Cuándo se quita la copia del splash, y la copia misma mientras sigue debajo.
+    private TraspasoSplash traspaso;
+    @Nullable private SplashScreenViewProvider copia;
     @Nullable private ApiClient.Renovacion renovacion;
     @Nullable private Destino destino;
     private boolean sesionEnVivo;
@@ -162,22 +166,74 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         inflar();
         plan = PlanArranque.alTocar(tocado, quieto, this);
         splash.setKeepOnScreenCondition(() -> plan.mantenerSplash(SystemClock.uptimeMillis()));
+        traspaso = TraspasoSplash.nuevo(
+                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S,
+                new TraspasoSplash.Pantalla() {
+                    @Override public void quitarCopia() { quitarCopiaDelSplash(); }
+                    @Override public void splashFuera() { alQuitarseSplash(); }
+                });
         // El traspaso, a una réplica propia (decisión del propietario tras el revisor). Sin esta
         // escucha, el sistema funde su ventana con la de la app y la G se atenúa en cada
-        // arranque. Con ella, Android pasa el splash a una copia cuyo icono animado (una
-        // superficie del sistema) no siempre se ve: la G desaparecía de 0 a 830 ms. Aquí, en el
-        // mismo paso, la pantalla de carga se pone encima de todo con su G estática (el último
-        // fotograma del AVD, con su mismo viewport) en los límites exactos del icono de la
-        // copia, y la copia se quita antes de pintarse. Desde aquí, todo pasa en la réplica.
+        // arranque. Con ella, Android pasa el splash a una copia; su icono es una superficie
+        // del sistema por encima de la ventana, y al quitar la copia la shell lo suelta en el
+        // acto, sin esperar a ningún fotograma de la app. Aquí la pantalla de carga se pone
+        // encima de la copia con su G estática (el último fotograma del AVD, con su mismo
+        // viewport) en el sitio del icono, y la copia se queda debajo hasta que el fotograma
+        // que pinta la réplica en su sitio se ha entregado y ha pasado otro (TraspasoSplash).
+        // Quitarla antes dejaba a la vista la copia sin icono si ese fotograma tardaba.
         splash.setOnExitAnimationListener(proveedor -> {
-            pasarAEncima(proveedor.getIconView());
-            proveedor.remove();
-            // Al quitarse, la librería vuelve a poner las barras del tema: con la app en claro,
-            // la de navegación salía clara sobre la pantalla oscura.
+            Trace.beginSection("gp:traspaso.encima");
+            copia = proveedor;
+            // En la traza (Perfetto), lo que vive la copia debajo de la réplica.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) Trace.beginAsyncSection("gp:copia", 0);
+            // La librería puede haber puesto ya las barras del tema: con la app en claro, la de
+            // navegación salía clara sobre la pantalla oscura.
             barrasOscuras();
-            alQuitarseSplash();
+            pasarAEncima(proveedor.getIconView());
+            traspaso.encima(SystemClock.uptimeMillis());
+            programarTicTraspaso();
+            Trace.endSection();
         });
         decidir();
+    }
+
+    // La copia del splash fuera, cuando TraspasoSplash lo dice.
+    private void quitarCopiaDelSplash() {
+        if (copia == null) return;
+        Trace.beginSection("gp:traspaso.quitarCopia");
+        copia.remove();
+        copia = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) Trace.endAsyncSection("gp:copia", 0);
+        Trace.endSection();
+        // Al quitarse, la librería vuelve a poner las barras del tema.
+        barrasOscuras();
+    }
+
+    private void programarTicTraspaso() {
+        reloj.removeCallbacks(ticTraspaso);
+        if (terminada || traspaso == null) return;
+        long siguiente = traspaso.siguienteTic();
+        if (siguiente >= 0) reloj.postAtTime(ticTraspaso, siguiente);
+    }
+
+    private void alTicTraspaso() {
+        traspaso.tic(SystemClock.uptimeMillis());
+        programarTicTraspaso();
+    }
+
+    // El fotograma que pinta la réplica en su sitio se ha entregado: se avisa, y del primero
+    // que venga después también.
+    private void alEntregarseReplica() {
+        Trace.beginSection("gp:traspaso.entregado");
+        traspaso.entregado(SystemClock.uptimeMillis());
+        Trace.endSection();
+        android.view.Choreographer.getInstance().postFrameCallback(t -> {
+            if (act.isDestroyed()) return;
+            Trace.beginSection("gp:traspaso.fotograma");
+            traspaso.fotograma(SystemClock.uptimeMillis());
+            programarTicTraspaso();
+            Trace.endSection();
+        });
     }
 
     /**
@@ -211,22 +267,29 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
         } else {
             raiz.bringToFront();
         }
-        if (icono == null || icono.getWidth() <= 0 || icono.getHeight() <= 0) return;
+        boolean conIcono = icono != null && icono.getWidth() > 0 && icono.getHeight() > 0;
         int[] enPantalla = new int[2];
-        icono.getLocationOnScreen(enPantalla);
-        float cx = enPantalla[0] + icono.getWidth() / 2f;
-        float cy = enPantalla[1] + icono.getHeight() / 2f;
-        // La réplica aún no se ha medido en su sitio nuevo: se casa justo antes de pintarla.
+        if (conIcono) icono.getLocationOnScreen(enPantalla);
+        float cx = conIcono ? enPantalla[0] + icono.getWidth() / 2f : 0f;
+        float cy = conIcono ? enPantalla[1] + icono.getHeight() / 2f : 0f;
+        // La réplica aún no se ha medido en su sitio nuevo: se casa justo antes de pintarla, y
+        // se pide aviso cuando se entregue ese mismo fotograma (Android 10 o más; antes, la
+        // copia ya se quita en el acto y no hace falta).
         OneShotPreDrawListener.add(raiz, () -> {
-            int[] g0 = new int[2];
-            g.getLocationOnScreen(g0);
-            // Sin traslación ni escala: la posición del layout.
-            float gx = g0[0] - g.getTranslationX() + g.getWidth() / 2f;
-            float gy = g0[1] - g.getTranslationY() + g.getHeight() / 2f;
-            baseX = cx - gx;
-            baseY = cy - gy;
-            g.setTranslationX(baseX);
-            g.setTranslationY(baseY);
+            if (conIcono) {
+                int[] g0 = new int[2];
+                g.getLocationOnScreen(g0);
+                // Sin traslación ni escala: la posición del layout.
+                float gx = g0[0] - g.getTranslationX() + g.getWidth() / 2f;
+                float gy = g0[1] - g.getTranslationY() + g.getHeight() / 2f;
+                baseX = cx - gx;
+                baseY = cy - gy;
+                g.setTranslationX(baseX);
+                g.setTranslationY(baseY);
+            }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                raiz.getViewTreeObserver().registerFrameCommitCallback(this::alEntregarseReplica);
+            }
         });
     }
 
@@ -359,8 +422,10 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     }
 
     private void montar() {
+        Trace.beginSection("gp:arranque.montarInicio");
         anfitrion.montarInicio();
         montado = true;
+        Trace.endSection();
     }
 
     // Montar Inicio cuando ya se haya dibujado un fotograma sin el splash: el que quita su
@@ -432,10 +497,11 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
     @Override
     public void salir() {
         if (!splashFuera) {
-            // El splash del sistema se va ahora; la salida, cuando avise de que se ha ido. Si no
-            // avisa (no llegó a enseñarlo), se sale igual al rato.
+            // El splash del sistema se va ahora; la salida, cuando su copia se haya quitado. Si
+            // no avisa (no llegó a enseñarlo), se sale igual al rato (TraspasoSplash).
             salidaPendiente = true;
-            reloj.postDelayed(this::alQuitarseSplash, ESPERA_SPLASH_MS);
+            traspaso.esperar(SystemClock.uptimeMillis());
+            programarTicTraspaso();
             return;
         }
         ejecutarSalida();
@@ -464,6 +530,15 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
 
     private void ejecutarSalida() {
         if (terminada || destino == null) return;
+        Trace.beginSection("gp:arranque.salida");
+        try {
+            ejecutarSalidaA(destino);
+        } finally {
+            Trace.endSection();
+        }
+    }
+
+    private void ejecutarSalidaA(@NonNull Destino destino) {
         switch (destino) {
             case SIN_CONEXION:
             case NO_CONECTA:
