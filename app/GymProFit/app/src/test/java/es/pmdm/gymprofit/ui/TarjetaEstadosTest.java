@@ -173,6 +173,17 @@ public class TarjetaEstadosTest {
                         && c.group().contains("android:layout_marginTop=\"@dimen/aire_anillo_fuera\"")
                         && c.group().contains("android:layout_marginEnd=\"@dimen/aire_anillo_fuera\"")
                         && c.group().contains("android:layout_marginBottom=\"@dimen/aire_anillo_fuera\""));
+        // La fila de kcal de Nutrición: con letra 1,3 se apila y el anillo pasaba a 1 dp de «kcal para
+        // hoy», con la esquina tocándola (octava pasada).
+        java.util.regex.Matcher k = java.util.regex.Pattern
+                .compile("<LinearLayout[^>]*android:id=\"@\\+id/filaKcal\"[^>]*>").matcher(nutricion);
+        assertTrue(k.find());
+        assertTrue("la fila de kcal lleva aire y su margen negativo, lado a lado",
+                k.group().contains("android:padding=\"@dimen/aire_anillo\"")
+                        && k.group().contains("android:layout_marginStart=\"@dimen/aire_anillo_fuera\"")
+                        && k.group().contains("android:layout_marginTop=\"@dimen/aire_anillo_fuera\"")
+                        && k.group().contains("android:layout_marginEnd=\"@dimen/aire_anillo_fuera\"")
+                        && k.group().contains("android:layout_marginBottom=\"@dimen/aire_anillo_fuera\""));
         // La fila de la macro: el aire de arriba y abajo también se devuelve, o la tarjeta crecía unos
         // 5 dp (séptima pasada).
         assertTrue(dimens.contains("<dimen name=\"aire_anillo_alto\">4dp</dimen>")

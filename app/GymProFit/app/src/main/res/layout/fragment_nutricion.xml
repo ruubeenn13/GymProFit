@@ -194,6 +194,11 @@
                         android:id="@+id/filaKcal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/aire_anillo_fuera"
+                        android:layout_marginTop="@dimen/aire_anillo_fuera"
+                        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                        android:layout_marginBottom="@dimen/aire_anillo_fuera"
+                        android:padding="@dimen/aire_anillo"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         android:focusable="true">
