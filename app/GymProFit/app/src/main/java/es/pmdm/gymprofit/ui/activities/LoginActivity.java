@@ -93,9 +93,8 @@ public class LoginActivity extends AppCompatActivity {
         if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
         mostrarSesionCerrada(savedInstanceState);
-        // Con el teclado, el título no queda a medias bajo el aviso (revisor, GP-223).
-        es.pmdm.gymprofit.ui.widget.TituloSinCortar.enganchar(findViewById(R.id.scrollEntrar),
-                findViewById(R.id.tvTituloEntrar), findViewById(R.id.tvTextoEntrar));
+        // Con el teclado, ni el título ni el enlace quedan a medias (revisor, GP-223).
+        es.pmdm.gymprofit.ui.widget.PiezasSinCortar.enganchar(findViewById(R.id.scrollEntrar));
         // Desde el arranque, Entrar llega en cascada sobre el fundido (GP-223).
         if (savedInstanceState == null && getIntent().getBooleanExtra(
                 es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false)) {
