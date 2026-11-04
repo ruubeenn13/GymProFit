@@ -171,7 +171,19 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
                 new TraspasoSplash.Pantalla() {
                     @Override public void quitarCopia() { quitarCopiaDelSplash(); }
                     @Override public void splashFuera() { alQuitarseSplash(); }
+                    @Override public void respaldo() { alSaltarRespaldo(); }
                 });
+        // El respaldo del splash cuenta desde que la app entrega su primer fotograma: antes, el
+        // sistema no puede pasárselo (Android 12 o más; por debajo, desde la petición de salida).
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            View decor = act.getWindow().getDecorView();
+            OneShotPreDrawListener.add(decor, () -> decor.getViewTreeObserver().registerFrameCommitCallback(() -> {
+                Trace.beginSection("gp:traspaso.primerFotograma");
+                traspaso.primerFotograma(SystemClock.uptimeMillis());
+                programarTicTraspaso();
+                Trace.endSection();
+            }));
+        }
         // El traspaso, a una réplica propia (decisión del propietario tras el revisor). Sin esta
         // escucha, el sistema funde su ventana con la de la app y la G se atenúa en cada
         // arranque. Con ella, Android pasa el splash a una copia; su icono es una superficie
@@ -195,6 +207,14 @@ public final class PantallaArranque implements PlanArranque.Pantalla {
             Trace.endSection();
         });
         decidir();
+    }
+
+    // El splash no avisó de que se iba y se da por ido: no debería pasar con la escucha en
+    // marcha, así que queda en el log y en la traza (Perfetto) para encontrarlo.
+    private void alSaltarRespaldo() {
+        Trace.beginSection("gp:traspaso.respaldo");
+        android.util.Log.w("Arranque", "El splash no avisó al irse: salta el respaldo");
+        Trace.endSection();
     }
 
     // La copia del splash fuera, cuando TraspasoSplash lo dice.
