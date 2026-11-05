@@ -263,8 +263,10 @@ public class AuthService implements IAuthService {
             throw new CuentaDesactivadaException();
         }
 
-        String nuevoAccessToken = jwtTokenProvider.generateToken(usuario);
+        // Primero se rota, que es lo que puede fallar si el refresh ya no estaba vigente;
+        // el access hereda la versión de sesión del refresh usado (GP-236).
         RefreshToken nuevoRefresh = refreshTokenService.rotar(actual);
+        String nuevoAccessToken = jwtTokenProvider.generateToken(usuario, actual.getVersionSesion());
         usuarioRepository.registrarAcceso(usuario.getId(), LocalDateTime.now());
 
         List<String> roles = usuario.getRoles().stream()
@@ -311,7 +313,7 @@ public class AuthService implements IAuthService {
         usuarioRepository.save(usuario);
 
         // Invalida cualquier sesión abierta: tras cambiar la contraseña hay que volver a iniciar sesión.
-        refreshTokenService.revocarTodosDeUsuario(usuario);
+        refreshTokenService.cerrarTodasLasSesiones(usuario);
 
         logger.info("Contraseña cambiada para usuario: {}", username);
     }

@@ -26,6 +26,16 @@ public interface IRefreshTokenRepository extends JpaRepository<RefreshToken, Int
     @Query("UPDATE RefreshToken r SET r.revocado = true WHERE r.usuario.id = :usuarioId AND r.revocado = false")
     void revocarTodosDeUsuario(@Param("usuarioId") Integer usuarioId);
 
+    /**
+     * Revoca un refresh solo si sigue vigente, en una sola sentencia (GP-236): la
+     * comprobación y la escritura no pueden separarse. Lo usa la rotación.
+     *
+     * @return 1 si lo revocó esta llamada; 0 si ya estaba revocado.
+     */
+    @Modifying
+    @Query("UPDATE RefreshToken r SET r.revocado = true WHERE r.id = :id AND r.revocado = false")
+    int revocarSiVigente(@Param("id") Integer id);
+
     // Borra los refresh tokens ya inútiles (revocados o expirados). Lo llama la tarea
     // programada de limpieza para que la tabla no crezca sin límite. Devuelve el nº borrado.
     @Modifying

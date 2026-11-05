@@ -184,13 +184,15 @@ class AuthServiceTest {
         RefreshToken actual = new RefreshToken();
         actual.setToken("refresh-viejo");
         actual.setUsuario(usuario);
+        // La versión del refresh usado: el access tiene que heredar esta, no la del usuario (GP-236).
+        actual.setVersionSesion(3);
 
         RefreshToken rotado = new RefreshToken();
         rotado.setToken("refresh-nuevo");
         rotado.setUsuario(usuario);
 
         when(refreshTokenService.validar("refresh-viejo")).thenReturn(actual);
-        when(jwtTokenProvider.generateToken(usuario)).thenReturn("nuevo-access");
+        when(jwtTokenProvider.generateToken(usuario, 3)).thenReturn("nuevo-access");
         when(refreshTokenService.rotar(actual)).thenReturn(rotado);
 
         TokenDTO result = authService.refresh("refresh-viejo");

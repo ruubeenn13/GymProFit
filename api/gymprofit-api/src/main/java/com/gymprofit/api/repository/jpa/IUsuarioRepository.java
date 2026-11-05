@@ -52,6 +52,16 @@ public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
     void registrarAcceso(@Param("id") Integer id, @Param("ahora") LocalDateTime ahora);
 
     /**
+     * Sube en uno la versión de sesión del usuario (GP-236), en la base y sin leerla antes,
+     * para que dos cierres a la vez no se pisen. Vacía antes el contexto de persistencia:
+     * lo pendiente del usuario (la contraseña nueva, por ejemplo) se escribe primero.
+     * Solo la llama RefreshTokenService.cerrarTodasLasSesiones.
+     */
+    @Modifying(flushAutomatically = true)
+    @Query("UPDATE Usuario u SET u.versionSesion = u.versionSesion + 1 WHERE u.id = :id")
+    void subirVersionSesion(@Param("id") Integer id);
+
+    /**
      * Cuentas para la web de administración (GP-085): búsqueda por usuario o correo y
      * filtros opcionales; un parámetro null no filtra.
      *

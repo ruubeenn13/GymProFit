@@ -5,6 +5,7 @@ import com.gymprofit.api.enums.NivelExperiencia;
 import com.gymprofit.api.enums.Sexo;
 import com.gymprofit.api.enums.TipoObjetivo;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -96,6 +97,14 @@ public class Usuario implements UserDetails {
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
+
+    // Versión de sesión (GP-236): cada access token y cada refresh la llevan sellada, y uno
+    // con una versión menor ya no vale. Solo la sube IUsuarioRepository.subirVersionSesion,
+    // en la base: ni se inserta (la base pone 0) ni se escribe al guardar la entidad, para
+    // que un save con la entidad leída antes no la devuelva a su valor viejo.
+    @Setter(AccessLevel.NONE)
+    @Column(name = "version_sesion", nullable = false, insertable = false, updatable = false)
+    private int versionSesion;
 
     // Avisos por tipo (GP-112): qué recordatorios del servidor recibe. Los valores de
     // serie son los de la migración, también para las cuentas que ya existían.

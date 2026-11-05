@@ -139,7 +139,7 @@ public class UsuarioService implements IUsuarioService {
         try {
             usuario.setActivo(false);
             usuarioRepository.save(usuario);
-            refreshTokenService.revocarTodosDeUsuario(usuario);
+            refreshTokenService.cerrarTodasLasSesiones(usuario);
 
             logger.info("Usuario con id {} desactivado correctamente", id);
         } catch (Exception e) {
@@ -204,7 +204,7 @@ public class UsuarioService implements IUsuarioService {
 
             usuarioRepository.save(usuario);
             if (!usuario.isEnabled()) {
-                refreshTokenService.revocarTodosDeUsuario(usuario);
+                refreshTokenService.cerrarTodasLasSesiones(usuario);
             }
 
             return usuarioMapper.toDTO(usuario);
@@ -389,7 +389,7 @@ public class UsuarioService implements IUsuarioService {
             // Desactivar cierra también las sesiones abiertas: sin esto, el refresh que
             // guarda el móvil seguía emitiendo tokens a una cuenta dada de baja (GP-083).
             if (!usuario.isEnabled()) {
-                refreshTokenService.revocarTodosDeUsuario(usuario);
+                refreshTokenService.cerrarTodasLasSesiones(usuario);
             }
             logger.info("Admin: usuario id={} activo={}", id, usuario.getActivo());
         } catch (Exception e) {

@@ -184,7 +184,7 @@ public class PasswordResetService implements IPasswordResetService {
         codigoRepository.save(registro);
         codigoRepository.invalidarTodosDeUsuario(usuario.getId());
 
-        refreshTokenService.revocarTodosDeUsuario(usuario);
+        refreshTokenService.cerrarTodasLasSesiones(usuario);
 
         logger.info("Contraseña restablecida por código para el usuario id={}", usuario.getId());
     }
