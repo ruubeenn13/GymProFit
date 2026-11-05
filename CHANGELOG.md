@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `3c87a14` | fix(android): **el tema guardado se fija una vez al abrir el proceso**: Entrar, la sesión en vivo y Registrar sesión ya no se crean dos veces al volver tras matar el proceso con el tema distinto del sistema; cambiarlo en Ajustes recrea una vez (GP-234). |
 | `d18458d` | feat(android,web,admin): **un solo logo, la G dorada del icono** (DEC-057, GP-231). Acerca de, las 9 páginas de la web y el admin dejan la G naranja y el cambio por tema: sobre oscuro la G va sola y sobre claro dentro de su baldosa #0B0C0E, con la proporción del icono en el lanzador. Un solo favicon y el apple-touch-icon es el icono. Salen de los trazados de la G del arranque; la G en PNG sale del APK. |
 | `fa84d41` | fix(api): **cambiar o restablecer la contraseña, y desactivar la cuenta, cierran todas las sesiones, también los access tokens ya emitidos** (versión de sesión por usuario; la rotación del refresh es atómica). Desplegar no cierra la sesión a nadie (GP-236). |
 | `6f4ff63` | build(scripts): el detector de huecos del arranque y la medida hasta `MainActivity`, en `scripts/arranque/` (GP-223). |
