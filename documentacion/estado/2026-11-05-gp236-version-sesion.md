@@ -1,6 +1,6 @@
 # GP-236: cerrar todas las sesiones alcanza también a los access tokens (2026-11-05)
 
-Solo API; la app no se toca. Rama `gp-236-version-sesion`. Sin versión ni etiqueta (DEC-056). Sin DEC todavía: irá en el remate, cuando el propietario confirme el despliegue.
+Solo API; la app no se toca. Rama `gp-236-version-sesion`. Sin versión ni etiqueta (DEC-056). La decisión es DEC-058, registrada en el remate una vez confirmado el despliegue.
 
 ## Commits
 
@@ -28,6 +28,12 @@ Solo API; la app no se toca. Rama `gp-236-version-sesion`. Sin versión ni etiqu
 
 `VersionSesionTest` (6 casos, contexto entero, JWT de verdad, sin `@Transactional`) y `AuthServiceTest` ajustado. Contra `main` sin el arreglo, 4 de los 5 primeros casos en rojo. Después, cada pieza quitada por separado deja al menos un caso en rojo: el corte del filtro, el sello al entrar, la revocación condicional, la comprobación de versión del refresh, la herencia de versión del access renovado y la subida de versión. Suite de la API: 1272 en verde.
 
-## Pendiente de este informe
+## Entrega
 
-PR, CI, despliegue y comprobación en producción: se completan al cerrar el lote.
+- **PR #79**, con el CI en verde, fusionado en `main` en `3200c0b`. Rama borrada.
+- **Despliegue**: `/actuator/info` de producción da `3200c0b` (confirmado también por el propietario).
+- **Comprobación en producción**, con una cuenta de prueba creada para ello:
+  - Dos sesiones de la misma cuenta; la A cambia la contraseña. La B recibe 401 al momento en una ruta protegida, en una pública y en su refresh. La A vuelve a entrar con la contraseña nueva y recibe 200.
+  - Con el release 1.8.0 abierto en Inicio, la contraseña se cambia desde otra sesión: la siguiente petición lleva a la app a Entrar con el aviso de sesión cerrada y el usuario ya escrito.
+  - La cuenta se borra y su login da 401; sus claves se borran después.
+- **Clientes que rotan el refresh**: la app no rota en paralelo (el autenticador y la renovación del arranque comparten cerrojo); el bot tampoco, comprobado por el propietario fuera de este repositorio (DEC-058).

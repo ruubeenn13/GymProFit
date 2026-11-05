@@ -1019,6 +1019,29 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-058 · Cerrar todas las sesiones sube una versión de sesión que llevan todos los tokens
+**Estado:** Aceptada · **Fecha:** 2026-11-05 · **Tarea:** GP-236 (`fa84d41`, PR #79, desplegada en `3200c0b`)
+
+**Contexto.** Cambiar o restablecer la contraseña y desactivar la cuenta «cerraban todas las sesiones» revocando los refresh del usuario. Fallaba por dos sitios:
+
+- **El access token seguía valiendo.** El filtro JWT solo miraba el usuario y la caducidad, así que un access emitido antes del cambio (el de otro dispositivo, o uno robado) seguía entrando hasta que caducaba, hasta 30 minutos, en rutas protegidas y públicas. Las cuentas desactivadas el filtro ya las cortaba (GP-083); lo que quedaba ahí era que un token de antes de la baja volvía a valer si la cuenta se reactivaba antes de que caducara.
+- **El refresh podía cruzarse con el cambio.** `rotar` leía el refresh y lo revocaba sin condición. Si una rotación había leído el refresh antes de la revocación masiva, emitía uno nuevo después de ella, y esa sesión quedaba viva sin límite.
+
+**Decisión.**
+
+- **Una versión de sesión por usuario** (`usuarios.version_sesion`, empieza en 0). Se sella en cada access token (claim `ver`) y en cada refresh (`refresh_tokens.version_sesion`). El filtro JWT responde 401 `error.sesion.cerrada` a un access de una versión menor que la del usuario, también en rutas públicas, igual que con una cuenta desactivada; `/auth/refresh` rechaza un refresh de una versión menor.
+- **Una versión y no la hora del cambio**: `iat` va en segundos y la app vuelve a entrar justo después de cambiar la contraseña, a menudo en el mismo segundo; comparar horas cortaría el token recién emitido o dejaría pasar los del mismo segundo.
+- **Un solo sitio la sube**: `RefreshTokenService.cerrarTodasLasSesiones`, que la incrementa en la base (`IUsuarioRepository.subirVersionSesion`, `UPDATE … + 1`) y revoca los refresh. Lo usan los cinco que antes solo revocaban: cambiar la contraseña, restablecerla, la baja lógica, el `PATCH` con `activo = false` y el interruptor del administrador. El campo de `Usuario` no se escribe desde la entidad (`insertable/updatable = false`, sin setter).
+- **La rotación es atómica**: revoca con una sentencia condicional (`revocarSiVigente`) y, si no revoca nada, no emite nada. Lo que emite hereda la versión del refresh usado, y el access renovado también: aunque un cruce llegara a emitir algo, nacería con la versión vieja y no valdría.
+- **Compatibilidad**: un token sin versión cuenta como 0. Desplegar no cerró la sesión a nadie, y la migración solo añade dos columnas con valor por defecto, así que la versión anterior de la API arranca igual con `ddl-auto=validate`.
+- **Rotar dos veces el mismo refresh a la vez da 401 a la segunda.** Se acepta porque ningún cliente lo hace: en la app, el autenticador de OkHttp y la renovación del arranque comparten cerrojo; en el bot (fuera de este repositorio, comprobado por el propietario), `TokenManager.renovar` es `synchronized` y, si el refresh falla, vuelve a entrar con sus credenciales.
+
+**Consecuencias.** Para la app es el mismo 401 que el de un token caducado: va a Entrar con el aviso de sesión cerrada y el usuario ya escrito. MariaDB (local y CI, con `innodb_snapshot_isolation`) responde a la revocación condicional de un refresh que cambió tras leerlo con el error 1020 en vez de 0 filas, como MySQL en producción; `rotar` contesta 401 en los dos casos, y cualquier test de carrera nuevo tiene que contar con esa diferencia. `VersionSesionTest` (6 casos, contexto entero, sin `@Transactional`) vigila cada pieza.
+
+**Qué la invalidaría.** Un cliente que necesite rotar el mismo refresh en paralelo (entonces, una ventana de gracia para el refresh recién usado), o cerrar sesiones de un solo dispositivo, que la versión por usuario no distingue.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
