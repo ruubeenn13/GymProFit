@@ -137,6 +137,10 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
     private ActivityResultLauncher<Intent> anadirEjercicios;
 
+    // Sin red (GP-223): el aviso de arriba y quien vigila la red mientras la pantalla se ve.
+    private View avisoSinRed;
+    @Nullable private android.net.ConnectivityManager.NetworkCallback vigilaRed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,6 +206,19 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             // El fallo lo pinta el estado de la sesión, en la tarjeta de arriba.
         });
 
+        avisoSinRed = findViewById(R.id.avisoSinRed);
+        ((android.widget.ImageView) avisoSinRed.findViewById(R.id.ivAviso)).setImageResource(R.drawable.ic_ms_cloud_off);
+        ((TextView) avisoSinRed.findViewById(R.id.tvAviso)).setText(R.string.envivo_sin_red);
+        boolean desdeArranque = savedInstanceState == null && getIntent().getBooleanExtra(
+                es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false);
+        pintarRed(hayRed(), desdeArranque);
+        if (desdeArranque) {
+            // Desde el arranque sin red (GP-223): la sesión sube 40 dp mientras aparece.
+            View contenido = ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+            // Solo el desplazamiento: la aparición la hace el fundido de la ventana.
+            Movimiento.subirSinFundido(java.util.Collections.singletonList(contenido), Movimiento.SESION_SUBE_DP);
+        }
+
         // Lo que falte por pedir: los ejercicios de la rutina, si Android cerró la app
         // mientras llegaban, y la última vez de los que aún no la tienen.
         repo.cargarEjercicios();
@@ -213,12 +230,58 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     protected void onStart() {
         super.onStart();
         reloj.post(tic);
+        vigilarRed();
     }
 
     @Override
     protected void onStop() {
         reloj.removeCallbacks(tic);
+        dejarDeVigilarRed();
         super.onStop();
+    }
+
+    // ── Sin red (GP-223) ─────────────────────────────────────
+
+    private boolean hayRed() {
+        android.net.ConnectivityManager cm = getSystemService(android.net.ConnectivityManager.class);
+        if (cm == null) return true;
+        android.net.Network red = cm.getActiveNetwork();
+        android.net.NetworkCapabilities c = red != null ? cm.getNetworkCapabilities(red) : null;
+        return c != null && c.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    // Mientras se ve la pantalla: el aviso sale al perder la red y se quita al volver.
+    private void vigilarRed() {
+        android.net.ConnectivityManager cm = getSystemService(android.net.ConnectivityManager.class);
+        if (cm == null || vigilaRed != null) return;
+        vigilaRed = new android.net.ConnectivityManager.NetworkCallback() {
+            @Override public void onAvailable(@NonNull android.net.Network red) { reloj.post(() -> pintarRed(hayRed(), false)); }
+            @Override public void onLost(@NonNull android.net.Network red) { reloj.post(() -> pintarRed(hayRed(), false)); }
+            @Override public void onCapabilitiesChanged(@NonNull android.net.Network red,
+                                                        @NonNull android.net.NetworkCapabilities c) {
+                reloj.post(() -> pintarRed(hayRed(), false));
+            }
+        };
+        cm.registerDefaultNetworkCallback(vigilaRed);
+        pintarRed(hayRed(), false);
+    }
+
+    private void dejarDeVigilarRed() {
+        android.net.ConnectivityManager cm = getSystemService(android.net.ConnectivityManager.class);
+        if (cm != null && vigilaRed != null) cm.unregisterNetworkCallback(vigilaRed);
+        vigilaRed = null;
+    }
+
+    // El aviso, a la vista solo sin red. Al aparecer baja 12 dp (también al llegar del arranque).
+    private void pintarRed(boolean conRed, boolean alLlegar) {
+        if (avisoSinRed == null) return;
+        boolean visible = avisoSinRed.getVisibility() == View.VISIBLE;
+        if (conRed) {
+            avisoSinRed.setVisibility(View.GONE);
+        } else if (!visible || alLlegar) {
+            avisoSinRed.setVisibility(View.VISIBLE);
+            Movimiento.entrarUna(avisoSinRed, 0, Movimiento.ENTRA, -Movimiento.AVISO_BAJA_DP);
+        }
     }
 
     @Override

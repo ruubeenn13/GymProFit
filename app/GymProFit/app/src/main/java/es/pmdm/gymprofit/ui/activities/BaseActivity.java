@@ -71,8 +71,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         UtilREST.setOnUnauthorizedListener(cuentaDesactivada -> {
             prefsManager.cerrarSesion();
             Intent intent = new Intent(this, LoginActivity.class);
-            // El login explica el cierre si la cuenta está desactivada (GP-083).
+            // El login explica el cierre: la cuenta desactivada (GP-083) o la sesión que ya no
+            // vale, con el correo ya escrito (GP-223).
             intent.putExtra(LoginActivity.EXTRA_CUENTA_DESACTIVADA, cuentaDesactivada);
+            intent.putExtra(LoginActivity.EXTRA_SESION_CERRADA, !cuentaDesactivada);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
@@ -208,6 +210,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                     UtilREST.clearToken();
                     prefsManager.cerrarSesion();
+                    // A propósito: Entrar ya no sugiere esta cuenta (GP-223).
+                    prefsManager.olvidarUltimaEntrada();
                     es.pmdm.gymprofit.utils.AvatarUtils.olvidar();
                     Intent intent = new Intent(this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

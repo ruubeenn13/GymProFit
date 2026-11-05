@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- El fondo de view_aviso_superficie (GP-223): superficie 2 con el radio de tarjeta pequeña. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/gp_surface_2" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+</shape>

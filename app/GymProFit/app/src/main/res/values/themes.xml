@@ -282,6 +282,32 @@
 
     <!-- Tema con barra de título, para las pantallas de licencias de
          play-services-oss-licenses, que dependen de la ActionBar (GP-082) -->
+    <!-- El arranque (GP-223): el splash del sistema, oscuro también con la app en claro, como el
+         icono, para que no haya destello. La G del logo sin fondo de icono; aquí quieta (Android 11 o
+         menos enseña el icono sin animar) y en values-v31 la animada. Lo pone MainActivity, la
+         pantalla de entrada; al instalarlo, pasa al tema de siempre. La duración es G_ENTRADA de
+         Movimiento (GArranqueTest). -->
+    <style name="Theme.GymProFit.Arranque" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_fondo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/g_arranque</item>
+        <item name="windowSplashScreenAnimationDuration">700</item>
+        <item name="postSplashScreenTheme">@style/Theme.GymProFit</item>
+    </style>
+
+    <!-- La pantalla de carga del arranque (GP-223), encima de un contexto con la configuración de
+         noche: estos atributos apuntan a los gp_* y, con esa configuración, salen los del tema
+         oscuro aunque la app esté en claro. Así no hay ni un hex a mano. -->
+    <style name="ThemeOverlay.GymProFit.Arranque" parent="">
+        <item name="android:colorBackground">@color/gp_background</item>
+        <item name="colorSurface">@color/gp_background</item>
+        <item name="colorOnSurface">@color/gp_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/gp_text_secondary</item>
+        <item name="colorPrimary">@color/gp_primary</item>
+        <item name="colorOnPrimary">@color/gp_on_primary</item>
+        <item name="android:textColorPrimary">@color/gp_on_surface</item>
+        <item name="android:textColorSecondary">@color/gp_text_secondary</item>
+    </style>
+
     <style name="Theme.GymProFit.ConBarra" parent="Theme.GymProFit">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La curva de rebote de DEC-039, cubic-bezier(.34,1.56,.64,1): la misma que Movimiento.REBOTE. -->
+<pathInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:controlX1="0.34" android:controlY1="1.56" android:controlX2="0.64" android:controlY2="1" />

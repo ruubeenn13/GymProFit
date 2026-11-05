@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La pantalla que llega desde el arranque (GP-223) aparece sobre el fondo oscuro de la
+     pantalla de carga: un fundido, sin deslizar, para que nunca se vea otro fondo. ENTRA de
+     Movimiento con la enfatizada (GArranqueTest lo comprueba). -->
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromAlpha="0"
+    android:toAlpha="1"
+    android:duration="350"
+    android:interpolator="@interpolator/enfatizada" />

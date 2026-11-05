@@ -2441,4 +2441,14 @@
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
     <string name="abrir_rutina_a11y">Open %1$s</string>
     <string name="abrir_resumen_a11y">See the summary of %1$s</string>
+    <!-- GP-223: el arranque, Entrar cuando la sesión ya no vale y la sesión en vivo sin red. -->
+    <string name="arranque_cargando">Loading GymProFit</string>
+    <string name="arranque_conectando">Connecting…</string>
+    <string name="arranque_conectando_a11y">Connecting</string>
+    <string name="arranque_sin_conexion_titulo">No connection</string>
+    <string name="arranque_sin_conexion_texto">Check your connection and try again.</string>
+    <string name="arranque_no_conecta_titulo">We can’t connect</string>
+    <string name="arranque_no_conecta_texto">The server is taking longer than usual. Try again in a moment.</string>
+    <string name="login_sesion_cerrada">Your session has ended. For your security, sign in again: your data is still here.</string>
+    <string name="envivo_sin_red">You’re offline. Your workout is saved on your phone and uploads when you’re back online.</string>
 </resources>

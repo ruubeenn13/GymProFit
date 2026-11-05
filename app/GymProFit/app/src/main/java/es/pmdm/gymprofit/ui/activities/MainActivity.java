@@ -31,6 +31,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.arranque.PantallaArranque;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.network.ApiCallback;
@@ -58,8 +59,13 @@ import es.pmdm.gymprofit.utils.TiempoRelativo;
 //
 // Guarda lo poco que la hoja necesita saber de las pestañas —qué rutina toca hoy y
 // el último peso— para enseñarlo solo cuando ya está cargado: la hoja no pide nada.
+//
+// Es también la pantalla de entrada (GP-223): abierta por el icono, instala el splash del
+// sistema y pone encima la pantalla de carga (PantallaArranque), que decide adónde ir. Las
+// pestañas solo se montan cuando el destino es Inicio, para que nada pida datos a la API
+// con una sesión que aún se está renovando. Abierta desde dentro de la app, va directa.
 // ============================================================
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements PantallaArranque.Anfitrion {
 
     // Clave para recordar la pestaña activa al recrearse la Activity (cambio de tema/idioma).
     private static final String KEY_TAB = "gpf_tab_activa";
@@ -74,6 +80,10 @@ public class MainActivity extends BaseActivity {
     @Nullable private String ultimoPeso;
 
     private final MedicionApi medicionApi = ApiClient.service(MedicionApi.class);
+
+    // El arranque (GP-223): la pantalla de carga mientras está, y si las pestañas ya están.
+    @Nullable private PantallaArranque arranque;
+    private boolean pestanasMontadas;
 
     // La sesión en curso (GP-012): su barra sobre la navegación y la primera fila del «+».
     private SesionEnCursoRepositorio sesionEnCurso;
@@ -100,6 +110,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Antes de super.onCreate: pasa del tema del splash al de siempre (GP-223).
+        androidx.core.splashscreen.SplashScreen splash =
+                androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -116,29 +129,6 @@ public class MainActivity extends BaseActivity {
 
         aplicarInsets();
 
-        pager.setAdapter(new TabsAdapter(this));
-        pager.setUserInputEnabled(false);
-        // El RecyclerView de dentro del pager toma el foco del teclado y Android le pinta su
-        // resaltado por defecto encima de toda la pestaña (revisor, GP-228): no es un control, así
-        // que sin resaltado; el foco se ve en lo que sí se pulsa (anillo de 2 dp, GP-227).
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            pager.getChildAt(0).setDefaultFocusHighlightEnabled(false);
-        }
-        // Y no es una parada del tabulador: no se desliza a mano (setUserInputEnabled en falso).
-        pager.getChildAt(0).setFocusable(false);
-        // Las cuatro vivas: cambiar de pestaña no re-infla; cada una recarga al volver.
-        pager.setOffscreenPageLimit(NavTabs.TOTAL - 1);
-        // Cada pestaña que se crea fuera de la vista nace ya apartada del foco.
-        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
-                new androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
-                    @Override
-                    public void onFragmentViewCreated(@NonNull androidx.fragment.app.FragmentManager fm,
-                                                      @NonNull Fragment f, @NonNull View v,
-                                                      @Nullable Bundle estado) {
-                        pager.post(() -> ocultarPestanasNoVisibles(pager.getCurrentItem()));
-                    }
-                }, false);
-
         barra.setOyente(new BarraNavegacion.Oyente() {
             @Override public void onPestana(int pestana) {
                 cerrarAcciones();
@@ -154,19 +144,126 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.accionApuntar).setOnClickListener(v -> accionApuntar());
         findViewById(R.id.accionComida).setOnClickListener(v -> accionComida());
         findViewById(R.id.accionPeso).setOnClickListener(v -> accionPeso());
+        getOnBackPressedDispatcher().addCallback(this, atrasAInicio);
+        getOnBackPressedDispatcher().addCallback(this, atrasCierraHoja);
+
+        // BaseActivity ya cerró la sesión de invitado y salió: nada más que hacer. Abierta por
+        // el icono, el arranque decide; si no, las pestañas, como siempre.
+        if (isFinishing()) return;
+        if (PantallaArranque.esArranque(getIntent(), savedInstanceState)) {
+            // Sin la transición de entrada de todas las pantallas (deslizar con alfa de 0,6 a 1):
+            // al abrir desde el icono se sumaba al fundido del splash y la G se apagaba y volvía.
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, 0, 0);
+            }
+            arranque = new PantallaArranque(this, this);
+            arranque.iniciar(splash);
+        } else {
+            montarPestanas(savedInstanceState, true);
+        }
+    }
+
+    /**
+     * Las cuatro pestañas y lo que depende de ellas. Al arrancar se llama cuando el destino
+     * es Inicio, y entonces «¿Te avisamos?» espera a que la pantalla de carga se vaya.
+     */
+    private void montarPestanas(@Nullable Bundle savedInstanceState, boolean conAvisos) {
+        if (pestanasMontadas) return;
+        pestanasMontadas = true;
+        pager.setAdapter(new TabsAdapter(this));
+        pager.setUserInputEnabled(false);
+        // El RecyclerView de dentro del pager toma el foco del teclado y Android le pinta su
+        // resaltado por defecto encima de toda la pestaña (revisor, GP-228): no es un control, así
+        // que sin resaltado; el foco se ve en lo que sí se pulsa (anillo de 2 dp, GP-227).
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            pager.getChildAt(0).setDefaultFocusHighlightEnabled(false);
+        }
+        // Y no es una parada del tabulador: no se desliza a mano (setUserInputEnabled en falso).
+        pager.getChildAt(0).setFocusable(false);
+        // Las cuatro vivas: cambiar de pestaña no re-infla; cada una recarga al volver.
+        // Al arrancar, solo Inicio: inflar las cuatro de golpe tenía el hilo principal 700 ms
+        // sin dibujar justo cuando se va el splash, y la salida no se veía (GP-223, medido en
+        // el emulador). Las otras tres, en cuanto se va la pantalla de carga (trasArranque).
+        if (arranque == null) pager.setOffscreenPageLimit(NavTabs.TOTAL - 1);
+        // Cada pestaña que se crea fuera de la vista nace ya apartada del foco.
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(
+                new androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks() {
+                    @Override
+                    public void onFragmentViewCreated(@NonNull androidx.fragment.app.FragmentManager fm,
+                                                      @NonNull Fragment f, @NonNull View v,
+                                                      @Nullable Bundle estado) {
+                        pager.post(() -> ocultarPestanasNoVisibles(pager.getCurrentItem()));
+                    }
+                }, false);
 
         int tabPorDefecto = getIntent().getIntExtra(NavTabs.EXTRA_TAB, NavTabs.INICIO);
         int tab = savedInstanceState != null
                 ? savedInstanceState.getInt(KEY_TAB, tabPorDefecto) : tabPorDefecto;
         pager.setCurrentItem(tab, false);
         pintarPestana(tab);
-        getOnBackPressedDispatcher().addCallback(this, atrasAInicio);
-        getOnBackPressedDispatcher().addCallback(this, atrasCierraHoja);
 
         if (savedInstanceState == null) aplicarDestino(getIntent());
         cargarUltimoPeso();
-        if (savedInstanceState == null) preguntarAvisos();
+        if (savedInstanceState == null && conAvisos) preguntarAvisos();
         configurarSesionEnCurso();
+    }
+
+    // ── El arranque (GP-223) ──────────────────────────────────────────────────
+
+    @Override
+    public void montarInicio() {
+        montarPestanas(null, false);
+    }
+
+    /**
+     * Lo que entra en cascada al irse la pantalla de carga: la cabecera de Inicio, cada
+     * bloque suyo que ya se vea y la barra de abajo. Inicio no cambia por dentro: se
+     * mueven sus piezas tal como estén, cargadas o cargando.
+     */
+    @NonNull
+    @Override
+    public List<View> piezasDeInicio() {
+        List<View> piezas = new java.util.ArrayList<>();
+        int alto = getResources().getDisplayMetrics().heightPixels;
+        View scroll = findViewById(R.id.scrollInicio);
+        if (scroll instanceof android.view.ViewGroup && ((android.view.ViewGroup) scroll).getChildCount() > 0
+                && ((android.view.ViewGroup) scroll).getChildAt(0) instanceof android.view.ViewGroup) {
+            android.view.ViewGroup columna = (android.view.ViewGroup) ((android.view.ViewGroup) scroll).getChildAt(0);
+            for (int i = 0; i < columna.getChildCount(); i++) {
+                View hijo = columna.getChildAt(i);
+                if (hijo.getVisibility() != View.VISIBLE || hijo.getTop() >= alto) continue;
+                // Tras la cabecera, el contenido es una columna con margen: van sus bloques uno a uno.
+                if (i > 0 && hijo.getId() == View.NO_ID && hijo instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup bloques = (android.view.ViewGroup) hijo;
+                    for (int j = 0; j < bloques.getChildCount(); j++) {
+                        View b = bloques.getChildAt(j);
+                        if (b.getVisibility() == View.VISIBLE && hijo.getTop() + b.getTop() < alto) piezas.add(b);
+                    }
+                } else {
+                    piezas.add(hijo);
+                }
+            }
+        }
+        View barraSesion = findViewById(R.id.barraSesion);
+        if (barraSesion.getVisibility() == View.VISIBLE) piezas.add(barraSesion);
+        piezas.add(barra);
+        return piezas;
+    }
+
+    @Override
+    public void trasArranque() {
+        arranque = null;
+        // Cuando acabe la cascada de Inicio, para no darle tirones. Tocar antes otra pestaña
+        // la monta al momento, como cualquier página de un ViewPager2.
+        pager.postDelayed(() -> pager.setOffscreenPageLimit(NavTabs.TOTAL - 1),
+                Movimiento.CASCADA + 10 * Movimiento.CASCADA_ESCALON);
+        preguntarAvisos();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (arranque != null) arranque.destruir();
+        super.onDestroy();
     }
 
     // ── Sesión en curso (GP-012) ──────────────────────────────────────────────
@@ -279,6 +376,8 @@ public class MainActivity extends BaseActivity {
     protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        // Mientras arranca no hay pestañas todavía: el arranque ya decide adónde ir.
+        if (!pestanasMontadas) return;
         cerrarAcciones();
         if (intent.hasExtra(NavTabs.EXTRA_TAB)) {
             irATab(intent.getIntExtra(NavTabs.EXTRA_TAB, NavTabs.INICIO));

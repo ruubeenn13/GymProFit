@@ -8,6 +8,16 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `6f4ff63` | build(scripts): el detector de huecos del arranque y la medida hasta `MainActivity`, en `scripts/arranque/` (GP-223). |
+| `fd9f8c8` | fix(android): con el teclado abierto, ninguna pieza de Entrar queda a medias en los bordes del scroll (`PiezasSinCortar`; quinta pasada del revisor) (GP-223). |
+| `be97839` | fix(android): **el teclado de Entrar sale también al recrearse** (tema o idioma), el aviso sin red de la sesión en vivo a 8 dp de la cabecera y el título de Entrar sin cortar (cuarta pasada del revisor) (GP-223). |
+| `a9fbd23` | fix(android): el respaldo del splash cuenta desde el primer fotograma de la app y dura 2 s en Android 12 o más: 27 de 27 arranques sin huecos (GP-223). |
+| `9963274` | fix(android): la copia del splash se queda bajo la réplica hasta que se ve, y el brillo de la G sobrevive al traspaso (GP-223). |
+| `d749c36` | fix(android): el traspaso del splash a una réplica propia de la pantalla de carga, con la G casada al icono, y el teclado de Entrar en oscuro (GP-223). |
+| `6de0a9a` | fix(android): segunda pasada del revisor en el arranque: la G ya no desaparece al quitarse el splash, y Entrar y la sesión en vivo sin primer fotograma vacío (GP-223). |
+| `14f6a30` | fix(android): primera pasada del revisor en el arranque; la pantalla de carga ya no cierra la app en Android 7 y TalkBack no se va a la pestaña de debajo (GP-223). |
+| `5f7e4db` | feat(android): **una sola pantalla de arranque con la G de la marca** (GP-223): sin `SplashActivity` ni su espera fija de 1,5 s; `MainActivity` es la lanzadora y decide (Inicio, Entrar con aviso y el usuario de la última vez, «Sin conexión» con «Reintentar», o la sesión en vivo guardada si no hay red). Del toque a `MainActivity`, mediana de 7 en el emulador con el release: 3745 ms antes, 967 ms después. |
+| `8923046` | build(android): los tests que leen ficheros como texto se repiten al cambiar esos ficheros (res, Java, DESIGN.md, PRODUCT-DECISIONS.md) (GP-230). |
 | `f4bc2da` | fix(android): octava pasada del revisor: la fila de kcal de Nutrición deja aire al anillo de foco (a letra 1,3 la tocaba) (GP-227). |
 | `03f3279` | fix(android): séptima pasada del revisor en el grupo B: el margen negativo de la cabecera de «Tu programa» va lado a lado (`layout_margin` negativo se ignora, y un test lo vigila en todos los layouts) y la tarjeta de macros no crece (GP-227). |
 | `811b90a` | fix(android): sexta pasada del revisor en el grupo B: el anillo de foco entero en los carruseles sin relleno de Inicio y en la valoración de Registrar sesión con el teclado abierto; aire para el anillo en las filas de macros y la cabecera de «Tu programa»; «Nothing logged» en inglés (GP-227). |

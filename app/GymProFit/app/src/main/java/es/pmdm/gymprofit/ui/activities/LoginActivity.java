@@ -46,6 +46,15 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_PASSWORD_CAMBIADA = "password_cambiada";
     // El correo con que entrar, desde «Entrar con él» de «Guarda tu plan» (GP-103).
     public static final String EXTRA_USUARIO = "usuario";
+    /**
+     * Extra booleano: la sesión se cerró sola —30 días sin abrir la app, o la contraseña
+     * cambiada en otro sitio— y no a propósito (GP-223). Arriba sale el aviso, el correo o
+     * usuario con que se entró ya escrito y el foco en la contraseña.
+     */
+    public static final String EXTRA_SESION_CERRADA = "sesion_cerrada";
+    private static final String ESTADO_AVISO = "aviso_sesion_cerrada";
+    // El foco está en la contraseña y falta abrir el teclado (onWindowFocusChanged).
+    private boolean tecladoPendiente;
 
     private EditText etUsuario, etPassword;
     private PreferencesManager prefsManager;
@@ -83,6 +92,14 @@ public class LoginActivity extends AppCompatActivity {
         String usuario = getIntent().getStringExtra(EXTRA_USUARIO);
         if (usuario != null && savedInstanceState == null) etUsuario.setText(usuario);
         configurarEventos();
+        mostrarSesionCerrada(savedInstanceState);
+        // Con el teclado, ni el título ni el enlace quedan a medias (revisor, GP-223).
+        es.pmdm.gymprofit.ui.widget.PiezasSinCortar.enganchar(findViewById(R.id.scrollEntrar));
+        // Desde el arranque, Entrar llega en cascada sobre el fundido (GP-223).
+        if (savedInstanceState == null && getIntent().getBooleanExtra(
+                es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false)) {
+            entrarEnCascada();
+        }
 
         // Una sola vez: al recrear la pantalla (cambio de tema) el extra seguiría ahí.
         if (getIntent().getBooleanExtra(EXTRA_CUENTA_DESACTIVADA, false)) {
@@ -100,6 +117,75 @@ public class LoginActivity extends AppCompatActivity {
                     .setPositiveButton(android.R.string.ok, null)
                     .show();
         }
+    }
+
+    /**
+     * La sesión se cerró sola (GP-223): el aviso con el candado, el correo o usuario de la
+     * última vez ya escrito y el foco en la contraseña, con el teclado. El aviso se queda si
+     * la pantalla se recrea (cambio de tema o de idioma); el texto y el foco, una vez.
+     */
+    private void mostrarSesionCerrada(@androidx.annotation.Nullable Bundle estado) {
+        boolean cerrada = estado != null ? estado.getBoolean(ESTADO_AVISO, false)
+                : getIntent().getBooleanExtra(EXTRA_SESION_CERRADA, false);
+        if (!cerrada) return;
+        android.view.View aviso = findViewById(R.id.avisoSesionCerrada);
+        ((android.widget.ImageView) aviso.findViewById(R.id.ivAviso)).setImageResource(R.drawable.ic_ms_lock);
+        ((android.widget.TextView) aviso.findViewById(R.id.tvAviso)).setText(R.string.login_sesion_cerrada);
+        aviso.setVisibility(android.view.View.VISIBLE);
+        String ultima = prefsManager.getUltimaEntrada();
+        if (estado == null && !ultima.isEmpty() && etUsuario.getText().length() == 0) etUsuario.setText(ultima);
+    }
+
+    // El foco y el teclado se deciden aquí, con el texto ya restaurado: en una recreación
+    // (el tema aplicado siendo Entrar la primera pantalla del proceso, o la vuelta tras morir
+    // el proceso) el campo del usuario recupera su texto en onRestoreInstanceState, después
+    // de onCreate, y antes se miraba vacío y no salía el teclado (revisor, GP-223).
+    @Override
+    protected void onPostCreate(@androidx.annotation.Nullable Bundle estado) {
+        super.onPostCreate(estado);
+        if (findViewById(R.id.avisoSesionCerrada).getVisibility() != android.view.View.VISIBLE) return;
+        if (etUsuario.getText().length() > 0 && etPassword.getText().length() == 0) {
+            etPassword.requestFocus();
+            tecladoPendiente = true;
+            // En una recreación en el sitio (cambio de tema o de idioma) la ventana ya tiene
+            // el foco al montarse y onWindowFocusChanged no llega: se pide al montar.
+            getWindow().getDecorView().post(() -> { if (hasWindowFocus()) mostrarTeclado(); });
+        }
+    }
+
+    // El teclado se pide cuando la ventana ya tiene el foco: antes, Android lo ignora, y en
+    // oscuro (la pantalla se recrea al aplicar el tema) no salía nunca (revisor, GP-223).
+    @Override
+    public void onWindowFocusChanged(boolean conFoco) {
+        super.onWindowFocusChanged(conFoco);
+        if (conFoco) mostrarTeclado();
+    }
+
+    // Una sola vez: el foco a la contraseña y el teclado, si quedaban pendientes.
+    private void mostrarTeclado() {
+        if (!tecladoPendiente) return;
+        tecladoPendiente = false;
+        etPassword.requestFocus();
+        androidx.core.view.WindowCompat.getInsetsController(getWindow(), etPassword)
+                .show(androidx.core.view.WindowInsetsCompat.Type.ime());
+    }
+
+    @Override
+    protected void onSaveInstanceState(@androidx.annotation.NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putBoolean(ESTADO_AVISO, findViewById(R.id.avisoSesionCerrada).getVisibility() == android.view.View.VISIBLE);
+    }
+
+    // Las piezas de Entrar suben 16 dp una tras otra (GP-223, la salida del arranque).
+    private void entrarEnCascada() {
+        java.util.List<android.view.View> piezas = new java.util.ArrayList<>();
+        for (int id : new int[]{R.id.avisoSesionCerrada, R.id.tvTituloEntrar, R.id.tvTextoEntrar,
+                R.id.bloqueUsuario, R.id.bloqueClave, R.id.tvOlvidastePassword, R.id.btnEntrar}) {
+            android.view.View v = findViewById(id);
+            if (v != null && v.getVisibility() == android.view.View.VISIBLE) piezas.add(v);
+        }
+        // Solo el desplazamiento: la aparición la hace el fundido de la ventana.
+        es.pmdm.gymprofit.utils.Movimiento.subirSinFundido(piezas, 16);
     }
 
     // Referencia los campos de texto del layout.
@@ -156,6 +242,8 @@ public class LoginActivity extends AppCompatActivity {
                 UtilREST.setToken(token);
                 UtilREST.setRefreshToken(refresh);
                 prefsManager.saveSesion(token, refresh);
+                // Lo que se escribió, correo o usuario: si la sesión caduca, Entrar sale con ello (GP-223).
+                prefsManager.saveUltimaEntrada(username);
                 prefsManager.saveUsername(user);
                 prefsManager.saveRol(rol);
 

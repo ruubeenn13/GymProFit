@@ -169,4 +169,17 @@
     <dimen name="opcion_borde">2dp</dimen>
     <!-- Interlineado del título de una fila (GP-216): 22 sp para 16 sp de texto. -->
     <dimen name="linea_titulo_fila">22sp</dimen>
+
+    <!-- ── El arranque (GP-223) ─────────────────────────────────────────── -->
+    <!-- El icono sin fondo del splash de Android 12: la G (160 dp) va dentro, en el círculo de 192. -->
+    <dimen name="arranque_icono">288dp</dimen>
+    <dimen name="arranque_g">160dp</dimen>
+    <dimen name="arranque_g_error">72dp</dimen>
+    <!-- «Conectando…» y el texto de los errores: no más anchos que esto, a cualquier letra. -->
+    <dimen name="arranque_texto_max">300dp</dimen>
+    <dimen name="arranque_boton_alto">52dp</dimen>
+    <dimen name="arranque_boton_abajo">32dp</dimen>
+    <!-- «Conectando…», Barlow a 15 sp; el título de un error, Barlow Condensed a 30 sp. -->
+    <dimen name="text_arranque_estado">15sp</dimen>
+    <dimen name="text_arranque_titulo">30sp</dimen>
 </resources>

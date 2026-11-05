@@ -35,6 +35,19 @@
             android:textColor="?attr/colorOnPrimaryContainer" />
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <!-- Sin red (GP-223): el entreno se guarda en el móvil. Sale mientras no hay red,
+         a 8 dp de la cabecera y de lo que sigue. -->
+    <include
+        android:id="@+id/avisoSinRed"
+        layout="@layout/view_aviso_superficie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_16"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:layout_marginEnd="@dimen/espacio_16"
+        android:layout_marginBottom="@dimen/espacio_8"
+        android:visibility="gone" />
+
     <!-- Tiempo, series y ejercicios. TalkBack lo lee de una vez. -->
     <LinearLayout
         android:id="@+id/filaResumen"

@@ -19,7 +19,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!-- La sesión se cerró sola (GP-223): caducó o se cambió la contraseña en otro sitio.
+         Fuera del scroll: con el foco en la contraseña el teclado sube el contenido, y el
+         aviso se quedaba cortado arriba. -->
+    <include
+        android:id="@+id/avisoSesionCerrada"
+        layout="@layout/view_aviso_superficie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_16"
+        android:layout_marginEnd="@dimen/espacio_16"
+        android:layout_marginBottom="@dimen/espacio_8"
+        android:visibility="gone" />
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollEntrar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

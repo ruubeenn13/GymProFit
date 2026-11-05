@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La pantalla de carga se queda quieta debajo mientras llega la siguiente (GP-223): sin
+     animación de salida desaparecería al empezar y se vería lo de detrás. Mismo tiempo que
+     arranque_entra. -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromYDelta="0"
+    android:toYDelta="0"
+    android:duration="350" />

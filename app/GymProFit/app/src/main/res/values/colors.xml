@@ -181,6 +181,12 @@
     <color name="gp_escaner_velo">#C70B0C0E</color>
 
     <color name="ic_launcher_fondo">#0B0C0E</color>
+    <!-- La G del arranque (GP-223): los colores del logo, medidos en drawable-night/logo.png (la mediana
+         del interior de cada pieza). Son de la marca, no del tema: no cambian con el claro. -->
+    <color name="logo_g_cuerpo">#EBBB3D</color>
+    <color name="logo_g_trazo">#FF6100</color>
+    <!-- El brillo que cruza la G mientras se espera (GP-223): luz blanca al 40 %. -->
+    <color name="gp_arranque_brillo">#66FFFFFF</color>
     <!-- La acción de un aviso invertido («Deshacer», lote 1.6.2): el naranja del otro tema, sobre el fondo oscuro del aviso en claro. -->
     <color name="gp_accion_inversa">#FF8A3D</color>
 

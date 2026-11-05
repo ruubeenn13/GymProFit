@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12 o más: el splash del sistema anima su icono, y la G entra (GP-223). El resto,
+     como en values/themes.xml. -->
+<resources>
+    <style name="Theme.GymProFit.Arranque" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_launcher_fondo</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/g_arranque_animada</item>
+        <item name="windowSplashScreenAnimationDuration">700</item>
+        <item name="postSplashScreenTheme">@style/Theme.GymProFit</item>
+    </style>
+</resources>

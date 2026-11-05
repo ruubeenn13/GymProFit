@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_aviso_superficie — un aviso arriba de la pantalla, en superficie 2, con su icono
+  (GP-223): «Tu sesión se ha cerrado» en Entrar (candado) y «Sin conexión» en la sesión
+  en vivo (cloud_off). No se pulsa: solo informa. El icono es decorativo; TalkBack lee el
+  texto, y como región viva lo anuncia cuando aparece.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:accessibilityLiveRegion="polite"
+    android:background="@drawable/bg_aviso_superficie"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/zona_tactil"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/espacio_16"
+    android:paddingTop="@dimen/espacio_12"
+    android:paddingEnd="@dimen/espacio_16"
+    android:paddingBottom="@dimen/espacio_12">
+
+    <ImageView
+        android:id="@+id/ivAviso"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
+    <TextView
+        android:id="@+id/tvAviso"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.GymProFit.Texto"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_caption" />
+</LinearLayout>

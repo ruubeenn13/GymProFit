@@ -192,6 +192,13 @@ public class GymProFitApp extends Application {
                 } else {
                     AnimUtils.aplicarDeslizamiento(a);
                 }
+                // Desde el arranque (GP-223), la llegada es un fundido sobre la pantalla de
+                // carga; la vuelta atrás, la de siempre. En Android 13 o menos lo pide quien abre.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                        && a.getIntent() != null
+                        && a.getIntent().getBooleanExtra(es.pmdm.gymprofit.arranque.PantallaArranque.EXTRA_DESDE_ARRANQUE, false)) {
+                    AnimUtils.fundidoDesdeArranque(a);
+                }
                 // Material motion: el lado de llegada de un contenedor que crece o de un eje X.
                 es.pmdm.gymprofit.utils.Transiciones.prepararDestino(a);
                 // El anillo de foco (GP-227), igual en todas las pantallas.

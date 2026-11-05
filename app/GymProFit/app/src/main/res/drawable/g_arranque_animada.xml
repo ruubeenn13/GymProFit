@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  g_arranque_animada — la G que entra en el splash del sistema, Android 12 o más (GP-223).
+  Parte de g_arranque_inicial (invisible) y acaba en el último fotograma, que es
+  g_arranque: el cuerpo gira, crece y aparece; el trazo llega desde arriba a la derecha.
+  En Android 11 o menos el splash enseña el icono quieto, y el primer fotograma de esta
+  sería invisible: allí va g_arranque (values/themes.xml frente a values-v31).
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/g_arranque_inicial">
+    <target android:name="giro_cuerpo" android:animation="@animator/g_cuerpo_gira" />
+    <target android:name="cuerpo" android:animation="@animator/g_cuerpo_aparece" />
+    <target android:name="vuelo_trazo" android:animation="@animator/g_trazo_llega" />
+    <target android:name="trazo" android:animation="@animator/g_trazo_aparece" />
+</animated-vector>

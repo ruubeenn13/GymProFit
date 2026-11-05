@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La G entra (GP-223): el cuerpo gira de −90° a 0° y crece de 0,72 a 1. G_CUERPO, estándar.
+     GArranqueTest comprueba que el tiempo es el de Movimiento. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+    <objectAnimator
+        android:propertyName="rotation"
+        android:valueFrom="-90"
+        android:valueTo="0"
+        android:valueType="floatType"
+        android:duration="450"
+        android:interpolator="@interpolator/estandar" />
+    <objectAnimator
+        android:propertyName="scaleX"
+        android:valueFrom="0.72"
+        android:valueTo="1"
+        android:valueType="floatType"
+        android:duration="450"
+        android:interpolator="@interpolator/estandar" />
+    <objectAnimator
+        android:propertyName="scaleY"
+        android:valueFrom="0.72"
+        android:valueTo="1"
+        android:valueType="floatType"
+        android:duration="450"
+        android:interpolator="@interpolator/estandar" />
+</set>

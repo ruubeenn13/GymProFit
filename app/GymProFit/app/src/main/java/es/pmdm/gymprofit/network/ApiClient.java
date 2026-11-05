@@ -191,6 +191,107 @@ public class ApiClient {
         }
     }
 
+    // ── La renovación del arranque (GP-223) ─────────────────────────────────
+
+    /** Lo que responde la renovación del arranque, ya en el hilo principal. */
+    public interface AlRenovar {
+        /**
+         * @param codigo el código HTTP de /auth/refresh, o -1 si no hubo respuesta.
+         * @param cuerpo el cuerpo tal cual (para ver si la cuenta está desactivada), o null.
+         */
+        void listo(int codigo, @androidx.annotation.Nullable String cuerpo);
+    }
+
+    /**
+     * Una renovación en marcha. Cancelarla es dejar de esperarla: su respuesta ya no llega a
+     * la pantalla, y si aún no se había enviado, ya no se envía.
+     *
+     * <p>Una petición ya enviada no se corta a propósito. El servidor puede haber rotado el
+     * refresh aunque la respuesta tarde: si se cortara, el refresh nuevo se perdería, el
+     * guardado seguiría siendo el viejo (ya revocado) y «Reintentar» daría un 401 de una
+     * sesión que no había caducado. Dejándola acabar, los tokens nuevos se guardan igual.
+     */
+    public static final class Renovacion {
+        private volatile boolean cancelada;
+
+        /** Deja de esperar (a los 15 s del arranque, o al cerrar la pantalla). */
+        public void cancelar() {
+            cancelada = true;
+        }
+    }
+
+    /**
+     * Renueva la sesión al arrancar la app (GP-223), en un hilo aparte.
+     *
+     * <p>Va por el mismo cerrojo que el TokenAuthenticator: el refresh es de un solo uso y
+     * dos renovaciones a la vez con el mismo gastarían una la de la otra, y la segunda daría
+     * 401 sin que la sesión hubiera caducado. Si mientras se esperaba el cerrojo otro hilo ya
+     * renovó, se da por buena sin volver a pedir.
+     *
+     * @param retardoDepuracionMs solo en depuración: espera antes de pedir, para ver
+     *                            «Conectando…» y el error sin tocar el servidor. 0 si no.
+     * @param alAcabar            se llama una vez en el hilo principal, salvo si se canceló.
+     */
+    @androidx.annotation.NonNull
+    public static Renovacion renovarAlArrancar(long retardoDepuracionMs, @androidx.annotation.NonNull AlRenovar alAcabar) {
+        Renovacion r = new Renovacion();
+        android.os.Handler principal = new android.os.Handler(android.os.Looper.getMainLooper());
+        String refreshAntes = UtilREST.getRefreshToken();
+        Thread hilo = new Thread(() -> {
+            int codigo = -1;
+            String cuerpo = null;
+            try {
+                if (BuildConfig.DEBUG && retardoDepuracionMs > 0) Thread.sleep(retardoDepuracionMs);
+                synchronized (TokenAuthenticator.class) {
+                    String refresh = UtilREST.getRefreshToken();
+                    if (refresh != null && !refresh.equals(refreshAntes)) {
+                        codigo = 200;
+                    } else if (refresh != null && !refresh.isEmpty() && !r.cancelada) {
+                        JSONObject peticion = new JSONObject();
+                        peticion.put("refreshToken", refresh);
+                        OkHttpClient plano = new OkHttpClient.Builder()
+                                .connectTimeout(15, TimeUnit.SECONDS)
+                                .readTimeout(15, TimeUnit.SECONDS)
+                                .callTimeout(20, TimeUnit.SECONDS)
+                                .build();
+                        okhttp3.Call llamada = plano.newCall(new Request.Builder()
+                                .url(BuildConfig.BASE_URL + "auth/refresh")
+                                .header("Accept", "application/json")
+                                .post(RequestBody.create(peticion.toString(), JSON))
+                                .build());
+                        try (Response resp = llamada.execute()) {
+                            codigo = resp.code();
+                            cuerpo = resp.body() != null ? resp.body().string() : null;
+                            if (resp.isSuccessful() && cuerpo != null) {
+                                JSONObject json = new JSONObject(cuerpo);
+                                String token = json.optString("token", "");
+                                String nuevoRefresh = json.optString("refreshToken", "");
+                                if (token.isEmpty() || nuevoRefresh.isEmpty()) {
+                                    codigo = -1;
+                                } else {
+                                    UtilREST.onTokensRefreshed(token, nuevoRefresh);
+                                    Log.d("GymProFit", "Sesión renovada al arrancar");
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Red que no llega, tiempo agotado o respuesta ilegible: sin respuesta
+                // útil. Lo decide DecisionArranque (código -1), no aquí.
+                Log.d("GymProFit", "Renovación al arrancar sin respuesta: " + e.getClass().getSimpleName());
+                codigo = -1;
+            }
+            int c = codigo;
+            String b = cuerpo;
+            principal.post(() -> {
+                if (!r.cancelada) alAcabar.listo(c, b);
+            });
+        }, "renovar-arranque");
+        hilo.start();
+        return r;
+    }
+
     // ¿La URL es de autenticación (/auth/...)? Sobre ellas no se inyecta token ni se refresca.
     private static boolean esEndpointAuth(Request request) {
         return request.url().encodedPath().contains("/auth/");
