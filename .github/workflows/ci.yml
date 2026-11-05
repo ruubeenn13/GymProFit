@@ -192,7 +192,7 @@ jobs:
 
       # Caché de Gradle (dependencias y wrapper)
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: google-services.json de mentira
         run: |
