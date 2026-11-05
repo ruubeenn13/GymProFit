@@ -159,6 +159,13 @@ a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness:
 }
 .firma img { position: relative; width: 36px; height: 36px; display: block; }
 
+/* El logo único (DEC-057): la G dorada con el trazo naranja, la del icono de la app. No se
+   recolorea. Sobre oscuro va sola; sobre claro, dentro de su baldosa, como el icono. El
+   #0B0C0E es de la marca, no de la paleta: no sale de un token del tema. */
+@media (prefers-color-scheme: light) {
+  .logo { background: #0B0C0E; border-radius: 18%; }
+}
+
 /* La luz detrás del logo: un degradado radial, sin imagen, quieto. Desborda
    hacia el titular a propósito: es la única luz de la página, alta y a la izquierda. */
 .luz {

@@ -16,7 +16,7 @@ js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licenc
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
-img/      logos claro y oscuro (256 y 512, webp) + favicons y apple-touch-icon
+img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057) + las texturas
 img/capturas/  las cuatro capturas de la portada, en webp a 360 y 720 de ancho
 ```
 
@@ -59,6 +59,12 @@ Un navegador que ya había visitado `/beta` mezcló la página nueva con el
   todo `/js/*`, un año e `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
   quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
   `immutable`.
+- **El logo y el favicon tienen nombres sin tema ni tamaño**: `img/logo.svg`,
+  `img/favicon.png` e `img/apple-touch-icon.png`. Como se revalidan, un logo
+  regenerado con el mismo nombre llega solo; el nombre cambia solo si cambia lo
+  que el fichero es (no si se regenera), porque los navegadores guardan el favicon
+  aparte y no siempre lo vuelven a pedir con el mismo `href`. Así se hizo en GP-231,
+  cuando los dos favicons por tema pasaron a uno solo.
 - **Ninguna regla `/*`**: si dos reglas ponen `Cache-Control` a la misma ruta,
   Pages une sus valores con una coma. Por eso cada página tiene su regla. Una
   página nueva necesita la suya, o se queda con la caché por defecto de Pages.

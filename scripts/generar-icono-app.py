@@ -1,4 +1,4 @@
-"""Genera el icono de la app desde logo.png (la versión elegida usa drawable-night/logo.png) (GP-081).
+"""Genera el icono de la app desde logo.png (la versión elegida usa documentacion/marca/logo.png, la G dorada) (GP-081).
 
 Salen de la misma fuente, en las cinco densidades:
   · mipmap-*/ic_launcher_foreground.png — el logo dentro de la zona segura del
@@ -14,7 +14,7 @@ El logo se coloca por su círculo MÍNIMO, no por su caja: la G es casi redonda 
 por la caja quedaría más pequeño de lo necesario.
 
 uso (desde la raíz del repo, con Pillow instalado):
-  python scripts/generar-icono-app.py app/GymProFit/app/src/main/res       app/GymProFit/app/src/main/res/drawable-night/logo.png "#0B0C0E" icono-play.png
+  python scripts/generar-icono-app.py app/GymProFit/app/src/main/res       documentacion/marca/logo.png "#0B0C0E" icono-play.png
 
 Si cambia el logo, se vuelve a ejecutar; los PNG no se retocan a mano.
 """

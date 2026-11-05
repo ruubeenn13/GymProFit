@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Icono adaptativo de GymProFit (GP-081). Todo sale de la misma fuente, drawable-night/logo.png:
+  Icono adaptativo de GymProFit (GP-081). Todo sale de la misma fuente, documentacion/marca/logo.png:
     · primer plano: el logo dentro de la zona segura de 66 dp sobre 108, así que
       ninguna máscara (círculo, squircle, cuadrado redondeado) lo recorta;
     · fondo: color plano, ic_launcher_fondo;

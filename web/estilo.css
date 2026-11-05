@@ -158,6 +158,13 @@ header.sitio {
 }
 .marca img { width: 30px; height: 30px; display: block; }
 
+/* El logo único (DEC-057): la G dorada con el trazo naranja, la del icono de la app. No se
+   recolorea. Sobre oscuro va sola; sobre claro, dentro de su baldosa, como el icono. El
+   #0B0C0E es de la marca, no de la paleta: no sale de un token del tema. */
+@media (prefers-color-scheme: light) {
+  .logo { background: #0B0C0E; border-radius: 18%; }
+}
+
 main { padding: 48px 0 72px; }
 
 footer.sitio {
@@ -252,9 +259,7 @@ th {
 
 /* ── Portada ─────────────────────────────────────────────────────── */
 
-/* Rejilla del hero: texto a la izquierda, logotipo a la derecha. El logo va
-   a tamaño completo y no como marca de agua: es lo único "de marca" que hay
-   en toda la página, así que esconderlo al 8% de opacidad no aportaría nada. */
+/* Rejilla del hero: texto a la izquierda y, a la derecha, lo que acompañe. */
 .hero {
   padding: 64px 0 28px;
   display: grid;
@@ -262,17 +267,12 @@ th {
   gap: 40px;
   align-items: center;
 }
-.hero-logo img {
-  width: 190px; height: 190px; display: block;
-}
 
 @media (max-width: 760px) {
   .hero {
     grid-template-columns: 1fr;
     gap: 22px;
   }
-  .hero-logo { order: -1; }
-  .hero-logo img { width: 104px; height: 104px; }
 }
 
 .pie-marca {
@@ -281,7 +281,7 @@ th {
   gap: 9px;
   margin: 0;
 }
-.pie-marca img { width: 20px; height: 20px; opacity: 0.85; }
+.pie-marca img { width: 20px; height: 20px; }
 
 .estado {
   display: inline-block;

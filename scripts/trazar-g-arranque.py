@@ -1,8 +1,12 @@
-"""Traza la G del arranque desde drawable-night/logo.png y mide su fidelidad (GP-223).
+"""Traza la G del arranque desde documentacion/marca/logo.png, mide su fidelidad (GP-223)
+y saca de esos trazados el logo único de la app, la web y el admin (GP-231).
 
-Dos órdenes, desde la raíz del repo:
+documentacion/marca/logo.png es la fuente de la marca: la G dorada con el trazo naranja.
+Vive fuera de res/ a propósito, porque el APK no la usa: usa sus trazados.
 
-  python scripts/trazar-g-arranque.py trazar  app/GymProFit/app/src/main/res/drawable-night/logo.png app/GymProFit/app/src/main/res
+Tres órdenes, desde la raíz del repo:
+
+  python scripts/trazar-g-arranque.py trazar  documentacion/marca/logo.png app/GymProFit/app/src/main/res
       Separa el cuerpo dorado y el trazo naranja por color y componente conexa, suaviza
       el borde (el PNG tiene ruido de compresión), sube cada máscara a x4, la traza con
       potrace y escribe drawable/g_arranque.xml (último fotograma) y
@@ -10,10 +14,22 @@ Dos órdenes, desde la raíz del repo:
       mediana del interior de cada pieza: van a values/colors.xml (logo_g_cuerpo y
       logo_g_trazo) a mano, si cambian.
 
-  python scripts/trazar-g-arranque.py comparar app/GymProFit/app/src/main/res/drawable-night/logo.png app/GymProFit/app/src/main/res/drawable/g_arranque.xml [diferencias.png]
+  python scripts/trazar-g-arranque.py comparar documentacion/marca/logo.png app/GymProFit/app/src/main/res/drawable/g_arranque.xml [diferencias.png]
       Rasteriza los dos trazados del vector a 512 px (supermuestreo x8, par-impar), los
       compone sobre el fondo del splash (#0B0C0E) igual que el PNG y cuenta los píxeles
       cuya diferencia máxima por canal pasa de cada umbral.
+
+  python scripts/trazar-g-arranque.py logo documentacion/marca/logo.png app/GymProFit/app/src/main/res web/img admin/public
+      El logo único (DEC-057). No vuelve a trazar: copia los dos trazados de
+      drawable/g_arranque.xml y los coloca en una baldosa de 100 x 100 con la G en la
+      proporción del icono en el lanzador (el círculo mínimo de la G, calculado sobre el
+      PNG como en generar-icono-app.py, mide 64/72 del lado). Escribe:
+        · res/drawable/logo_marca.xml — Acerca de: la baldosa en logo_baldosa (#0B0C0E en
+          claro, transparente en oscuro) y la G encima;
+        · web/img/logo.svg — la G sola, en la misma caja; en claro, la baldosa la pone el CSS;
+        · web/img/favicon.png y admin/public/favicon.png — la baldosa con la G, 64 px;
+        · web/img/apple-touch-icon.png — el icono a sangre, opaco, 180 px.
+      Necesita Pillow y numpy.
 
 Necesita Pillow, numpy y scikit-image; «trazar», además, potracer (port de potrace en
 Python). Se instalaron en un entorno virtual temporal, fuera del repo:
@@ -116,7 +132,7 @@ PIVOTE_TRAZO = (0.749 * LOGO, 0.20 * LOGO)
 CABECERA = '''<?xml version="1.0" encoding="utf-8"?>
 <!--
   {nombre} — la G del logo para el arranque (GP-223). {que}
-  Trazada con potrace (potracer) de drawable-night/logo.png: dos trazados, el cuerpo
+  Trazada con potrace (potracer) de documentacion/marca/logo.png: dos trazados, el cuerpo
   dorado y el trazo naranja, con los colores del PNG (logo_g_cuerpo y logo_g_trazo).
   Fidelidad: documentacion/estado/2026-11-04-gp-223-arranque.md. Si cambia el logo,
   se vuelve a trazar con el script del informe; no se retoca a mano.
@@ -276,9 +292,142 @@ def comparar(ruta_png, ruta_xml, ruta_diff=None):
 
 
 
+# ── El logo único (GP-231, DEC-057) ─────────────────────────────────────────
+LADO = 100.0                # la baldosa, en unidades del vector y del SVG
+PROPORCION = 64.0 / 72.0    # diámetro del círculo mínimo de la G / lado: el icono en el lanzador
+                            # (radio de 32 dp en los 72 dp visibles de la capa de 108)
+ESQUINA = 0.18              # radio de las esquinas / lado, el del icono heredado
+BALDOSA = '#0B0C0E'         # ic_launcher_fondo
+BALDOSA_PATH = ('M18,0H82A18,18 0,0 1,100,18V82A18,18 0,0 1,82,100H18'
+                'A18,18 0,0 1,0,82V18A18,18 0,0 1,18,0Z')
+
+
+def circulo_minimo(ruta_png):
+    """Centro y radio del círculo mínimo de la G, igual que generar-icono-app.py."""
+    import math
+    logo = Image.open(ruta_png).convert('RGBA')
+    alfa = logo.getchannel('A')
+    pts = [(x, y) for y in range(0, logo.height, 2) for x in range(0, logo.width, 2) if alfa.getpixel((x, y)) > 16]
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    radio = lambda a, b: max(math.hypot(x - a, y - b) for x, y in pts)
+    r, paso = radio(cx, cy), 16.0
+    while paso > 0.25:
+        mejor = None
+        for dx, dy in ((paso, 0), (-paso, 0), (0, paso), (0, -paso)):
+            rr = radio(cx + dx, cy + dy)
+            if rr < r:
+                r, mejor = rr, (cx + dx, cy + dy)
+        if mejor:
+            cx, cy = mejor
+        else:
+            paso /= 2
+    return cx, cy, r
+
+
+def piezas(ruta_xml):
+    """Los dos trazados de g_arranque.xml y sus colores, en el orden en que se pintan."""
+    import os
+    colores = os.path.join(os.path.dirname(os.path.dirname(ruta_xml)), 'values', 'colors.xml')
+    xml = open(ruta_xml, encoding='utf-8').read()
+    salida = []
+    for nombre in ('cuerpo', 'trazo'):
+        bloque = re.search(r'<path[^>]*android:name="%s"[^>]*>' % nombre, xml, re.S).group(0)
+        d = re.search(r'android:pathData="([^"]+)"', bloque).group(1)
+        ref = re.search(r'android:fillColor="([^"]+)"', bloque).group(1)
+        hexa = '#%02X%02X%02X' % tuple(int(v) for v in color(ref, colores))
+        salida.append((nombre, ref, hexa, d))
+    return salida
+
+
+VECTOR_LOGO = '''<?xml version="1.0" encoding="utf-8"?>
+<!--
+  logo_marca — el logo único (GP-231, DEC-057): la G dorada con el trazo naranja, la del icono.
+  Sobre claro va dentro de su baldosa #0B0C0E; sobre oscuro logo_baldosa es transparente
+  y la G va sola, en el mismo sitio. No se recolorea ni tiene variante por tema.
+
+  Lo escribe scripts/trazar-g-arranque.py logo: los trazados son los de g_arranque.xml,
+  sin el margen del splash, y el círculo mínimo de la G mide 64/72 del lado, como en el
+  icono del lanzador. No se retoca a mano.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:name="baldosa"
+        android:fillColor="@color/logo_baldosa"
+        android:pathData="{baldosa}" />
+    <group
+        android:name="g"
+        android:translateX="{tx}"
+        android:translateY="{ty}"
+        android:scaleX="{k}"
+        android:scaleY="{k}">
+{paths}
+    </group>
+</vector>
+'''
+
+PATH_LOGO = '''        <path
+            android:name="{nombre}"
+            android:fillColor="{ref}"
+            android:pathData="{d}" />'''
+
+
+def rasterizar(trozos, lado_px, k, tx, ty, esquinas):
+    """La baldosa con la G a lado_px, supermuestreada; con esquinas=None, a sangre y opaca."""
+    n = lado_px * SS
+    s = n / LADO
+    fondo = np.array([int(BALDOSA[i:i + 2], 16) for i in (1, 3, 5)], dtype=float)
+    img = np.tile(fondo, (n, n, 1))
+    for _, _, hexa, d in trozos:
+        acc = np.zeros((n, n), dtype=bool)
+        for poli in aplanar(d):
+            capa = Image.new('1', (n, n), 0)
+            ImageDraw.Draw(capa).polygon([((x * k + tx) * s, (y * k + ty) * s) for x, y in poli], fill=1)
+            acc ^= np.array(capa, dtype=bool)
+        img[acc] = np.array([int(hexa[i:i + 2], 16) for i in (1, 3, 5)], dtype=float)
+    rgb = img.reshape(lado_px, SS, lado_px, SS, 3).mean(axis=(1, 3))
+    if esquinas is None:
+        return Image.fromarray(np.round(rgb).astype(np.uint8), 'RGB')
+    mascara = Image.new('L', (n, n), 0)
+    ImageDraw.Draw(mascara).rounded_rectangle([0, 0, n - 1, n - 1], radius=esquinas * n, fill=255)
+    a = np.array(mascara, dtype=float).reshape(lado_px, SS, lado_px, SS).mean(axis=(1, 3))
+    return Image.fromarray(np.round(np.dstack([rgb, a])).astype(np.uint8), 'RGBA')
+
+
+def logo(ruta_png, res, web_img, admin_public):
+    cx, cy, r = circulo_minimo(ruta_png)
+    k = LADO * PROPORCION / (2 * r)
+    tx, ty = LADO / 2 - cx * k, LADO / 2 - cy * k
+    num = lambda v: ('%.4f' % v).rstrip('0').rstrip('.')
+    trozos = piezas(res + '/drawable/g_arranque.xml')
+    paths = '\n'.join(PATH_LOGO.format(nombre=n, ref=ref, d=d) for n, ref, _, d in trozos)
+    with open(res + '/drawable/logo_marca.xml', 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(VECTOR_LOGO.format(baldosa=BALDOSA_PATH, tx=num(tx), ty=num(ty), k=num(k), paths=paths))
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">'
+           '<!-- El logo único de GymProFit (GP-231, DEC-057): los trazados de la G del arranque. '
+           'Lo escribe scripts/trazar-g-arranque.py logo; no se edita a mano. -->'
+           '<g transform="translate(%s %s) scale(%s)">%s</g></svg>\n') % (
+        num(tx), num(ty), num(k), ''.join('<path fill="%s" d="%s"/>' % (hexa, d) for _, _, hexa, d in trozos))
+    with open(web_img + '/logo.svg', 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(svg)
+    favicon = rasterizar(trozos, 64, k, tx, ty, ESQUINA)
+    favicon.save(web_img + '/favicon.png', optimize=True)
+    favicon.save(admin_public + '/favicon.png', optimize=True)
+    rasterizar(trozos, 180, k, tx, ty, None).save(web_img + '/apple-touch-icon.png', optimize=True)
+    print('círculo mínimo: centro (%.1f, %.1f) radio %.1f de 512; escala %s, desplazamiento (%s, %s)'
+          % (cx, cy, r, num(k), num(tx), num(ty)))
+
+
+
 def main():
     if len(sys.argv) >= 4 and sys.argv[1] == 'trazar':
         escribir_vectores(trazar_logo(sys.argv[2]), sys.argv[3])
+    elif len(sys.argv) >= 6 and sys.argv[1] == 'logo':
+        logo(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
     elif len(sys.argv) >= 4 and sys.argv[1] == 'comparar':
         comparar(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
     else:

@@ -1019,6 +1019,25 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-057 · Un solo logo: la G dorada del icono, sin variante por tema
+**Estado:** Aceptada · **Fecha:** 2026-11-05 · **Tarea:** GP-231
+
+**Contexto.** Había dos logos. Acerca de y la web cambiaban con el tema entre una G naranja con el trazo dorado (claro) y la G dorada con el trazo naranja (oscuro), la web con `<picture>` por `prefers-color-scheme`, y cada tema tenía su favicon. La G naranja no es la de la app: el icono (GP-081, versión A) y el arranque (GP-223) usan la dorada sobre `#0B0C0E`. Quien conoce la app por su icono veía otra marca en la web con el móvil en claro.
+
+**Decisión.**
+
+- **Un solo logo**: la G dorada con el trazo naranja, la del icono de la app. **No se recolorea y no tiene variante por tema.**
+- **Sobre oscuro va sola. Sobre claro, dentro de su baldosa `#0B0C0E`, como el icono**: la G con la proporción del icono en el lanzador (su círculo mínimo mide 64/72 del lado, el radio de 32 dp en los 72 visibles de la capa de 108) y esquinas del 18 % del lado, las del icono heredado. La G ocupa el mismo sitio en los dos temas: lo único que cambia es si la baldosa se ve.
+- **Su dorado es del logo, no de la interfaz**: no cuenta como uso del dorado de DEC-018, que sigue igual (solo celebra lo conseguido). Lo mismo el `#0B0C0E` de la baldosa: es del icono, no un token del tema.
+- **Una sola fuente**: `documentacion/marca/logo.png`, fuera del APK. La G de la app y la de la web salen de los trazados de `g_arranque.xml` con `scripts/trazar-g-arranque.py logo`, sin redibujarla ni volver a trazarla: `drawable/logo_marca.xml` (Acerca de, con la baldosa en `logo_baldosa`, transparente en `values-night`), `web/img/logo.svg`, el favicon de la web y el del admin.
+- **Un solo favicon**: la baldosa con la G, que se ve en pestañas claras y oscuras. El `apple-touch-icon.png` es el icono de la app, opaco, a 180 × 180.
+
+**Consecuencias.** Se borran la G naranja, los logos de la web por tema (256 y 512) y sus favicons, y `.hero-logo`, que no usaba nadie. El logo del pie de las páginas legales deja de ir al 85 % de opacidad: eso también era recolorearlo. `LogoMarcaTest` vigila que el logo de la app y el de la web lleven los trazados de la G del arranque, y `LogoUnicoWebTest`, que ninguna página vuelva a usar otro logo, otro favicon o un `<picture>` por tema. Si el logo cambia: se vuelve a trazar (`trazar`), se regenera el icono (`generar-icono-app.py`) y se ejecuta `logo`.
+
+**Qué la invalidaría.** Un rediseño de marca deliberado, o un fondo claro en el que la baldosa oscura pese más que el contenido (entonces, una versión de la G pensada para claro, no la naranja de antes).
+
+---
+
 ### DEC-058 · Cerrar todas las sesiones sube una versión de sesión que llevan todos los tokens
 **Estado:** Aceptada · **Fecha:** 2026-11-05 · **Tarea:** GP-236 (`fa84d41`, PR #79, desplegada en `3200c0b`)
 
