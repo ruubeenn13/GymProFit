@@ -1,6 +1,8 @@
 package com.gymprofit.api.config.security;
 
+import com.gymprofit.api.entity.Usuario;
 import com.gymprofit.api.exceptions.CuentaDesactivadaException;
+import com.gymprofit.api.exceptions.InvalidCredentialsException;
 import com.gymprofit.api.service.usuario.IUsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -58,6 +60,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // seguirían respondiendo a ese token como si nada.
                     if (!userDetails.isEnabled()) {
                         throw new CuentaDesactivadaException();
+                    }
+
+                    // Lo mismo si el token es de antes del último cierre de todas las
+                    // sesiones de su usuario (GP-236): cambiar o restablecer la contraseña
+                    // cierra también los access tokens ya emitidos. El usuario ya está
+                    // cargado, así que mirarlo no cuesta ninguna consulta.
+                    if (userDetails instanceof Usuario usuario
+                            && jwtTokenProvider.extractVersionSesion(token) < usuario.getVersionSesion()) {
+                        throw new InvalidCredentialsException("error.sesion.cerrada");
                     }
 
                     UsernamePasswordAuthenticationToken authToken =

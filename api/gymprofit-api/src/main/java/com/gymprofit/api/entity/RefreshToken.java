@@ -44,4 +44,9 @@ public class RefreshToken {
     // Marca de revocación: un token revocado (rotado o por logout) ya no sirve.
     @Column(nullable = false)
     private boolean revocado;
+
+    // Versión de sesión del usuario con la que se emitió (GP-236). Al rotar se hereda del
+    // refresh usado, no se relee del usuario; si es menor que la del usuario, no renueva.
+    @Column(name = "version_sesion", nullable = false)
+    private int versionSesion;
 }

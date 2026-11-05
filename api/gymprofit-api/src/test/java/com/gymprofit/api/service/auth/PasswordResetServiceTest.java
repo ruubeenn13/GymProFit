@@ -263,7 +263,7 @@ class PasswordResetServiceTest {
         assertThat(guardado.isUsado()).isFalse();
         assertThat(passwordEncoder.matches(PASSWORD_VIEJA, usuario.getPassword())).isTrue();
         verify(usuarioRepository, never()).save(any(Usuario.class));
-        verify(refreshTokenService, never()).revocarTodosDeUsuario(any(Usuario.class));
+        verify(refreshTokenService, never()).cerrarTodasLasSesiones(any(Usuario.class));
     }
 
     @Test
@@ -312,7 +312,7 @@ class PasswordResetServiceTest {
 
         service.restablecer(canje(codigo));
 
-        verify(refreshTokenService).revocarTodosDeUsuario(usuario);
+        verify(refreshTokenService).cerrarTodasLasSesiones(usuario);
         // Revocar solo el refresh token en curso dejaría vivas las demás sesiones de la
         // cuenta, que es exactamente lo que obliga a cerrar un cambio de contraseña.
         verify(refreshTokenService, never()).revocarPorToken(anyString());

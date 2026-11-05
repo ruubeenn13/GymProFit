@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `fa84d41` | fix(api): **cambiar o restablecer la contraseña, y desactivar la cuenta, cierran todas las sesiones, también los access tokens ya emitidos** (versión de sesión por usuario; la rotación del refresh es atómica). Desplegar no cierra la sesión a nadie (GP-236). |
 | `6f4ff63` | build(scripts): el detector de huecos del arranque y la medida hasta `MainActivity`, en `scripts/arranque/` (GP-223). |
 | `fd9f8c8` | fix(android): con el teclado abierto, ninguna pieza de Entrar queda a medias en los bordes del scroll (`PiezasSinCortar`; quinta pasada del revisor) (GP-223). |
 | `be97839` | fix(android): **el teclado de Entrar sale también al recrearse** (tema o idioma), el aviso sin red de la sesión en vivo a 8 dp de la cabecera y el título de Entrar sin cortar (cuarta pasada del revisor) (GP-223). |
