@@ -48,7 +48,6 @@ public class CrearRutinaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_crear_rutina);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

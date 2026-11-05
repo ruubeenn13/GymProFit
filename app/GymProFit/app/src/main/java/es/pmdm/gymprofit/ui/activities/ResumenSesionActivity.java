@@ -102,7 +102,6 @@ public class ResumenSesionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_resumen_sesion);
 
         sesionId = getIntent().getIntExtra("sesionId", -1);

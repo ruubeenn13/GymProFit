@@ -394,8 +394,7 @@ public class PerfilActivity extends BaseActivity {
         HojaElegir.mostrar(this, R.string.ajustes_tema, opciones, actual, R.string.perfil_hoja_nota, i -> {
             int modo = i == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
             if (modo == prefsManager.getTheme()) return;
-            prefsManager.saveTheme(modo);
-            recreate();
+            prefsManager.cambiarTema(modo);
         });
     }
 

@@ -145,7 +145,16 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
                 .getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES);
     }
-    public void applyTheme() { AppCompatDelegate.setDefaultNightMode(getTheme()); }
+
+    /**
+     * Guarda el tema y lo aplica a toda la app. AppCompat recrea las pantallas abiertas,
+     * y cada una lo vuelve a leer en {@link ScaleUtils#wrap}. Al abrir el proceso lo fija
+     * GymProFitApp, una vez, antes de la primera pantalla (GP-234).
+     */
+    public void cambiarTema(int themeMode) {
+        saveTheme(themeMode);
+        AppCompatDelegate.setDefaultNightMode(themeMode);
+    }
 
     /** «Empezar el descanso al marcar una serie»: sí, de serie (GP-013). */
     public boolean getDescansoAlMarcar() { return prefs.getBoolean(KEY_DESCANSO_AL_MARCAR, true); }

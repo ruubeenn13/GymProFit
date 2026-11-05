@@ -106,7 +106,6 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferencesManager prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_registrar_sesion);
 
         spRutina             = findViewById(R.id.spRutina);

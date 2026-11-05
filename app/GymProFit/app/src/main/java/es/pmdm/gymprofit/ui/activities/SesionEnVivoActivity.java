@@ -145,7 +145,6 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferencesManager prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_sesion_en_vivo);
 
         repo = SesionEnCursoRepositorio.get(this);

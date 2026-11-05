@@ -56,7 +56,6 @@ public class CambiarPasswordActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_cambiar_password);
 
         tilActual = findViewById(R.id.tilActual);

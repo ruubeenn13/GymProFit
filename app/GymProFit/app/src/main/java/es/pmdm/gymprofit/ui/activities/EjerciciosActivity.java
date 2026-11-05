@@ -43,7 +43,6 @@ import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UiFeedback;
 
 // ============================================================
@@ -98,7 +97,6 @@ public class EjerciciosActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new PreferencesManager(this).applyTheme();
         setContentView(R.layout.activity_ejercicios);
 
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());

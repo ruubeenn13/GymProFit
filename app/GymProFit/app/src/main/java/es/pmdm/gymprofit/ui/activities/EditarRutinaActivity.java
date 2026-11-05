@@ -80,7 +80,6 @@ public class EditarRutinaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_editar_rutina);
 
         rutinaId = getIntent().getIntExtra("rutinaId", -1);

@@ -46,6 +46,7 @@ public class GymProFitApp extends Application {
         super.onCreate();
         verificarEntornoAislado();
         registrarAlmacenTokens();
+        aplicarTemaGuardado();
         aplicarIdiomaGuardado();
         crearCanalPush();
         registrarTransicionesGlobales();
@@ -223,6 +224,15 @@ public class GymProFitApp extends Application {
     // (AppCompatDelegate). Sustituye al antiguo aplicarIdioma() con updateConfiguration
     // (deprecado) que cada Activity repetía: AndroidX aplica el locale a TODAS las
     // pantallas y lo mantiene, sin tocar Configuration a mano. Idioma nuevo = solo strings.
+    // El claro u oscuro guardado, una vez por proceso y antes de la primera pantalla (GP-234).
+    // Antes lo fijaba cada pantalla en su onCreate, muchas después de super.onCreate: si
+    // era la primera del proceso y el tema guardado no era el del sistema, AppCompat la
+    // creaba con el del sistema y la volvía a crear con el guardado. ScaleUtils.wrap sigue
+    // metiéndolo en el override de cada pantalla (GP-216, lote 4).
+    private void aplicarTemaGuardado() {
+        AppCompatDelegate.setDefaultNightMode(PreferencesManager.temaGuardado(this));
+    }
+
     private void aplicarIdiomaGuardado() {
         String lang = new PreferencesManager(this).getLanguage();
         if (lang != null && !lang.isEmpty()) {

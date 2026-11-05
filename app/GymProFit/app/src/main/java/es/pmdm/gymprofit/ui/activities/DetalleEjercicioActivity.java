@@ -115,7 +115,6 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new PreferencesManager(this).applyTheme();
         setContentView(R.layout.activity_detalle_ejercicio);
 
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());

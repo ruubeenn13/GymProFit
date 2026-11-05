@@ -18,7 +18,6 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.AuthApi;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PoliticaCuenta;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -59,7 +58,6 @@ public class RecuperarPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new PreferencesManager(this).applyTheme();
         setContentView(R.layout.activity_recuperar_password);
 
         inicializarVistas();
