@@ -1,6 +1,10 @@
 # Diseño de gymprofit.app (GP-205)
 
-Dirección del rediseño de toda la web. La identidad no cambia: fondo `#0B0C0E`, el naranja de la app `#FF6A00`, Barlow y Barlow Condensed servidas desde el dominio y los logos de `img/`. Lo que cambia es el mundo en que se ponen, la composición y el movimiento. Reglas técnicas: DEC-053 y `README.md`.
+Dirección del rediseño de toda la web. La identidad no cambia: fondo `#0B0C0E`, el naranja de la app `#FF6A00`, Barlow y Barlow Condensed servidas desde el dominio y el logo de `img/`. Lo que cambia es el mundo en que se ponen, la composición y el movimiento. Reglas técnicas: DEC-053 y `README.md`.
+
+## El logo
+
+Uno solo (DEC-057): `img/logo.svg`, la G dorada con el trazo naranja del icono de la app, con `class="logo"` en las cabeceras y los pies. No se recolorea (ni opacidad), no cambia con el tema y no va en `<picture>`. Sobre oscuro va sola; sobre claro, la hoja le pone su baldosa `#0B0C0E` con esquinas del 18 %, como el icono. La caja es la misma en los dos temas, así que nada se mueve al cambiar. Un solo favicon (`img/favicon.png`, la baldosa) y `img/apple-touch-icon.png`, el icono opaco. Salen de `scripts/trazar-g-arranque.py logo`; `LogoUnicoWebTest` falla si una página vuelve a usar otro.
 
 ## Concepto: el dorsal
 

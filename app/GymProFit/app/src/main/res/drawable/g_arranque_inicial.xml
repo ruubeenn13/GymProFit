@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   g_arranque_inicial — la G del logo para el arranque (GP-223). El primer fotograma (invisible): la base de g_arranque_animada.
-  Trazada con potrace (potracer) de drawable-night/logo.png: dos trazados, el cuerpo
+  Trazada con potrace (potracer) de documentacion/marca/logo.png: dos trazados, el cuerpo
   dorado y el trazo naranja, con los colores del PNG (logo_g_cuerpo y logo_g_trazo).
   Fidelidad: documentacion/estado/2026-11-04-gp-223-arranque.md. Si cambia el logo,
   se vuelve a trazar con el script del informe; no se retoca a mano.

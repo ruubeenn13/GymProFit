@@ -44,7 +44,7 @@
                     android:layout_height="96dp"
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/logo" />
+                    android:src="@drawable/logo_marca" />
 
                 <TextView
                     android:layout_width="wrap_content"
