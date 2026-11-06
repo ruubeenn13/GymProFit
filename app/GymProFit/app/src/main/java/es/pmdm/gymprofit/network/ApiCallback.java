@@ -42,7 +42,8 @@ public abstract class ApiCallback<T> implements Callback<T> {
     public void onResponse(Call<T> call, Response<T> response) {
         int code = response.code();
         if (code == 401) {
-            // El TokenAuthenticator ya intentó renovar y no pudo → sesión no recuperable.
+            // Un 401 que el TokenAuthenticator deja pasar: sin refresh guardado, o el
+            // reintento con el access recién renovado también dio 401.
             // Si la API dice que la cuenta está desactivada (GP-083), el aviso lo explica.
             UtilREST.notifyUnauthorized(esCuentaDesactivada(leerError(response)));
             onFail(401, "Sesión expirada");
@@ -59,6 +60,21 @@ public abstract class ApiCallback<T> implements Callback<T> {
 
     @Override
     public void onFailure(Call<T> call, Throwable t) {
+        if (t instanceof SesionCerradaException) {
+            // /auth/refresh dijo 401 (DEC-059): el mismo cierre que el 401 de arriba.
+            UtilREST.notifyUnauthorized(((SesionCerradaException) t).cuentaDesactivada);
+            onFail(401, "Sesión expirada");
+            return;
+        }
+        if (t instanceof RenovacionLimitadaException) {
+            // /auth/refresh dijo 429, o sigue su espera: el aviso de GP-096 con lo que
+            // falta, no el de sin red. La sesión sigue.
+            onFail(429, PREFIJO_RETRY_AFTER + ((RenovacionLimitadaException) t).segundosDeEspera + ";"
+                    + t.getMessage());
+            return;
+        }
+        // Sin red, tiempo agotado o una renovación sin respuesta (5xx): la sesión sigue y,
+        // pasados 5 s, la siguiente acción vuelve a intentar (GP-237).
         onFail(-1, t != null ? t.getMessage() : "Error de red");
     }
 

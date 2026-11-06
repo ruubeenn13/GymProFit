@@ -32,8 +32,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 //  - AuthInterceptor: añade el header "Authorization: Bearer <token>" a cada
 //    petición (salvo las de /auth/).
 //  - TokenAuthenticator: ante un 401, renueva el access token con el refresh
-//    (POST /auth/refresh) y OkHttp reintenta la petición automáticamente. Si
-//    la renovación falla, el 401 propaga y la app cierra sesión.
+//    (POST /auth/refresh, una llamada por intento: TurnoRenovacion) y OkHttp reintenta
+//    la petición. Solo un 401 de /auth/refresh cierra la sesión (DEC-059); sin
+//    respuesta o 5xx, la petición falla como sin red; con 429, como un 429; los tokens
+//    se quedan, y en la espera (5 s, o Retry-After) no se vuelve a llamar.
 // Expone interfaces Retrofit tipadas por dominio vía service(Class), que
 // deserializan JSON→POJO con Gson (etapa 2).
 // ============================================================
@@ -90,7 +92,7 @@ public class ApiClient {
                         .header("Accept-Language", java.util.Locale.getDefault().getLanguage())
                         .build()))
                 .addInterceptor(logging)
-                .authenticator(new TokenAuthenticator())
+                .authenticator(new TokenAuthenticator(TURNO))
                 .build();
 
         // Gson: las interfaces tipadas por dominio deserializan JSON→POJO con este converter.
@@ -121,41 +123,91 @@ public class ApiClient {
         }
     }
 
+    /**
+     * El turno de renovación de toda la app: el TokenAuthenticator lo usa a mitad de uso y
+     * la renovación del arranque va por su mismo cerrojo.
+     */
+    static final TurnoRenovacion TURNO = new TurnoRenovacion(ApiClient::pedirRefresh, new TurnoRenovacion.Tokens() {
+        @Override public String access() { return UtilREST.getToken(); }
+        @Override public String refresh() { return UtilREST.getRefreshToken(); }
+        @Override public void guardar(String access, String refresh) {
+            UtilREST.onTokensRefreshed(access, refresh);
+            Log.d("GymProFit", "Access token renovado vía refresh");
+        }
+    }, android.os.SystemClock::elapsedRealtime);
+
     // Ante un 401, renueva el access token con el refresh y deja que OkHttp reintente.
     static class TokenAuthenticator implements Authenticator {
+        private final TurnoRenovacion turno;
+
+        TokenAuthenticator(TurnoRenovacion turno) {
+            this.turno = turno;
+        }
+
+        /**
+         * @return la petición con el access nuevo, o null para que el 401 llegue tal cual.
+         * @throws SesionCerradaException si /auth/refresh dijo 401: ApiCallback cierra la sesión.
+         * @throws IOException            si no hubo respuesta útil: la petición falla como sin red.
+         */
         @Override
-        public Request authenticate(Route route, Response response) {
+        public Request authenticate(Route route, Response response) throws IOException {
             // No renovar sobre endpoints de auth (login/refresh 401 = credenciales, no expiración).
             if (esEndpointAuth(response.request())) return null;
             // Evita bucles: si ya se reintentó una vez, rendirse.
             if (contarRespuestas(response) >= 2) return null;
 
-            String refresh = UtilREST.getRefreshToken();
-            if (refresh == null || refresh.isEmpty()) return null;
-
-            synchronized (TokenAuthenticator.class) {
-                // Si otro hilo ya renovó (el token cambió respecto al que llevaba la petición), reintentar con ese.
-                String actual = UtilREST.getToken();
-                String usado = tokenDePeticion(response.request());
-                if (actual != null && !actual.equals(usado)) {
+            // Una llamada por intento y, si falla, una espera sin llamar (GP-235).
+            TurnoRenovacion.Resultado r = turno.renovar(tokenDePeticion(response.request()));
+            switch (r.tipo) {
+                case RENOVADA:
                     return response.request().newBuilder()
-                            .header("Authorization", "Bearer " + actual)
+                            .header("Authorization", "Bearer " + r.token)
                             .build();
+                case SIN_REFRESH:
+                    // Sin refresh no hay sesión que salvar: el 401 sigue a ApiCallback.
+                    return null;
+                case CERRADA: {
+                    // El aviso de cuenta desactivada puede venir de /auth/refresh o de la
+                    // petición original (el filtro de la API la corta con un access vigente).
+                    boolean desactivada = r.cuentaDesactivada || ApiCallback.esCuentaDesactivada(leerCuerpo(response));
+                    // Lanzando, OkHttp no cierra la respuesta: se cierra aquí.
+                    response.close();
+                    throw new SesionCerradaException(desactivada);
                 }
-
-                String nuevoToken = renovar(refresh);
-                if (nuevoToken == null) return null;
-
-                return response.request().newBuilder()
-                        .header("Authorization", "Bearer " + nuevoToken)
-                        .build();
+                case LIMITADA:
+                    // 429 de /auth/refresh: llega a la pantalla como el 429 de GP-096.
+                    response.close();
+                    throw new RenovacionLimitadaException(r.segundosDeEspera);
+                default:
+                    response.close();
+                    throw new IOException("Sin respuesta al renovar la sesión");
             }
         }
     }
 
-    // Llama a POST /auth/refresh con un cliente aparte (sin authenticator, para no recursar).
-    // Si va bien, actualiza y persiste los tokens en UtilREST y devuelve el nuevo access token.
-    private static String renovar(String refreshToken) {
+    // Los segundos de un Retry-After numérico, o null (no venía, o es una fecha HTTP).
+    static Integer segundosRetryAfter(String cabecera) {
+        if (cabecera == null) return null;
+        try {
+            int s = Integer.parseInt(cabecera.trim());
+            return s > 0 ? s : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    // El cuerpo de la respuesta sin consumirlo, o null si no se puede leer.
+    private static String leerCuerpo(Response response) {
+        try {
+            return response.peekBody(8192).string();
+        } catch (IOException | IllegalStateException e) {
+            return null;
+        }
+    }
+
+    // POST /auth/refresh con un cliente aparte (sin authenticator, para no recursar). No
+    // guarda nada: lo decide TurnoRenovacion con lo que devuelve.
+    private static TurnoRenovacion.Respuesta pedirRefresh(String refreshToken) {
         OkHttpClient plano = new OkHttpClient.Builder()
                 .connectTimeout(15, TimeUnit.SECONDS)
                 // Mismo margen para el cold-start de Render en el refresh.
@@ -167,27 +219,33 @@ public class ApiClient {
             cuerpo.put("refreshToken", refreshToken);
             Request req = new Request.Builder()
                     .url(BuildConfig.BASE_URL + "auth/refresh")
+                    .header("Accept", "application/json")
                     // OkHttp 4.x: orden (contenido, tipo); la forma (tipo, contenido) está deprecada.
                     .post(RequestBody.create(cuerpo.toString(), JSON))
                     .build();
 
             try (Response resp = plano.newCall(req).execute()) {
-                if (!resp.isSuccessful() || resp.body() == null) {
+                String texto = resp.body() != null ? resp.body().string() : null;
+                String token = null, nuevoRefresh = null;
+                if (resp.isSuccessful() && texto != null) {
+                    try {
+                        JSONObject json = new JSONObject(texto);
+                        token = json.optString("token", "");
+                        nuevoRefresh = json.optString("refreshToken", "");
+                    } catch (org.json.JSONException e) {
+                        // Cuerpo ilegible: TurnoRenovacion lo trata como sin respuesta.
+                        Log.d("GymProFit", "Refresh con cuerpo ilegible");
+                    }
+                } else {
                     Log.d("GymProFit", "Refresh fallido → " + resp.code());
-                    return null;
                 }
-                JSONObject json = new JSONObject(resp.body().string());
-                String nuevoToken = json.optString("token", "");
-                String nuevoRefresh = json.optString("refreshToken", "");
-                if (nuevoToken.isEmpty() || nuevoRefresh.isEmpty()) return null;
-
-                UtilREST.onTokensRefreshed(nuevoToken, nuevoRefresh);
-                Log.d("GymProFit", "Access token renovado vía refresh");
-                return nuevoToken;
+                return new TurnoRenovacion.Respuesta(resp.code(), texto, token, nuevoRefresh,
+                        segundosRetryAfter(resp.header("Retry-After")));
             }
         } catch (Exception e) {
-            Log.e("GymProFit", "Refresh exception: " + e.getMessage());
-            return null;
+            // Red que no llega o tiempo agotado: sin respuesta, no sesión cerrada.
+            Log.d("GymProFit", "Refresh sin respuesta: " + e.getClass().getSimpleName());
+            return TurnoRenovacion.Respuesta.sinRespuesta();
         }
     }
 
@@ -223,7 +281,7 @@ public class ApiClient {
     /**
      * Renueva la sesión al arrancar la app (GP-223), en un hilo aparte.
      *
-     * <p>Va por el mismo cerrojo que el TokenAuthenticator: el refresh es de un solo uso y
+     * <p>Va por el mismo cerrojo que el TokenAuthenticator (el de {@link #TURNO}): el refresh es de un solo uso y
      * dos renovaciones a la vez con el mismo gastarían una la de la otra, y la segunda daría
      * 401 sin que la sesión hubiera caducado. Si mientras se esperaba el cerrojo otro hilo ya
      * renovó, se da por buena sin volver a pedir.
@@ -242,7 +300,7 @@ public class ApiClient {
             String cuerpo = null;
             try {
                 if (BuildConfig.DEBUG && retardoDepuracionMs > 0) Thread.sleep(retardoDepuracionMs);
-                synchronized (TokenAuthenticator.class) {
+                synchronized (TURNO) {
                     String refresh = UtilREST.getRefreshToken();
                     if (refresh != null && !refresh.equals(refreshAntes)) {
                         codigo = 200;

@@ -1061,6 +1061,24 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-059 · Solo un 401 de /auth/refresh cierra la sesión, y tras un intento fallido se espera antes de volver a llamar
+**Estado:** Aceptada · **Fecha:** 2026-11-06 · **Tarea:** GP-237 y GP-235
+
+**Contexto.** A mitad de uso, cualquier fallo de `/auth/refresh` (sin red, tiempo agotado, 429 del cupo por IP, 5xx) cerraba la sesión: el autenticador de OkHttp devolvía null, el 401 original llegaba a la pantalla y se borraban los tokens. Un corte de cobertura de unos segundos tiraba un refresh válido. Y con varias peticiones esperando, cada una volvía a llamar con el mismo refresh (6 llamadas en el 401 a mitad de uso de GP-223). Al arrancar ya se hacía bien desde GP-223: solo un 401 cerraba.
+
+**Decisión.**
+
+- **Solo un 401 de `/auth/refresh` cierra la sesión**, al arrancar y a mitad de uso, con el aviso de cuenta desactivada si la API lo dice. La clasificación es una sola, `DecisionArranque.clasificar`, compartida y no copiada. Sin respuesta, tiempo agotado, 429, 5xx o un 2xx sin los dos tokens: los tokens se quedan y la petición falla sin llevar a Entrar.
+- **Una llamada por intento**: la hace quien llega primero al cerrojo (`TurnoRenovacion`, el mismo que usa la renovación del arranque) y los demás usan su resultado.
+- **Tras un intento fallido, una espera con ese refresh**: 5 s si no hubo respuesta útil; con 429, lo que diga `Retry-After` (5 s si no lo dice o no es un número). Lo que llegue en ese rato falla sin llamar: como sin red, o, con 429, como el 429 de GP-096, con lo que falta de espera («espera 30 segundos»). Pasada la espera, la siguiente acción vuelve a probar. Es la única regla de tanda: la de la hora de envío de la petición, que se probó antes, no juntaba las peticiones que el `Dispatcher` de OkHttp deja en cola (5 a la vez por host; Inicio lanza 8, y las 3 últimas salían después del intento).
+- **Un refresh rechazado se recuerda**: quien llegue con él se rinde sin llamar, aunque el 401 aún no haya borrado los tokens.
+
+**Consecuencias.** Las pantallas no cambian: el sin respuesta llega como `onFail(-1)` y el 429 como `onFail(429)` con la espera, por los caminos que ya tenían aviso (`UiFeedback`). Mientras la API no responda, el usuario ve fallos de red y no Entrar; si su sesión estaba revocada, lo sabrá en el primer intento con respuesta. La renovación del arranque no cambia. `TurnoRenovacionTest` y `TokenAuthenticatorTest` vigilan cada regla.
+
+**Qué la invalidaría.** Que la API devuelva otra cosa que 401 para un refresh inválido (entonces la sesión no se cerraría nunca), o un cliente que necesite reintentar solo dentro de la espera, como un guardado en segundo plano (entonces, una cola de reintentos propia y no acortar la espera).
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
