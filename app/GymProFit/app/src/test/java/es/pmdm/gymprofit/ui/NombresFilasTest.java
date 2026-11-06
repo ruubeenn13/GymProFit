@@ -60,9 +60,10 @@ public class NombresFilasTest {
 
     @Test
     public void cadaPapeleraDiceQueSesionBorra() throws IOException {
+        // Sin papelera desde GP-232: borrar es una acción de TalkBack de la tarjeta, con el mismo nombre.
         String adapter = leer(UI.resolve("adapters/SesionAdapter.java"));
-        assertTrue(adapter.contains("btnEliminar.setContentDescription("));
-        assertTrue(adapter.contains("R.string.sesiones_eliminar_a11y"));
+        assertTrue(adapter.contains("ViewCompat.addAccessibilityAction(itemView, textos.borrarA11y(s)"));
+        assertTrue(leer(UI.resolve("tarjetas/TextosTarjeta.java")).contains("R.string.sesiones_eliminar_a11y"));
         for (String tema : new String[]{ "values", "values-en" }) {
             String xml = leer(RES.resolve(tema + "/strings.xml"));
             Matcher m = Pattern.compile("<string name=\"sesiones_eliminar_a11y\">([^<]*)</string>").matcher(xml);

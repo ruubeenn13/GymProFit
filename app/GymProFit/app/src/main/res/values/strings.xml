@@ -2513,4 +2513,81 @@
     <string name="arranque_no_conecta_texto">El servidor tarda más de lo normal. Vuelve a intentarlo en un momento.</string>
     <string name="login_sesion_cerrada">Tu sesión se ha cerrado. Por seguridad, vuelve a entrar: tus datos siguen ahí.</string>
     <string name="envivo_sin_red">Sin conexión. Tu entreno se guarda en el móvil y se sube cuando vuelva la red.</string>
+    <!-- GP-232: las tarjetas de sesión, de rutina y de programa, en frase y sin «·». -->
+    <string name="tarjeta_y_serie">" y "</string>
+    <plurals name="tarjeta_minutos">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <plurals name="tarjeta_series">
+        <item quantity="one">%d serie</item>
+        <item quantity="other">%d series</item>
+    </plurals>
+    <plurals name="tarjeta_records">
+        <item quantity="one">%d récord</item>
+        <item quantity="other">%d récords</item>
+    </plurals>
+    <plurals name="tarjeta_ejercicios">
+        <item quantity="one">%d ejercicio</item>
+        <item quantity="other">%d ejercicios</item>
+    </plurals>
+    <!-- %1$s: el día; %2$s: la hora o el día de la semana. «Ayer, 18:05», «Ayer, martes». -->
+    <string name="tarjeta_cuando">%1$s, %2$s</string>
+    <string name="tarjeta_dia_patron">EEEE d</string>
+    <string name="tarjeta_hora_patron">HH:mm</string>
+    <string name="tarjeta_cuando_hoy_a11y">hoy a las %1$s</string>
+    <string name="tarjeta_cuando_ayer_a11y">ayer a las %1$s</string>
+    <!-- %1$s: «lunes 2»; %2$s: la hora. -->
+    <string name="tarjeta_cuando_otro_a11y">el %1$s a las %2$s</string>
+    <string name="tarjeta_comparacion_sube">%1$d %% más que la anterior</string>
+    <string name="tarjeta_comparacion_baja">%1$d %% menos que la anterior</string>
+    <string name="tarjeta_comparacion_igual">Igual que la anterior</string>
+    <string name="tarjeta_comparacion_primera">Primera vez con esta rutina</string>
+    <string name="tarjeta_sin_ejercicios">Sin ejercicios apuntados</string>
+    <string name="tarjeta_sin_hacer">Sin hacer todavía</string>
+    <!-- %1$s: «hace 6 días», «ayer». -->
+    <string name="tarjeta_ultima_vez">La última vez, %1$s</string>
+    <string name="tarjeta_enlace_con">", con "</string>
+    <plurals name="tarjeta_kilos_a11y">
+        <item quantity="one">%1$s kilo</item>
+        <item quantity="other">%1$s kilos</item>
+    </plurals>
+    <!-- %1$d: cuántas; %2$s y %3$s: los kilos de la primera y de la última. -->
+    <plurals name="tarjeta_barras_a11y">
+        <item quantity="one">Tu última vez con esta rutina, %2$s kilos</item>
+        <item quantity="other">Tus %1$d últimas veces con esta rutina, de %2$s a %3$s kilos</item>
+    </plurals>
+    <!-- %1$s: «hace 6 días»; %2$s: «7.920 kilos». -->
+    <string name="tarjeta_ultima_a11y">La última vez, %1$s, %2$s</string>
+    <string name="tarjeta_toca_hoy_a11y">, la que toca hoy</string>
+    <string name="tarjeta_abre_resumen_a11y">Abre el resumen</string>
+    <string name="historial_esta_semana">Esta semana</string>
+    <string name="historial_semana_pasada">Semana pasada</string>
+    <string name="historial_semana_del">Semana del %1$s</string>
+    <!-- %1$d: entrenos; %2$s: los kilos ya con sus miles. -->
+    <plurals name="historial_semana_resumen">
+        <item quantity="one">%1$d entreno y %2$s kg</item>
+        <item quantity="other">%1$d entrenos y %2$s kg</item>
+    </plurals>
+    <plurals name="historial_semana_a11y">
+        <item quantity="one">%1$d entreno y %2$s kilos</item>
+        <item quantity="other">%1$d entrenos y %2$s kilos</item>
+    </plurals>
+    <string name="historial_error">No se ha podido cargar tu historial.</string>
+    <string name="resumen_borrar">Borrar entreno</string>
+    <string name="historial_borrar_fondo">Borrar</string>
+    <!-- %1$s: la rutina. -->
+    <string name="historial_borrada">%1$s, borrado</string>
+    <!-- %1$d y %2$d: los días del programa; «2 o 3 días». -->
+    <string name="programa_dias_o">%1$d o %2$d días</string>
+    <string name="programa_minutos_de_a">de %1$d a %2$d minutos</string>
+    <!-- %1$s: el nivel; %2$s: los días; %3$s: los minutos. -->
+    <string name="programa_frase">%1$s, %2$s, %3$s</string>
+    <string name="programa_frase_sin_minutos">%1$s, %2$s</string>
+    <!-- %1$d: cuántas rutinas; %2$s: sus nombres en frase. -->
+    <plurals name="programa_ciclo_a11y">
+        <item quantity="one">Ciclo de %1$d rutina que se repite: %2$s</item>
+        <item quantity="other">Ciclo de %1$d rutinas que se repite: %2$s</item>
+    </plurals>
+    <string name="programa_recomendado_a11y">, recomendado para ti</string>
 </resources>

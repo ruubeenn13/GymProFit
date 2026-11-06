@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_rutina_tarjeta — una rutina de Entrenar (GP-232, tablero «Entrenar»): el nombre y, arriba
+  a la derecha, cuándo toca («Hoy» en naranja, «Siguiente», «En 2 entrenos») en las del programa
+  o ▶ para empezar en «Mis rutinas»; debajo, las zonas en frase, «7 ejercicios y 55 minutos», los
+  kilos de la última vez con sus barras (o «Sin hacer todavía», sin barras) y «La última vez,
+  hace 6 días», con sus récords en dorado. Toda la tarjeta abre el detalle; la pulsación larga,
+  su menú. TalkBack la lee de una vez; ▶ es su propio botón. La pinta TarjetaRutina.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/cuerpoRutina"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/espacio_16">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvNombre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+            <TextView
+                android:id="@+id/tvCuando"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnEmpezarFila"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:background="@drawable/bg_circulo_superficie"
+                android:src="@drawable/ic_ms_play_arrow_fill"
+                android:visibility="gone"
+                app:tint="?attr/colorPrimary" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMusculos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary" />
+
+        <TextView
+            android:id="@+id/tvResumen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary" />
+
+        <es.pmdm.gymprofit.ui.widget.FilaQueBaja
+            android:id="@+id/filaKilosRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:importantForAccessibility="noHideDescendants">
+
+            <TextView
+                android:id="@+id/tvKilosRutina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+            <es.pmdm.gymprofit.ui.widget.BarrasVecesView
+                android:id="@+id/barrasRutina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrasAlto="@dimen/barras_tarjeta_alto"
+                app:barrasAncho="@dimen/barras_tarjeta_ancho"
+                app:barrasHueco="@dimen/barras_tarjeta_hueco" />
+        </es.pmdm.gymprofit.ui.widget.FilaQueBaja>
+
+        <TextView
+            android:id="@+id/tvUltimaRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.function.IntConsumer;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta;
+import es.pmdm.gymprofit.ui.widget.BarrasVecesView;
+import es.pmdm.gymprofit.utils.FrasesTarjeta;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 import es.pmdm.gymprofit.model.logro.LogroProgreso;
 import es.pmdm.gymprofit.model.record.Record;
@@ -58,8 +61,9 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 //   · Récords: los tres más recientes con la marca anterior, que RecordDTO ya trae; cada fila
 //     abre la ficha del ejercicio, como la tarjeta del récord de Inicio. «Ver los N».
 //   · Logros: los dos últimos conseguidos y los dos más cerca de conseguirse (LogrosProgreso).
-//   · Historial: las dos últimas sesiones terminadas, con cuándo, minutos y kilos; los kilos se
-//     piden por sesión (la lista no los trae) y se guardan: una sesión terminada no cambia.
+//   · Historial: las dos últimas sesiones terminadas en filas compactas, con cuándo, kilos,
+//     récords y las barras de sus últimas veces, de la primera página de /sesiones/historial
+//     (GP-232): ya no se piden los kilos de cada fila.
 //
 // Cada una tiene su estado: cargando, error con «Reintentar» y vacío de cuenta nueva.
 // ============================================================
@@ -73,10 +77,9 @@ final class ListasProgreso {
     private final IntConsumer abrirSeccion;
     private final VistaEstado estadoRecords, estadoLogros, estadoHistorial;
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
-    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     // Kilos de cada sesión ya pedidos.
-    private final Map<Integer, Double> kilosSesion = new HashMap<>();
-    @Nullable private List<SesionEntrenamiento> ultimas;
+    // Las filas del Historial entran una sola vez (GP-232).
+    private final es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta entrada = new es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta();
 
     ListasProgreso(@NonNull Fragment fragment, @NonNull View raiz, @NonNull IntConsumer abrirSeccion) {
         this.fragment = fragment;
@@ -222,7 +225,8 @@ final class ListasProgreso {
 
     // ── Historial ────────────────────────────────────────────────────────────
 
-    void pintarHistorial(@NonNull Fuente<List<SesionEntrenamiento>> fuente, @NonNull Runnable reintentar) {
+    void pintarHistorial(@NonNull Fuente<es.pmdm.gymprofit.model.sesion.PaginaHistorial> fuente,
+                         @NonNull Runnable reintentar) {
         Context ctx = raiz.getContext();
         View card = raiz.findViewById(R.id.cardHistorial);
         View enlace = raiz.findViewById(R.id.enlaceHistorial);
@@ -236,8 +240,9 @@ final class ListasProgreso {
                     reintentar);
             return;
         }
-        List<SesionEntrenamiento> terminadas = HistorialSesiones.terminadas(fuente.dato());
-        if (terminadas.isEmpty()) {
+        List<es.pmdm.gymprofit.model.sesion.PaginaHistorial.Sesion> todas =
+                fuente.dato() == null ? new java.util.ArrayList<>() : fuente.dato().sesiones();
+        if (todas.isEmpty()) {
             card.setVisibility(View.GONE);
             enlace.setVisibility(View.GONE);
             estadoHistorial.vacio(R.string.progreso_historial_vacio);
@@ -246,36 +251,48 @@ final class ListasProgreso {
         estadoHistorial.oculto();
         card.setVisibility(View.VISIBLE);
         enlace.setVisibility(View.VISIBLE);
-        ultimas = terminadas.subList(0, Math.min(SESIONES, terminadas.size()));
-        rellenarHistorial();
-        for (SesionEntrenamiento s : ultimas) {
-            if (!kilosSesion.containsKey(s.getId())) pedirKilos(s.getId());
-        }
+        rellenarHistorial(todas.subList(0, Math.min(SESIONES, todas.size())));
     }
 
-    private void rellenarHistorial() {
-        if (ultimas == null || !fragment.isAdded()) return;
+    // Filas compactas (GP-232): la rutina, «Ayer, 13.640 kg y 1 récord» y las barras pequeñas.
+    private void rellenarHistorial(List<es.pmdm.gymprofit.model.sesion.PaginaHistorial.Sesion> ultimas) {
+        if (!fragment.isAdded()) return;
         Context ctx = raiz.getContext();
         LinearLayout lista = raiz.findViewById(R.id.listaHistorial);
         lista.removeAllViews();
-        NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
+        TextosTarjeta textos = new TextosTarjeta(ctx);
         for (int i = 0; i < ultimas.size(); i++) {
-            SesionEntrenamiento s = ultimas.get(i);
-            if (i > 0) separador(lista);
-            View fila = fila(lista, R.drawable.ic_ms_check, R.drawable.bg_fila_icono_hecho, R.color.gp_success);
-            String rutina = s.getRutinaNombre() != null ? s.getRutinaNombre() : ctx.getString(R.string.hecho_hoy_libre);
-            String apoyo = ctx.getString(R.string.duracion_min, s.getDuracionMinutos());
-            String cuando = FechaUtils.diaRelativo(ctx, s.getFechaInicio());
-            if (!cuando.isEmpty()) apoyo = ctx.getString(R.string.hoy_toca_separador, cuando, apoyo);
-            Double kilos = kilosSesion.get(s.getId());
-            if (kilos != null && kilos > 0) {
-                apoyo = ctx.getString(R.string.hoy_toca_separador, apoyo,
-                        ctx.getString(R.string.inicio_kilos_n, nf.format(Math.round(kilos))));
-            }
+            es.pmdm.gymprofit.model.sesion.PaginaHistorial.Sesion s = ultimas.get(i);
+            if (i > 0) separadorSesion(lista);
+            View fila = LayoutInflater.from(ctx).inflate(R.layout.item_sesion_fila, lista, false);
+            lista.addView(fila);
+            String rutina = textos.titulo(s);
+            String cuando = textos.cuandoRelativo(s.getFechaInicio());
+            String kilos = s.getEjercicios() == 0 ? ctx.getString(R.string.tarjeta_sin_ejercicios)
+                    : ctx.getString(R.string.inicio_kilos_n, textos.numero(s.getKilos()));
+            String antes = cuando.isEmpty() ? kilos : ctx.getString(R.string.tarjeta_cuando, cuando, kilos);
+            FrasesTarjeta.Linea l = FrasesTarjeta.conRecords(antes, ctx.getString(R.string.enumeracion_y),
+                    s.getRecords(), textos.frases());
             ((TextView) fila.findViewById(R.id.tvTituloFila)).setText(rutina);
-            textoOculto(fila.findViewById(R.id.tvApoyoFila), apoyo);
-            fila.findViewById(R.id.ivFlechaFila).setVisibility(View.VISIBLE);
-            fila.setContentDescription(rutina + ". " + apoyo);
+            textoOculto(fila.findViewById(R.id.tvApoyoFila), null);
+            TextView apoyo = fila.findViewById(R.id.tvApoyoFila);
+            apoyo.setText(textos.conOro(l));
+            apoyo.setVisibility(View.VISIBLE);
+            BarrasVecesView barras = fila.findViewById(R.id.barrasFila);
+            barras.setVeces(s.esLibre() ? new java.util.ArrayList<>() : s.getBarras());
+            entrada.pintar("s:" + s.getId(), null, 0, R.dimen.text_tarjeta_kg, textos, barras);
+
+            StringBuilder a11y = new StringBuilder(rutina);
+            String cuandoA11y = textos.cuandoA11y(s.getFechaInicio());
+            if (!cuandoA11y.isEmpty()) a11y.append(", ").append(cuandoA11y);
+            a11y.append(". ").append(s.getEjercicios() == 0 ? kilos : textos.kilosA11y(s.getKilos()));
+            if (s.getRecords() > 0) a11y.append(ctx.getString(R.string.enumeracion_y))
+                    .append(FrasesTarjeta.records(s.getRecords(), textos.frases()));
+            a11y.append('.');
+            String b = s.esLibre() ? null : textos.barrasA11y(s.getBarras());
+            if (b != null) a11y.append(' ').append(b).append('.');
+            a11y.append(' ').append(ctx.getString(R.string.tarjeta_abre_resumen_a11y)).append('.');
+            fila.setContentDescription(a11y);
             fila.setOnClickListener(v -> {
                 Intent intent = new Intent(ctx, ResumenSesionActivity.class);
                 intent.putExtra("sesionId", s.getId());
@@ -284,23 +301,15 @@ final class ListasProgreso {
         }
     }
 
-    private void pedirKilos(int sesionId) {
-        sesionApi.getVolumenSesion(sesionId).enqueue(new ApiCallback<Map<String, Double>>() {
-            @Override
-            public void onOk(Map<String, Double> r) {
-                if (r == null || !fragment.isAdded()) return;
-                Double v = r.get("volumenKg");
-                kilosSesion.put(sesionId, v == null ? 0d : v);
-                rellenarHistorial();
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-                // Sin los kilos la fila se queda con cuándo y los minutos, que dicen lo esencial; el
-                // resumen de la sesión, al abrirla, sí enseña su fallo. Queda rastro en el log.
-                Log.w("GymProFit", "kilos de la sesión " + sesionId + " (" + code + "): " + message);
-            }
-        });
+    // Entre filas de sesión, la raya desde el texto (16 dp): estas filas no llevan icono.
+    private static void separadorSesion(LinearLayout lista) {
+        View sep = new View(lista.getContext(), null, 0, R.style.Widget_GymProFit_Separador);
+        ViewGroup.MarginLayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                lista.getResources().getDimensionPixelSize(R.dimen.separador_alto));
+        lp.setMarginStart(lista.getResources().getDimensionPixelSize(R.dimen.fila_padding_horizontal));
+        sep.setLayoutParams(lp);
+        sep.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        lista.addView(sep);
     }
 
     // ── Piezas ───────────────────────────────────────────────────────────────

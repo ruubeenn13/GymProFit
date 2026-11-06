@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Atributos de BarrasVecesView (GP-232): las medidas de cada tamaño, desde el layout. -->
+<resources>
+    <declare-styleable name="BarrasVecesView">
+        <!-- Ancho de cada barra. -->
+        <attr name="barrasAncho" format="dimension" />
+        <!-- Hueco entre barras. -->
+        <attr name="barrasHueco" format="dimension" />
+        <!-- Alto de la barra más alta. -->
+        <attr name="barrasAlto" format="dimension" />
+    </declare-styleable>
+</resources>

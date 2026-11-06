@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_programa_recomendado — el programa recomendado en Programas (GP-232, tablero «Programas»):
+  lo mismo que item_programa pero en la tarjeta protagonista (gp_hero, radio 28, 20 dp de relleno),
+  con el nombre a 26 sp en gp_on_hero, el apoyo en gp_on_hero_variant, las siglas del ciclo con
+  borde y, debajo, su porqué. Tocar abre el detalle; TalkBack la lee de una vez.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Card.Protagonista"
+    android:theme="@style/ThemeOverlay.GymProFit.Hero"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:padding="@dimen/espacio_20">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvProgramaNombre"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                        android:textColor="@color/gp_on_hero" />
+
+                    <TextView
+                        android:id="@+id/tvLoSigues"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/espacio_8"
+                        android:background="@drawable/bg_chip_zona_hecha"
+                        android:gravity="center_vertical"
+                        android:minHeight="22dp"
+                        android:paddingStart="@dimen/espacio_8"
+                        android:paddingEnd="@dimen/espacio_8"
+                        android:text="@string/programas_lo_sigues"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:id="@+id/puntoNivel"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_punto_nivel" />
+
+                    <TextView
+                        android:id="@+id/tvProgramaResumen"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Hero.Apoyo" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_chevron_right"
+                app:tint="@color/gp_on_hero_variant" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tiraCiclo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_16"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/tvProgramaMotivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_12"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+            android:textColor="@color/gp_on_hero"
+            android:visibility="gone" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

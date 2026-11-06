@@ -2468,4 +2468,81 @@
     <string name="arranque_no_conecta_texto">The server is taking longer than usual. Try again in a moment.</string>
     <string name="login_sesion_cerrada">Your session has ended. For your security, sign in again: your data is still here.</string>
     <string name="envivo_sin_red">You’re offline. Your workout is saved on your phone and uploads when you’re back online.</string>
+    <!-- GP-232: session, routine and program cards, in plain sentences without «·». -->
+    <string name="tarjeta_y_serie">", and "</string>
+    <plurals name="tarjeta_minutos">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="tarjeta_series">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
+    <plurals name="tarjeta_records">
+        <item quantity="one">%d record</item>
+        <item quantity="other">%d records</item>
+    </plurals>
+    <plurals name="tarjeta_ejercicios">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
+    <!-- %1$s: the day; %2$s: the time or the weekday. «Yesterday, 6:05 PM», «Yesterday, Tuesday». -->
+    <string name="tarjeta_cuando">%1$s, %2$s</string>
+    <string name="tarjeta_dia_patron">EEEE, MMM d</string>
+    <string name="tarjeta_hora_patron">h:mm a</string>
+    <string name="tarjeta_cuando_hoy_a11y">today at %1$s</string>
+    <string name="tarjeta_cuando_ayer_a11y">yesterday at %1$s</string>
+    <!-- %1$s: «Monday, Nov 2»; %2$s: the time. -->
+    <string name="tarjeta_cuando_otro_a11y">on %1$s at %2$s</string>
+    <string name="tarjeta_comparacion_sube">%1$d%% more than last time</string>
+    <string name="tarjeta_comparacion_baja">%1$d%% less than last time</string>
+    <string name="tarjeta_comparacion_igual">Same as last time</string>
+    <string name="tarjeta_comparacion_primera">First time with this routine</string>
+    <string name="tarjeta_sin_ejercicios">No exercises logged</string>
+    <string name="tarjeta_sin_hacer">Not done yet</string>
+    <!-- %1$s: «6 days ago», «yesterday». -->
+    <string name="tarjeta_ultima_vez">Last time, %1$s</string>
+    <string name="tarjeta_enlace_con">", with "</string>
+    <plurals name="tarjeta_kilos_a11y">
+        <item quantity="one">%1$s kilo</item>
+        <item quantity="other">%1$s kilos</item>
+    </plurals>
+    <!-- %1$d: how many; %2$s and %3$s: kilos of the first and the last. -->
+    <plurals name="tarjeta_barras_a11y">
+        <item quantity="one">Your last time with this routine, %2$s kilos</item>
+        <item quantity="other">Your last %1$d times with this routine, from %2$s to %3$s kilos</item>
+    </plurals>
+    <!-- %1$s: «6 days ago»; %2$s: «7,920 kilos». -->
+    <string name="tarjeta_ultima_a11y">Last time, %1$s, %2$s</string>
+    <string name="tarjeta_toca_hoy_a11y">, the one up today</string>
+    <string name="tarjeta_abre_resumen_a11y">Opens the summary</string>
+    <string name="historial_esta_semana">This week</string>
+    <string name="historial_semana_pasada">Last week</string>
+    <string name="historial_semana_del">Week of %1$s</string>
+    <!-- %1$d: workouts; %2$s: the kilos, already grouped. -->
+    <plurals name="historial_semana_resumen">
+        <item quantity="one">%1$d workout and %2$s kg</item>
+        <item quantity="other">%1$d workouts and %2$s kg</item>
+    </plurals>
+    <plurals name="historial_semana_a11y">
+        <item quantity="one">%1$d workout and %2$s kilos</item>
+        <item quantity="other">%1$d workouts and %2$s kilos</item>
+    </plurals>
+    <string name="historial_error">Couldn\'t load your history.</string>
+    <string name="resumen_borrar">Delete workout</string>
+    <string name="historial_borrar_fondo">Delete</string>
+    <!-- %1$s: the routine. -->
+    <string name="historial_borrada">%1$s deleted</string>
+    <!-- %1$d and %2$d: the program days; «2 or 3 days». -->
+    <string name="programa_dias_o">%1$d or %2$d days</string>
+    <string name="programa_minutos_de_a">%1$d to %2$d minutes</string>
+    <!-- %1$s: the level; %2$s: the days; %3$s: the minutes. -->
+    <string name="programa_frase">%1$s, %2$s, %3$s</string>
+    <string name="programa_frase_sin_minutos">%1$s, %2$s</string>
+    <!-- %1$d: how many routines; %2$s: their names in a sentence. -->
+    <plurals name="programa_ciclo_a11y">
+        <item quantity="one">A %1$d-routine cycle that repeats: %2$s</item>
+        <item quantity="other">A %1$d-routine cycle that repeats: %2$s</item>
+    </plurals>
+    <string name="programa_recomendado_a11y">, recommended for you</string>
 </resources>

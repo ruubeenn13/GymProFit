@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_semana_historial — la cabecera de una semana del Historial completo (GP-232): «ESTA
+  SEMANA» a la izquierda y «2 entrenos y 22.050 kg» a la derecha. Es un encabezado para TalkBack,
+  que la lee de una vez («Esta semana: 2 entrenos y 22.050 kilos»).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cabeceraSemana"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/espacio_4"
+    android:paddingTop="@dimen/espacio_16"
+    android:paddingEnd="@dimen/espacio_4"
+    android:paddingBottom="@dimen/espacio_12">
+
+    <TextView
+        android:id="@+id/tvSemanaTitulo"
+        style="@style/Widget.GymProFit.Seccion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvSemanaResumen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+        android:textColor="@color/gp_text_secondary" />
+</LinearLayout>

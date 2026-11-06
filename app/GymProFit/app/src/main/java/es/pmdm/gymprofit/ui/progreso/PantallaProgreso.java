@@ -51,6 +51,8 @@ public final class PantallaProgreso {
     private final Fuente<List<LogroProgreso>> logros = new Fuente<>();
     private final Fuente<List<MedicionCorporal>> mediciones = new Fuente<>();
     private final Fuente<Usuario> usuario = new Fuente<>();
+    // La primera página del historial por semanas (GP-232): las filas del Historial, sin una petición por fila.
+    private final Fuente<es.pmdm.gymprofit.model.sesion.PaginaHistorial> historial = new Fuente<>();
 
     /**
      * @param periodo      el período de los kilos que había elegido (índice de KilosMovidos.PERIODOS).
@@ -75,6 +77,7 @@ public final class PantallaProgreso {
         // Sin cuenta no hay nada que pedir; no pasa con sesión iniciada, pero no se pide con -1.
         if (usuarioId == -1) return;
         pedirSesiones();
+        pedirHistorial();
         pedirRecords();
         pedirLogros();
         kilos.pedir();
@@ -90,9 +93,17 @@ public final class PantallaProgreso {
     private void pintarSesiones() {
         resumen.pintar(sesiones, records, logros);
         kilos.setSesiones(sesiones);
-        listas.pintarHistorial(sesiones, this::pedirSesiones);
         // El vacío de los récords depende de si hay entrenos (GP-229).
         listas.pintarRecords(records, sesiones, this::pedirRecords);
+    }
+
+    private void pedirHistorial() {
+        historial.pedir(sesionApi.historial(null), fragment, this::pintarHistorial);
+        pintarHistorial();
+    }
+
+    private void pintarHistorial() {
+        listas.pintarHistorial(historial, this::pedirHistorial);
     }
 
     private void pedirRecords() {

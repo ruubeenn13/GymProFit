@@ -1,43 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  fragment_historial — sección Historial de Progreso (GP-105; antes SesionesActivity).
-  Las sesiones registradas con el nombre de su rutina —propia o plantilla, GP-113—,
-  o el vacío si no hay ninguna.
+  fragment_historial — el Historial completo de Progreso (GP-232, tablero «Historial»): las
+  sesiones por semanas, cada semana con su cabecera, en tarjetas que se borran deslizando a la
+  izquierda. Carga, error y vacío van en view_estado dentro de la sección, sin toast (la parte
+  del Historial de GP-064).
 -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/raizHistorial"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/android:colorBackground">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSesiones"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_4"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_24" />
 
-        <TextView
-            android:id="@+id/tvVacio"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/sesiones_sin_sesiones"
-            android:textSize="@dimen/text_subtitle"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSesiones"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingStart="@dimen/margen_pantalla"
-            android:paddingEnd="@dimen/margen_pantalla"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:clipToPadding="false" />
-
-    </LinearLayout>
-
+    <include
+        android:id="@+id/estadoHistorial"
+        layout="@layout/view_estado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla" />
 </FrameLayout>

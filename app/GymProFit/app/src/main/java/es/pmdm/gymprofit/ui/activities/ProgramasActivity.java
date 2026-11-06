@@ -168,37 +168,106 @@ public class ProgramasActivity extends BaseActivity {
                         es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this))));
         FrameLayout contenedor = findViewById(R.id.contenedorRecomendado);
         contenedor.removeAllViews();
-        contenedor.addView(tarjeta(contenedor, elegido, recomendado.getMotivo()));
+        contenedor.addView(tarjeta(contenedor, elegido, recomendado.getMotivo(), true));
 
         LinearLayout lista = findViewById(R.id.listaProgramas);
         lista.removeAllViews();
         for (Programa p : programas) {
             if (elegido != null && p.getCodigo().equals(elegido.getCodigo())) continue;
-            lista.addView(tarjeta(lista, p, null));
+            lista.addView(tarjeta(lista, p, null, false));
         }
         findViewById(R.id.tvProgramasVacio).setVisibility(lista.getChildCount() == 0 ? View.VISIBLE : View.GONE);
     }
 
-    private View tarjeta(ViewGroup padre, Programa p, @Nullable String motivo) {
-        View card = LayoutInflater.from(this).inflate(R.layout.item_programa, padre, false);
-        String resumen = resumen(this, p);
+    // Un programa (GP-232): el nivel con su punto y en frase, «Lo sigues» y la tira de su ciclo. El
+    // recomendado, en la tarjeta protagonista y con su porqué.
+    private View tarjeta(ViewGroup padre, Programa p, @Nullable String motivo, boolean recomendado) {
+        View card = LayoutInflater.from(this).inflate(
+                recomendado ? R.layout.item_programa_recomendado : R.layout.item_programa, padre, false);
+        String frase = frase(this, p);
         boolean loSigue = p.getCodigo().equals(codigoSeguido);
         ((TextView) card.findViewById(R.id.tvProgramaNombre)).setText(p.getNombre());
-        ((TextView) card.findViewById(R.id.tvProgramaResumen)).setText(resumen);
+        ((TextView) card.findViewById(R.id.tvProgramaResumen)).setText(frase);
+        card.findViewById(R.id.puntoNivel).setBackgroundTintList(android.content.res.ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(this, es.pmdm.gymprofit.utils.NivelColor.de(p.getNivel()))));
         card.findViewById(R.id.tvLoSigues).setVisibility(loSigue ? View.VISIBLE : View.GONE);
         TextView tvMotivo = card.findViewById(R.id.tvProgramaMotivo);
         tvMotivo.setText(motivo);
         tvMotivo.setVisibility(motivo == null || motivo.isEmpty() ? View.GONE : View.VISIBLE);
+        List<String> nombres = tiraCiclo(card.findViewById(R.id.tiraCiclo), p, recomendado);
 
         StringBuilder a11y = new StringBuilder(p.getNombre());
-        if (loSigue) a11y.append(". ").append(getString(R.string.programas_lo_sigues));
-        a11y.append(". ").append(resumen);
-        if (motivo != null && !motivo.isEmpty()) a11y.append(". ").append(motivo);
+        if (recomendado) a11y.append(getString(R.string.programa_recomendado_a11y));
+        if (loSigue) a11y.append(", ").append(getString(R.string.programas_lo_sigues).toLowerCase(
+                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this)));
+        a11y.append(". ").append(frase).append('.');
+        if (!nombres.isEmpty()) {
+            a11y.append(' ').append(getResources().getQuantityString(R.plurals.programa_ciclo_a11y, nombres.size(),
+                    nombres.size(), es.pmdm.gymprofit.utils.FrasesTarjeta.ciclo(nombres,
+                            es.pmdm.gymprofit.utils.FrasesTarjeta.Textos.de(this)))).append('.');
+        }
+        if (motivo != null && !motivo.isEmpty()) a11y.append(' ').append(motivo);
         card.setContentDescription(a11y);
         // Seguir un programa es un flujo: del listado a su detalle, eje X compartido.
         card.setOnClickListener(v -> Transiciones.avanzar(this, new Intent(this, ProgramaDetalleActivity.class)
                 .putExtra(ProgramaDetalleActivity.EXTRA_CODIGO, p.getCodigo())));
         return card;
+    }
+
+    // La tira del ciclo: un círculo con las siglas de cada rutina, en su orden, y el icono de que
+    // se repite. Devuelve los nombres, para TalkBack.
+    private List<String> tiraCiclo(LinearLayout tira, Programa p, boolean recomendado) {
+        List<String> nombres = new ArrayList<>();
+        List<es.pmdm.gymprofit.model.programa.DiaPrograma> semana =
+                p.getSemana() != null ? new ArrayList<>(p.getSemana()) : new ArrayList<>();
+        java.util.Collections.sort(semana, (a, b) -> Integer.compare(a.getPosicion(), b.getPosicion()));
+        int lado = getResources().getDimensionPixelSize(R.dimen.sigla_ciclo);
+        int hueco = getResources().getDimensionPixelSize(R.dimen.espacio_8);
+        int texto = recomendado ? androidx.core.content.ContextCompat.getColor(this, R.color.gp_on_hero)
+                : com.google.android.material.color.MaterialColors.getColor(tira, com.google.android.material.R.attr.colorOnSurface);
+        android.graphics.Typeface condensada = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.barlow_condensed);
+        for (es.pmdm.gymprofit.model.programa.DiaPrograma d : semana) {
+            nombres.add(d.getRutinaNombre());
+            TextView c = new TextView(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(lado, lado);
+            lp.setMarginEnd(hueco);
+            c.setLayoutParams(lp);
+            c.setGravity(android.view.Gravity.CENTER);
+            c.setBackgroundResource(recomendado ? R.drawable.bg_sigla_ciclo_hero : R.drawable.bg_sigla_ciclo);
+            c.setText(es.pmdm.gymprofit.utils.Siglas.de(d.getRutinaNombre()));
+            c.setTextColor(texto);
+            c.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_sigla_ciclo));
+            if (condensada != null) c.setTypeface(android.graphics.Typeface.create(condensada, android.graphics.Typeface.BOLD));
+            c.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            tira.addView(c);
+        }
+        if (!semana.isEmpty()) {
+            android.widget.ImageView repite = new android.widget.ImageView(this);
+            int veinte = getResources().getDimensionPixelSize(R.dimen.espacio_20);
+            repite.setLayoutParams(new LinearLayout.LayoutParams(veinte, veinte));
+            repite.setImageResource(R.drawable.ic_ms_autorenew);
+            repite.setImageTintList(android.content.res.ColorStateList.valueOf(recomendado
+                    ? androidx.core.content.ContextCompat.getColor(this, R.color.gp_on_hero_variant)
+                    : androidx.core.content.ContextCompat.getColor(this, R.color.gp_text_secondary)));
+            repite.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+            tira.addView(repite);
+        }
+        tira.setVisibility(semana.isEmpty() ? View.GONE : View.VISIBLE);
+        return nombres;
+    }
+
+    /** «Intermedio, 2 o 3 días, de 45 a 55 minutos»: el nivel, los días y los minutos en frase (GP-232). */
+    public static String frase(android.content.Context ctx, Programa p) {
+        String nivel = UIHelper.traducirNivel(ctx, p.getNivel());
+        String dias = p.getDiasMin() == p.getDiasMax()
+                ? ctx.getResources().getQuantityString(R.plurals.programa_dias, p.getDiasMax(), p.getDiasMax())
+                : ctx.getString(R.string.programa_dias_o, p.getDiasMin(), p.getDiasMax());
+        int[] minutos = p.minutos();
+        if (minutos == null) return ctx.getString(R.string.programa_frase_sin_minutos, nivel, dias);
+        String tiempo = minutos[0] == minutos[1]
+                ? ctx.getResources().getQuantityString(R.plurals.tarjeta_minutos, minutos[0], minutos[0])
+                : ctx.getString(R.string.programa_minutos_de_a, minutos[0], minutos[1]);
+        return ctx.getString(R.string.programa_frase, nivel, dias, tiempo);
     }
 
     /** «3 días · 45–55 min · Intermedio» (o «2–3 días»). */
