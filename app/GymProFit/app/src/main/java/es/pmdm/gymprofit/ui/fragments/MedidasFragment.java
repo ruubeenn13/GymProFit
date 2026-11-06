@@ -360,6 +360,18 @@ public class MedidasFragment extends BaseFragment {
         chartPeso.setVisibility(View.VISIBLE);
         tvGraficaVacia.setVisibility(View.GONE);
         tvGraficaPista.setVisibility(que == PuntosGrafica.Que.UN_PUNTO ? View.VISIBLE : View.GONE);
+        // La pista va sobre el área de la gráfica: la gráfica le deja su sitio arriba, o pisaba la
+        // cifra de arriba del eje y la cruzaba la cuadrícula (revisor, GP-225).
+        chartPeso.setExtraTopOffset(0f);
+        if (que == PuntosGrafica.Que.UN_PUNTO) {
+            tvGraficaPista.post(() -> {
+                if (!isAdded()) return;
+                float alto = tvGraficaPista.getHeight() / getResources().getDisplayMetrics().density;
+                chartPeso.setExtraTopOffset(alto + 4f);
+                chartPeso.notifyDataSetChanged();
+                chartPeso.invalidate();
+            });
+        }
         tvGraficaPista.setText(metrica == MET_PESO ? R.string.grafica_un_peso : R.string.grafica_una_medida);
 
         ChartStyler.styleLine(chartPeso, new ValueFormatter() {
