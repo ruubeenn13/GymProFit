@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Barras de tus últimas veces</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div aria-hidden="true" style="height: {{ altoCss }}; display: flex; align-items: flex-end; gap: {{ huecoCss }}">
+<sc-for list="{{ barras }}" as="b" hint-placeholder-count="6">
+<span class="gp-barra" style="display: block; flex-shrink: 0; width: {{ anchoCss }}; height: {{ b.alto }}; border-radius: {{ radioArriba }} {{ radioArriba }} {{ radioAbajo }} {{ radioAbajo }}; background: {{ b.color }}; transform-origin: 50% 100%; animation: {{ b.animacion }}"></span>
+</sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"datos":{"editor":null,"default":[[11020,0],[11640,1],[12180,0],[12740,0],[13250,0],[13640,1]]},"tema":{"editor":"enum","options":["oscuro","claro"],"default":"oscuro"},"alto":{"editor":"int","default":36},"ancho":{"editor":"int","default":10},"hueco":{"editor":"int","default":6},"animar":{"editor":"boolean","default":true},"$preview":{"width":90,"height":36}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props || {};
+    const claro = p.tema === 'claro';
+    const num = (x, d) => { const n = Number(x); return Number.isFinite(n) && n > 0 ? n : d; };
+    const lista = Array.isArray(p.datos) ? p.datos : [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0], [13640, 1]];
+    const datos = lista.map((d) => Array.isArray(d) ? { v: Number(d[0]) || 0, r: !!d[1] } : { v: Number(d) || 0, r: false });
+    const max = datos.reduce((m, d) => Math.max(m, d.v), 0) || 1;
+    const alto = num(p.alto, 36);
+    const ancho = num(p.ancho, 10);
+    const hueco = num(p.hueco, 6);
+    const C = claro
+      ? { esta: '#B83E00', oro: '#AE8528', resto: '#8C8C7D' }
+      : { esta: '#FF6A00', oro: '#E8B84B', resto: '#676F7E' };
+    const ultima = datos.length - 1;
+    const animar = p.animar !== false;
+    const barras = datos.map((d, i) => {
+      const retraso = 120 + i * 40;
+      let animacion = animar ? ('gp-crece 500ms cubic-bezier(0.2, 0, 0, 1) ' + retraso + 'ms both') : 'none';
+      if (animar && d.r) animacion += ', gp-brilla 900ms ease-out ' + (retraso + 520) + 'ms 1';
+      return {
+        alto: Math.max(4, Math.round(alto * d.v / max)) + 'px',
+        color: d.r ? C.oro : (i === ultima ? C.esta : C.resto),
+        animacion: animacion
+      };
+    });
+    return {
+      barras: barras,
+      altoCss: alto + 'px',
+      anchoCss: ancho + 'px',
+      huecoCss: hueco + 'px',
+      radioArriba: Math.min(8, ancho / 2) + 'px',
+      radioAbajo: Math.min(4, ancho / 2) + 'px'
+    };
+  }
+}
+</script>
+</body>
+</html>

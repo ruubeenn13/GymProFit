@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tarjetas en tema claro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+@keyframes gp-crece{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes gp-brilla{0%,100%{filter:none}40%{filter:brightness(1.45)}}
+@media (prefers-reduced-motion: reduce){.gp-barra{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 1200px; height: 860px; box-sizing: border-box; padding: 40px; background: #F1F1EE; color: #17181C; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 1.1; color: #17181C">Las mismas tarjetas, en claro</h1>
+<p style="margin: 0; font-size: 15px; color: #5A5C62">Tarjeta blanca con borde de 1 dp. Barras: esta en #B83E00, la de récord en #AE8528 y las demás en #8C8C7D.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 35px; align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">HISTORIAL</span>
+<div style="box-sizing: border-box; padding: 0 4px; display: flex; justify-content: space-between; align-items: baseline; line-height: 16px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: #5A5C62">ESTA SEMANA</span>
+<span style="font-size: 13px; color: #5A5C62">2 entrenos y 22.050 kg</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna A</span><span style="font-size: 13px; color: #5A5C62">Ayer, 18:05</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #5A5C62">Pierna y abdomen</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">13.640<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #5A5C62"> kg</span></span><dc-import name="Barras" datos="{{ pa6 }}" tema="claro" alto="36" ancho="10" hueco="6" hint-size="90px,36px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 18px; font-weight: 600; color: #1A7C41"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_up</span>3 % más que la anterior</span>
+<span style="margin-top: 4px; font-size: 13px; line-height: 16px; color: #5A5C62">58 minutos, 18 series y <span style="font-weight: 600; color: #8A6920">1 récord</span></span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna B</span><span style="font-size: 13px; color: #5A5C62">Viernes 30, 17:40</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #5A5C62">Pierna y abdomen</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">11.980<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #5A5C62"> kg</span></span><dc-import name="Barras" datos="{{ pb5 }}" tema="claro" alto="36" ancho="10" hueco="6" hint-size="74px,36px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 18px; font-weight: 600; color: #5A5C62"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_down</span>2 % menos que la anterior</span>
+<span style="margin-top: 4px; font-size: 13px; line-height: 16px; color: #5A5C62">63 minutos y 18 series</span>
+</div>
+<span style="margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">PROGRESO · HISTORIAL</span>
+<div style="box-sizing: border-box; width: 350px; padding: 4px 0; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF">
+<div style="min-height: 72px; box-sizing: border-box; padding: 10px 12px 10px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Pierna A</span><span style="font-size: 13px; color: #5A5C62">Ayer, 13.640 kg y <span style="font-weight: 600; color: #8A6920">1 récord</span></span></span>
+<dc-import name="Barras" datos="{{ pa6 }}" tema="claro" alto="24" ancho="5" hueco="3" hint-size="45px,24px"></dc-import>
+<span class="ms" aria-hidden="true" style="color: #5A5C62">chevron_right</span>
+</div>
+<div style="height: 1px; margin-left: 16px; background: #E8E8E3"></div>
+<div style="min-height: 72px; box-sizing: border-box; padding: 10px 12px 10px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Torso A</span><span style="font-size: 13px; color: #5A5C62">Lunes, 8.410 kg</span></span>
+<dc-import name="Barras" datos="{{ ta6 }}" tema="claro" alto="24" ancho="5" hueco="3" hint-size="45px,24px"></dc-import>
+<span class="ms" aria-hidden="true" style="color: #5A5C62">chevron_right</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">TUS ÚLTIMOS ENTRENOS</span>
+<div style="width: 350px; overflow: hidden">
+<div style="display: flex; gap: 12px; width: max-content">
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 20px; background: #FFFFFF; display: flex; flex-direction: column">
+<span style="font-size: 13px; line-height: 16px; color: #5A5C62">Ayer, martes</span>
+<span style="margin-top: 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna A</span>
+<div style="margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">13.640<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 14px; color: #5A5C62"> kg</span></span><dc-import name="Barras" datos="{{ pa6 }}" tema="claro" alto="28" ancho="7" hueco="4" hint-size="62px,28px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 18px; font-weight: 600; color: #8A6920"><span class="ms f" aria-hidden="true" style="font-size: 18px">trophy</span>1 récord</span>
+</div>
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 20px; background: #FFFFFF; display: flex; flex-direction: column">
+<span style="font-size: 13px; line-height: 16px; color: #5A5C62">Lunes</span>
+<span style="margin-top: 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Torso A</span>
+<div style="margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">8.410<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 14px; color: #5A5C62"> kg</span></span><dc-import name="Barras" datos="{{ ta6 }}" tema="claro" alto="28" ancho="7" hueco="4" hint-size="62px,28px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 18px; font-weight: 600; color: #1A7C41"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_up</span>2 % más que la anterior</span>
+</div>
+</div>
+</div>
+<span style="margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">ENTRENAR · RUTINAS</span>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Torso B</span><span style="font-size: 13px; font-weight: 600; color: #B83E00">Hoy</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #5A5C62">Pecho, espalda y brazos</span>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #5A5C62">7 ejercicios y 55 minutos</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">7.920<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #5A5C62"> kg</span></span><dc-import name="Barras" datos="{{ tb5 }}" tema="claro" alto="36" ancho="10" hueco="6" hint-size="74px,36px"></dc-import></div>
+<span style="margin-top: 6px; font-size: 13px; line-height: 16px; color: #5A5C62">La última vez, hace 6 días, con <span style="font-weight: 600; color: #8A6920">2 récords</span></span>
+</div>
+<span style="margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">¿QUÉ RUTINA HOY?</span>
+<div style="box-sizing: border-box; width: 350px; padding: 8px 0; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF">
+<div style="min-height: 76px; box-sizing: border-box; padding: 10px 16px 10px 20px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; font-weight: 600">Torso B</span><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #FFE0CC; color: #5C1E00; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Toca hoy</span></span><span style="font-size: 13px; color: #5A5C62">Pecho, espalda y brazos</span><span style="font-size: 13px; color: #5A5C62">La última vez, hace 6 días</span></span>
+<dc-import name="Barras" datos="{{ tb5 }}" tema="claro" alto="24" ancho="5" hueco="3" hint-size="37px,24px"></dc-import>
+<span class="ms f" aria-hidden="true" style="color: #B83E00">play_arrow</span>
+</div>
+<div style="min-height: 76px; box-sizing: border-box; padding: 10px 16px 10px 20px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 16px; font-weight: 600">Pierna B</span><span style="font-size: 13px; color: #5A5C62">Pierna y abdomen</span><span style="font-size: 13px; color: #5A5C62">La última vez, hace 5 días</span></span>
+<dc-import name="Barras" datos="{{ pb5 }}" tema="claro" alto="24" ancho="5" hueco="3" hint-size="37px,24px"></dc-import>
+<span class="ms f" aria-hidden="true" style="color: #B83E00">play_arrow</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #B83E00">PARA TI · NIVEL INTERMEDIO</span>
+<div style="box-sizing: border-box; width: 350px; padding: 20px; border-radius: 28px; background: #3A2110; color: #FFF4E8; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: flex-start; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 29px">Cuerpo completo</span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #FFD3B0"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B"></span>Intermedio, 2 o 3 días, 50 minutos</span>
+</div>
+<span class="ms" aria-hidden="true" style="color: #FFD3B0">chevron_right</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 36px; height: 36px; box-sizing: border-box; border-radius: 18px; border: 1px solid #FFD3B0; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">CA</span>
+<span style="width: 36px; height: 36px; box-sizing: border-box; border-radius: 18px; border: 1px solid #FFD3B0; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">CB</span>
+<span style="width: 36px; height: 36px; box-sizing: border-box; border-radius: 18px; border: 1px solid #FFD3B0; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">CC</span>
+<span class="ms" aria-hidden="true" style="font-size: 20px; color: #FFD3B0">autorenew</span>
+</div>
+</div>
+<span style="margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; line-height: 16px; letter-spacing: 0.08em; color: #5A5C62">MÁS PROGRAMAS</span>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 26px">Torso y pierna</span><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #FFE0CC; color: #5C1E00; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Lo sigues</span></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #5A5C62"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #99620E"></span>Intermedio, 4 días, de 50 a 55 minutos</span>
+</div>
+<span class="ms" aria-hidden="true" style="color: #5A5C62">chevron_right</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E8E8E3; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">TA</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E8E8E3; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">PA</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E8E8E3; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">TB</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #E8E8E3; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">PB</span>
+<span class="ms" aria-hidden="true" style="font-size: 20px; color: #5A5C62">autorenew</span>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      pa6: [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0], [13640, 1]],
+      ta6: [[7380, 0], [7610, 1], [7790, 0], [8010, 1], [8250, 0], [8410, 0]],
+      tb5: [[6980, 0], [7150, 0], [7320, 0], [7540, 0], [7920, 1]],
+      pb5: [[10890, 0], [11450, 0], [11900, 1], [12230, 0], [11980, 0]]
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Qué rutina hoy</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+@keyframes gp-crece{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes gp-brilla{0%,100%{filter:none}40%{filter:brightness(1.45)}}
+@media (prefers-reduced-motion: reduce){.gp-barra{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 760px; overflow: hidden; background: #040405; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; justify-content: flex-end">
+<section aria-label="¿Qué rutina hoy?" style="box-sizing: border-box; padding: 8px 0 24px; border-radius: 28px 28px 0 0; background: #1B1E24; display: flex; flex-direction: column">
+<span aria-hidden="true" style="align-self: center; width: 32px; height: 4px; margin: 8px 0 16px; border-radius: 2px; background: #676F7E"></span>
+<h2 style="margin: 0 0 8px; padding: 0 20px; font-size: 20px; font-weight: 600; color: #F2F2F3">¿Qué rutina hoy?</h2>
+<sc-for list="{{ rutinas }}" as="r" hint-placeholder-count="6">
+<a href="#" aria-label="{{ r.a11y }}" style="min-height: 76px; box-sizing: border-box; padding: 10px 16px 10px 20px; color: #F2F2F3; text-decoration: none; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; font-weight: 600">{{ r.nombre }}</span><sc-if value="{{ r.hoy }}" hint-placeholder-val="{{ false }}"><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #3A2110; color: #FFB27A; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Toca hoy</span></sc-if></span>
+<span style="font-size: 13px; color: #A1A9B6">{{ r.zonas }}</span>
+<span style="font-size: 13px; color: #A1A9B6">{{ r.ultima }}</span>
+</span>
+<sc-if value="{{ r.barras }}" hint-placeholder-val="{{ true }}">
+<dc-import name="Barras" datos="{{ r.barras }}" tema="oscuro" alto="24" ancho="5" hueco="3" hint-size="45px,24px"></dc-import>
+</sc-if>
+<span class="ms f" aria-hidden="true" style="color: #FF6A00">play_arrow</span>
+</a>
+</sc-for>
+<a href="#" style="min-height: 64px; box-sizing: border-box; padding: 8px 16px 8px 20px; color: #F2F2F3; text-decoration: none; display: flex; align-items: center; gap: 14px">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">bolt</span>
+<span style="flex: 1; font-size: 16px; font-weight: 600">Empezar sin rutina</span>
+</a>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const r = (nombre, zonas, ultima, barras, hoy) => ({ nombre, zonas, ultima, barras, hoy,
+      a11y: 'Empezar ' + nombre + (hoy ? ', la que toca hoy' : '') + '. ' + zonas + '. ' + ultima + '.' });
+    return {
+      rutinas: [
+        r('Torso B', 'Pecho, espalda y brazos', 'La última vez, hace 6 días', [[6980, 0], [7150, 0], [7320, 0], [7540, 0], [7920, 1]], true),
+        r('Pierna B', 'Pierna y abdomen', 'La última vez, hace 5 días', [[10890, 0], [11450, 0], [11900, 1], [12230, 0], [11980, 0]], false),
+        r('Torso A', 'Espalda, hombros y brazos', 'La última vez, hace 2 días', [[7380, 0], [7610, 1], [7790, 0], [8010, 1], [8250, 0], [8410, 0]], false),
+        r('Pierna A', 'Pierna y abdomen', 'La última vez, ayer', [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0], [13640, 1]], false),
+        r('Día de brazos', 'Brazos y abdomen', 'La última vez, hace 3 semanas', [[2150, 0], [2280, 0]], false),
+        r('Pierna en casa', 'Pierna', 'Sin hacer todavía', null, false)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
