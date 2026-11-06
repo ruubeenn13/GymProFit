@@ -1,6 +1,6 @@
-# Lote 6 · sesión y arranque (GP-237, GP-235, GP-234, GP-233 y GP-219) — EN PAUSA
+# Lote 6 · sesión y arranque (GP-237, GP-235, GP-234, GP-233 y GP-219)
 
-Pausado el 05-11-2026 a petición del propietario, sin cerrar. Lo retoma otra sesión.
+Pausado el 05-11-2026 a petición del propietario y retomado y cerrado el 06-11-2026. «Encargo» y «Dónde se queda» son de la pausa; lo de después, en «Cierre».
 
 ## Encargo
 
@@ -89,3 +89,64 @@ Ficheros: `res/values/idioma.xml` y `res/values-en/idioma.xml` (bool `recursos_e
 
 - Cuenta local `gp237a` (base 3308) con una sesión en vivo «Entrenamiento libre» empezada; producción no se ha tocado.
 - `Medium_Phone_API_36.1`: queda instalada la debug del lote con esa cuenta (antes había el release de `f17027e` sin sesión) y el sistema en claro. API local, proxy y emulador parados.
+
+## Cierre (06-11-2026)
+
+Retomado sobre `796f1cd`: el stash `lote-6-pausa` se aplicó sin choques, compilaba y sus 22 tests pasaban (suite de 1069 en verde).
+
+### GP-237 y GP-235 — hechos
+
+**Diagnóstico de las 3 llamadas.** Con el log de la hora de envío de cada 401 (solo para depurar, ya quitado): no era un error del cálculo. Inicio lanza 8 peticiones y el `Dispatcher` de OkHttp deja 5 a la vez por host. Las 5 primeras salieron entre 16.102 y 16.112, llegaron sus 401 y el intento acabó a las 16.137; las 3 en cola (`/diario`, `/records`, `/comidas`) salieron entre 16.140 y 16.145, ya después del intento, y para la regla por hora de envío eran otra acción: segunda llamada.
+
+**El arreglo, como decidió el propietario** (`1d84f89`, DEC-059): tras un intento sin respuesta no se vuelve a llamar con el mismo refresh durante 5 s; con 429, lo que diga `Retry-After` (5 s si no viene o no es un número). Lo que llega en ese rato falla sin llamar: como sin red, o con 429 como el 429 de GP-096 (`RenovacionLimitadaException` → `onFail(429, "Retry-After=N;…")`, «Demasiados intentos: espera N segundos»). La regla por hora de envío sobraba y se quitó: una sola regla. El reloj del turno es `SystemClock.elapsedRealtime`.
+
+**Tests.** `TurnoRenovacionTest` (14) y `TokenAuthenticatorTest` (8). Los nuevos, vistos en rojo por mutación (el código de main no tiene la clase):
+- sin la espera: `tras_un_sin_respuesta_no_se_vuelve_a_llamar_en_5_s_y_luego_si`, `sin_respuesta_una_llamada_por_tanda_y_todas_fallan_sin_cerrar`, `con_429_una_llamada_por_tanda_y_todas_esperan`, `con_429_no_se_vuelve_a_llamar_hasta_que_pase_retry_after_y_se_dice_cuanto_falta`;
+- con el 429 tratado como sin respuesta: los cuatro de 429 (`con_429_falla_con_la_espera_de_retry_after_y_no_como_sin_red`, `con_429_sin_retry_after_espera_los_5_s_de_siempre` y los dos de arriba) y `sin_red_429_y_5xx_no_cierran_ni_tocan_los_tokens`;
+- sin leer `Retry-After`: tres de los de 429;
+- sin la rama de `ApiCallback`: `api_callback_da_el_429_con_su_espera`;
+- con la espera sin mirar el refresh: `la_espera_es_del_refresh_con_que_se_intento`.
+Suite unitaria: 1074 en verde; `assembleDebug` y `lintDebug`, bien.
+
+**Medido en el emulador** (API 36, debug, access de 60 s, `scripts/sesion-arranque/tanda.sh`: en Perfil, caduca el access, se pone el modo y se vuelve a Inicio):
+
+| `/auth/refresh` | Llamadas al volver a Inicio | Peticiones | Tras la espera, siguiente acción |
+|---|---|---|---|
+| 503 | 1 | 8 fallan sin red | 1 llamada, renueva y sigue |
+| 500 | 1 | 8 fallan sin red | 1 llamada, renueva y sigue |
+| 429 (`Retry-After: 30`) | 1 | 8 fallan como 429; Inicio dice «espera 30 segundos» | abrir Perfil a los 10 s: 0 llamadas; a los 31 s, 1 y renueva |
+| colgado (70 s) | 1 (agota a los 60 s) | 8 fallan sin red | 1 llamada, renueva y sigue |
+| conexión cortada | 1 | 8 fallan sin red | 1 llamada, renueva y sigue |
+| sesión viva | 1 | ninguna falla | — |
+
+- **Revocada**: restablecida la clave de `gp237a` por `forgot-password`/`reset-password` (revoca las sesiones, DEC-058), abrir Perfil: 1 llamada (401), Entrar creada una vez con «Tu sesión se ha cerrado».
+- **Sin red de verdad** (`svc wifi disable` y `svc data disable`, con el access caducado): las 8 peticiones fallan al conectar y no llegan a pedir renovación, nadie va a Entrar; con la red de vuelta, 1 llamada, renueva y sigue.
+- Nadie fue a Entrar en ningún caso salvo el revocado.
+
+### GP-234 — hecho
+
+Contado con `matar_y_volver.sh` (en Android 7 no existe `wm_on_create_called`: cuenta `am_on_resume_called` con su motivo, y una recreación suma otra con `handleRelaunchActivity`; comprobado cambiando el tema en Ajustes, que la produce):
+- API 36, app clara y sistema oscuro, **Entrar**: 1 creación en 3 de 3 (lo que faltaba de la pausa).
+- API 24, app oscura y sistema claro: Entrar, sesión en vivo y Registrar sesión, 1 en 3 de 3 cada una.
+- API 24, app clara y sistema oscuro (el sistema a oscuro con `service call uimode 4 i32 2`, porque Android 7 no tiene `cmd uimode`): las tres, 1 en 3 de 3.
+
+### GP-233 — hecho
+
+`035ddfe`. Sin idioma elegido:
+- API 36, hoja de Idioma de Ajustes: sistema en español → «Español»; en inglés → «English»; francés delante (fr, en, es) → la app sale en **español** y marca «Español». El informe de la pausa suponía que con el francés y luego el inglés la app salía en inglés; en este emulador no: sale en español con la fecha en francés. El diálogo marca lo que se ve, que era lo pedido.
+- API 24, diálogo de la bienvenida: en → «English» (el código de antes marcaba Español), es → «Español», fr → la app en español y «Español».
+
+### GP-219 — comprobado, no hace falta cambiar nada
+
+En `GymProFit_API_24`, sin TalkBack, con la escala de letra del sistema (1,0 → 1,15) cambiada con la app delante: app en español y sistema en inglés, y al revés. En los dos casos la pantalla que estaba, la que se abre después (Entrar) y la de vuelta siguen en el idioma de la app. El idioma no va por el camino que perdía el tema, así que no va al override de `ScaleUtils.wrap`.
+
+### Scripts
+
+`12fa161`: `scripts/sesion-arranque/` con `proxy-refresh.py` (deja su modo y su registro en la carpeta temporal, fuera del repositorio), `tanda.sh` (sin depender de otros apaños) y `matar_y_volver.sh` (también Android 7), con su línea en `scripts/README.md`. El resto de los apaños (`toca.py`, `entrar.sh` y los de esta sesión) se queda fuera.
+
+### Decisiones tomadas
+
+1. La espera sin `Retry-After` en un 429 es la misma de 5 s, y se dice como 429 con esos segundos.
+2. La espera cuenta desde que acaba el intento, no desde que empezó: un tiempo agotado tarda 60 s y quien esperaba el cerrojo entra justo después.
+3. La espera es del refresh con que se intentó: otro refresh (volver a entrar) no la hereda.
+
