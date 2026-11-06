@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tarjetas: antes y después</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+@keyframes gp-crece{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes gp-brilla{0%,100%{filter:none}40%{filter:brightness(1.45)}}
+@media (prefers-reduced-motion: reduce){.gp-barra{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 1200px; height: 1960px; box-sizing: border-box; padding: 48px; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px; line-height: 1.1; color: #F2F2F3">Tarjetas de rutinas, sesiones y programas</h1>
+<p style="margin: 0; font-size: 16px; color: #A1A9B6">Hoy, tal como está en main (da555fa), frente a la propuesta: los kilos en grande y las barras de tus últimas veces. Datos de ejemplo de seis semanas de Torso y pierna; hoy es miércoles 4 de noviembre.</p>
+</div>
+<div style="margin-top: 32px; display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; padding-bottom: 12px">
+<span></span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: #A1A9B6">HOY</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: #FF6A00">PROPUESTA</span>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">Historial</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">Progreso › Ver todo. La lista entera de entrenos.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24">
+<div style="display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 600; color: #F2F2F3">3 nov 2026 18:05</span>
+<span style="font-size: 14px; color: #A1A9B6">Pierna A</span>
+</div>
+<span style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #A1A9B6"><span class="ms" aria-hidden="true">delete</span></span>
+</div>
+<div style="height: 1px; margin: 12px 0 10px; background: #4A505B"></div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6"><span class="ms" aria-hidden="true" style="font-size: 16px; opacity: 0.6">schedule</span>58 min</div>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24">
+<div style="display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 600; color: #F2F2F3">2 nov 2026 19:10</span>
+<span style="font-size: 14px; color: #A1A9B6">Torso A</span>
+</div>
+<span style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; color: #A1A9B6"><span class="ms" aria-hidden="true">delete</span></span>
+</div>
+<div style="height: 1px; margin: 12px 0 10px; background: #4A505B"></div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6"><span class="ms" aria-hidden="true" style="font-size: 16px; opacity: 0.6">schedule</span>52 min</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="width: 350px; box-sizing: border-box; padding: 0 4px; display: flex; justify-content: space-between; align-items: baseline; line-height: 16px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: #A1A9B6">ESTA SEMANA</span>
+<span style="font-size: 13px; color: #A1A9B6">2 entrenos y 22.050 kg</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna A</span><span style="font-size: 13px; color: #A1A9B6; white-space: nowrap">Ayer, 18:05</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">Pierna y abdomen</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">13.640<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ pa6 }}" tema="oscuro" alto="36" ancho="10" hueco="6" hint-size="90px,36px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 18px; font-weight: 600; color: #4ADE80"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_up</span>3 % más que la anterior</span>
+<span style="margin-top: 4px; font-size: 13px; line-height: 16px; color: #A1A9B6">58 minutos, 18 series y <span style="font-weight: 600; color: #E8B84B">1 récord</span></span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Torso A</span><span style="font-size: 13px; color: #A1A9B6; white-space: nowrap">Lunes 2, 19:10</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">Espalda, hombros y brazos</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">8.410<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ ta6 }}" tema="oscuro" alto="36" ancho="10" hueco="6" hint-size="90px,36px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 18px; font-weight: 600; color: #4ADE80"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_up</span>2 % más que la anterior</span>
+<span style="margin-top: 4px; font-size: 13px; line-height: 16px; color: #A1A9B6">52 minutos y 21 series</span>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">Tus últimos entrenos</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">Inicio. Carrusel con los cinco últimos.</span>
+</div>
+<div style="width: 402px; overflow: hidden">
+<div style="display: flex; gap: 12px; width: max-content">
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #A1A9B6">Ayer · martes</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.1; color: #F2F2F3">Pierna A</span>
+<div style="display: flex; gap: 12px; font-size: 14px; color: #F2F2F3"><span>13.640 kg</span><span>58 min</span></div>
+<span style="font-size: 13px; color: #E8B84B">1 récord</span>
+</div>
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border-radius: 20px; background: #1B1E24; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #A1A9B6">Lunes</span>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 26px; line-height: 1.1; color: #F2F2F3">Torso A</span>
+<div style="display: flex; gap: 12px; font-size: 14px; color: #F2F2F3"><span>8.410 kg</span><span>52 min</span></div>
+<span style="font-size: 13px; color: #4ADE80">+2 % que la anterior</span>
+</div>
+</div>
+</div>
+<div style="width: 402px; overflow: hidden">
+<div style="display: flex; gap: 12px; width: max-content">
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border-radius: 20px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<span style="font-size: 13px; line-height: 16px; color: #A1A9B6">Ayer, martes</span>
+<span style="margin-top: 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna A</span>
+<div style="margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">13.640<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 14px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ pa6 }}" tema="oscuro" alto="28" ancho="7" hueco="4" hint-size="62px,28px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 18px; font-weight: 600; color: #E8B84B"><span class="ms f" aria-hidden="true" style="font-size: 18px">trophy</span>1 récord</span>
+</div>
+<div style="box-sizing: border-box; width: 220px; padding: 16px; border-radius: 20px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<span style="font-size: 13px; line-height: 16px; color: #A1A9B6">Lunes</span>
+<span style="margin-top: 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Torso A</span>
+<div style="margin-top: 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">8.410<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 14px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ ta6 }}" tema="oscuro" alto="28" ancho="7" hueco="4" hint-size="62px,28px"></dc-import></div>
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 18px; font-weight: 600; color: #4ADE80"><span class="ms" aria-hidden="true" style="font-size: 18px">trending_up</span>2 % más que la anterior</span>
+</div>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">Historial de Progreso</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">Progreso. Las dos últimas sesiones.</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 4px 0; border-radius: 24px; background: #1B1E24">
+<div style="min-height: 64px; box-sizing: border-box; padding: 8px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center"><span class="ms" aria-hidden="true">check</span></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px">Pierna A</span><span style="font-size: 13px; color: #A1A9B6">Ayer · martes · 58 min · 13.640 kg</span></span>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+<div style="height: 1px; margin-left: 70px; background: #252A31"></div>
+<div style="min-height: 64px; box-sizing: border-box; padding: 8px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: #143323; color: #4ADE80; display: flex; align-items: center; justify-content: center"><span class="ms" aria-hidden="true">check</span></span>
+<span style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px">Torso A</span><span style="font-size: 13px; color: #A1A9B6">Lunes · 52 min · 8.410 kg</span></span>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 4px 0; border-radius: 24px; background: #1B1E24; color: #F2F2F3">
+<div style="min-height: 72px; box-sizing: border-box; padding: 10px 12px 10px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Pierna A</span><span style="font-size: 13px; color: #A1A9B6">Ayer, 13.640 kg y <span style="font-weight: 600; color: #E8B84B">1 récord</span></span></span>
+<dc-import name="Barras" datos="{{ pa6 }}" tema="oscuro" alto="24" ancho="5" hueco="3" hint-size="45px,24px"></dc-import>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+<div style="height: 1px; margin-left: 16px; background: #252A31"></div>
+<div style="min-height: 72px; box-sizing: border-box; padding: 10px 12px 10px 16px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Torso A</span><span style="font-size: 13px; color: #A1A9B6">Lunes, 8.410 kg</span></span>
+<dc-import name="Barras" datos="{{ ta6 }}" tema="oscuro" alto="24" ancho="5" hueco="3" hint-size="45px,24px"></dc-import>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">Rutinas</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">Entrenar. Las del programa y las tuyas, ahora una tarjeta cada una.</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 4px 0; border-radius: 24px; background: #1B1E24">
+<div style="min-height: 84px; box-sizing: border-box; padding: 12px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 16px; background: #FF6A00; color: #1A0E00; display: flex; align-items: center; justify-content: center"><span class="ms f" aria-hidden="true">fitness_center</span></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Torso B</span><span style="font-size: 13px; color: #A1A9B6">Pecho · Espalda · Brazos</span><span style="font-size: 13px; color: #A1A9B6">7 ejercicios · 55 min</span></span>
+<span style="font-size: 13px; font-weight: 600; color: #FF6A00">Hoy</span>
+</div>
+<div style="height: 1px; margin-left: 80px; background: #252A31"></div>
+<div style="min-height: 84px; box-sizing: border-box; padding: 12px 16px; display: flex; align-items: center; gap: 14px">
+<span style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 16px; background: #252A31; color: #F2F2F3; display: flex; align-items: center; justify-content: center"><span class="ms f" aria-hidden="true">fitness_center</span></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Pierna B</span><span style="font-size: 13px; color: #A1A9B6">Pierna · Core</span><span style="font-size: 13px; color: #A1A9B6">6 ejercicios · 50 min</span></span>
+<span style="font-size: 13px; font-weight: 600; color: #A1A9B6">Siguiente</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Torso B</span><span style="font-size: 13px; font-weight: 600; color: #FF6A00">Hoy</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">Pecho, espalda y brazos</span>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">7 ejercicios y 55 minutos</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">7.920<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ tb5 }}" tema="oscuro" alto="36" ancho="10" hueco="6" hint-size="74px,36px"></dc-import></div>
+<span style="margin-top: 6px; font-size: 13px; line-height: 16px; color: #A1A9B6">La última vez, hace 6 días, con <span style="font-weight: 600; color: #E8B84B">2 récords</span></span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">Pierna B</span><span style="font-size: 13px; font-weight: 600; color: #A1A9B6">Siguiente</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">Pierna y abdomen</span>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #A1A9B6">6 ejercicios y 50 minutos</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">11.980<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #A1A9B6"> kg</span></span><dc-import name="Barras" datos="{{ pb5 }}" tema="oscuro" alto="36" ancho="10" hueco="6" hint-size="74px,36px"></dc-import></div>
+<span style="margin-top: 6px; font-size: 13px; line-height: 16px; color: #A1A9B6">La última vez, hace 5 días</span>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">¿Qué rutina hoy?</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">La hoja de «Cambiar» y «Empezar otra» de Inicio.</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 8px 0; border-radius: 24px; background: #1B1E24">
+<div style="min-height: 64px; box-sizing: border-box; padding: 4px 20px; display: flex; align-items: center; gap: 14px">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">play_arrow</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Torso A</span><span style="font-size: 13px; color: #A1A9B6">7 ejercicios</span></span>
+</div>
+<div style="min-height: 64px; box-sizing: border-box; padding: 4px 20px; display: flex; align-items: center; gap: 14px">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">play_arrow</span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Pierna A</span><span style="font-size: 13px; color: #A1A9B6">6 ejercicios</span></span>
+</div>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 8px 0; border-radius: 24px; background: #1B1E24; color: #F2F2F3">
+<div style="min-height: 76px; box-sizing: border-box; padding: 10px 16px 10px 20px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="display: flex; align-items: center; gap: 8px"><span style="font-size: 16px; font-weight: 600">Torso B</span><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #3A2110; color: #FFB27A; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Toca hoy</span></span><span style="font-size: 13px; color: #A1A9B6">Pecho, espalda y brazos</span><span style="font-size: 13px; color: #A1A9B6">La última vez, hace 6 días</span></span>
+<dc-import name="Barras" datos="{{ tb5 }}" tema="oscuro" alto="24" ancho="5" hueco="3" hint-size="37px,24px"></dc-import>
+<span class="ms f" aria-hidden="true" style="color: #FF6A00">play_arrow</span>
+</div>
+<div style="min-height: 76px; box-sizing: border-box; padding: 10px 16px 10px 20px; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px"><span style="font-size: 16px; font-weight: 600">Pierna B</span><span style="font-size: 13px; color: #A1A9B6">Pierna y abdomen</span><span style="font-size: 13px; color: #A1A9B6">La última vez, hace 5 días</span></span>
+<dc-import name="Barras" datos="{{ pb5 }}" tema="oscuro" alto="24" ancho="5" hueco="3" hint-size="37px,24px"></dc-import>
+<span class="ms f" aria-hidden="true" style="color: #FF6A00">play_arrow</span>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 220px repeat(2, minmax(0, 1fr)); column-gap: 40px; align-items: start; padding: 28px 0; border-top: 1px solid #252A31">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 18px; font-weight: 600">Programas</span>
+<span style="font-size: 14px; line-height: 1.35; color: #A1A9B6">Entrenar › Más programas › Ver todos.</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 20px; color: #F2F2F3">Torso y pierna</span>
+<span style="align-self: flex-start; padding: 2px 8px; border-radius: 12px; background: #3A2110; color: #FFB27A; font-size: 13px">Lo sigues</span>
+<span style="font-size: 14px; color: #A1A9B6">4 días · 50–55 min · Intermedio</span>
+</div>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+<div style="box-sizing: border-box; width: 350px; padding: 16px; border-radius: 24px; background: #1B1E24; color: #F2F2F3; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; gap: 8px">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 4px">
+<span style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 26px">Torso y pierna</span><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #3A2110; color: #FFB27A; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Lo sigues</span></span>
+<span style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: #A1A9B6"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 4px; background: #E8A94B"></span>Intermedio, 4 días, de 50 a 55 minutos</span>
+</div>
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">chevron_right</span>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">TA</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">PA</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">TB</span>
+<span style="width: 36px; height: 36px; border-radius: 18px; background: #252A31; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 14px">PB</span>
+<span class="ms" aria-hidden="true" style="font-size: 20px; color: #A1A9B6">autorenew</span>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      pa6: [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0], [13640, 1]],
+      ta6: [[7380, 0], [7610, 1], [7790, 0], [8010, 1], [8250, 0], [8410, 0]],
+      tb5: [[6980, 0], [7150, 0], [7320, 0], [7540, 0], [7920, 1]],
+      pb5: [[10890, 0], [11450, 0], [11900, 1], [12230, 0], [11980, 0]]
+    };
+  }
+}
+</script>
+</body>
+</html>

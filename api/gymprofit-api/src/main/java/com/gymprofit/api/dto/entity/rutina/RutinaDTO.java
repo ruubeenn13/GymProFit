@@ -1,11 +1,15 @@
 package com.gymprofit.api.dto.entity.rutina;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.SeriesMusculoDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.VezRutinaDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 // ============================================================
 // RutinaDTO — DTO de salida que representa una rutina de entrenamiento completa
@@ -39,6 +43,13 @@ public class RutinaDTO implements Serializable {
     private String programaCodigo;
     // Nombre de ese programa, en el idioma de la petición (lote 1.2.1).
     private String programaNombre;
+    // Solo en GET /rutinas/usuario/{id}/activas (GP-232), para las tarjetas de Entrenar y la
+    // hoja «¿Qué rutina hoy?»: las series pautadas por músculo, de más a menos, y las 6 últimas
+    // veces que se hizo, de la más vieja a la más nueva. En el resto de rutas no salen.
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<SeriesMusculoDTO> musculos;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<VezRutinaDTO> ultimas;
     // NO HAY CAMPO DE CALORÍAS AQUÍ, Y ES A PROPÓSITO (DEC-004 / GP-010).
     // El gasto calórico de un entrenamiento no se puede estimar con los datos que
     // tiene la app, así que no se estima. La columna sigue en la base de datos hasta

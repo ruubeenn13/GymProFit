@@ -39,8 +39,11 @@ public class ResumenSesionService {
                  THEN COALESCE(SUM(CASE WHEN sr.segundos IS NULL THEN sr.peso * sr.repeticiones END), 0)
                  ELSE COALESCE(er.peso_usado * er.repeticiones_rutinas * er.series_completadas, 0) END""";
 
-    /** Series hechas: las marcadas con algo dentro (como la última vez) o, sin series, las del resumen. */
-    private static final String SERIES_DEL_EJERCICIO = """
+    /**
+     * Series hechas: las marcadas con algo dentro (como la última vez) o, sin series, las del
+     * resumen. También la usa el historial (GP-232), para que una sesión cuente igual en los dos.
+     */
+    static final String SERIES_DEL_EJERCICIO = """
             CASE WHEN COUNT(sr.id) > 0
                  THEN SUM(CASE WHEN sr.completada = 1 AND (sr.repeticiones > 0 OR sr.segundos > 0) THEN 1 ELSE 0 END)
                  ELSE COALESCE(er.series_completadas, 0) END""";

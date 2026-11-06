@@ -103,6 +103,11 @@ public class RecordService implements IRecordService {
     }
 
     @Override
+    public Map<Integer, Integer> recordsPorSesion(Integer usuarioId) {
+        return calcular(usuarioId).recordsPorSesion();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<RecordDestacadoDTO> recordDestacado(Integer usuarioId) {
         securityUtils.checkDueno(usuarioId);

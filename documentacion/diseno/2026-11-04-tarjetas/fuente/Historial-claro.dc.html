@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Historial, tema claro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+@keyframes gp-crece{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes gp-brilla{0%,100%{filter:none}40%{filter:brightness(1.45)}}
+@media (prefers-reduced-motion: reduce){.gp-barra{animation:none !important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 1620px; overflow: hidden; background: #F1F1EE; color: #17181C; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column">
+<header style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 4px; background: #FFFFFF; display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="Volver" style="width: 48px; height: 48px; padding: 0; border: 0; border-radius: 24px; background: transparent; color: #17181C; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">arrow_back</span></button>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; color: #17181C">Historial</h1>
+</header>
+<main style="box-sizing: border-box; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 28px">
+<sc-for list="{{ semanas }}" as="w" hint-placeholder-count="3">
+<section style="display: flex; flex-direction: column; gap: 12px">
+<div style="box-sizing: border-box; padding: 0 4px; display: flex; justify-content: space-between; align-items: baseline; line-height: 16px">
+<h2 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; color: #5A5C62">{{ w.titulo }}</h2>
+<span style="font-size: 13px; color: #5A5C62">{{ w.resumen }}</span>
+</div>
+<sc-for list="{{ w.sesiones }}" as="s" hint-placeholder-count="2">
+<a href="#" aria-label="{{ s.a11y }}" style="box-sizing: border-box; width: 350px; padding: 16px; border: 1px solid #C9C9C2; border-radius: 24px; background: #FFFFFF; color: #17181C; text-decoration: none; display: flex; flex-direction: column">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 20px; line-height: 23px">{{ s.rutina }}</span><span style="font-size: 13px; color: #5A5C62; white-space: nowrap">{{ s.cuando }}</span></div>
+<span style="margin-top: 2px; font-size: 13px; line-height: 16px; color: #5A5C62">{{ s.zonas }}</span>
+<div style="margin-top: 10px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 30px">{{ s.kg }}<span style="font-family: 'Barlow', sans-serif; font-weight: 400; font-size: 15px; color: #5A5C62"> kg</span></span>
+<sc-if value="{{ s.barras }}" hint-placeholder-val="{{ true }}">
+<dc-import name="Barras" datos="{{ s.barras }}" tema="claro" alto="36" ancho="10" hueco="6" hint-size="90px,36px"></dc-import>
+</sc-if>
+</div>
+<sc-if value="{{ s.comp }}" hint-placeholder-val="{{ true }}">
+<span style="margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; line-height: 18px; font-weight: 600; color: {{ s.comp.color }}"><span class="ms" aria-hidden="true" style="font-size: 18px">{{ s.comp.icono }}</span>{{ s.comp.texto }}</span>
+</sc-if>
+<span style="margin-top: {{ s.mMeta }}; font-size: 13px; line-height: 16px; color: #5A5C62">{{ s.meta }}<sc-if value="{{ s.rec }}" hint-placeholder-val="{{ false }}"><span style="font-weight: 600; color: #8A6920">{{ s.rec }}</span></sc-if></span>
+</a>
+</sc-for>
+</section>
+</sc-for>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1620}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const PA6 = [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0], [13640, 1]];
+    const TA6 = [[7380, 0], [7610, 1], [7790, 0], [8010, 1], [8250, 0], [8410, 0]];
+    const PB5 = [[10890, 0], [11450, 0], [11900, 1], [12230, 0], [11980, 0]];
+    const TB5 = [[6980, 0], [7150, 0], [7320, 0], [7540, 0], [7920, 1]];
+    const PA5 = [[11020, 0], [11640, 1], [12180, 0], [12740, 0], [13250, 0]];
+    const TA5 = [[7380, 0], [7610, 1], [7790, 0], [8010, 1], [8250, 0]];
+    const PB4 = [[10890, 0], [11450, 0], [11900, 1], [12230, 0]];
+    const sube = (t) => ({ texto: t, icono: 'trending_up', color: '#1A7C41' });
+    const baja = (t) => ({ texto: t, icono: 'trending_down', color: '#5A5C62' });
+    const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const s = (rutina, cuando, zonas, kg, barras, comp, meta, rec, dia) => ({
+      rutina, cuando, zonas, kg, barras, comp, meta, rec,
+      mMeta: comp ? '4px' : '8px',
+      a11y: rutina + ', ' + dia + '. ' + zonas + '. ' + kg + ' kilos' + (comp ? ', ' + comp.texto : '') + '. '
+        + meta + (rec || '') + '.'
+        + (barras ? ' Tus ' + barras.length + ' últimas veces con esta rutina, de ' + fmt(barras[0][0]) + ' a ' + fmt(barras[barras.length - 1][0]) + ' kilos.' : '')
+    });
+    return {
+      semanas: [
+        { titulo: 'ESTA SEMANA', resumen: '2 entrenos y 22.050 kg', sesiones: [
+          s('Pierna A', 'Ayer, 18:05', 'Pierna y abdomen', '13.640', PA6, sube('3 % más que la anterior'), '58 minutos, 18 series y ', '1 récord', 'ayer a las 18:05'),
+          s('Torso A', 'Lunes 2, 19:10', 'Espalda, hombros y brazos', '8.410', TA6, sube('2 % más que la anterior'), '52 minutos y 21 series', null, 'el lunes 2 a las 19:10')
+        ] },
+        { titulo: 'SEMANA PASADA', resumen: '4 entrenos y 41.400 kg', sesiones: [
+          s('Pierna B', 'Viernes 30, 17:40', 'Pierna y abdomen', '11.980', PB5, baja('2 % menos que la anterior'), '63 minutos y 18 series', null, 'el viernes 30 a las 17:40'),
+          s('Torso B', 'Jueves 29, 18:20', 'Pecho, espalda y brazos', '7.920', TB5, sube('5 % más que la anterior'), '67 minutos, 21 series y ', '2 récords', 'el jueves 29 a las 18:20'),
+          s('Pierna A', 'Martes 27, 18:00', 'Pierna y abdomen', '13.250', PA5, sube('4 % más que la anterior'), '71 minutos y 18 series', null, 'el martes 27 a las 18:00'),
+          s('Torso A', 'Lunes 26, 19:05', 'Espalda, hombros y brazos', '8.250', TA5, sube('3 % más que la anterior'), '55 minutos y 21 series', null, 'el lunes 26 a las 19:05')
+        ] },
+        { titulo: 'SEMANA DEL 19 OCT', resumen: '5 entrenos y 42.370 kg', sesiones: [
+          s('Entrenamiento libre', 'Sábado 24, 11:30', 'Brazos y abdomen', '1.850', null, null, '25 minutos y 9 series', null, 'el sábado 24 a las 11:30'),
+          s('Pierna B', 'Viernes 23, 17:35', 'Pierna y abdomen', '12.230', PB4, sube('3 % más que la anterior'), '52 minutos y 18 series', null, 'el viernes 23 a las 17:35')
+        ] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
