@@ -253,7 +253,10 @@
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:layout_margin="16dp"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:layout_marginTop="@dimen/espacio_16"
+        android:layout_marginBottom="@dimen/espacio_16"
         android:text="@string/sesiones_guardar" />
 
 </LinearLayout>

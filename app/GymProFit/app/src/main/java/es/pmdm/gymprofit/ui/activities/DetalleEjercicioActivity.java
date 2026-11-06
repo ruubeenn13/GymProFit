@@ -497,8 +497,9 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             PuntosGrafica.unPunto(ds, this, enKilos ? Marcas.kilos(this, y)
                     : enSegundos ? Marcas.tiempo(Math.round(y))
                     : getResources().getQuantityString(R.plurals.record_repeticiones, Math.round(y), Math.round(y)));
-            // El punto solo es el récord: en dorado, como en la línea.
-            ds.setCircleColor(oro);
+            // La primera vez es el punto de partida, no un récord (DESIGN.md, lote 2): sin dorado
+            // (revisor, GP-225; DEC-018).
+            ds.setCircleColor(marca);
         }
         // Al cambiar de período no se queda marcado un punto del anterior, y los extremos tienen aire
         // para no pisar las cifras del eje (revisor, GP-228).

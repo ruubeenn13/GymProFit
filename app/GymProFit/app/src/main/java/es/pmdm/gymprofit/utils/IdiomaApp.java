@@ -68,6 +68,10 @@ public final class IdiomaApp {
     public static Locale sinElegir(Context ctx) {
         String elegido = PreferencesManager.idiomaGuardado(ctx);
         if (elegido != null && !elegido.isEmpty()) return null;
+        // Elegido fuera de la app (el idioma por app de Android 13 o más, o «cmd locale»): también
+        // manda ese. Sin esto, la pantalla salía en inglés y la API respondía en español, porque el
+        // idioma por defecto se ponía en el del sistema (revisor, GP-225).
+        if (!androidx.appcompat.app.AppCompatDelegate.getApplicationLocales().isEmpty()) return null;
         return locale(resolver(null, idiomasDelSistema()));
     }
 

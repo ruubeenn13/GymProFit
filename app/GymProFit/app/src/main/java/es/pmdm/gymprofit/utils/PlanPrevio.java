@@ -44,6 +44,18 @@ public final class PlanPrevio {
         return difProteinas > 0 ? Aviso.MAS_PROTEINA : Aviso.MENOS_PROTEINA;
     }
 
+    /**
+     * Las cifras que se enseñan: con el formulario tocado (o sin objetivo guardado), las del plan;
+     * sin tocar nada, las del objetivo guardado, que no se recalcula solo (DEC-054). Antes salía el
+     * plan recalculado junto a «Sin cambios respecto a ahora» (GP-225).
+     *
+     * @return {kcal, gramos de proteína}.
+     */
+    public int[] cifras(boolean formularioCambiado, boolean hayObjetivoGuardado) {
+        if (hayObjetivoGuardado && !formularioCambiado) return new int[]{ kcal - difKcal, proteinas - difProteinas };
+        return new int[]{ kcal, proteinas };
+    }
+
     private PlanPrevio(ResultadoNutricional r, int kcalActuales, int proteinasActuales) {
         this.kcal = r.calorias;
         this.proteinas = r.proteinas;

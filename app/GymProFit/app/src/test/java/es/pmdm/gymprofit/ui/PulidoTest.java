@@ -259,8 +259,7 @@ public class PulidoTest {
         // Los chips de Programas, los de la app y no el lavanda de Material.
         String prog = leer(RES.resolve("layout/activity_programas.xml"));
         assertFalse(prog.contains("Widget.Material3.Chip"));
-        // La hoja de seguir programa: a toda la altura y el aviso en superficie 2.
-        assertTrue(leer(JAVA.resolve("ui/widget/SeguirProgramaHoja.java")).contains("setFitToContents(false)"));
+        // La hoja de seguir programa: el aviso en superficie 2 (su alto, en la segunda pasada).
         assertTrue(leer(RES.resolve("layout/dialog_seguir_programa.xml")).contains("@drawable/bg_aviso_hoja"));
         // La pista del selector se vuelve a medir con la píldora de ahora.
         assertTrue(leer(JAVA.resolve("ui/widget/SelectorPildora.java")).contains("post(this::requestLayout);"));
@@ -269,6 +268,23 @@ public class PulidoTest {
         assertTrue(leer(RES.resolve("values/strings.xml")).contains("<string name=\"ficha_atras\">Volver</string>"));
         assertTrue("Registrar sesión a margen_pantalla", leer(RES.resolve("layout/activity_registrar_sesion.xml"))
                 .contains("android:paddingStart=\"@dimen/margen_pantalla\""));
+    }
+
+    // Segunda pasada en Entrenar.
+    @Test
+    public void segundaPasadaDelRevisorEnEntrenar() throws IOException {
+        assertFalse("los chips de días de Programas, sin el lavanda de Material",
+                leer(RES.resolve("layout/item_chip_filtro.xml")).contains("Widget.Material3.Chip"));
+        String hoja = leer(JAVA.resolve("ui/widget/SeguirProgramaHoja.java"));
+        assertFalse("la hoja sube desde abajo", hoja.contains("setFitToContents(false)"));
+        assertTrue("y no cambia de alto al elegir minutos", hoja.contains("raiz.setMinimumHeight("));
+        String ficha = leer(JAVA.resolve("ui/activities/DetalleEjercicioActivity.java"));
+        assertFalse("un solo entreno no es un récord: sin dorado", ficha.contains("ds.setCircleColor(oro);"));
+        assertTrue("sin cambios, Tus datos enseña el objetivo guardado",
+                leer(JAVA.resolve("ui/activities/TusDatosActivity.java")).contains("plan.cifras(hayCambios(), hayAntes)"));
+        assertTrue("«Guardar sesión» a margen_pantalla", Pattern.compile(
+                "android:id=\"@\\+id/btnGuardar\"[^>]*android:layout_marginStart=\"@dimen/margen_pantalla\"", Pattern.DOTALL)
+                .matcher(leer(RES.resolve("layout/activity_registrar_sesion.xml"))).find());
     }
 
     private static int cuenta(String s, String trozo) {

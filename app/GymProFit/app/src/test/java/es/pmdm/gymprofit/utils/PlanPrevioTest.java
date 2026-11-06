@@ -151,4 +151,24 @@ public class PlanPrevioTest {
         assertEquals(PlanPrevio.Aviso.MENOS_PROTEINA, p.aviso(true, true));
         assertEquals(PlanPrevio.Aviso.NINGUNO, p.aviso(true, false));
     }
+
+    // GP-225 (revisor): sin tocar nada, la barra decía «3.061 kcal · 128 g prot.» y «Sin cambios
+    // respecto a ahora» con un objetivo guardado de 135 g, que no se recalcula solo (DEC-054).
+    // Sin cambios en el formulario, las cifras son las del objetivo guardado.
+    @Test
+    public void sinCambiosLasCifrasSonLasGuardadas() {
+        PlanPrevio p = PlanPrevio.de(dani(), null, 0L, 3061, 135);
+        int[] c = p.cifras(false, true);
+        assertEquals(3061, c[0]);
+        assertEquals(135, c[1]);
+    }
+
+    @Test
+    public void conCambiosOSinObjetivoLasCifrasSonLasDelPlan() {
+        PlanPrevio p = PlanPrevio.de(dani(), null, 0L, 3061, 135);
+        assertEquals(p.proteinas, p.cifras(true, true)[1]);
+        assertEquals(p.kcal, p.cifras(true, true)[0]);
+        PlanPrevio sin = PlanPrevio.de(dani(), null, 0L, 0, 0);
+        assertEquals(sin.kcal, sin.cifras(false, false)[0]);
+    }
 }

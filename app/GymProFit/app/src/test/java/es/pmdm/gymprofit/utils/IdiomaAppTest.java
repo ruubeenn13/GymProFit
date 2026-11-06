@@ -78,6 +78,17 @@ public class IdiomaAppTest {
         if (!s.contains("IdiomaApp.aplicarSinElegir(base, override);")) throw new AssertionError("ScaleUtils.wrap no pone el idioma de la app");
     }
 
+    // Un idioma elegido fuera de la app (el idioma por app del sistema) cuenta como elegido: si no,
+    // la API respondía en español con la pantalla en inglés (revisor, GP-225).
+    @Test
+    public void elIdiomaElegidoEnElSistemaTambienCuenta() throws IOException {
+        Path p = Paths.get("src", "main", "java", "es", "pmdm", "gymprofit", "utils", "IdiomaApp.java");
+        String s = new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+        if (!s.contains("AppCompatDelegate.getApplicationLocales().isEmpty()")) {
+            throw new AssertionError("sinElegir no mira el idioma elegido en el sistema");
+        }
+    }
+
     // Sin el filtro, la APK lleva las traducciones de AppCompat y Material (francés,
     // catalán…) y Android elige una de ellas antes que el inglés de la lista del sistema.
     @Test
