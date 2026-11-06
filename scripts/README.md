@@ -6,6 +6,7 @@
 | `reset-datos-pruebas.sh` | Restaura los datos de pruebas al estado base. Exige la API parada. |
 | `sembrar_demo.py` | Crea la cuenta demo de las capturas, `@dani.entrena`, con tres semanas de datos. Solo en local. |
 | `versionar-hojas-web.py` | Pone en las páginas de `web/` la versión de sus hojas. Ver `web/README.md`. |
+| `sesion-arranque/` | Pruebas de la renovación de sesión y del arranque (GP-237, GP-235, GP-234). `proxy-refresh.py` se pone en el 8080 delante de la API local (en el 8081, con el access de 60 s) y decide qué contesta `/auth/refresh`; `tanda.sh <modo>` cuenta las llamadas al volver a Inicio y en la siguiente acción; `matar_y_volver.sh` cuenta cuántas veces se crea cada pantalla al volver tras matar el proceso. Cómo arrancar cada pieza, en la cabecera de cada script. Al acabar, se paran el proxy y la API para dejar libre el 8080. |
 | `extraer-musculos.py`, `generar-icono-app.py` | Utilidades sueltas de la app; cada una explica su uso en la cabecera. |
 
 ## La cuenta demo y las capturas de la web
