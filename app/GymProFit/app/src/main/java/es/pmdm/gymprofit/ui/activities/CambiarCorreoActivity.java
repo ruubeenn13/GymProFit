@@ -51,7 +51,6 @@ public class CambiarCorreoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferencesManager prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_cambiar_correo);
 
         tilEmail = findViewById(R.id.tilEmail);

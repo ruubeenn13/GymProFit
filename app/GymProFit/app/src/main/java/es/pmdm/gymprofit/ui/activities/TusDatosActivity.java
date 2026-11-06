@@ -137,7 +137,6 @@ public class TusDatosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_tus_datos);
 
         // Lo guardado en el móvil primero; lo de la API lo corrige al llegar.

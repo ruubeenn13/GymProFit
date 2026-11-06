@@ -106,7 +106,6 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_anadir_ejercicios);
 
         Toolbar toolbar = findViewById(R.id.toolbar);

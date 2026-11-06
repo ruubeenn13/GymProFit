@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  idioma.xml — en qué idioma están los recursos con que se pinta la app. values-en lo
+  sobrescribe. Sin idioma elegido, el diálogo de idioma marca este (GP-233): con el
+  sistema en francés la app sale en español, pero con el francés y luego el inglés en
+  la lista del sistema sale en inglés, y la primera configuración diría «fr» en los dos.
+-->
+<resources>
+    <bool name="recursos_en_ingles">false</bool>
+</resources>

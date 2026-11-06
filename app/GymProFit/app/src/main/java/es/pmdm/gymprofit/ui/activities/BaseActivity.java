@@ -53,13 +53,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     // Interfaz Retrofit tipada de auth (etapa 2), usada para revocar el refresh en el logout
     private final AuthApi authApi = ApiClient.service(AuthApi.class);
 
-    // Aplica tema e idioma guardados antes de crear la vista y registra el listener de 401
-    // que fuerza logout y redirige a LoginActivity cuando el token expira o es inválido.
+    // Registra el listener de 401 que fuerza logout y redirige a LoginActivity cuando la
+    // sesión no se puede renovar.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
-        // El idioma lo aplica AndroidX (AppCompatDelegate) globalmente; ver GymProFitApp.
+        // El tema y el idioma los fija GymProFitApp al abrir el proceso (GP-234): aquí,
+        // después de crear la pantalla con otro, la creaba dos veces.
         // La transición de deslizamiento la registra GymProFitApp para TODAS las Activities.
         super.onCreate(savedInstanceState);
 
@@ -111,14 +111,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         dialog.findViewById(R.id.optionTemaClaro).setOnClickListener(v -> {
-            prefsManager.saveTheme(AppCompatDelegate.MODE_NIGHT_NO);
             dialog.dismiss();
-            recreate();
+            prefsManager.cambiarTema(AppCompatDelegate.MODE_NIGHT_NO);
         });
         dialog.findViewById(R.id.optionTemaOscuro).setOnClickListener(v -> {
-            prefsManager.saveTheme(AppCompatDelegate.MODE_NIGHT_YES);
             dialog.dismiss();
-            recreate();
+            prefsManager.cambiarTema(AppCompatDelegate.MODE_NIGHT_YES);
         });
         ((com.google.android.material.button.MaterialButton) dialog.findViewById(R.id.btnCerrarTema))
                 .setOnClickListener(v -> dialog.dismiss());
@@ -149,10 +147,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         fondo.setColor(tv.data);
         root.setBackground(fondo);
 
-        String idiomaActual = prefsManager.getLanguage();
+        String idiomaActual = PreferencesManager.idiomaMarcado(prefsManager.getLanguage(),
+                getResources().getBoolean(R.bool.recursos_en_ingles));
         ImageView ivCheckEspanol = dialog.findViewById(R.id.ivCheckEspanol);
         ImageView ivCheckIngles = dialog.findViewById(R.id.ivCheckIngles);
-        if ("es".equals(idiomaActual) || idiomaActual.isEmpty()) {
+        if ("es".equals(idiomaActual)) {
             ivCheckEspanol.setVisibility(View.VISIBLE);
         } else {
             ivCheckIngles.setVisibility(View.VISIBLE);

@@ -96,7 +96,6 @@ public class SemanaNutricionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_semana_nutricion);
 
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());

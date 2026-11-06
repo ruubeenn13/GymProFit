@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.PreferencesManager;
 
 // ============================================================
 // AcercaDeActivity — pantalla "Acerca de" con datos de contacto y enlaces externos
@@ -34,8 +33,6 @@ public class AcercaDeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PreferencesManager prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_acerca_de);
 

@@ -69,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
 
         setContentView(R.layout.activity_login);
 

@@ -145,7 +145,16 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
                 .getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES);
     }
-    public void applyTheme() { AppCompatDelegate.setDefaultNightMode(getTheme()); }
+
+    /**
+     * Guarda el tema y lo aplica a toda la app. AppCompat recrea las pantallas abiertas,
+     * y cada una lo vuelve a leer en {@link ScaleUtils#wrap}. Al abrir el proceso lo fija
+     * GymProFitApp, una vez, antes de la primera pantalla (GP-234).
+     */
+    public void cambiarTema(int themeMode) {
+        saveTheme(themeMode);
+        AppCompatDelegate.setDefaultNightMode(themeMode);
+    }
 
     /** «Empezar el descanso al marcar una serie»: sí, de serie (GP-013). */
     public boolean getDescansoAlMarcar() { return prefs.getBoolean(KEY_DESCANSO_AL_MARCAR, true); }
@@ -164,6 +173,19 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
 
     public void saveLanguage(String code) { editor.putString(KEY_LANGUAGE, code); editor.apply(); }
     public String getLanguage() { return prefs.getString(KEY_LANGUAGE, ""); }
+
+    /**
+     * El idioma que marca el diálogo de idioma: el elegido en la app o, sin elegir, el de
+     * los recursos con que se pinta (GP-233). Antes marcaba «Español» aunque se viera en inglés.
+     *
+     * @param guardado         lo que da {@link #getLanguage()}: «es», «en» o vacío.
+     * @param recursosEnIngles el bool {@code recursos_en_ingles} de la pantalla.
+     * @return «es» o «en».
+     */
+    public static String idiomaMarcado(String guardado, boolean recursosEnIngles) {
+        if (guardado == null || guardado.isEmpty()) return recursosEnIngles ? "en" : "es";
+        return "en".equals(guardado) ? "en" : "es";
+    }
 
     // Token y refresh se guardan/leen SIEMPRE del almacén cifrado (securePrefs), nunca en claro.
     public void saveToken(String token) { securePrefs.edit().putString(KEY_TOKEN, token).apply(); }

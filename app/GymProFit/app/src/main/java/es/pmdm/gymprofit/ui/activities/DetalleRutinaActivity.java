@@ -109,7 +109,6 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
-        prefsManager.applyTheme();
         setContentView(R.layout.activity_detalle_rutina);
 
         rutinaId        = getIntent().getIntExtra("rutinaId", -1);

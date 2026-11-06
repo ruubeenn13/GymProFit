@@ -102,7 +102,6 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
-        prefs.applyTheme();
         setContentView(R.layout.activity_estadisticas_nutricion);
 
         es.pmdm.gymprofit.utils.ResultadoNutricional objetivo = es.pmdm.gymprofit.utils.DiaNutricion.objetivo(prefs);
