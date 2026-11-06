@@ -93,7 +93,11 @@
         android:id="@+id/barraEncaja"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/espacio_12"
+        android:layout_marginTop="@dimen/espacio_4"
+        android:layout_marginStart="@dimen/aire_anillo_fuera"
+        android:layout_marginEnd="@dimen/aire_anillo_fuera"
+        android:layout_marginBottom="@dimen/aire_anillo_fuera"
+        android:padding="@dimen/aire_anillo"
         android:focusable="true"
         android:orientation="vertical">
 

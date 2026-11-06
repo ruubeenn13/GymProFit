@@ -95,9 +95,9 @@
     <string name="ejercicios_core">Core</string>
 
     <!-- NUTRITION -->
-    <string name="nutricion_proteinas">Proteins</string>
+    <string name="nutricion_proteinas">Protein</string>
     <string name="nutricion_carbohidratos">Carbs</string>
-    <string name="nutricion_grasas">Fats</string>
+    <string name="nutricion_grasas">Fat</string>
     <string name="nutricion_desayuno">Breakfast</string>
     <string name="nutricion_almuerzo">Mid-morning</string>
     <string name="nutricion_comida">Lunch</string>
@@ -153,6 +153,7 @@
     <!-- SESSIONS -->
     <string name="sesiones_sin_sesiones">No sessions recorded</string>
     <string name="sesiones_rutina">Routine</string>
+    <string name="sesiones_rutina_a11y">Routine: %1$s</string>
     <string name="sesiones_duracion">Duration (min) *</string>
     <string name="sesiones_notas">Notes (optional)</string>
     <string name="sesiones_guardar">Save session</string>
@@ -198,7 +199,8 @@
     <string name="grafica_rango_todo">All</string>
     <string name="grafica_titulo_grasa">BODY FAT TREND</string>
     <string name="grafica_titulo_cintura">WAIST TREND</string>
-    <string name="grafica_sin_datos">No data for this metric yet.\nLog at least 2 to see the trend.</string>
+    <string name="grafica_sin_medida">You haven’t logged this measurement yet.</string>
+    <string name="grafica_sin_medida_rango">No measurements in these dates. Try “All”.</string>
     <string name="nutricion_grafica_kcal">CALORIES PER DAY</string>
     <string name="nutricion_grafica_vacia">No meals logged yet.\nLog some to see your history.</string>
     <string name="nutricion_meta_kcal">Goal</string>
@@ -217,6 +219,9 @@
     <string name="detalle_periodo_4">4 wks</string>
     <string name="detalle_periodo_8">8 wks</string>
     <string name="detalle_periodo_todo">All</string>
+    <string name="detalle_progresion_pista">Next time you’ll see your progress</string>
+    <string name="detalle_progresion_un_punto_a11y">%1$s: one session, %2$s on %3$s</string>
+    <string name="detalle_vez_igual_a11y">Same as last time</string>
     <string name="detalle_periodo_sin_sesiones">No sessions in these weeks. Try “%1$s.”</string>
     <string name="detalle_periodo_4_nombre">4 weeks</string>
     <string name="detalle_periodo_8_nombre">8 weeks</string>
@@ -237,7 +242,7 @@
     <string name="detalle_series_a11y">Sets: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, record</string>
     <string name="detalle_pista_subir">Next time, go up in weight: you hit %1$d reps on every set.</string>
-    <string name="detalle_progresion_a11y">%1$s, best of each day, from %2$s to %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, best of each day: from %2$s on %3$s to %4$s on %5$s</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>
@@ -538,9 +543,9 @@
          The policy is NOT shipped inside the APK: it opens in the browser, so it can
          be corrected without publishing a new version. -->
     <string name="politica_privacidad">Privacy policy</string>
-    <!-- Third-party licences (GP-082) -->
-    <string name="licencias_titulo">Third-party licences</string>
-    <string name="licencias_texto">GymProFit is built on other people\'s software and resources. Each keeps its own licence and copyright notice.</string>
+    <!-- Third-party licenses (GP-082) -->
+    <string name="licencias_titulo">Third-party licenses</string>
+    <string name="licencias_texto">GymProFit is built on other people\'s software and resources. Each keeps its own license and copyright notice.</string>
     <string name="licencias_bibliotecas">App libraries</string>
     <string name="licencias_material_symbols">Material Symbols · Apache 2.0</string>
     <string name="licencias_barlow">Barlow · SIL Open Font License 1.1</string>
@@ -549,11 +554,11 @@
     <string name="licencias_aviso_barlow">Barlow and Barlow Condensed fonts, Copyright 2017 The Barlow Project Authors. Distributed under the SIL Open Font License, Version 1.1, whose full text follows.</string>
     <string name="licencias_aviso_mpandroidchart">MPAndroidChart, Copyright 2020 Philipp Jahoda. Distributed under the Apache License, Version 2.0, whose full text follows.</string>
     <string name="licencias_datos">Data</string>
-    <string name="licencias_datos_texto">The exercise catalogue, the basic foods and the products you search for and scan come from open projects. Each source keeps its own licence.</string>
+    <string name="licencias_datos_texto">The exercise catalog, the basic foods and the products you search for and scan come from open projects. Each source keeps its own license.</string>
     <string name="licencias_fed">free-exercise-db · Unlicense (public domain)</string>
-    <string name="licencias_fed_uso">The exercise catalogue and its images.</string>
+    <string name="licencias_fed_uso">The exercise catalog and its images.</string>
     <string name="licencias_wger">wger · Creative Commons</string>
-    <string name="licencias_wger_uso">The names and descriptions of some exercises. Their texts carry Creative Commons licences, stated on each exercise.</string>
+    <string name="licencias_wger_uso">The names and descriptions of some exercises. Their texts carry Creative Commons licenses, stated on each exercise.</string>
     <string name="licencias_off">Open Food Facts · ODbL</string>
     <string name="licencias_off_uso">The packaged products you search for and scan by barcode.</string>
     <string name="licencias_ciqual">Ciqual 2025 · ANSES · Licence Ouverte</string>
@@ -573,13 +578,13 @@
     <string name="eliminar_cuenta_borra_1">Your account: name, username, email address and password.</string>
     <string name="eliminar_cuenta_borra_2">Your profile: sex, age, height, weight, activity level, experience level, goal and the alerts you chose.</string>
     <string name="eliminar_cuenta_borra_3">Your profile picture, if you uploaded one.</string>
-    <string name="eliminar_cuenta_borra_4">Your whole training history: the programme you follow, routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
+    <string name="eliminar_cuenta_borra_4">Your whole training history: the program you follow, routines, sessions, exercises performed, sets with their weights and reps, notes and progress.</string>
     <string name="eliminar_cuenta_borra_5">Your whole nutrition log: meals, foods eaten, any custom foods and dishes you created, with their ingredients, your favorites, the water of each day and the meals marked “Not today”.</string>
     <string name="eliminar_cuenta_borra_6">Your body measurements, personal goals and achievements.</string>
     <string name="eliminar_cuenta_borra_7">Your open sessions and your device identifier for notifications.</string>
     <string name="eliminar_cuenta_que_no_se_borra">What does not get deleted</string>
     <string name="eliminar_cuenta_no_borra_1">Crash reports already sent to Firebase Crashlytics, which are anonymous and not linked to your account.</string>
-    <string name="eliminar_cuenta_no_borra_2">Foods from the general catalogue, which are not yours and hold no personal data.</string>
+    <string name="eliminar_cuenta_no_borra_2">Foods from the general catalog, which are not yours and hold no personal data.</string>
     <string name="eliminar_cuenta_no_borra_3">Server technical logs, which hold no identifiable personal data.</string>
     <string name="eliminar_cuenta_antes">Before you do it</string>
     <string name="eliminar_cuenta_antes_1">If you only want to stop using the app for a while, you do not need to delete anything: signing out is enough. Your history will be waiting.</string>
@@ -631,6 +636,7 @@
     <string name="unidad_kg_entero">%d\u00A0kg</string>
     <string name="unidad_kg_decimal">%.1f\u00A0kg</string>
     <string name="unidad_cm_decimal">%.1f\u00A0cm</string>
+    <string name="unidad_pct_decimal">%.1f%%</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
@@ -650,6 +656,8 @@
     <string name="home_fecha_patron" translatable="false">EEEE, MMMM d</string>
     <string name="ejercicio_sin_nombre">Exercise %d</string>
     <!-- Récords (GP-088) -->
+    <string name="records_vacio_sin_entrenos">Your records show up when you beat one of your own marks. Your first workout sets your starting point.</string>
+    <string name="records_vacio_con_entrenos">You already have your starting point. Your first record comes when you beat one of your marks.</string>
     <string name="records_vacio_titulo">No records yet</string>
     <string name="records_vacio_texto">The first time you do an exercise is your starting point. Beat it and it will show up here.</string>
     <string name="record_antes">Before: %s</string>
@@ -827,7 +835,8 @@
     <string name="comida_anadir_merienda">Add to snack</string>
     <string name="comida_anadir_cena">Add to dinner</string>
     <string name="dia_futuro_a11y">%1$s, not here yet</string>
-    <string name="nutricion_kcal_a11y">%1$s of %2$s kilocalories. %3$s %4$s.</string>
+    <string name="nutricion_kcal_a11y_quedan">%1$s of %2$s kilocalories. %3$s kilocalories left.</string>
+    <string name="nutricion_kcal_a11y_pasas">%1$s of %2$s kilocalories. %3$s kilocalories over.</string>
 
     <!-- GP-105 · Progreso y Ajustes -->
     <string name="progreso_titulo">Progress</string>
@@ -1229,7 +1238,7 @@
     <string name="alta_objetivo_mantener_desc">You’ll eat what you burn</string>
     <string name="alta_objetivo_fuerza_desc">10% more, and the big lifts at 4–6 reps</string>
     <string name="alta_nivel_titulo">How much experience do you have?</string>
-    <string name="alta_nivel_texto">We use this to pick your programme and how many sets you do in each exercise.</string>
+    <string name="alta_nivel_texto">We use this to pick your program and how many sets you do in each exercise.</string>
     <string name="alta_nivel_principiante_desc">I’m starting out, or coming back after more than 6 months off</string>
     <string name="alta_nivel_intermedio_desc">I’ve trained consistently for more than 6 months</string>
     <string name="alta_nivel_avanzado_desc">I’ve trained for years and I know the big lifts</string>
@@ -1270,12 +1279,12 @@
     <string name="alta_peso_kilos_a11y">Kilos</string>
     <string name="alta_peso_decimas_a11y">Tenths of a kilo</string>
     <string name="alta_donde_titulo">Where will you train?</string>
-    <string name="alta_donde_texto">Your programme only has exercises you can do there.</string>
+    <string name="alta_donde_texto">Your program only has exercises you can do there.</string>
     <string name="alta_donde_gimnasio_desc">With barbells, machines and cables</string>
     <string name="alta_donde_mancuernas_desc">At home, with dumbbells and an incline bench</string>
     <string name="alta_donde_corporal_desc">With a pull-up bar and a chair or a bench</string>
     <string name="alta_dias_titulo">How much can you train?</string>
-    <string name="alta_dias_texto">Your programme is split over those days and each routine fits in that time. You can change it later.</string>
+    <string name="alta_dias_texto">Your program is split over those days and each routine fits in that time. You can change it later.</string>
     <string name="alta_dias_etiqueta">Days per week</string>
     <string name="alta_tiempo_etiqueta">Time per session</string>
     <plurals name="alta_dias_a11y">
@@ -1329,8 +1338,8 @@
     <string name="alta_plan_gramos">%1$d g</string>
     <string name="alta_plan_litros">%1$s L</string>
     <string name="alta_plan_kcal_a11y">%1$s kilocalories a day</string>
-    <string name="alta_plan_macros_a11y">Protein, %1$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s litres.</string>
-    <string name="alta_plan_macros_a11y_rango">Protein, %1$d grams, effective minimum %5$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s litres.</string>
+    <string name="alta_plan_macros_a11y">Protein, %1$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s liters.</string>
+    <string name="alta_plan_macros_a11y_rango">Protein, %1$d grams, effective minimum %5$d grams. Carbs, %2$d grams. Fat, %3$d grams. Water, %4$s liters.</string>
     <string name="proteina_minimo">effective minimum: %1$d\u00A0g</string>
     <string name="nutricion_proteina_rango">Target: %1$d\u00A0g (effective minimum: %2$d\u00A0g)</string>
     <string name="proteina_base_masa_magra">Calculated on your lean mass.</string>
@@ -1342,10 +1351,10 @@
     <string name="alta_plan_nota_fuerza">10% more than you burn, to get stronger.</string>
     <string name="alta_plan_nota_menores">Under 18, “Lose fat” stays at your maintenance calories. If you want to lose fat, talk it over with a professional first.</string>
     <string name="alta_plan_sin_calorias">No calories for now: you’d rather not give your details. Add them in your profile whenever you like and we’ll work them out.</string>
-    <string name="alta_plan_tu_programa">Your programme</string>
-    <string name="alta_plan_programa_cargando">Finding your programme…</string>
-    <string name="alta_plan_programa_error">We couldn’t load your programme. Your plan is still here.</string>
-    <string name="alta_plan_programa_sin_red">No connection: we couldn’t load your programme. Your plan is still here.</string>
+    <string name="alta_plan_tu_programa">Your program</string>
+    <string name="alta_plan_programa_cargando">Finding your program…</string>
+    <string name="alta_plan_programa_error">We couldn’t load your program. Your plan is still here.</string>
+    <string name="alta_plan_programa_sin_red">No connection: we couldn’t load your program. Your plan is still here.</string>
     <string name="alta_plan_detalle_programa">%1$s · %2$s · %3$d min sessions</string>
     <string name="alta_plan_rutina_a11y">%1$s, %2$d minutes. %3$s</string>
     <string-array name="alta_dias_semana">
@@ -1428,7 +1437,7 @@
 
     <!-- ── New sign-up: welcome (GP-103, 1.5.1) ───────────────────────────── -->
     <string name="bienvenida_titulo">Log every set and watch yourself climb</string>
-    <string name="bienvenida_texto">In a minute you’ll have your training programme and your calories for the day.</string>
+    <string name="bienvenida_texto">In a minute you’ll have your training program and your calories for the day.</string>
     <string name="bienvenida_ya_tengo_cuenta">I already have an account</string>
     <string name="bienvenida_idioma_es">ES</string>
     <string name="bienvenida_idioma_en">EN</string>
@@ -1473,8 +1482,8 @@
     <string name="inicio_fundador_escribir">Write</string>
     <string name="inicio_fundador_ocultar">Hide</string>
     <string name="inicio_programa_pendiente_sub">We couldn’t set it up when you created your account. Follow it whenever you like.</string>
-    <string name="inicio_programa_pendiente_seguir">Follow the programme</string>
-    <string name="inicio_programa_pendiente_a11y">Follow the programme %1$s</string>
+    <string name="inicio_programa_pendiente_seguir">Follow the program</string>
+    <string name="inicio_programa_pendiente_a11y">Follow the program %1$s</string>
 
     <!-- Lote 1.6.1: Añadir, Buscar, el escáner y la ficha del alimento (GP-162, GP-160). -->
     <string name="anadir_cerrar">Close</string>
@@ -1509,7 +1518,7 @@
     <string name="ficha_carb">carbs</string>
     <string name="ficha_grasa">fat</string>
     <string name="ficha_gramos_valor">%1$s\u00A0g</string>
-    <string name="ficha_cifras_a11y">%1$s kilocalories, %2$s grams of protein, %3$s of carbohydrates and %4$s of fat</string>
+    <string name="ficha_cifras_a11y">%1$s kilocalories, %2$s grams of protein, %3$s grams of carbohydrates and %4$s grams of fat</string>
     <string name="ficha_reparto_a11y">Of its calories, %1$d percent protein, %2$d carbohydrates and %3$d fat</string>
     <string name="ficha_reparto_proteina">Protein %1$d%%</string>
     <string name="ficha_reparto_carb">Carbs %1$d%%</string>
@@ -1530,7 +1539,7 @@
     <string name="ficha_info_proteinas">Protein</string>
     <string name="ficha_info_carbohidratos">Carbohydrates</string>
     <string name="ficha_info_grasas">Fat</string>
-    <string name="ficha_info_fibra">Fibre</string>
+    <string name="ficha_info_fibra">Fiber</string>
     <string name="ficha_info_kcal_valor">%1$s\u00A0kcal</string>
     <string name="ficha_reportar">Report a problem with this data</string>
     <string name="ficha_reportar_titulo">What is wrong?</string>
@@ -1556,7 +1565,7 @@
     <string name="ficha_origen_usda">Basic · USDA FoodData Central</string>
     <string name="ficha_origen_producto">Packaged product · %1$s</string>
     <string name="ficha_origen_tuyo">Created by you</string>
-    <string name="ficha_origen_catalogo">From the GymProFit catalogue</string>
+    <string name="ficha_origen_catalogo">From the GymProFit catalog</string>
     <string name="ficha_error">The food could not be loaded.</string>
     <string name="ficha_anadido">Added: %1$s</string>
     <string name="ficha_actualizado">Amount updated</string>
@@ -1568,7 +1577,7 @@
     <string name="escaner_leido">Read</string>
     <string name="escaner_consultando">Looking up the product…</string>
     <string name="escaner_escribir">Type the code</string>
-    <string name="escaner_permiso_para">The camera is used to read barcodes. The image is analysed on your phone and is never stored or sent.</string>
+    <string name="escaner_permiso_para">The camera is used to read barcodes. The image is analyzed on your phone and is never stored or sent.</string>
     <string name="escaner_permiso_negado_titulo">The scanner needs the camera</string>
     <string name="escaner_permiso_negado_texto">You can type the code by hand or allow the camera in your phone settings.</string>
     <string name="escaner_abrir_ajustes">Open settings</string>
@@ -1696,7 +1705,7 @@
     <string name="crear_energia">Energy</string>
     <string name="crear_grasas">Fat</string>
     <string name="crear_hidratos">Carbohydrate</string>
-    <string name="crear_fibra">Fibre</string>
+    <string name="crear_fibra">Fiber</string>
     <string name="crear_proteinas">Protein</string>
     <string name="crear_opcional_corto">optional</string>
     <string name="crear_unidad_kcal">kcal</string>
@@ -1793,9 +1802,9 @@
     <string name="reciente_ayer">Yesterday\'s %1$s</string>
     <!-- %2$s: the weekday («Monday»). -->
     <string name="reciente_semana">%2$s\'s %1$s</string>
-    <!-- %2$s: the date, with reciente_fecha_patron («28 September»). -->
+    <!-- %2$s: the date, with reciente_fecha_patron («September 28»). -->
     <string name="reciente_fecha">%1$s on %2$s</string>
-    <string name="reciente_fecha_patron">d MMMM</string>
+    <string name="reciente_fecha_patron">MMMM d</string>
     <string name="reciente_a11y">%1$s: %2$s, %3$s\u00A0kcal</string>
     <!-- %1$s: «Yesterday's snack»; %2$s: «to dinner». -->
     <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
@@ -1916,7 +1925,7 @@
     <string name="encaja_quedan_kcal">You have %1$s left</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g of protein</string>
-    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g protein</string>
+    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g protein</string>
     <string name="encaja_cubre">%1$s%% of what\'s left</string>
     <string name="encaja_cubre_a11y">Covers %1$s percent of the protein you still need</string>
     <string name="encaja_sueles_desayuno">You usually have it at breakfast</string>
@@ -1952,7 +1961,10 @@
     <string name="proteina_conseguida">Protein reached</string>
     <string name="nutricion_te_faltan">%1$d\u00A0g to go</string>
     <string name="nutricion_macro_a11y">%1$s: %2$d of %3$d grams</string>
-    <string name="nutricion_macro_falta_a11y">%1$s, %2$d to go</string>
+    <plurals name="nutricion_macro_falta_a11y">
+        <item quantity="one">%1$d gram to go</item>
+        <item quantity="other">%1$d grams to go</item>
+    </plurals>
     <string name="entreno_dia">Training day</string>
     <string name="entreno_dia_rutina">Training day · %1$s</string>
     <plurals name="dias_completos_semana">
@@ -1969,13 +1981,13 @@
     <string name="semana_frase_dia">That day, with everything logged.</string>
     <string name="agua_titulo">Water</string>
     <string name="agua_vaso">Glass</string>
-    <string name="agua_a11y">Water: %1$s of %2$s litres, %3$s</string>
-    <string name="agua_a11y_sin_objetivo">Water: %1$s litres, %2$s</string>
+    <string name="agua_a11y">Water: %1$s of %2$s liters, %3$s</string>
+    <string name="agua_a11y_sin_objetivo">Water: %1$s liters, %2$s</string>
     <plurals name="agua_vasos">
         <item quantity="one">%d glass</item>
         <item quantity="other">%d glasses</item>
     </plurals>
-    <string name="agua_vaso_a11y">Add a glass of water, %1$d millilitres</string>
+    <string name="agua_vaso_a11y">Add a glass of water, %1$d milliliters</string>
     <string name="agua_quitar_a11y">Remove a glass</string>
     <string name="agua_quitado_a11y">Glass removed</string>
     <string name="agua_fallo">Water wasn\'t saved: %1$s</string>
@@ -2146,8 +2158,8 @@
     <string name="inicio_cifra_l">%1$s\u00A0L</string>
     <string name="inicio_dia_proteina_a11y">Protein: %1$d of %2$d grams</string>
     <string name="inicio_dia_proteina_sin_objetivo_a11y">Protein: %1$d grams today</string>
-    <string name="inicio_dia_agua_a11y">Water: %1$s of %2$s litres, %3$d of %4$d glasses</string>
-    <string name="inicio_dia_agua_sin_objetivo_a11y">Water: %1$s litres, %2$d glasses</string>
+    <string name="inicio_dia_agua_a11y">Water: %1$s of %2$s liters, %3$d of %4$d glasses</string>
+    <string name="inicio_dia_agua_sin_objetivo_a11y">Water: %1$s liters, %2$d glasses</string>
     <string name="inicio_dia_error">Couldn\'t load your day.</string>
     <string name="inicio_apuntar_desayuno">Log breakfast</string>
     <string name="inicio_apuntar_almuerzo">Log mid-morning</string>
@@ -2380,8 +2392,6 @@
         <item quantity="one">See the record</item>
         <item quantity="other">See all %1$d</item>
     </plurals>
-    <string name="progreso_record_antes">%1$s · before %2$s</string>
-    <string name="progreso_records_vacio">No records yet. The first one comes with your first workout.</string>
     <string name="progreso_records_error">Couldn\'t load your records.</string>
     <string name="progreso_ver_todos">See all</string>
     <string name="progreso_marca_tiempo_a11y">%1$s hold time</string>
@@ -2424,6 +2434,10 @@
     </plurals>
     <string name="medicion_a11y_por_ciento">%1$s percent</string>
     <!-- GP-228: the Measurements chart for TalkBack. %1$s: the metric; %2$s and %4$s: the value with its unit; %3$s and %5$s: the short date. -->
+    <string name="progreso_un_peso_a11y">One weigh-in: %1$s kilos on %2$s</string>
+    <string name="grafica_un_peso">Log another weight to see how you change</string>
+    <string name="grafica_una_medida">Log another measurement to see how you change</string>
+    <string name="medicion_grafica_un_punto_a11y">%1$s: %2$s on %3$s. %4$s</string>
     <string name="medicion_grafica_a11y">%1$s: from %2$s on %3$s to %4$s on %5$s</string>
     <string name="progreso_kilos_sube">+%1$d%%</string>
     <string name="sesiones_eliminar_fecha_patron">MMMM d</string>
@@ -2431,7 +2445,10 @@
     <string name="medicion_detalles_cerrados">Collapsed</string>
     <string name="medicion_grasa_valor">%1$s%%</string>
     <string name="estadisticas_kcal_a11y">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal; goal, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_igual">Calories per day from %1$s to %2$s: %3$s\u00A0kcal; goal, %4$s\u00A0kcal</string>
+    <string name="estadisticas_kcal_a11y_igual_sin_objetivo">Calories per day from %1$s to %2$s: %3$s\u00A0kcal</string>
     <string name="estadisticas_kcal_a11y_sin_objetivo">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal</string>
+    <string name="estadisticas_macro_leyenda">%1$s · %2$s</string>
     <string name="estadisticas_macros_a11y">Macro split: protein %1$s, carbs %2$s, fat %3$s</string>
     <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>

@@ -26,7 +26,7 @@
         android:minHeight="64dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="14dp"
+        android:paddingStart="@dimen/espacio_16"
         android:paddingEnd="6dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
@@ -41,7 +41,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="@dimen/fila_icono_a_texto"
         android:orientation="vertical">
 
         <LinearLayout
@@ -95,11 +95,8 @@
     </FrameLayout>
     </LinearLayout>
 
+    <!-- Hasta el texto, 70 dp (GP-225). -->
     <View
         android:id="@+id/rayaFila"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="14dp"
-        android:importantForAccessibility="no"
-        android:background="?attr/colorOutlineVariant" />
+        style="@style/Widget.GymProFit.Separador" />
 </LinearLayout>

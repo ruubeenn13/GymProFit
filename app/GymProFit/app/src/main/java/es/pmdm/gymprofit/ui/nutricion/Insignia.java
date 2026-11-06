@@ -33,7 +33,7 @@ public final class Insignia {
         Drawable d = ContextCompat.getDrawable(ctx, R.drawable.ic_ms_verified_fill);
         if (d == null) return nombre;
         d = d.mutate();
-        d.setTint(ContextCompat.getColor(ctx, R.color.gp_macro_proteinas));
+        d.setTint(ContextCompat.getColor(ctx, R.color.gp_revisado));
         int lado = Math.round(tamanoDp * ctx.getResources().getDisplayMetrics().density);
         d.setBounds(0, 0, lado, lado);
         SpannableStringBuilder sb = new SpannableStringBuilder(nombre).append("  ");

@@ -175,6 +175,14 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getLanguage() { return prefs.getString(KEY_LANGUAGE, ""); }
 
     /**
+     * El idioma elegido («es», «en») o vacío, sin abrir el almacén cifrado: lo lee cada
+     * pantalla al crearse (ScaleUtils.wrap, GP-240), como {@link #temaGuardado}.
+     */
+    public static String idiomaGuardado(Context context) {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).getString(KEY_LANGUAGE, "");
+    }
+
+    /**
      * El idioma que marca el diálogo de idioma: el elegido en la app o, sin elegir, el de
      * los recursos con que se pinta (GP-233). Antes marcaba «Español» aunque se viera en inglés.
      *

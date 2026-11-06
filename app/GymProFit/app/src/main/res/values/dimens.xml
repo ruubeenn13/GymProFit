@@ -132,6 +132,11 @@
          con sangría hasta el texto (16 + 40 + 14 = 70). -->
     <dimen name="fila_alto_min">64dp</dimen>
     <dimen name="fila_padding_horizontal">16dp</dimen>
+    <!-- La cabecera de las pantallas secundarias (MaterialToolbar, Widget.GymProFit.Cabecera). -->
+    <dimen name="cabecera_alto">56dp</dimen>
+    <!-- Buscador en píldora (Biblioteca y Añadir, GP-225): 56 dp y la mitad de radio. -->
+    <dimen name="buscador_alto">56dp</dimen>
+    <dimen name="buscador_radio">28dp</dimen>
     <dimen name="fila_icono_circulo">40dp</dimen>
     <dimen name="fila_icono">22dp</dimen>
     <dimen name="fila_icono_a_texto">14dp</dimen>
@@ -155,6 +160,12 @@
     <!-- Roles de texto (los de DESIGN.md): título de pantalla 34, cifra 26 a 48, sección 20,
          cuerpo 16 y apoyo 13 a 14. Los escalones de arriba (text_*) apuntan a estos tamaños. -->
     <dimen name="text_enlace_seccion">15sp</dimen>
+    <!-- Título junto a la cara de Profi («Lo que te encaja», tablero 25; GP-225). -->
+    <dimen name="text_titulo_profi">17sp</dimen>
+    <dimen name="profi_cara_pequena">32dp</dimen>
+    <!-- La cola del bocadillo de Profi (BurbujaProfi): ancho y alto de su base. -->
+    <dimen name="cola_burbuja">8dp</dimen>
+    <dimen name="cola_burbuja_alto">14dp</dimen>
     <dimen name="text_cifra_pequena">26sp</dimen>
     <dimen name="text_cifra_grande">48sp</dimen>
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_dia_pulsable — un día de la tira de Nutrición que no es el elegido: la capa del 10 % al pulsar,
+     con el radio 16 y los 2 dp hacia dentro del día elegido (GP-225: era un rectángulo). Con el foco,
+     el anillo de FocoVisible. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item android:id="@android:id/mask" android:left="2dp" android:right="2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/radio_miniatura" />
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>

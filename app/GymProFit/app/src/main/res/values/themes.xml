@@ -19,6 +19,10 @@
              como la tarjeta y el selector. Lo usan filas, papeleras y «Volver». -->
         <item name="selectableItemBackground">@drawable/fondo_pulsable</item>
         <item name="selectableItemBackgroundBorderless">@drawable/fondo_pulsable_redondo</item>
+        <!-- Y los del sistema, que el código pide a veces (la tira de días de Nutrición): con el
+             foco llevaban el gris de Material (GP-225). -->
+        <item name="android:selectableItemBackground">@drawable/fondo_pulsable</item>
+        <item name="android:selectableItemBackgroundBorderless">@drawable/fondo_pulsable_redondo</item>
         <item name="actionBarItemBackground">@drawable/fondo_pulsable_redondo</item>
         <item name="toolbarNavigationButtonStyle">@style/Widget.GymProFit.Cabecera.Volver</item>
         <!-- Paleta M3 mapeada a los tokens gp_* -->
@@ -64,6 +68,9 @@
         <item name="bottomNavigationStyle">@style/Widget.GymProFit.BottomNavigationView</item>
         <item name="floatingActionButtonStyle">@style/Widget.GymProFit.Fab</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymProFit.Dialog</item>
+        <!-- Hojas inferiores en la superficie de la app (GP-225, GP-065): sin esto, la de seguir
+             un programa y la de elegir rutina salían en el lavanda de Material. -->
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.GymProFit.Hoja</item>
         <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
@@ -253,6 +260,8 @@
     <!-- ── Botón principal: sólido naranja, contundente ────────────────────── -->
     <style name="Widget.GymProFit.Button" parent="Widget.Material3.Button">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearance.GymProFit.Circulo</item>
+        <!-- Sin capa de foco: el anillo lo pone FocoVisible (GP-225). -->
+        <item name="rippleColor">@color/boton_capa</item>
         <item name="android:minHeight">52dp</item>
         <item name="android:textSize">@dimen/text_body</item>
         <item name="android:textStyle">bold</item>
@@ -330,7 +339,9 @@
          cabecera a mano. -->
     <style name="Widget.GymProFit.Cabecera" parent="Widget.Material3.Toolbar.Surface">
         <item name="android:background">?attr/colorSurface</item>
-        <item name="android:minHeight">?attr/actionBarSize</item>
+        <!-- 56 dp, como dice DESIGN.md: ?attr/actionBarSize de Material 3 son 64 y la cabecera
+             medía 64 (GP-225). -->
+        <item name="android:minHeight">@dimen/cabecera_alto</item>
         <item name="navigationIcon">@drawable/ic_ms_arrow_back</item>
         <item name="navigationIconTint">?attr/colorOnSurface</item>
         <item name="navigationContentDescription">@string/btn_volver</item>
@@ -363,6 +374,8 @@
     <!-- Spinner con la flecha de Material Symbols; el paddingEnd deja sitio a la flecha -->
     <style name="Widget.GymProFit.Spinner" parent="Widget.AppCompat.Spinner">
         <item name="android:background">@drawable/bg_spinner</item>
+        <!-- El menú, en superficie con borde (GP-225): salía del color del fondo. -->
+        <item name="android:popupBackground">@drawable/bg_menu_desplegable</item>
         <item name="android:paddingEnd">44dp</item>
         <!-- Zona táctil mínima (GP-062): el de crear alimento medía 24 dp de alto -->
         <item name="android:minHeight">48dp</item>
@@ -419,6 +432,19 @@
         <!-- Y sin la elevación tonal, que le sumaba un 11 % de naranja (como el calendario). -->
         <item name="elevationOverlayEnabled">false</item>
         <item name="dialogCornerRadius">22dp</item>
+    </style>
+
+    <!-- ── Hojas inferiores (BottomSheetDialog) ────────────────────────────────
+         Material 3 las pinta con colorSurfaceContainerLow, que el tema no define: salían
+         lavanda (#F7F2FA) en claro y gris violáceo en oscuro (GP-065, GP-225). Superficie de
+         la app, sin tinte de elevación; las esquinas de 28 dp son las de Material. -->
+    <style name="ThemeOverlay.GymProFit.Hoja" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.GymProFit.Hoja</item>
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="Widget.GymProFit.Hoja" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">?attr/colorSurface</item>
     </style>
 
     <!-- ── Calendario (MaterialDatePicker) con la letra de la 1.12 ──────────

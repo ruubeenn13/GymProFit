@@ -117,6 +117,8 @@ public class SesionAdapter extends RecyclerView.Adapter<SesionAdapter.ViewHolder
             tvRutina   = itemView.findViewById(R.id.tvRutinaSesion);
             tvDuracion = itemView.findViewById(R.id.tvDuracionSesion);
             btnEliminar = itemView.findViewById(R.id.btnEliminarSesion);
+            // Un ImageView pulsable: TalkBack lo anuncia como botón (revisor, GP-225).
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(btnEliminar);
         }
     }
 }

@@ -73,8 +73,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:paddingBottom="80dp">
+                android:paddingStart="@dimen/margen_pantalla"
+                android:paddingEnd="@dimen/margen_pantalla"
+                android:paddingTop="@dimen/espacio_16"
+                android:paddingBottom="@dimen/espacio_16">
 
                 <TextView
                     android:id="@+id/tvFechaUltima"
@@ -116,8 +118,9 @@
                             app:selectorNombreGrupo="@string/selector_grupo_metrica"
                             app:selectorElegida="0" />
 
-                        <!-- Área de gráfica: la línea o, si esa métrica no tiene ≥2 datos,
-                             un mensaje de estado vacío (la card y los chips NO desaparecen). -->
+                        <!-- Área de gráfica: la línea, el punto solo o, si esa métrica no tiene
+                             datos en el rango, un mensaje de estado vacío (la card y los chips NO
+                             desaparecen; GP-229). -->
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="180dp"
@@ -133,13 +136,28 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="@string/grafica_sin_datos"
+                                android:text="@string/grafica_sin_medida"
                                 android:textColor="?attr/colorOnSurfaceVariant"
                                 android:textSize="@dimen/text_body"
                                 android:gravity="center"
                                 android:visibility="gone" />
 
+                            <!-- Con un solo punto: qué hace falta para ver la línea (GP-229). Va
+                                 encima de la gráfica, arriba: aparecer no mueve el selector de
+                                 rango (revisor, GP-225). Lo dice la descripción de la gráfica. -->
+                            <TextView
+                                android:id="@+id/tvGraficaPista"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:gravity="center"
+                                android:importantForAccessibility="no"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                                android:textColor="@color/gp_text_secondary"
+                                android:visibility="gone" />
+
                         </FrameLayout>
+
 
                         <!-- Rango temporal de la gráfica -->
                         <es.pmdm.gymprofit.ui.widget.SelectorPildora
@@ -199,7 +217,7 @@
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
                                 android:src="@drawable/ic_ms_chevron_right"
-                                android:alpha="0.4"
+                                app:tint="@color/gp_stroke"
                                 android:contentDescription="@null" />
 
                         </LinearLayout>
@@ -241,7 +259,7 @@
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
                                 android:src="@drawable/ic_ms_chevron_right"
-                                android:alpha="0.4"
+                                app:tint="@color/gp_stroke"
                                 android:contentDescription="@null" />
 
                         </LinearLayout>
@@ -283,7 +301,7 @@
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
                                 android:src="@drawable/ic_ms_chevron_right"
-                                android:alpha="0.4"
+                                app:tint="@color/gp_stroke"
                                 android:contentDescription="@null" />
 
                         </LinearLayout>
@@ -328,7 +346,7 @@
                                 android:layout_height="16dp"
                                 android:layout_marginStart="8dp"
                                 android:src="@drawable/ic_ms_chevron_right"
-                                android:alpha="0.4"
+                                app:tint="@color/gp_stroke"
                                 android:contentDescription="@null" />
 
                         </LinearLayout>
@@ -406,7 +424,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
                                     android:src="@drawable/ic_ms_chevron_right"
-                                    android:alpha="0.4"
+                                    app:tint="@color/gp_stroke"
                                     android:contentDescription="@null" />
 
                             </LinearLayout>
@@ -448,7 +466,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
                                     android:src="@drawable/ic_ms_chevron_right"
-                                    android:alpha="0.4"
+                                    app:tint="@color/gp_stroke"
                                     android:contentDescription="@null" />
 
                             </LinearLayout>
@@ -490,7 +508,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
                                     android:src="@drawable/ic_ms_chevron_right"
-                                    android:alpha="0.4"
+                                    app:tint="@color/gp_stroke"
                                     android:contentDescription="@null" />
 
                             </LinearLayout>
@@ -532,7 +550,7 @@
                                     android:layout_height="16dp"
                                     android:layout_marginStart="8dp"
                                     android:src="@drawable/ic_ms_chevron_right"
-                                    android:alpha="0.4"
+                                    app:tint="@color/gp_stroke"
                                     android:contentDescription="@null" />
 
                             </LinearLayout>

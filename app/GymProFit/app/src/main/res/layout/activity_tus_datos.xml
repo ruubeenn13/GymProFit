@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
                 android:layout_marginEnd="@dimen/margen_pantalla"
-                android:gravity="top"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -55,9 +55,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/espacio_8"
+                    android:layout_marginStart="@dimen/espacio_4"
                     android:background="@drawable/bg_burbuja_profi"
-                    android:paddingStart="@dimen/espacio_16"
+                    android:paddingStart="@dimen/espacio_24"
                     android:paddingEnd="@dimen/espacio_16"
                     android:paddingTop="@dimen/espacio_12"
                     android:paddingBottom="@dimen/espacio_12"

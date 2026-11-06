@@ -3,7 +3,7 @@
      de una zona de toque de 48 (2 dp de margen por lado). El
      color lo pone el adaptador con backgroundTint: gp_surface_2 en «+», gp_success_container en ✓. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/tarjeta_capa">
     <item android:left="2dp" android:top="2dp" android:right="2dp" android:bottom="2dp">
         <shape android:shape="oval">
             <solid android:color="@android:color/white" />

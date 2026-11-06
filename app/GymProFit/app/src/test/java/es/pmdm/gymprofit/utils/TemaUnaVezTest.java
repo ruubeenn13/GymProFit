@@ -38,7 +38,10 @@ public class TemaUnaVezTest {
         for (Path f : ficheros) {
             String nombre = f.getFileName().toString();
             if (nombre.equals("GymProFitApp.java") || nombre.equals("PreferencesManager.java")) continue;
-            String codigo = new String(Files.readAllBytes(f), StandardCharsets.UTF_8);
+            // Un Drawable que recibe el tema de su pantalla (Drawable.applyTheme, BurbujaProfi) no
+            // fija nada: se quitan su declaración y la llamada a la de su padre.
+            String codigo = new String(Files.readAllBytes(f), StandardCharsets.UTF_8)
+                    .replace("void applyTheme(", "").replace("super.applyTheme(", "");
             if (codigo.contains("applyTheme(") || codigo.contains("setDefaultNightMode(")) culpables.add(nombre);
         }
         assertTrue("Fijan el tema por su cuenta: " + culpables, culpables.isEmpty());

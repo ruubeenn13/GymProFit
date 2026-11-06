@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import es.pmdm.gymprofit.utils.AnimUtils;
+import es.pmdm.gymprofit.utils.IdiomaApp;
 import es.pmdm.gymprofit.utils.InsetsUtils;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -48,11 +49,21 @@ public class GymProFitApp extends Application {
         registrarAlmacenTokens();
         aplicarTemaGuardado();
         aplicarIdiomaGuardado();
+        IdiomaApp.fijarPorDefecto(this);
         crearCanalPush();
         registrarTransicionesGlobales();
         observarSesionEnCurso();
         // El fin del descanso con la app delante, esté en la pantalla que esté (GP-013).
         es.pmdm.gymprofit.envivo.VigilanteDescanso.instalar(this);
+    }
+
+    // Android vuelve a poner el idioma por defecto del proceso en el del sistema con cada
+    // cambio de configuración (también al cambiar la lista de idiomas): sin idioma elegido,
+    // se recoloca en el de la app (GP-240), que es el que leen Accept-Language y el calendario.
+    @Override
+    public void onConfigurationChanged(@NonNull android.content.res.Configuration nueva) {
+        super.onConfigurationChanged(nueva);
+        IdiomaApp.fijarPorDefecto(this);
     }
 
     // ------------------------------------------------------------------

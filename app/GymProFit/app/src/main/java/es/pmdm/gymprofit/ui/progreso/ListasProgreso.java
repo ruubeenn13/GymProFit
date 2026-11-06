@@ -41,12 +41,14 @@ import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.ui.fragments.ProgresoFragment;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.FilaRecord;
 import es.pmdm.gymprofit.utils.HistorialSesiones;
 import es.pmdm.gymprofit.utils.LogrosProgreso;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VacioRecords;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
@@ -90,7 +92,8 @@ final class ListasProgreso {
 
     // ── Récords ──────────────────────────────────────────────────────────────
 
-    void pintarRecords(@NonNull Fuente<Records> fuente, @NonNull Runnable reintentar) {
+    void pintarRecords(@NonNull Fuente<Records> fuente, @NonNull Fuente<List<SesionEntrenamiento>> sesiones,
+                       @NonNull Runnable reintentar) {
         Context ctx = raiz.getContext();
         View card = raiz.findViewById(R.id.cardRecords);
         TextView enlace = raiz.findViewById(R.id.enlaceRecords);
@@ -109,7 +112,11 @@ final class ListasProgreso {
         if (todos.isEmpty()) {
             card.setVisibility(View.GONE);
             enlace.setVisibility(View.GONE);
-            estadoRecords.vacio(R.string.progreso_records_vacio);
+            // Sin entrenos y con entrenos sin récords no es lo mismo (GP-229).
+            VacioRecords.Que que = VacioRecords.de(sesiones.lista(), sesiones.fallo(),
+                    sesiones.dato() == null ? 0 : sesiones.dato().size());
+            if (que == VacioRecords.Que.CARGANDO) estadoRecords.cargando();
+            else estadoRecords.vacio(VacioRecords.texto(que));
             return;
         }
         estadoRecords.oculto();
@@ -124,24 +131,28 @@ final class ListasProgreso {
         for (int i = 0; i < Math.min(RECORDS, todos.size()); i++) {
             Record r = todos.get(i);
             if (i > 0) separador(lista);
-            View fila = fila(lista, R.drawable.ic_ms_trophy_fill, R.drawable.bg_fila_icono_oro, R.color.gp_gold);
+            // Dorado solo el más reciente, como en la lista de Récords: el mismo récord no puede ir
+            // celebrado en una y apagado en la otra (revisor, GP-225; DEC-018).
+            boolean dorado = i == 0;
+            View fila = dorado ? fila(lista, R.drawable.ic_ms_trophy_fill, R.drawable.bg_fila_icono_oro, R.color.gp_gold)
+                    : fila(lista, R.drawable.ic_ms_trophy, R.drawable.bg_fila_icono, R.color.gp_text_secondary);
             String nombre = r.nombre(idioma);
-            String cuando = mayuscula(TiempoRelativo.texto(ctx, r.getFecha()), idioma);
             String anterior = Marcas.anteriorSolo(ctx, r);
-            String apoyo = anterior == null ? cuando
-                    : cuando == null ? anterior.replace(' ', ' ')
-                    : ctx.getString(R.string.progreso_record_antes, cuando, anterior.replace(' ', ' '));
+            String apoyo = FilaRecord.apoyo(TiempoRelativo.texto(ctx, r.getFecha()),
+                    anterior == null ? null : anterior.replace(' ', ' '),
+                    ctx.getString(R.string.record_hace_antes), idioma);
             // La marca no se parte: con letra grande dejaba el «10» solo en otra línea.
             String marca = Marcas.texto(ctx, r).replace(' ', ' ');
             ((TextView) fila.findViewById(R.id.tvTituloFila)).setText(nombre);
             textoOculto(fila.findViewById(R.id.tvApoyoFila), apoyo);
             TextView valor = fila.findViewById(R.id.tvValorFila);
             valor.setText(marca);
+            if (!dorado) valor.setTextColor(ContextCompat.getColor(ctx, R.color.gp_on_surface));
             Marcas.iconoTiempo(valor, r);
             valor.setVisibility(View.VISIBLE);
-            // Un récord por tiempo dice que es un tiempo: el cronómetro solo se ve.
-            String marcaDicha = r.esDeTiempo() ? ctx.getString(R.string.progreso_marca_tiempo_a11y, marca) : marca;
-            fila.setContentDescription(nombre + ". " + (apoyo == null ? "" : apoyo + ". ") + marcaDicha);
+            // Un récord por tiempo dice que es un tiempo: el cronómetro solo se ve (igual que la lista).
+            fila.setContentDescription(FilaRecord.dicho(nombre, apoyo, marca, r.esDeTiempo(),
+                    ctx.getString(R.string.progreso_marca_tiempo_a11y)));
             fila.setOnClickListener(v -> abrirEjercicio(r, v));
         }
     }
@@ -317,10 +328,5 @@ final class ListasProgreso {
     private static void textoOculto(TextView tv, @Nullable String texto) {
         tv.setText(texto);
         tv.setVisibility(texto == null || texto.isEmpty() ? View.GONE : View.VISIBLE);
-    }
-
-    @Nullable
-    private static String mayuscula(@Nullable String s, Locale idioma) {
-        return s == null || s.isEmpty() ? s : s.substring(0, 1).toUpperCase(idioma) + s.substring(1);
     }
 }

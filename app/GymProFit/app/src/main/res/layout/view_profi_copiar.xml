@@ -22,17 +22,23 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginBottom="14dp"
         android:layout_weight="1"
         android:background="@drawable/bg_burbuja_profi"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="@dimen/espacio_24"
+        android:paddingEnd="@dimen/espacio_16"
+        android:paddingTop="@dimen/espacio_16"
+        android:paddingBottom="@dimen/espacio_16">
 
         <TextView
             android:id="@+id/tvMensajeProfi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/aire_anillo_fuera"
+            android:layout_marginTop="@dimen/aire_anillo_fuera"
+            android:layout_marginEnd="@dimen/aire_anillo_fuera"
+            android:padding="@dimen/aire_anillo"
             android:focusable="true"
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_body" />
@@ -42,7 +48,7 @@
             style="@style/Widget.GymProFit.BotonPildora"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/espacio_8"
             android:minHeight="48dp"
             android:text="@string/copiar_profi_boton"
             app:icon="@drawable/ic_ms_content_copy"
@@ -52,7 +58,7 @@
             android:id="@+id/btnNoCopiar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="@dimen/espacio_8"
             android:background="?attr/selectableItemBackground"
             android:gravity="center_vertical"
             android:minHeight="48dp"

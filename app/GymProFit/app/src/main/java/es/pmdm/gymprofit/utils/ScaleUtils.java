@@ -51,6 +51,12 @@ public final class ScaleUtils {
         int tema = PreferencesManager.temaGuardado(base);
         if (tema == AppCompatDelegate.MODE_NIGHT_YES) override.uiMode = Configuration.UI_MODE_NIGHT_YES;
         else if (tema == AppCompatDelegate.MODE_NIGHT_NO) override.uiMode = Configuration.UI_MODE_NIGHT_NO;
+        // Sin idioma elegido, el de la app y no el primero del sistema (GP-240): así AppCompat
+        // y Material también salen en español con el sistema en francés. Y el idioma por defecto
+        // del proceso, que Android vuelve a poner en el del sistema cuando ninguno de la lista
+        // es de la app (con [francés], el calendario de Material salía en francés).
+        IdiomaApp.aplicarSinElegir(base, override);
+        IdiomaApp.fijarPorDefecto(base);
         return base.createConfigurationContext(override);
     }
 }

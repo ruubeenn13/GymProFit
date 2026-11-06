@@ -114,12 +114,18 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvDias       = findViewById(R.id.tvKpiDiasValor);
         tvObjetivo   = findViewById(R.id.tvKpiObjetivoValor);
         tvAdherencia = findViewById(R.id.tvKpiAdherenciaValor);
+        // Cada fila de cifras, a la altura de su tarjeta más alta (GP-225).
+        es.pmdm.gymprofit.utils.AltoIgual.fila(findViewById(R.id.cardKpiMedia), findViewById(R.id.cardKpiDias));
+        es.pmdm.gymprofit.utils.AltoIgual.fila(findViewById(R.id.cardKpiObjetivo), findViewById(R.id.cardKpiAdherencia));
         chipsPeriodo = findViewById(R.id.chipsPeriodo);
         chartKcal    = findViewById(R.id.chartKcal);
         chartMacros  = findViewById(R.id.chartMacros);
         tvMacrosVacia = findViewById(R.id.tvMacrosVacia);
         gridHeatmap  = findViewById(R.id.gridHeatmap);
         btnNext      = findViewById(R.id.btnNext);
+        // Son ImageView pulsables: TalkBack los anuncia como botón (revisor, GP-225).
+        es.pmdm.gymprofit.utils.RolBoton.aplicar(findViewById(R.id.btnPrev));
+        es.pmdm.gymprofit.utils.RolBoton.aplicar(btnNext);
 
         coloresMacros = new int[]{ ContextCompat.getColor(this, R.color.gp_macro_proteinas),
                 ContextCompat.getColor(this, R.color.gp_macro_carbos), ContextCompat.getColor(this, R.color.gp_macro_grasas) };
@@ -262,8 +268,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         }
 
         // Tooltip: kcal + fecha.
-        chartKcal.setMarker(new ChartMarker(this, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
-                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron))));
+        ChartMarker.poner(chartKcal, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
+                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron)));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
         ChartStyler.styleBarDataSet(ds, this);
@@ -289,11 +295,17 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal.setData(data);
         chartKcal.invalidate();
         // Las barras no son nada para TalkBack sin descripción (DEC-019).
+        // Con un solo día (o todos iguales) no es «entre 379 y 379» (revisor, GP-225).
+        boolean igual = nf.format(minKcal).equals(nf.format(maxKcal));
         chartKcal.setContentDescription(conObjetivo
-                ? getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
-                        nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal))
-                : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
-                        nf.format(minKcal), nf.format(maxKcal)));
+                ? (igual ? getString(R.string.estadisticas_kcal_a11y_igual, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(objetivoKcal))
+                        : getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal)))
+                : (igual ? getString(R.string.estadisticas_kcal_a11y_igual_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal))
+                        : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal))));
     }
 
     // Donut del reparto de macros (gramos totales de proteína/carbohidratos/grasa del periodo).
@@ -315,10 +327,12 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartMacros.setVisibility(View.VISIBLE);
         tvMacrosVacia.setVisibility(View.GONE);
 
+        // Los gramos van en la leyenda y no dentro de cada porción: «4 g» no cabía en la suya y
+        // «323 g» montaba sobre el borde del agujero, sobre todo con letra 1,3 (GP-225).
         List<PieEntry> entradas = new ArrayList<>();
-        entradas.add(new PieEntry((float) prot, getString(R.string.macro_prot)));
-        entradas.add(new PieEntry((float) carb, getString(R.string.macro_carb)));
-        entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
+        entradas.add(new PieEntry((float) prot, leyendaMacro(R.string.macro_prot, prot)));
+        entradas.add(new PieEntry((float) carb, leyendaMacro(R.string.macro_carb, carb)));
+        entradas.add(new PieEntry((float) grasa, leyendaMacro(R.string.macro_grasa, grasa)));
 
         ChartStyler.stylePie(chartMacros);
         // El total es la suma de lo que se enseña redondeado: 12 + 52 + 12 no puede decir 77.
@@ -327,21 +341,18 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
         PieDataSet ds = new PieDataSet(entradas, "");
         ChartStyler.stylePieDataSet(ds, coloresMacros, this);
-        // Blanco sobre los macros de claro y casi negro sobre los de oscuro (el blanco sobre el
-        // turquesa daba 1,86:1).
-        ds.setValueTextColor(ContextCompat.getColor(this, R.color.gp_texto_sobre_macro));
         PieData data = new PieData(ds);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return getString(R.string.unidad_g_redondeado, value);
-            }
-        });
         chartMacros.setData(data);
         chartMacros.invalidate();
         chartMacros.setContentDescription(getString(R.string.estadisticas_macros_a11y,
                 getString(R.string.unidad_g_redondeado, prot), getString(R.string.unidad_g_redondeado, carb),
                 getString(R.string.unidad_g_redondeado, grasa)));
+    }
+
+    // «Proteína · 88 g»: la entrada de la leyenda del donut.
+    private String leyendaMacro(int nombre, double gramos) {
+        return getString(R.string.estadisticas_macro_leyenda, getString(nombre),
+                getString(R.string.unidad_g_redondeado, gramos));
     }
 
     // Construye el heatmap: una celda por día del periodo, coloreada según si ese día

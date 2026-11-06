@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- bg_fila_comida — una fila de alimento en una comida (lote 1.6.2): fondo de la tarjeta (para
-     tapar el rojo de quitar mientras se desliza), raya abajo y el de pulsar. -->
+     tapar el rojo de quitar mientras se desliza), raya abajo desde el texto (70 dp, el separador
+     de la fila de lista; GP-225) y el de pulsar. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/tarjeta_capa">
     <item>
         <layer-list>
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="?attr/colorSurfaceVariant" />
+                    <solid android:color="?attr/colorSurface" />
                 </shape>
             </item>
-            <item android:bottom="1dp">
+            <item android:gravity="bottom" android:height="@dimen/separador_alto"
+                android:left="@dimen/fila_sangria_separador">
                 <shape android:shape="rectangle">
-                    <solid android:color="?attr/colorSurface" />
+                    <solid android:color="?attr/colorSurfaceVariant" />
                 </shape>
             </item>
         </layer-list>

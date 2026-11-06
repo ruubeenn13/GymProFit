@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.FrasesA11y;
 import es.pmdm.gymprofit.utils.AvatarUtils;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.Comida;
@@ -294,7 +295,7 @@ public class NutricionFragment extends BaseFragment {
                 tvNumero.setTextColor(texto);
                 tvNumero.setTypeface(tvNumero.getTypeface(), android.graphics.Typeface.BOLD);
             } else {
-                celda.setBackgroundResource(fondoPulsable());
+                celda.setBackgroundResource(R.drawable.bg_dia_pulsable);
                 tvInicial.setTextColor(futuro ? apagado : secundario);
                 tvNumero.setTextColor(futuro ? apagado : texto);
             }
@@ -668,8 +669,10 @@ public class NutricionFragment extends BaseFragment {
             // «para hoy» solo hoy; mirando otro día, «para ese día» (lo vio el revisor).
             unidad.setText(DiaNutricion.rotuloKcal(esHoy(), restantes >= 0));
             contarKcal(tvKcal, quedan, d.kcal, d.objetivoKcal, modo, nf);
-            a11y = getString(R.string.nutricion_kcal_a11y, nf.format(d.kcal), nf.format(d.objetivoKcal),
-                    rotulo.getText(), getString(R.string.nutricion_kcal_valor, nf.format(Math.abs(restantes))));
+            // La frase entera, y no el rótulo visible delante de la cifra: «3,061 kilocalories
+            // left», no «Left 3,061 kcal» (GP-225).
+            a11y = getString(restantes >= 0 ? R.string.nutricion_kcal_a11y_quedan : R.string.nutricion_kcal_a11y_pasas,
+                    nf.format(d.kcal), nf.format(d.objetivoKcal), nf.format(Math.abs(restantes)));
         }
         findViewById(R.id.filaKcal).setContentDescription(completo
                 ? getString(R.string.dia_completo_a11y, a11y) : a11y);
@@ -768,9 +771,14 @@ public class NutricionFragment extends BaseFragment {
         int faltan = Math.max(0, d.objetivoProteinas - gramos);
         falta.setVisibility(faltan > 0 ? View.VISIBLE : View.GONE);
         falta.setText(getString(R.string.nutricion_te_faltan, faltan));
-        String a11y = getString(R.string.nutricion_macro_a11y, nombre.getText(), gramos, d.objetivoProteinas);
-        if (detalle.length() > 0) a11y = a11y + ". " + detalle.toString().replace('\n', ' ');
-        fila.setContentDescription(faltan > 0 ? getString(R.string.nutricion_macro_falta_a11y, a11y, faltan) : a11y);
+        // Lo que falta va antes del rango y de la base, cada cosa en su frase (GP-225: se leía
+        // «Calculada sobre tu peso., te faltan 80»).
+        String[] lineas = detalle.toString().split("\n");
+        String[] partes = new String[2 + lineas.length];
+        partes[0] = getString(R.string.nutricion_macro_a11y, nombre.getText(), gramos, d.objetivoProteinas);
+        partes[1] = faltan > 0 ? getResources().getQuantityString(R.plurals.nutricion_macro_falta_a11y, faltan, faltan) : null;
+        System.arraycopy(lineas, 0, partes, 2, lineas.length);
+        fila.setContentDescription(FrasesA11y.unir(partes));
         if (celebrar && dorada) {
             Movimiento.brillar(barra, ContextCompat.getColor(requireContext(), R.color.gp_brillo_oro),
                     Movimiento.CIERRA, Movimiento.BRILLO);
@@ -1231,7 +1239,7 @@ public class NutricionFragment extends BaseFragment {
                         getResources().getDimensionPixelSize(R.dimen.separador_alto));
                 lp.setMarginStart(getResources().getDimensionPixelSize(R.dimen.fila_sangria_separador));
                 raya.setLayoutParams(lp);
-                raya.setBackgroundColor(color(com.google.android.material.R.attr.colorOutlineVariant));
+                raya.setBackgroundColor(color(com.google.android.material.R.attr.colorSurfaceVariant));
                 raya.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
                 lista.addView(raya);
             }

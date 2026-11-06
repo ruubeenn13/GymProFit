@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:padding="12dp"
-            android:background="@drawable/bg_grupo_solo"
+            android:background="@drawable/bg_aviso_hoja"
             android:textSize="@dimen/text_body"
             android:textColor="?attr/colorOnSurface"
             android:visibility="gone" />

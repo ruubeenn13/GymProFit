@@ -138,6 +138,9 @@ public class TusDatosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
         setContentView(R.layout.activity_tus_datos);
+        // La descripción de la actividad, al alto de la más larga: con letra 1,3, «Mucha» va en dos
+        // líneas y bajaba el selector de experiencia al elegirla (GP-225).
+        es.pmdm.gymprofit.utils.AltoReservado.para(findViewById(R.id.tvActividadTexto), ACTIVIDAD_DESC);
 
         // Lo guardado en el móvil primero; lo de la API lo corrige al llegar.
         nivelGuardado = prefs.getNivel();
@@ -479,10 +482,11 @@ public class TusDatosActivity extends AppCompatActivity {
             dif.setVisibility(View.GONE);
             minimo.setVisibility(View.GONE);
         } else {
-            quedara.setText(getString(R.string.datos_plan_cifras, entero.format(plan.kcal), plan.proteinas));
             dif.setVisibility(View.VISIBLE);
             // Sin objetivo guardado todavía no hay «respecto a ahora» que decir.
             boolean hayAntes = prefs.hayObjetivoGuardado() && prefs.getCaloriasDiarias() > 0;
+            int[] cifras = plan.cifras(hayCambios(), hayAntes);
+            quedara.setText(getString(R.string.datos_plan_cifras, entero.format(cifras[0]), cifras[1]));
             PlanPrevio.Aviso aviso = plan.aviso(hayCambios(), hayAntes);
             if (aviso == PlanPrevio.Aviso.NINGUNO) {
                 dif.setText(null);

@@ -22,4 +22,6 @@
     <!-- Si la raíz de una pestaña era enfocable antes de apartarla del foco. Ver MainActivity. -->
     <item name="tag_enfocable_original" type="id"/>
 
+    <!-- El tinte que trae del layout un icono de alimento (Categorias.tenir). -->
+    <item name="tinte_original" type="id" />
 </resources>

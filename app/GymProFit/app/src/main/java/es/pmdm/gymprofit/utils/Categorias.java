@@ -62,6 +62,57 @@ public final class Categorias {
         return i < 0 ? R.drawable.ic_ms_restaurant : ICONOS[i];
     }
 
+    // El color del icono, en el mismo orden que CLAVES (GP-225, como el tablero de Nutrición): el
+    // de su macro principal, verde las verduras, el del agua las bebidas y, sin categoría, ninguno
+    // (el del texto). Colores de dato; pasan 3:1 sobre el círculo en los dos temas
+    // (TintesCategoriaTest).
+    private static final String[] TINTES = {
+            "gp_macro_proteinas", "gp_macro_proteinas", "gp_macro_proteinas", "gp_macro_proteinas",
+            "gp_macro_carbos", "gp_macro_carbos", "gp_macro_carbos", "gp_success", "gp_macro_grasas",
+            "gp_macro_grasas", "gp_agua", "gp_macro_proteinas", "gp_macro_carbos", null};
+
+    private static final int[] COLORES = {
+            R.color.gp_macro_proteinas, R.color.gp_macro_proteinas, R.color.gp_macro_proteinas,
+            R.color.gp_macro_proteinas, R.color.gp_macro_carbos, R.color.gp_macro_carbos,
+            R.color.gp_macro_carbos, R.color.gp_success, R.color.gp_macro_grasas, R.color.gp_macro_grasas,
+            R.color.gp_agua, R.color.gp_macro_proteinas, R.color.gp_macro_carbos, 0};
+
+    /** El nombre del color de la categoría («gp_macro_carbos»), o null si no lleva. */
+    @Nullable
+    public static String tinte(@Nullable String clave) {
+        if (clave == null || clave.trim().isEmpty()) return null;
+        int i = CLAVES.indexOf(clave.trim());
+        return i < 0 ? null : TINTES[i];
+    }
+
+    /** El color del icono de la categoría, o 0 si va en el color del texto. */
+    @androidx.annotation.ColorRes
+    public static int color(@Nullable String clave) {
+        if (clave == null || clave.trim().isEmpty()) return 0;
+        int i = CLAVES.indexOf(clave.trim());
+        return i < 0 ? 0 : COLORES[i];
+    }
+
+    /**
+     * Tiñe el icono de un alimento con su categoría; sin ella (o en un plato, clave nula), con el
+     * tinte que trae el icono del layout, que se guarda la primera vez: la vista se recicla.
+     */
+    public static void tenir(@NonNull android.widget.ImageView icono, @Nullable String clave) {
+        Object guardado = icono.getTag(R.id.tinte_original);
+        if (guardado == null) {
+            guardado = icono.getImageTintList() != null ? icono.getImageTintList() : SIN_TINTE;
+            icono.setTag(R.id.tinte_original, guardado);
+        }
+        int c = color(clave);
+        if (c != 0) {
+            icono.setImageTintList(androidx.core.content.ContextCompat.getColorStateList(icono.getContext(), c));
+        } else {
+            icono.setImageTintList(guardado == SIN_TINTE ? null : (android.content.res.ColorStateList) guardado);
+        }
+    }
+
+    private static final Object SIN_TINTE = new Object();
+
     /** El nombre traducido; 0 si la clave es desconocida (se escribe tal cual). */
     @StringRes
     public static int nombre(@Nullable String clave) {

@@ -292,6 +292,8 @@ public class AnadirAlimentoActivity extends BaseActivity {
             ((TextView) findViewById(R.id.tvTituloAnadir)).setText(R.string.ingredientes_titulo);
             ((TextView) findViewById(R.id.etBuscarAnadir)).setHint(R.string.ingredientes_buscar_hint);
         } else {
+            // Abre la hoja de elegir comida: TalkBack lo anuncia como botón (revisor, GP-225).
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(etiqueta);
             cargarDia();
             cargarRecientes();
             cargarHabituales();

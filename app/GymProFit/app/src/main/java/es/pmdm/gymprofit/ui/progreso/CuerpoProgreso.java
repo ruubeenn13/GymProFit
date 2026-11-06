@@ -37,6 +37,7 @@ import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.MedicionHoy;
 import es.pmdm.gymprofit.utils.Numeros;
+import es.pmdm.gymprofit.utils.PuntosGrafica;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -143,11 +144,22 @@ final class CuerpoProgreso {
             tvCambio.setVisibility(View.GONE);
         }
 
+        // Con un día de pesajes, el punto con su valor y su fecha y la pista; con dos o más, la
+        // línea (GP-229: con un pesaje no salía nada).
         LineChart linea = raiz.findViewById(R.id.chartPesoProgreso);
-        if (r.puntos.size() >= 2) {
-            pintarLinea(linea, r.puntos);
+        TextView pista = raiz.findViewById(R.id.tvPistaCuerpo);
+        List<EjeFechas.Punto> dias = porDia(r.puntos);
+        PuntosGrafica.Que que = PuntosGrafica.de(dias.size());
+        pista.setVisibility(que == PuntosGrafica.Que.UN_PUNTO ? View.VISIBLE : View.GONE);
+        if (que == PuntosGrafica.Que.LINEA) {
+            pintarLinea(linea, dias, null);
             partes.add(ctx.getResources().getQuantityString(R.plurals.progreso_linea_peso_a11y, r.semanas,
                     uno.format(r.puntos.get(0).peso), peso, r.semanas));
+        } else if (que == PuntosGrafica.Que.UN_PUNTO) {
+            String fecha = EjeFechas.etiqueta(dias.get(0).x, idioma, ctx.getString(R.string.inicio_fecha_corta_patron));
+            pintarLinea(linea, dias, ctx.getString(R.string.unidad_kg_decimal, (double) dias.get(0).y));
+            partes.add(ctx.getString(R.string.progreso_un_peso_a11y, peso, fecha));
+            partes.add(pista.getText().toString());
         } else {
             linea.setVisibility(View.GONE);
         }
@@ -189,18 +201,24 @@ final class CuerpoProgreso {
         c.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 
-    private static void pintarLinea(LineChart c, List<CambioPeso.Punto> puntos) {
-        // Por fecha y no por orden (GP-228): dos pesajes separados un día no salen igual de lejos
-        // que dos separados un mes. Varios el mismo día darían una línea vertical: se queda el
-        // último del día (EjeFechas). Las semanas ya las dice el texto.
+    // Por fecha y no por orden (GP-228): dos pesajes separados un día no salen igual de lejos
+    // que dos separados un mes. Varios el mismo día darían una línea vertical: se queda el
+    // último del día (EjeFechas).
+    private static List<EjeFechas.Punto> porDia(List<CambioPeso.Punto> puntos) {
         List<String> fechas = new ArrayList<>();
         List<Float> pesos = new ArrayList<>();
         for (CambioPeso.Punto p : puntos) {
             fechas.add(p.fecha);
             pesos.add((float) p.peso);
         }
+        return EjeFechas.porDia(fechas, pesos, EjeFechas.DelDia.ULTIMO);
+    }
+
+    // La línea, o con un solo día el punto con su valor encima y su fecha debajo (unPunto no
+    // nulo): sin ejes en la línea, que las semanas ya las dice el texto.
+    private static void pintarLinea(LineChart c, List<EjeFechas.Punto> dias, @Nullable String unPunto) {
         List<Entry> e = new ArrayList<>();
-        for (EjeFechas.Punto p : EjeFechas.porDia(fechas, pesos, EjeFechas.DelDia.ULTIMO)) e.add(new Entry(p.x, p.y));
+        for (EjeFechas.Punto p : dias) e.add(new Entry(p.x, p.y));
         LineDataSet ds = new LineDataSet(e, null);
         ChartStyler.styleLineDataSet(ds, c.getContext());
         ds.setDrawFilled(false);
@@ -209,6 +227,19 @@ final class CuerpoProgreso {
         int azul = androidx.core.content.ContextCompat.getColor(c.getContext(), R.color.gp_linea_peso);
         ds.setColor(azul);
         ds.setCircleColor(azul);
+        boolean solo = unPunto != null;
+        if (solo) PuntosGrafica.unPunto(ds, c.getContext(), unPunto);
+        c.getXAxis().setEnabled(solo);
+        if (solo) {
+            Locale idioma = FechaUtils.localeDeLaApp(c.getContext());
+            String patron = c.getContext().getString(R.string.inicio_fecha_corta_patron);
+            c.getXAxis().setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
+                @Override
+                public String getAxisLabel(float value, com.github.mikephil.charting.components.AxisBase axis) {
+                    return EjeFechas.llevaEtiqueta(value, dias) ? EjeFechas.etiqueta(value, idioma, patron) : "";
+                }
+            });
+        }
         c.setData(new LineData(ds));
         c.setVisibility(View.VISIBLE);
         c.invalidate();

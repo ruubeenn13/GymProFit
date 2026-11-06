@@ -346,6 +346,8 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     // texto; sin proteína pendiente, solo las kcal.
     private void pintarCabeceraEncaja(@NonNull View v, @NonNull LoQueTeEncaja.Resultado r) {
         Context ctx = v.getContext();
+        // Encabezado también por debajo de Android 9, donde el atributo del layout no llega.
+        androidx.core.view.ViewCompat.setAccessibilityHeading(v.findViewById(R.id.tvTituloEncaja), true);
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
         String kcal = ctx.getString(R.string.encaja_kcal, nf.format(r.kcalQuedan));
         String prot = r.conProteina() ? ctx.getString(R.string.encaja_proteina, nf.format(r.proteinaQuedan)) : null;
@@ -366,7 +368,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
     private void pintarPropuesta(@NonNull View v, @NonNull Favoritos.Propuesta p) {
         Context ctx = v.getContext();
         Alimento a = p.getAlimento();
-        ((ImageView) v.findViewById(R.id.ivIconoPropuesta)).setImageResource(icono(a));
+        pintarIcono(v.findViewById(R.id.ivIconoPropuesta), a);
         ((TextView) v.findViewById(R.id.tvTituloPropuesta)).setText(ctx.getString(R.string.propuesta_titulo, a.getNombre()));
         ((TextView) v.findViewById(R.id.tvVecesPropuesta)).setText(
                 ctx.getResources().getQuantityString(R.plurals.propuesta_veces, p.getVeces(), p.getVeces()));
@@ -460,6 +462,12 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    /** El icono de la fila con el color de su categoría (GP-225); un plato y lo que no tiene, sin color. */
+    public static void pintarIcono(@NonNull ImageView iv, @NonNull Alimento a) {
+        iv.setImageResource(icono(a));
+        Categorias.tenir(iv, a.esPlato() ? null : a.getCategoriaClave());
+    }
+
     /** El icono de la fila: el de Mis platos en un plato; el de su categoría; sin categoría, el de producto (B2). */
     public static int icono(@NonNull Alimento a) {
         if (a.esPlato()) return R.drawable.ic_ms_menu_book;
@@ -520,12 +528,13 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             detalle = v.findViewById(R.id.tvDetalleFila);
             raya = v.findViewById(R.id.rayaFila);
             mas = v.findViewById(R.id.btnMasFila);
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(mas);
             iconoMas = v.findViewById(R.id.ivMasFila);
         }
 
         void pintar(@NonNull Alimento a, @Nullable GruposBusqueda.Seccion seccion, int fondo) {
             Context ctx = itemView.getContext();
-            icono.setImageResource(icono(a));
+            pintarIcono(icono, a);
             nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx,
                     es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(ctx, a.getNombre(), a.isRevisado(), 18), a.esPlato()));
             itemView.setBackgroundResource(fondo);
@@ -623,6 +632,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             nombre = v.findViewById(R.id.tvNombreEncaja);
             detalle = v.findViewById(R.id.tvDetalleEncaja);
             mas = v.findViewById(R.id.btnMasEncaja);
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(mas);
             iconoMas = v.findViewById(R.id.ivMasEncaja);
             barra = v.findViewById(R.id.barraEncaja);
             relleno = v.findViewById(R.id.rellenoEncaja);
@@ -637,7 +647,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
             sugerencia = s;
             Context ctx = vista.getContext();
             Alimento a = s.alimento;
-            icono.setImageResource(icono(a));
+            pintarIcono(icono, a);
             nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, a.getNombre(), a.esPlato()));
             vista.setOnClickListener(v -> acciones.abrir(a, v));
             mas.setOnClickListener(v -> acciones.tocarMas(a, mas, iconoMas));

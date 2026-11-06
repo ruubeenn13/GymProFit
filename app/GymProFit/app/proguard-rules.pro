@@ -48,3 +48,11 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+
+# ---- Drawables con clase propia ----
+# Un drawable que nombra su clase en el XML (<drawable class=…>) solo se instancia por reflexión:
+# sin esta regla R8 la quitaba y la release se cerraba al abrir Inicio (GP-225, BurbujaProfi).
+# DrawablesConClaseTest exige una regla por cada uno.
+-keep class es.pmdm.gymprofit.ui.widget.BurbujaProfi {
+    public <init>();
+}

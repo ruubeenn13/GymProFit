@@ -165,6 +165,18 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         etNotas.setSaveEnabled(false);
         ratingBar.setSaveEnabled(false);
         spRutina.setSaveEnabled(false);
+        // Nombre propio con lo elegido («Rutina: Full body A»): el labelFor del rótulo no llegaba a
+        // todos los lectores y el desplegable solo decía la rutina (GP-225, DEC-019).
+        androidx.core.view.ViewCompat.setAccessibilityDelegate(spRutina, new androidx.core.view.AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                    @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                Object elegida = spRutina.getSelectedItem();
+                info.setContentDescription(getString(R.string.sesiones_rutina_a11y,
+                        elegida != null ? elegida.toString() : ""));
+            }
+        });
 
         etDuracion.setText(vm.getDuracion());
         etNotas.setText(vm.getNotas());
@@ -281,7 +293,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, opciones);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // El menú marca la elegida con una ✓ (revisor, GP-225).
+        spinnerAdapter.setDropDownViewResource(R.layout.item_desplegable);
 
         posicionSincronizada = posicionDe(vm.getRutinaId());
         spRutina.setAdapter(spinnerAdapter);

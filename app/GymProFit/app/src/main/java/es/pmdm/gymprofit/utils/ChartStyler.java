@@ -90,7 +90,9 @@ public final class ChartStyler {
 
         ds.setColor(marca);
         ds.setLineWidth(2.4f);
-        ds.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);   // curva suave
+        // Recta entre puntos: la curva suave inventaba mesetas y subidas que los datos no tienen
+        // (revisor, GP-225), y «Tu cuerpo» ya iba así.
+        ds.setMode(LineDataSet.Mode.LINEAR);
         ds.setDrawCircles(true);
         ds.setCircleColor(marca);
         ds.setCircleRadius(3.5f);
@@ -148,14 +150,13 @@ public final class ChartStyler {
         l.setWordWrapEnabled(true);
     }
 
-    // Aplica los colores (uno por porción) y el acabado a una serie de donut.
+    // Aplica los colores (uno por porción) y el acabado a una serie de donut. Sin valores
+    // dentro de las porciones: una pequeña no los cabe y con letra grande montan sobre el
+    // agujero; la cifra va en la leyenda (GP-225).
     public static void stylePieDataSet(PieDataSet ds, int[] colors, Context ctx) {
         ds.setColors(colors);
         ds.setSliceSpace(2.5f);
-        ds.setDrawValues(true);
-        ds.setValueTextColor(Color.WHITE);
-        ds.setValueTextSize(textoSp(ctx));
-        ds.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
+        ds.setDrawValues(false);
     }
 
     // --- helpers privados ---
@@ -172,6 +173,18 @@ public final class ChartStyler {
         if (fmt != null) x.setValueFormatter(fmt);
     }
 
+    /**
+     * Una cifra del eje Y en el idioma de la app («79.2» / «79,2») con los decimales que pide el eje.
+     * MPAndroidChart formatea con el idioma del sistema: con la app en inglés y el sistema en español
+     * el eje decía «79,2» junto a «79.2 kg» (revisor, GP-225).
+     */
+    static String cifraEje(float v, int decimales, java.util.Locale idioma) {
+        java.text.NumberFormat nf = java.text.NumberFormat.getNumberInstance(idioma);
+        nf.setMinimumFractionDigits(decimales);
+        nf.setMaximumFractionDigits(decimales);
+        return nf.format(v);
+    }
+
     private static void ejeYIzq(Context ctx, YAxis y, int color, Typeface tf) {
         y.setDrawAxisLine(false);
         y.setDrawGridLines(true);
@@ -181,6 +194,13 @@ public final class ChartStyler {
         y.setTypeface(tf);
         y.setTextSize(textoSp(ctx));
         y.setLabelCount(4, false);
+        final java.util.Locale idioma = FechaUtils.localeDeLaApp(ctx);
+        y.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, com.github.mikephil.charting.components.AxisBase eje) {
+                return cifraEje(value, Math.max(0, eje.mDecimals), idioma);
+            }
+        });
     }
 
     /**
@@ -196,7 +216,7 @@ public final class ChartStyler {
         return Math.min(24f, 13f * ctx.getResources().getConfiguration().fontScale);
     }
 
-    private static Typeface fuente(Context ctx) {
+    static Typeface fuente(Context ctx) {
         Typeface tf = ResourcesCompat.getFont(ctx, R.font.barlow_condensed);
         return tf != null ? tf : Typeface.DEFAULT;
     }

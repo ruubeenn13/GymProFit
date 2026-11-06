@@ -646,7 +646,8 @@ public class ComidaActivity extends BaseActivity {
     private LoQueTeEncaja.Resultado calcularIdeas() {
         ResultadoNutricional meta = DiaNutricion.objetivo(prefsManager);
         if (meta == null || comidasDelDia == null) return null;
-        DiaNutricion d = DiaNutricion.de(comidasDelDia, meta);
+        // Esta comida, como está en la pantalla: lo recién quitado aún no se ha borrado en la API.
+        DiaNutricion d = DiaNutricion.deConEsta(comidasDelDia, tipoComida, lineas, meta);
         java.util.Set<Integer> suele = new java.util.HashSet<>();
         if (sueles != null) for (Alimento a : sueles) suele.add(a.getId());
         java.util.Set<Integer> ayer = new java.util.HashSet<>();
@@ -751,6 +752,8 @@ public class ComidaActivity extends BaseActivity {
             pintarProfi(tarjeta, ayer);
             tarjeta.findViewById(R.id.btnSiCopiar).setOnClickListener(v -> copiarAyer(tarjeta, ayer));
             tarjeta.findViewById(R.id.btnNoCopiar).setOnClickListener(v -> noCopiarAyer(tarjeta));
+            // «Ahora no» es un TextView pulsable: rol de botón para TalkBack (revisor, GP-225).
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(tarjeta.findViewById(R.id.btnNoCopiar));
             ranura.addView(tarjeta);
             if (entra && copiaNueva) Movimiento.entrarUna(tarjeta, 100, Movimiento.ENTRA, 16);
         }
@@ -795,13 +798,14 @@ public class ComidaActivity extends BaseActivity {
             String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), sg.cantidad);
             String detalle = getString(R.string.ideas_detalle, cantidad, nf.format(sg.kcal),
                     nf.format(Math.round(sg.proteina)));
-            ((ImageView) fila.findViewById(R.id.ivIconoSueles)).setImageResource(BusquedaAlimentoAdapter.icono(a));
+            BusquedaAlimentoAdapter.pintarIcono(fila.findViewById(R.id.ivIconoSueles), a);
             ((TextView) fila.findViewById(R.id.tvNombreSueles)).setText(a.getNombre());
             ((TextView) fila.findViewById(R.id.tvCantidadSueles)).setText(detalle);
             fila.findViewById(R.id.textosSueles).setContentDescription(
                     getString(R.string.fila_a11y, a.getNombre(), detalle));
             fila.findViewById(R.id.rayaSueles).setVisibility(i < deEsta.size() - 1 ? View.VISIBLE : View.GONE);
             View mas = fila.findViewById(R.id.btnMasSueles);
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(mas);
             ImageView iconoMas = fila.findViewById(R.id.ivMasSueles);
             boolean viaja = anadiendo.contains(a.getId());
             BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, viaja);

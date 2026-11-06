@@ -55,6 +55,10 @@ public final class SeguirProgramaHoja {
         BottomSheetDialog hoja = new BottomSheetDialog(act);
         View raiz = LayoutInflater.from(act).inflate(R.layout.dialog_seguir_programa, null, false);
         hoja.setContentView(raiz);
+        // Con un alto mínimo del 85 % de la ventana: al elegir otros minutos la vista previa cambia de
+        // alto y, ajustada a su contenido, la hoja crecía hacia arriba y el selector se movía bajo el
+        // dedo (revisor, GP-225). Así sube desde abajo, con sus esquinas, y no cambia de alto.
+        raiz.setMinimumHeight(Math.round(act.getResources().getDisplayMetrics().heightPixels * 0.85f));
         hoja.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
         hoja.getBehavior().setSkipCollapsed(true);
 
