@@ -90,7 +90,9 @@ public final class ChartStyler {
 
         ds.setColor(marca);
         ds.setLineWidth(2.4f);
-        ds.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);   // curva suave
+        // Recta entre puntos: la curva suave inventaba mesetas y subidas que los datos no tienen
+        // (revisor, GP-225), y «Tu cuerpo» ya iba así.
+        ds.setMode(LineDataSet.Mode.LINEAR);
         ds.setDrawCircles(true);
         ds.setCircleColor(marca);
         ds.setCircleRadius(3.5f);

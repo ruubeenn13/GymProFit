@@ -131,7 +131,11 @@ final class ListasProgreso {
         for (int i = 0; i < Math.min(RECORDS, todos.size()); i++) {
             Record r = todos.get(i);
             if (i > 0) separador(lista);
-            View fila = fila(lista, R.drawable.ic_ms_trophy_fill, R.drawable.bg_fila_icono_oro, R.color.gp_gold);
+            // Dorado solo el más reciente, como en la lista de Récords: el mismo récord no puede ir
+            // celebrado en una y apagado en la otra (revisor, GP-225; DEC-018).
+            boolean dorado = i == 0;
+            View fila = dorado ? fila(lista, R.drawable.ic_ms_trophy_fill, R.drawable.bg_fila_icono_oro, R.color.gp_gold)
+                    : fila(lista, R.drawable.ic_ms_trophy, R.drawable.bg_fila_icono, R.color.gp_text_secondary);
             String nombre = r.nombre(idioma);
             String anterior = Marcas.anteriorSolo(ctx, r);
             String apoyo = FilaRecord.apoyo(TiempoRelativo.texto(ctx, r.getFecha()),
@@ -143,6 +147,7 @@ final class ListasProgreso {
             textoOculto(fila.findViewById(R.id.tvApoyoFila), apoyo);
             TextView valor = fila.findViewById(R.id.tvValorFila);
             valor.setText(marca);
+            if (!dorado) valor.setTextColor(ContextCompat.getColor(ctx, R.color.gp_on_surface));
             Marcas.iconoTiempo(valor, r);
             valor.setVisibility(View.VISIBLE);
             // Un récord por tiempo dice que es un tiempo: el cronómetro solo se ve (igual que la lista).

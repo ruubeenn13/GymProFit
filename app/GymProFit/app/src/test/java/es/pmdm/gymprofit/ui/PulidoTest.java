@@ -287,6 +287,21 @@ public class PulidoTest {
                 .matcher(leer(RES.resolve("layout/activity_registrar_sesion.xml"))).find());
     }
 
+    // Revisor en el grupo Progreso (primera pasada).
+    @Test
+    public void primeraPasadaDelRevisorEnProgreso() throws IOException {
+        String estilo = leer(JAVA.resolve("utils/ChartStyler.java"));
+        assertFalse("las líneas de dato no se curvan", estilo.contains("HORIZONTAL_BEZIER"));
+        String m = leer(RES.resolve("layout/fragment_medidas.xml"));
+        int pista = m.indexOf("android:id=\"@+id/tvGraficaPista\"");
+        int cierre = m.indexOf("</FrameLayout>", m.indexOf("android:id=\"@+id/chartPeso\""));
+        assertTrue("la pista del punto único va sobre la gráfica, dentro de su marco", pista > 0 && pista < cierre);
+        String l = leer(JAVA.resolve("ui/progreso/ListasProgreso.java"));
+        assertTrue("dorado solo el récord más reciente, como en la lista", l.contains("boolean dorado = i == 0;"));
+        assertTrue(leer(RES.resolve("layout/item_record.xml")).contains("android:minHeight=\"@dimen/fila_alto_min\""));
+        assertTrue(leer(JAVA.resolve("ui/adapters/SesionAdapter.java")).contains("RolBoton.aplicar(btnEliminar)"));
+    }
+
     private static int cuenta(String s, String trozo) {
         int n = 0;
         for (int i = s.indexOf(trozo); i >= 0; i = s.indexOf(trozo, i + 1)) n++;

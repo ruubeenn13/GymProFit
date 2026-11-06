@@ -353,6 +353,7 @@
                         <!-- Con un solo día de pesajes (GP-229). -->
                         <TextView
                             android:id="@+id/tvPistaCuerpo"
+                            android:importantForAccessibility="no"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/espacio_4"
