@@ -1079,6 +1079,25 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-060 · Las tarjetas de sesión salen de una petición por página de semanas, y los récords de una sesión son los que batió ese día
+**Estado:** Aceptada · **Fecha:** 2026-11-06 · **Tarea:** GP-232
+
+**Contexto.** El lienzo de las tarjetas (04-11, `documentacion/diseno/2026-11-04-tarjetas/`) pone en cada tarjeta de sesión los kilos, las barras de sus últimas veces con esa rutina, la comparación con la anterior, las zonas y los récords, y agrupa el Historial por semanas. La lista de sesiones no traía nada de eso: Inicio pedía `/sesiones/{id}/resumen` por tarjeta y Progreso `/sesiones/{id}/volumen` por fila, y los récords de una sesión eran los vigentes que salían de ella, así que uno superado después desaparecía de la sesión que lo batió. Entrenar y la hoja de elegir rutina tampoco sabían las zonas ni la última vez de una rutina propia.
+
+**Decisión.**
+
+- **`GET /sesiones/historial?antes=`**, con el usuario del token: hasta **8 semanas con sesiones** por página, **una semana nunca se parte** y el cursor `siguiente` (el lunes de la última semana de la página) lleva a la siguiente. Las semanas van por el lunes de la hora local (las fechas se guardan en la del móvil). Por sesión: rutina, inicio, minutos, kilos (GP-011), series y ejercicios (como el resumen), récords batidos ese día, kilos de la anterior de la misma rutina, series por músculo (`Musculos.normalizar`) y las barras: kilos y récord de sus últimas 6 sesiones de la misma rutina, hasta ella, aunque caigan en otra página. Solo sesiones terminadas. Un número fijo de consultas por petición (sesiones, kilos agrupados, récords y detalle de la página), ninguna por sesión.
+- **Los récords de una sesión son los que batió ese día** (`CalculadoraRecords`, sin primeras marcas), los mismos que el resumen da como batidos al guardarla: un récord superado después sigue contando en su sesión. Así se cuentan en el Historial, Inicio, Progreso, las barras y Profi.
+- **`GET /rutinas/usuario/{id}/activas` trae además `musculos` y `ultimas`** (fecha, kilos y récord de sus 6 últimas sesiones), con consultas agrupadas y **solo en esa ruta** (`@JsonInclude(NON_NULL)`: las demás no cambian).
+- **Borrar una sesión del Historial no pregunta**: se desliza o se usa la acción de TalkBack, sale «Deshacer» 5 s y el borrado se manda cuando el aviso se va, como quitar un alimento (DEC-043). Desde el resumen del entreno sí se pregunta: al salir no queda «Deshacer» a la vista.
+- **En frase y sin «·» dentro de estas tarjetas**, con la coma de serie en inglés; el resto de la app no cambia.
+
+**Consecuencias.** Inicio y Progreso hacen una petición para sus tarjetas en vez de una por tarjeta. Una sesión sin ejercicios cuenta en la semana y en las barras de su rutina con 0 kg. `HistorialSesionesTest` cubre el aislamiento (DEC-014, DEC-027), el récord superado, las barras de otras páginas y el cursor. El Historial deja de tener su vacío a mano (parte de GP-064).
+
+**Qué la invalidaría.** Que el cálculo de récords por petición se note en producción con historiales largos (se mediría antes de guardarlos, DEC-021), o que una semana con muchísimas sesiones haga una página demasiado grande (entonces se partiría por sesiones, no por semanas).
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
