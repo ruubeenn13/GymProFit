@@ -302,6 +302,23 @@ public class PulidoTest {
         assertTrue(leer(JAVA.resolve("ui/adapters/SesionAdapter.java")).contains("RolBoton.aplicar(btnEliminar)"));
     }
 
+    // Tercera pasada en Progreso: con un punto, sin cuadrícula que cruce su cifra, la cifra en la
+    // condensada de la app, y la ficha dice en su descripción las cifras que dibuja.
+    @Test
+    public void terceraPasadaDelRevisorEnProgreso() throws IOException {
+        String p = leer(JAVA.resolve("utils/PuntosGrafica.java"));
+        assertTrue(p.contains("ds.setValueTypeface(ChartStyler.fuente(ctx));"));
+        assertTrue(p.contains("c.getAxisLeft().setDrawGridLines(que == Que.LINEA);"));
+        assertTrue(leer(JAVA.resolve("ui/fragments/MedidasFragment.java")).contains("PuntosGrafica.cuadricula(chartPeso, que);"));
+        assertTrue(leer(JAVA.resolve("ui/activities/DetalleEjercicioActivity.java")).contains("PuntosGrafica.cuadricula(chart,"));
+        for (String t : new String[]{ "values", "values-en" }) {
+            Matcher m = Pattern.compile("<string name=\"detalle_progresion_a11y\">([^<]+)</string>")
+                    .matcher(leer(RES.resolve(t + "/strings.xml")));
+            assertTrue(m.find());
+            assertTrue(t + ": de qué cifra a qué cifra", m.group(1).contains("%4$s") && m.group(1).contains("%5$s"));
+        }
+    }
+
     private static int cuenta(String s, String trozo) {
         int n = 0;
         for (int i = s.indexOf(trozo); i >= 0; i = s.indexOf(trozo, i + 1)) n++;

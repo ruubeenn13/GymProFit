@@ -220,7 +220,7 @@
     <string name="detalle_periodo_8">8 wks</string>
     <string name="detalle_periodo_todo">All</string>
     <string name="detalle_progresion_pista">Next time you’ll see your progress</string>
-    <string name="detalle_progresion_un_punto_a11y">%1$s: one session, on %2$s</string>
+    <string name="detalle_progresion_un_punto_a11y">%1$s: one session, %2$s on %3$s</string>
     <string name="detalle_vez_igual_a11y">Same as last time</string>
     <string name="detalle_periodo_sin_sesiones">No sessions in these weeks. Try “%1$s.”</string>
     <string name="detalle_periodo_4_nombre">4 weeks</string>
@@ -242,7 +242,7 @@
     <string name="detalle_series_a11y">Sets: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, record</string>
     <string name="detalle_pista_subir">Next time, go up in weight: you hit %1$d reps on every set.</string>
-    <string name="detalle_progresion_a11y">%1$s, best of each day, from %2$s to %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, best of each day: from %2$s on %3$s to %4$s on %5$s</string>
     <string name="stats_periodo_semana">Week</string>
     <string name="stats_periodo_mes">Month</string>
     <string name="stats_kpi_media">Avg kcal/day</string>

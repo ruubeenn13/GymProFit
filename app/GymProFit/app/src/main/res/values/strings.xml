@@ -218,7 +218,7 @@
     <string name="detalle_periodo_8">8 sem.</string>
     <string name="detalle_periodo_todo">Todo</string>
     <string name="detalle_progresion_pista">La próxima vez verás tu progreso</string>
-    <string name="detalle_progresion_un_punto_a11y">%1$s: una sesión, el %2$s</string>
+    <string name="detalle_progresion_un_punto_a11y">%1$s: una sesión, %2$s el %3$s</string>
     <string name="detalle_vez_igual" translatable="false">—</string>
     <string name="detalle_vez_igual_a11y">Igual que la vez anterior</string>
     <string name="detalle_periodo_sin_sesiones">Sin sesiones en estas semanas. Prueba con «%1$s».</string>
@@ -241,7 +241,7 @@
     <string name="detalle_series_a11y">Series: %1$s</string>
     <string name="detalle_vez_record_a11y">%1$s, récord</string>
     <string name="detalle_pista_subir">La próxima vez, sube el peso: ya llegaste a las %1$d repeticiones en todas las series.</string>
-    <string name="detalle_progresion_a11y">%1$s, la mejor marca de cada día, del %2$s al %3$s</string>
+    <string name="detalle_progresion_a11y">%1$s, la mejor marca de cada día: de %2$s el %3$s a %4$s el %5$s</string>
     <string name="stats_periodo_semana">Semana</string>
     <string name="stats_periodo_mes">Mes</string>
     <string name="stats_kpi_media">Media kcal/día</string>

@@ -388,6 +388,7 @@ public class MedidasFragment extends BaseFragment {
 
         LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, requireContext());
+        PuntosGrafica.cuadricula(chartPeso, que);
         // El azul de dato, como «Tu cuerpo»: el naranja es de lo que se pulsa (GP-225).
         int azul = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_linea_peso);
         ds.setColor(azul);

@@ -37,6 +37,14 @@ public final class PuntosGrafica {
     }
 
     /**
+     * La cuadrícula del eje Y, solo con línea: con un punto solo y letra 1,3 una de sus rayas
+     * cruzaba la cifra escrita encima del punto (revisor, GP-225), y para un punto no dice nada.
+     */
+    public static void cuadricula(@NonNull com.github.mikephil.charting.charts.LineChart c, @NonNull Que que) {
+        c.getAxisLeft().setDrawGridLines(que == Que.LINEA);
+    }
+
+    /**
      * Prepara la serie de un solo punto: su valor escrito encima, en el color del texto, y el
      * punto algo más grande, que solo no se ve como parte de una línea. La fecha la pone el eje
      * ({@link EjeFechas#llevaEtiqueta}, que con un punto solo etiqueta el suyo).
@@ -56,6 +64,8 @@ public final class PuntosGrafica {
         ctx.getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSurface, tv, true);
         ds.setValueTextColor(tv.data);
         ds.setValueTextSize(ChartStyler.textoSp(ctx));
+        // La condensada de las cifras, como el eje (revisor, GP-225: salía en la del sistema).
+        ds.setValueTypeface(ChartStyler.fuente(ctx));
         ds.setCircleRadius(6f);
         ds.setDrawCircleHole(false);
         ds.setDrawFilled(false);

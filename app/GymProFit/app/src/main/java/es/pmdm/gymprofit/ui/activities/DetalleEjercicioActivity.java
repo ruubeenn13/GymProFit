@@ -492,11 +492,9 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         // Con muchas sesiones los círculos tapan la línea: por encima de 30 solo la línea.
         ds.setDrawCircles(entradas.size() <= 30);
         boolean unPunto = PuntosGrafica.de(entradas.size()) == PuntosGrafica.Que.UN_PUNTO;
+        PuntosGrafica.cuadricula(chart, PuntosGrafica.de(entradas.size()));
         if (unPunto) {
-            float y = entradas.get(0).getY();
-            PuntosGrafica.unPunto(ds, this, enKilos ? Marcas.kilos(this, y)
-                    : enSegundos ? Marcas.tiempo(Math.round(y))
-                    : getResources().getQuantityString(R.plurals.record_repeticiones, Math.round(y), Math.round(y)));
+            PuntosGrafica.unPunto(ds, this, marcaEscrita(entradas.get(0).getY(), enKilos, enSegundos));
             // La primera vez es el punto de partida, no un récord (DESIGN.md, lote 2): sin dorado
             // (revisor, GP-225; DEC-018).
             ds.setCircleColor(marca);
@@ -513,17 +511,27 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         // Lo que se ha subido en el periodo (solo en kilos): verde si sube, neutro si no (DEC-055).
         pintarDelta(enKilos && entradas.size() >= 2
                 ? (double) entradas.get(entradas.size() - 1).getY() - entradas.get(0).getY() : null);
+        // La descripción dice también las cifras que dibuja, como la de Medidas (revisor, GP-225).
+        EjeFechas.Punto primero = puntos.get(0), ultimo = puntos.get(puntos.size() - 1);
         if (unPunto) {
             chart.setContentDescription(FrasesA11y.unir(getString(R.string.detalle_progresion_un_punto_a11y,
                     ((TextView) findViewById(R.id.tvProgresionTitulo)).getText(),
-                    EjeFechas.etiqueta(puntos.get(0).x, idioma, patron)),
+                    marcaEscrita(primero.y, enKilos, enSegundos), EjeFechas.etiqueta(primero.x, idioma, patron)),
                     pista.getVisibility() == View.VISIBLE ? pista.getText().toString() : null));
             return;
         }
         chart.setContentDescription(getString(R.string.detalle_progresion_a11y,
                 ((TextView) findViewById(R.id.tvProgresionTitulo)).getText(),
-                EjeFechas.etiqueta(puntos.get(0).x, idioma, patron),
-                EjeFechas.etiqueta(puntos.get(puntos.size() - 1).x, idioma, patron)));
+                marcaEscrita(primero.y, enKilos, enSegundos), EjeFechas.etiqueta(primero.x, idioma, patron),
+                marcaEscrita(ultimo.y, enKilos, enSegundos), EjeFechas.etiqueta(ultimo.x, idioma, patron)));
+    }
+
+    // Una marca de la gráfica como se escribe: «85 kg», «1:15» o «10 repeticiones».
+    private String marcaEscrita(float y, boolean enKilos, boolean enSegundos) {
+        if (enKilos) return Marcas.kilos(this, y);
+        if (enSegundos) return Marcas.tiempo(Math.round(y));
+        int reps = Math.round(y);
+        return getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps);
     }
 
     private void pintarDelta(@Nullable Double kilos) {

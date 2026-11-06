@@ -216,7 +216,7 @@ public final class ChartStyler {
         return Math.min(24f, 13f * ctx.getResources().getConfiguration().fontScale);
     }
 
-    private static Typeface fuente(Context ctx) {
+    static Typeface fuente(Context ctx) {
         Typeface tf = ResourcesCompat.getFont(ctx, R.font.barlow_condensed);
         return tf != null ? tf : Typeface.DEFAULT;
     }
