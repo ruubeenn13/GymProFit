@@ -150,3 +150,19 @@ En `GymProFit_API_24`, sin TalkBack, con la escala de letra del sistema (1,0 →
 2. La espera cuenta desde que acaba el intento, no desde que empezó: un tiempo agotado tarda 60 s y quien esperaba el cerrojo entra justo después.
 3. La espera es del refresh con que se intentó: otro refresh (volver a entrar) no la hereda.
 
+### Fusión y producción
+
+- PR #83, CI en verde (Android 2 min 21 s, API 5 min 41 s), fusionado en `6ec5ed5`. Es solo app: Render no despliega (el servicio vive en `api/gymprofit-api`) y `/actuator/info` sigue en `3200c0b`, la fusión de `fa84d41`, el último cambio de la API, que es el código que sirve.
+- Release de la fusión (1.8.0, sin subir versión, DEC-056) en `Medium_Phone_API_36.1`, contra `api.gymprofit.app`, con una cuenta de prueba creada para esto (`prueba2379627ca`):
+  - Inicio, Nutrición y Entrenar cargan bien; ninguna renovación en logcat.
+  - Cambiada la contraseña desde otra sesión (curl, `change-password` 200) y abierta Nutrición en la app: **una** línea `Refresh fallido → 401` en logcat y Entrar creada una vez, con «Tu sesión se ha cerrado» y el usuario escrito.
+  - Cuenta borrada (`DELETE /usuarios/me` 200) y comprobado: el login da 401.
+
+### Cómo queda el entorno
+
+- Cuenta local `gp237a` borrada (`DELETE /usuarios/me` 200, login 401).
+- `Medium_Phone_API_36.1`: el release de la fusión, sin sesión, sistema en español y en claro.
+- `GymProFit_API_24`: la debug del lote sin sesión (se desinstaló el release que tenía, con permiso del propietario), sistema en inglés y en claro.
+- Proxy del 8080, API del 8081 y emuladores, parados; el 8080 queda libre para `scripts/entorno-pruebas.sh`.
+- Los apaños que no van al repositorio (`toca.py`, `entrar.sh`, `ui.py`, `idioma_app.sh`, el proxy y la tanda de la pausa) salen de `scripts/depuracion-lote6/`.
+
