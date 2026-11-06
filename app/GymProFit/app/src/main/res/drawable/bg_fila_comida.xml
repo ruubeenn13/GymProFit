@@ -3,7 +3,7 @@
      tapar el rojo de quitar mientras se desliza), raya abajo desde el texto (70 dp, el separador
      de la fila de lista; GP-225) y el de pulsar. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/tarjeta_capa">
     <item>
         <layer-list>
             <item>

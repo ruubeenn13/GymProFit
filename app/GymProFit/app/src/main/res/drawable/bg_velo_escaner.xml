@@ -5,7 +5,7 @@
   para que sirva de círculo en un botón de 48 dp y de píldora en el aviso.
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?attr/colorControlHighlight">
+    android:color="@color/tarjeta_capa">
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="24dp" />

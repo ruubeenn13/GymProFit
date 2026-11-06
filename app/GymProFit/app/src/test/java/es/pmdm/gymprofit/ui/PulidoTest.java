@@ -181,8 +181,12 @@ public class PulidoTest {
 
     @Test
     public void primeraPasadaDelRevisorEnNutricion() throws IOException {
+        // El anillo de un día no toca al de al lado: el fondo va 2 dp hacia dentro y la celda sigue
+        // con 2 dp de margen (con 4, en la segunda pasada, bajó a 47 dp de ancho, menos de 48).
         String dia = leer(RES.resolve("layout/item_dia_semana.xml"));
-        assertTrue("el anillo de un día no toca al de al lado", dia.contains("android:layout_marginStart=\"@dimen/espacio_4\""));
+        assertTrue(dia.contains("android:layout_marginStart=\"2dp\""));
+        assertTrue(leer(RES.resolve("drawable/bg_dia_elegido.xml")).contains("android:left=\"2dp\" android:right=\"2dp\""));
+        assertTrue(leer(RES.resolve("drawable/bg_dia_pulsable.xml")).contains("android:left=\"2dp\" android:right=\"2dp\""));
         assertTrue("la capa al pulsar un día, redondeada", leer(JAVA.resolve("ui/fragments/NutricionFragment.java"))
                 .contains("celda.setBackgroundResource(R.drawable.bg_dia_pulsable);"));
         assertTrue(leer(RES.resolve("drawable/bg_dia_pulsable.xml")).contains("@dimen/radio_miniatura"));
@@ -199,6 +203,24 @@ public class PulidoTest {
         assertTrue(leer(JAVA.resolve("ui/activities/AnadirAlimentoActivity.java")).contains("RolBoton.aplicar(etiqueta);"));
         assertTrue(leer(JAVA.resolve("ui/activities/ComidaActivity.java"))
                 .contains("RolBoton.aplicar(tarjeta.findViewById(R.id.btnNoCopiar))"));
+    }
+
+    // Segunda pasada: los fondos pulsables propios se teñían con el foco (colorControlHighlight), y el
+    // anillo cruzaba con sus esquinas el texto de los bloques que lo toman sin aire.
+    @Test
+    public void segundaPasadaDelRevisorEnNutricion() throws IOException {
+        java.util.List<String> conCapa = new java.util.ArrayList<>();
+        try (java.util.stream.Stream<Path> s = Files.list(RES.resolve("drawable"))) {
+            for (Path p : (Iterable<Path>) s::iterator) {
+                if (leer(p).contains("?attr/colorControlHighlight")) conCapa.add(p.getFileName().toString());
+            }
+        }
+        assertTrue("fondos con capa de foco: " + conCapa, conCapa.isEmpty());
+        for (String[] l : new String[][]{ { "view_profi_copiar", "tvMensajeProfi" }, { "item_sueles", "textosSueles" },
+                { "item_encaja", "barraEncaja" } }) {
+            assertTrue(l[1], Pattern.compile("android:id=\"@\\+id/" + l[1] + "\"[^>]*android:padding=\"@dimen/aire_anillo\"",
+                    Pattern.DOTALL).matcher(leer(RES.resolve("layout/" + l[0] + ".xml"))).find());
+        }
     }
 
     private static int cuenta(String s, String trozo) {

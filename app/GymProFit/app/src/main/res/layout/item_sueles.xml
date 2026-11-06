@@ -40,7 +40,10 @@
             android:id="@+id/textosSueles"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:layout_marginTop="@dimen/aire_anillo_fuera"
+            android:layout_marginBottom="@dimen/aire_anillo_fuera"
+            android:padding="@dimen/aire_anillo"
             android:layout_weight="1"
             android:focusable="true"
             android:orientation="vertical">
