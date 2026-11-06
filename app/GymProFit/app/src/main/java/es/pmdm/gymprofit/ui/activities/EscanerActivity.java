@@ -473,7 +473,7 @@ public class EscanerActivity extends BaseActivity {
                 cantidad.raciones(), cantidad.gramos(), !cantidad.conGramos());
 
         // El icono de su tipo de alimento, como en las listas (tablero 27).
-        ((android.widget.ImageView) findViewById(R.id.ivIconoHoja)).setImageResource(BusquedaAlimentoAdapter.icono(a));
+        BusquedaAlimentoAdapter.pintarIcono(findViewById(R.id.ivIconoHoja), a);
         titulo.setText(es.pmdm.gymprofit.ui.nutricion.Insignia.nombre(this, a.getNombre(), a.isRevisado(), 18));
         texto.setText(a.esProducto() ? getString(R.string.escaner_producto_sub, porcion)
                 : BusquedaAlimentoAdapter.detalle(this, a));

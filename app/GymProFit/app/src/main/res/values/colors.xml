@@ -121,6 +121,9 @@
     <!-- La línea del peso de «Tu cuerpo» en Progreso (tablero 16): el azul de dato, no el naranja,
          que es de lo que se pulsa. Es el tono de la proteína en cada tema (5,09:1 en claro y 6,68:1 en oscuro sobre la tarjeta). -->
     <color name="gp_linea_peso">@color/gp_macro_proteinas</color>
+    <!-- La insignia de «datos revisados» (ficha, filas de Añadir y escáner; lienzo de Nutrición): el
+         azul de dato, con su propio nombre (GP-225). Sobre la tarjeta, 5,09:1 en claro y 6,68:1 en oscuro. -->
+    <color name="gp_revisado">@color/gp_macro_proteinas</color>
     <color name="gp_hero_macro_carbos">#E8A94B</color>
     <color name="gp_hero_macro_grasas">#B295E8</color>
     <color name="gp_on_hero">#FFF4E8</color>
@@ -209,6 +212,4 @@
          botón era de contorno; relleno y con este rojo se lee en los dos. -->
     <color name="gp_eliminar_fondo">#C62828</color>
     <color name="gp_eliminar_texto">#FFFFFF</color>
-    <!-- GP-228: texto sobre un macro (donut de Estadísticas): blanco sobre los de claro. -->
-    <color name="gp_texto_sobre_macro">#FFFFFF</color>
 </resources>

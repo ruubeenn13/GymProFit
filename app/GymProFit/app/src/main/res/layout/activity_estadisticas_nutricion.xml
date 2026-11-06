@@ -85,14 +85,16 @@
 
             </LinearLayout>
 
-            <!-- KPIs 2×2 -->
+            <!-- KPIs 2×2. Las dos tarjetas de cada fila, a la altura de la más alta (AltoIgual, en
+                 la pantalla): con letra 1,3 «DÍAS REGISTRADOS» va en dos líneas y la tarjeta de al
+                 lado se quedaba corta (GP-225). -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="12dp">
 
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView android:id="@+id/cardKpiMedia"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="16dp">
@@ -107,7 +109,7 @@
 
                 <Space android:layout_width="12dp" android:layout_height="1dp" />
 
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView android:id="@+id/cardKpiDias"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="16dp">
@@ -128,7 +130,7 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="12dp">
 
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView android:id="@+id/cardKpiObjetivo"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="16dp">
@@ -143,7 +145,7 @@
 
                 <Space android:layout_width="12dp" android:layout_height="1dp" />
 
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.card.MaterialCardView android:id="@+id/cardKpiAdherencia"
                     android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1">
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="vertical" android:padding="16dp">

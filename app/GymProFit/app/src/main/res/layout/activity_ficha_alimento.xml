@@ -49,12 +49,13 @@
             app:icon="@drawable/ic_ms_edit"
             app:iconSize="18dp" />
 
-        <!-- El corazón (tablero 7, lote 1.6.3): vacío o relleno; al marcarlo, late. -->
+        <!-- El corazón (tablero 7, lote 1.6.3): vacío o relleno; al marcarlo, late. Su círculo, a
+             18 dp del borde (16 de margen y los 2 de dentro del fondo; GP-225: estaba a 10). -->
         <ImageButton
             android:id="@+id/btnFavoritoFicha"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/espacio_16"
             android:background="@drawable/bg_mas_fila"
             android:backgroundTint="@color/gp_surface"
             android:src="@drawable/ic_ms_favorite"
@@ -118,7 +119,7 @@
                             android:backgroundTint="?android:attr/colorBackground"
                             android:contentDescription="@string/datos_revisados"
                             android:src="@drawable/ic_ms_verified_fill"
-                            app:tint="@color/gp_macro_proteinas"
+                            app:tint="@color/gp_revisado"
                             android:visibility="gone" />
                     </FrameLayout>
 

@@ -148,14 +148,13 @@ public final class ChartStyler {
         l.setWordWrapEnabled(true);
     }
 
-    // Aplica los colores (uno por porción) y el acabado a una serie de donut.
+    // Aplica los colores (uno por porción) y el acabado a una serie de donut. Sin valores
+    // dentro de las porciones: una pequeña no los cabe y con letra grande montan sobre el
+    // agujero; la cifra va en la leyenda (GP-225).
     public static void stylePieDataSet(PieDataSet ds, int[] colors, Context ctx) {
         ds.setColors(colors);
         ds.setSliceSpace(2.5f);
-        ds.setDrawValues(true);
-        ds.setValueTextColor(Color.WHITE);
-        ds.setValueTextSize(textoSp(ctx));
-        ds.setYValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
+        ds.setDrawValues(false);
     }
 
     // --- helpers privados ---

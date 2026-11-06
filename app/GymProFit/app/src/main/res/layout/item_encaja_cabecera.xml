@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_encaja_cabecera — la cabecera de «Lo que te encaja», arriba de Mis platos (lote 1.6.7,
-  tablero 9). El título en el acento suave con su icono (encabezado para TalkBack) y, debajo,
+  tablero 9). La cara de Profi y el título a 17 sp (tablero 25, GP-225; encabezado para TalkBack) y, debajo,
   lo que queda del día: «Te quedan 1.161 kcal y 54 g de proteína», con las cifras en negrita.
   Sin proteína pendiente, solo las kcal.
 -->
@@ -21,23 +21,26 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="@dimen/profi_cara_pequena"
+            android:layout_height="@dimen/profi_cara_pequena"
+            android:background="@color/gp_hero"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_ms_star_shine_fill"
-            app:tint="@color/gp_on_primary_container" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/profi_cara"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.GymProFit.Circulo" />
 
         <TextView
             android:id="@+id/tvTituloEncaja"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="@dimen/espacio_12"
+            android:accessibilityHeading="true"
             android:text="@string/encaja_titulo"
-            android:textAppearance="@style/TextAppearance.GymProFit.Label"
-            android:textStyle="bold"
-            android:textColor="@color/gp_on_primary_container" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Seccion"
+            android:textSize="@dimen/text_titulo_profi"
+            android:textColor="?attr/colorOnSurface" />
     </LinearLayout>
 
     <TextView

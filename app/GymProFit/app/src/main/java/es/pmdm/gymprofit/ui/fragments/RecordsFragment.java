@@ -19,6 +19,10 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RecordApi;
+import es.pmdm.gymprofit.network.SesionApi;
+import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.utils.VacioRecords;
+import java.util.List;
 import es.pmdm.gymprofit.ui.adapters.RecordAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -35,10 +39,11 @@ public class RecordsFragment extends BaseFragment {
 
     private RecyclerView rvRecords;
     private View layoutVacio, layoutError, cargando;
-    private TextView tvError;
+    private TextView tvError, tvVacioTexto;
 
     private final RecordApi recordApi = ApiClient.service(RecordApi.class);
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
+    private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
 
     @Nullable
     @Override
@@ -54,6 +59,7 @@ public class RecordsFragment extends BaseFragment {
         layoutVacio = findViewById(R.id.layoutVacio);
         layoutError = findViewById(R.id.layoutError);
         tvError     = findViewById(R.id.tvError);
+        tvVacioTexto = findViewById(R.id.tvVacioTexto);
         cargando    = findViewById(R.id.cargandoRecords);
         rvRecords.setLayoutManager(new LinearLayoutManager(requireContext()));
         findViewById(R.id.btnReintentar).setOnClickListener(v -> cargar());
@@ -78,7 +84,7 @@ public class RecordsFragment extends BaseFragment {
             public void onOk(Records r) {
                 if (!isAdded()) return;
                 if (r == null || r.getRecords().isEmpty()) {
-                    mostrar(layoutVacio);
+                    pintarVacio();
                     return;
                 }
                 rvRecords.setAdapter(new RecordAdapter(r.getRecords(), RecordsFragment.this::abrirEjercicio));
@@ -91,6 +97,31 @@ public class RecordsFragment extends BaseFragment {
                 mostrar(layoutError);
             }
         });
+    }
+
+    // Sin récords: lo que se dice depende de si ya hay entrenos (GP-229). La lista de sesiones
+    // solo se pide entonces.
+    private void pintarVacio() {
+        if (rvRecords.getAdapter() == null) mostrar(cargando);
+        sesionApi.getDeUsuario(prefsManager.getUsuarioId()).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
+            @Override
+            public void onOk(List<SesionEntrenamiento> sesiones) {
+                if (!isAdded()) return;
+                vacio(VacioRecords.de(true, false, sesiones == null ? 0 : sesiones.size()));
+            }
+            @Override
+            public void onFail(int code, String message) {
+                // Sin saber si hay entrenos, el texto que vale en los dos casos: los récords ya
+                // llegaron (vacíos), así que no es un fallo que enseñar.
+                if (!isAdded()) return;
+                vacio(VacioRecords.Que.SIN_SABER);
+            }
+        });
+    }
+
+    private void vacio(VacioRecords.Que que) {
+        tvVacioTexto.setText(VacioRecords.texto(que));
+        mostrar(layoutVacio);
     }
 
     private void mostrar(View visible) {

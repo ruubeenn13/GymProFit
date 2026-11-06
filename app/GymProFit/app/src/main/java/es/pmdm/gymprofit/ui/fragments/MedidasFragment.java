@@ -32,6 +32,7 @@ import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.GrasaReciente;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.EjeFechas;
+import es.pmdm.gymprofit.utils.PuntosGrafica;
 import es.pmdm.gymprofit.utils.NombreMedida;
 import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
@@ -68,6 +69,7 @@ public class MedidasFragment extends BaseFragment {
     private LineChart chartPeso;
     private TextView tvGraficaTitulo;
     private TextView tvGraficaVacia;
+    private TextView tvGraficaPista;
     private SelectorPildora chipsMetrica, chipsRango;
     private List<MedicionCorporal> historial;
     // Métricas representables en la gráfica (solo las que la gente mide de verdad).
@@ -106,6 +108,7 @@ public class MedidasFragment extends BaseFragment {
         cardGraficaPeso = findViewById(R.id.cardGraficaPeso);
         chartPeso       = findViewById(R.id.chartPeso);
         tvGraficaVacia  = findViewById(R.id.tvGraficaVacia);
+        tvGraficaPista  = findViewById(R.id.tvGraficaPista);
         tvGraficaTitulo = findViewById(R.id.tvGraficaTitulo);
         chipsMetrica    = findViewById(R.id.chipsMetrica);
         chipsRango      = findViewById(R.id.chipsRango);
@@ -339,16 +342,25 @@ public class MedidasFragment extends BaseFragment {
 
         tvGraficaTitulo.setText(tituloMetrica(metrica));
 
-        // La card y los chips SIEMPRE se ven (hay histórico); si la métrica elegida no
-        // tiene ≥2 puntos, se muestra el estado vacío dentro del área en vez de la línea
-        // (así el usuario puede volver a otra métrica sin que desaparezca la card).
-        if (entradas.size() < 2) {
+        // La card y los chips SIEMPRE se ven (hay histórico). Sin ningún punto en la métrica y
+        // el rango elegidos, el vacío dentro del área; con uno, el punto con su valor y su fecha
+        // y la pista de apuntar otro; con dos o más, la línea (GP-229: con un pesaje decía
+        // «Aún no hay datos»).
+        PuntosGrafica.Que que = PuntosGrafica.de(entradas.size());
+        if (que == PuntosGrafica.Que.VACIO) {
             chartPeso.setVisibility(View.GONE);
+            tvGraficaPista.setVisibility(View.GONE);
+            // Con medidas de esta métrica fuera del rango no es «aún no hay datos».
+            boolean alguna = false;
+            for (MedicionCorporal m : historial) alguna |= valorMetrica(m, metrica) > 0;
+            tvGraficaVacia.setText(alguna ? R.string.grafica_sin_medida_rango : R.string.grafica_sin_medida);
             tvGraficaVacia.setVisibility(View.VISIBLE);
             return;
         }
         chartPeso.setVisibility(View.VISIBLE);
         tvGraficaVacia.setVisibility(View.GONE);
+        tvGraficaPista.setVisibility(que == PuntosGrafica.Que.UN_PUNTO ? View.VISIBLE : View.GONE);
+        tvGraficaPista.setText(metrica == MET_PESO ? R.string.grafica_un_peso : R.string.grafica_una_medida);
 
         ChartStyler.styleLine(chartPeso, new ValueFormatter() {
             @Override
@@ -364,17 +376,47 @@ public class MedidasFragment extends BaseFragment {
 
         LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, requireContext());
+        // El azul de dato, como «Tu cuerpo»: el naranja es de lo que se pulsa (GP-225).
+        int azul = androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_linea_peso);
+        ds.setColor(azul);
+        ds.setCircleColor(azul);
+        ds.setFillColor(azul);
+        ds.setHighLightColor(azul);
+        if (que == PuntosGrafica.Que.UN_PUNTO) {
+            PuntosGrafica.unPunto(ds, requireContext(), valorEscrito(metrica, puntos.get(0).y));
+        }
         // Un decimal en el eje como mucho: con 30 días salían «79,20 / 79,11» (revisor, GP-228).
         chartPeso.getAxisLeft().setGranularity(0.1f);
         chartPeso.getAxisLeft().setGranularityEnabled(true);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
-        // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019).
+        // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019); con
+        // un solo punto, ese punto y la pista.
         EjeFechas.Punto primero = puntos.get(0), ultimo = puntos.get(puntos.size() - 1);
-        chartPeso.setContentDescription(getString(R.string.medicion_grafica_a11y, getString(metrica == MET_GRASA ? R.string.medicion_label_grasa
-                        : metrica == MET_CINTURA ? R.string.medicion_label_cintura : R.string.perfil_peso),
+        if (que == PuntosGrafica.Que.UN_PUNTO) {
+            chartPeso.setContentDescription(getString(R.string.medicion_grafica_un_punto_a11y,
+                    tituloDicho(metrica), valorDicho(metrica, primero.y), EjeFechas.etiqueta(primero.x, idioma, patron),
+                    tvGraficaPista.getText()));
+            return;
+        }
+        chartPeso.setContentDescription(getString(R.string.medicion_grafica_a11y, tituloDicho(metrica),
                 valorDicho(metrica, primero.y), EjeFechas.etiqueta(primero.x, idioma, patron),
                 valorDicho(metrica, ultimo.y), EjeFechas.etiqueta(ultimo.x, idioma, patron)));
+    }
+
+    // Un valor de la gráfica como se escribe junto al punto: «79,2 kg», «14,5 %», «86,0 cm».
+    private String valorEscrito(int metrica, double v) {
+        switch (metrica) {
+            case MET_GRASA:   return getString(R.string.unidad_pct_decimal, v);
+            case MET_CINTURA: return getString(R.string.unidad_cm_decimal, v);
+            default:          return getString(R.string.unidad_kg_decimal, v);
+        }
+    }
+
+    // El nombre de la métrica como se dice («Peso», «Grasa corporal», «Cintura»).
+    private String tituloDicho(int metrica) {
+        return getString(metrica == MET_GRASA ? R.string.medicion_label_grasa
+                : metrica == MET_CINTURA ? R.string.medicion_label_cintura : R.string.perfil_peso);
     }
 
     // Un valor de la gráfica como se dice: «79,2 kilos», «14,5 por ciento», «86 centímetros».

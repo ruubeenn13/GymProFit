@@ -795,13 +795,14 @@ public class ComidaActivity extends BaseActivity {
             String cantidad = AnadirRapido.texto(Cantidades.Formatos.de(this), FechaUtils.localeDeLaApp(this), sg.cantidad);
             String detalle = getString(R.string.ideas_detalle, cantidad, nf.format(sg.kcal),
                     nf.format(Math.round(sg.proteina)));
-            ((ImageView) fila.findViewById(R.id.ivIconoSueles)).setImageResource(BusquedaAlimentoAdapter.icono(a));
+            BusquedaAlimentoAdapter.pintarIcono(fila.findViewById(R.id.ivIconoSueles), a);
             ((TextView) fila.findViewById(R.id.tvNombreSueles)).setText(a.getNombre());
             ((TextView) fila.findViewById(R.id.tvCantidadSueles)).setText(detalle);
             fila.findViewById(R.id.textosSueles).setContentDescription(
                     getString(R.string.fila_a11y, a.getNombre(), detalle));
             fila.findViewById(R.id.rayaSueles).setVisibility(i < deEsta.size() - 1 ? View.VISIBLE : View.GONE);
             View mas = fila.findViewById(R.id.btnMasSueles);
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(mas);
             ImageView iconoMas = fila.findViewById(R.id.ivMasSueles);
             boolean viaja = anadiendo.contains(a.getId());
             BusquedaAlimentoAdapter.pintarMas(mas, iconoMas, viaja);

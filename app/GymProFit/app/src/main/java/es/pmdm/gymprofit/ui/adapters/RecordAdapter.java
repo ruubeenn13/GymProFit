@@ -19,6 +19,7 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.FilaRecord;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.Zonas;
@@ -114,13 +115,15 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         h.tvNombre.setText(nombre);
         h.tvMarca.setText(marca);
 
-        // «hace 2 días · antes 82,5 kg × 10»; lo que falte, no se escribe (GP-105).
+        // «Hace 2 días · antes 82,5 kg × 10»; lo que falte, no se escribe (GP-105). Igual que en
+        // Progreso (FilaRecord, GP-225).
         String cuando = TiempoRelativo.texto(ctx, r.getFecha());
         String anterior = Marcas.anteriorSolo(ctx, r);
         // La marca anterior no se parte entre líneas («82,5 kg ×» y «10» debajo), como en Progreso.
         if (anterior != null) anterior = anterior.replace(' ', ' ');
-        String detalle = cuando == null ? (anterior == null ? "" : ctx.getString(R.string.record_antes, anterior))
-                : anterior == null ? cuando : ctx.getString(R.string.record_hace_antes, cuando, anterior);
+        String detalle = cuando == null && anterior != null ? ctx.getString(R.string.record_antes, anterior)
+                : FilaRecord.apoyo(cuando, anterior, ctx.getString(R.string.record_hace_antes), idioma);
+        if (detalle == null) detalle = "";
         h.tvDetalle.setText(detalle);
         h.tvDetalle.setVisibility(detalle.isEmpty() ? View.GONE : View.VISIBLE);
 
@@ -142,7 +145,8 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 : primera ? R.drawable.bg_grupo_primera : ultima ? R.drawable.bg_grupo_ultima : R.drawable.bg_grupo_media);
         h.divider.setVisibility(ultima ? View.GONE : View.VISIBLE);
 
-        h.itemView.setContentDescription(ctx.getString(R.string.record_a11y, nombre, marca, detalle));
+        h.itemView.setContentDescription(FilaRecord.dicho(nombre, detalle, marca, r.esDeTiempo(),
+                ctx.getString(R.string.progreso_marca_tiempo_a11y)));
         h.itemView.setOnClickListener(v -> { if (listener != null) listener.onClick(r, v); });
     }
 

@@ -75,7 +75,7 @@
          y, debajo, las predefinidas ofrecidas como sugerencia. Antes veía las seis
          predefinidas directamente bajo el rótulo "Mis rutinas", que no eran suyas. -->
     <!-- Lista vacía por el filtro de nivel, no por falta de rutinas. -->
-    <string name="rutinas_principiante">Principiantes</string>
+    <string name="rutinas_principiante">Principiante</string>
     <string name="rutinas_intermedio">Intermedio</string>
     <string name="rutinas_avanzado">Avanzado</string>
     <string name="rutinas_nombre">Nombre de la rutina</string>
@@ -148,6 +148,7 @@
     <!-- SESIONES -->
     <string name="sesiones_sin_sesiones">No hay sesiones registradas</string>
     <string name="sesiones_rutina">Rutina</string>
+    <string name="sesiones_rutina_a11y">Rutina: %1$s</string>
     <string name="sesiones_duracion">Duración (min) *</string>
     <string name="sesiones_notas">Notas (opcional)</string>
     <string name="sesiones_guardar">Guardar sesión</string>
@@ -196,7 +197,8 @@
     <string name="grafica_rango_todo">Todo</string>
     <string name="grafica_titulo_grasa">EVOLUCIÓN DE LA GRASA</string>
     <string name="grafica_titulo_cintura">EVOLUCIÓN DE LA CINTURA</string>
-    <string name="grafica_sin_datos">Aún no hay datos de esta métrica.\nRegistra al menos 2 para ver la evolución.</string>
+    <string name="grafica_sin_medida">Aún no has apuntado esta medida.</string>
+    <string name="grafica_sin_medida_rango">Sin medidas en estas fechas. Prueba con «Todo».</string>
     <string name="nutricion_grafica_kcal">CALORÍAS POR DÍA</string>
     <string name="nutricion_grafica_vacia">Aún no has registrado comidas.\nRegistra alguna para ver el historial.</string>
     <string name="nutricion_meta_kcal">Meta</string>
@@ -215,6 +217,10 @@
     <string name="detalle_periodo_4">4 sem.</string>
     <string name="detalle_periodo_8">8 sem.</string>
     <string name="detalle_periodo_todo">Todo</string>
+    <string name="detalle_progresion_pista">La próxima vez verás tu progreso</string>
+    <string name="detalle_progresion_un_punto_a11y">%1$s: una sesión, el %2$s</string>
+    <string name="detalle_vez_igual" translatable="false">—</string>
+    <string name="detalle_vez_igual_a11y">Igual que la vez anterior</string>
     <string name="detalle_periodo_sin_sesiones">Sin sesiones en estas semanas. Prueba con «%1$s».</string>
     <string name="detalle_periodo_4_nombre">4 semanas</string>
     <string name="detalle_periodo_8_nombre">8 semanas</string>
@@ -648,6 +654,7 @@
     <string name="unidad_kg_entero">%d\u00A0kg</string>
     <string name="unidad_kg_decimal">%.1f\u00A0kg</string>
     <string name="unidad_cm_decimal">%.1f\u00A0cm</string>
+    <string name="unidad_pct_decimal">%.1f\u00A0%%</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
     <string name="series_por_reps">%1$d × %2$d</string>
     <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
@@ -667,6 +674,8 @@
     <string name="home_fecha_patron" translatable="false">EEEE, d \'de\' MMMM</string>
     <string name="ejercicio_sin_nombre">Ejercicio %d</string>
     <!-- Récords (GP-088) -->
+    <string name="records_vacio_sin_entrenos">Tus récords salen cuando superas una marca tuya. El primer entreno pone tu punto de partida.</string>
+    <string name="records_vacio_con_entrenos">Ya tienes tu punto de partida. El primer récord llega cuando superes una de tus marcas.</string>
     <string name="records_vacio_titulo">Todavía sin récords</string>
     <string name="records_vacio_texto">La primera vez que haces un ejercicio es tu punto de partida. Cuando lo superes, aparecerá aquí.</string>
     <string name="record_antes">Antes: %s</string>
@@ -845,7 +854,8 @@
     <string name="comida_anadir_merienda">Añadir a la merienda</string>
     <string name="comida_anadir_cena">Añadir a la cena</string>
     <string name="dia_futuro_a11y">%1$s, todavía no ha llegado</string>
-    <string name="nutricion_kcal_a11y">%1$s de %2$s kilocalorías. %3$s %4$s.</string>
+    <string name="nutricion_kcal_a11y_quedan">%1$s de %2$s kilocalorías. Te quedan %3$s kilocalorías.</string>
+    <string name="nutricion_kcal_a11y_pasas">%1$s de %2$s kilocalorías. Te pasas %3$s kilocalorías.</string>
 
     <!-- GP-105 · Progreso y Ajustes -->
     <string name="progreso_titulo">Progreso</string>
@@ -1531,7 +1541,7 @@
     <string name="ficha_carb">carb.</string>
     <string name="ficha_grasa">grasa</string>
     <string name="ficha_gramos_valor">%1$s\u00A0g</string>
-    <string name="ficha_cifras_a11y">%1$s kilocalorías, %2$s gramos de proteína, %3$s de carbohidratos y %4$s de grasa</string>
+    <string name="ficha_cifras_a11y">%1$s kilocalorías, %2$s gramos de proteína, %3$s gramos de carbohidratos y %4$s gramos de grasa</string>
     <string name="ficha_reparto_a11y">De sus calorías, %1$d por ciento de proteína, %2$d de carbohidratos y %3$d de grasa</string>
     <string name="ficha_reparto_proteina">Proteína %1$d %%</string>
     <string name="ficha_reparto_carb">Carb. %1$d %%</string>
@@ -1984,7 +1994,10 @@
     <string name="proteina_conseguida">Proteína conseguida</string>
     <string name="nutricion_te_faltan">Te faltan %1$d\u00A0g</string>
     <string name="nutricion_macro_a11y">%1$s: %2$d de %3$d gramos</string>
-    <string name="nutricion_macro_falta_a11y">%1$s, te faltan %2$d</string>
+    <plurals name="nutricion_macro_falta_a11y">
+        <item quantity="one">Te falta %1$d gramo</item>
+        <item quantity="other">Te faltan %1$d gramos</item>
+    </plurals>
     <string name="entreno_dia">Día de entreno</string>
     <string name="entreno_dia_rutina">Día de entreno · %1$s</string>
     <plurals name="dias_completos_semana">
@@ -2418,8 +2431,6 @@
         <item quantity="many">Ver los %1$d</item>
         <item quantity="other">Ver los %1$d</item>
     </plurals>
-    <string name="progreso_record_antes">%1$s · antes %2$s</string>
-    <string name="progreso_records_vacio">Aún no tienes récords. El primero llega con tu primer entreno.</string>
     <string name="progreso_records_error">No se han podido cargar tus récords.</string>
     <string name="progreso_ver_todos">Ver todos</string>
     <string name="progreso_marca_tiempo_a11y">%1$s de tiempo</string>
@@ -2464,6 +2475,10 @@
     </plurals>
     <string name="medicion_a11y_por_ciento">%1$s por ciento</string>
     <!-- GP-228: la gráfica de Medidas para TalkBack. %1$s: la métrica; %2$s y %4$s: el valor con su unidad; %3$s y %5$s: la fecha corta. -->
+    <string name="progreso_un_peso_a11y">Un pesaje: %1$s kilos el %2$s</string>
+    <string name="grafica_un_peso">Apunta otro peso para ver cómo cambias</string>
+    <string name="grafica_una_medida">Apunta otra medida para ver cómo cambias</string>
+    <string name="medicion_grafica_un_punto_a11y">%1$s: %2$s el %3$s. %4$s</string>
     <string name="medicion_grafica_a11y">%1$s: de %2$s el %3$s a %4$s el %5$s</string>
     <string name="sesiones_eliminar_fecha_patron">d \'de\' MMMM</string>
     <!-- GP-227: el estado de «Más detalles» de Medidas para TalkBack. -->
@@ -2474,6 +2489,7 @@
     <!-- GP-228 (revisor): Estadísticas de nutrición. %1$s y %2$s: primera y última fecha; %3$s y %4$s: la menor y la mayor; %5$s: el objetivo. -->
     <string name="estadisticas_kcal_a11y">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal; objetivo, %5$s kcal</string>
     <string name="estadisticas_kcal_a11y_sin_objetivo">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal</string>
+    <string name="estadisticas_macro_leyenda">%1$s · %2$s</string>
     <string name="estadisticas_macros_a11y">Reparto de macros: proteína %1$s, carbohidratos %2$s, grasa %3$s</string>
     <string name="estadisticas_mapa_a11y">Días en objetivo: %1$d. Fuera: %2$d. Sin datos: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>

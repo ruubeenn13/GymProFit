@@ -91,6 +91,8 @@ public final class PantallaProgreso {
         resumen.pintar(sesiones, records, logros);
         kilos.setSesiones(sesiones);
         listas.pintarHistorial(sesiones, this::pedirSesiones);
+        // El vacío de los récords depende de si hay entrenos (GP-229).
+        listas.pintarRecords(records, sesiones, this::pedirRecords);
     }
 
     private void pedirRecords() {
@@ -100,7 +102,7 @@ public final class PantallaProgreso {
 
     private void pintarRecords() {
         resumen.pintar(sesiones, records, logros);
-        listas.pintarRecords(records, this::pedirRecords);
+        listas.pintarRecords(records, sesiones, this::pedirRecords);
     }
 
     private void pedirLogros() {

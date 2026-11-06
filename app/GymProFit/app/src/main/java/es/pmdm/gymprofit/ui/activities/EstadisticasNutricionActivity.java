@@ -114,6 +114,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvDias       = findViewById(R.id.tvKpiDiasValor);
         tvObjetivo   = findViewById(R.id.tvKpiObjetivoValor);
         tvAdherencia = findViewById(R.id.tvKpiAdherenciaValor);
+        // Cada fila de cifras, a la altura de su tarjeta más alta (GP-225).
+        es.pmdm.gymprofit.utils.AltoIgual.fila(findViewById(R.id.cardKpiMedia), findViewById(R.id.cardKpiDias));
+        es.pmdm.gymprofit.utils.AltoIgual.fila(findViewById(R.id.cardKpiObjetivo), findViewById(R.id.cardKpiAdherencia));
         chipsPeriodo = findViewById(R.id.chipsPeriodo);
         chartKcal    = findViewById(R.id.chartKcal);
         chartMacros  = findViewById(R.id.chartMacros);
@@ -315,10 +318,12 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartMacros.setVisibility(View.VISIBLE);
         tvMacrosVacia.setVisibility(View.GONE);
 
+        // Los gramos van en la leyenda y no dentro de cada porción: «4 g» no cabía en la suya y
+        // «323 g» montaba sobre el borde del agujero, sobre todo con letra 1,3 (GP-225).
         List<PieEntry> entradas = new ArrayList<>();
-        entradas.add(new PieEntry((float) prot, getString(R.string.macro_prot)));
-        entradas.add(new PieEntry((float) carb, getString(R.string.macro_carb)));
-        entradas.add(new PieEntry((float) grasa, getString(R.string.macro_grasa)));
+        entradas.add(new PieEntry((float) prot, leyendaMacro(R.string.macro_prot, prot)));
+        entradas.add(new PieEntry((float) carb, leyendaMacro(R.string.macro_carb, carb)));
+        entradas.add(new PieEntry((float) grasa, leyendaMacro(R.string.macro_grasa, grasa)));
 
         ChartStyler.stylePie(chartMacros);
         // El total es la suma de lo que se enseña redondeado: 12 + 52 + 12 no puede decir 77.
@@ -327,21 +332,18 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
         PieDataSet ds = new PieDataSet(entradas, "");
         ChartStyler.stylePieDataSet(ds, coloresMacros, this);
-        // Blanco sobre los macros de claro y casi negro sobre los de oscuro (el blanco sobre el
-        // turquesa daba 1,86:1).
-        ds.setValueTextColor(ContextCompat.getColor(this, R.color.gp_texto_sobre_macro));
         PieData data = new PieData(ds);
-        data.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return getString(R.string.unidad_g_redondeado, value);
-            }
-        });
         chartMacros.setData(data);
         chartMacros.invalidate();
         chartMacros.setContentDescription(getString(R.string.estadisticas_macros_a11y,
                 getString(R.string.unidad_g_redondeado, prot), getString(R.string.unidad_g_redondeado, carb),
                 getString(R.string.unidad_g_redondeado, grasa)));
+    }
+
+    // «Proteína · 88 g»: la entrada de la leyenda del donut.
+    private String leyendaMacro(int nombre, double gramos) {
+        return getString(R.string.estadisticas_macro_leyenda, getString(nombre),
+                getString(R.string.unidad_g_redondeado, gramos));
     }
 
     // Construye el heatmap: una celda por día del periodo, coloreada según si ese día

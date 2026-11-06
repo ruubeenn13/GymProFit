@@ -50,6 +50,7 @@
 
     <!-- Botón de texto del alta («Prefiero no decirlo», «Ya tengo cuenta»): 48 dp. -->
     <style name="Widget.GymProFit.Alta.BotonTexto" parent="Widget.Material3.Button.TextButton">
+        <item name="rippleColor">@color/tarjeta_capa</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">48dp</item>

@@ -350,6 +350,18 @@
                             android:layout_marginTop="@dimen/espacio_8"
                             android:visibility="gone" />
 
+                        <!-- Con un solo día de pesajes (GP-229). -->
+                        <TextView
+                            android:id="@+id/tvPistaCuerpo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_4"
+                            android:gravity="center"
+                            android:text="@string/grafica_un_peso"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                            android:textColor="@color/gp_text_secondary"
+                            android:visibility="gone" />
+
                         <TextView
                             android:id="@+id/tvObjetivoCuerpo"
                             android:layout_width="match_parent"

@@ -50,6 +50,8 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.EjeFechas;
+import es.pmdm.gymprofit.utils.FrasesA11y;
+import es.pmdm.gymprofit.utils.PuntosGrafica;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Movimiento;
@@ -414,10 +416,16 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             fechas.add(p.getFecha());
             valores.add(y);
         }
-        if (valores.size() < 2) {
+        // Sin ninguna marca, nada; con un solo día, el punto con su valor y su fecha y la pista de
+        // que la próxima vez se verá el progreso; con dos o más, la línea (GP-229: con un entreno
+        // la tarjeta no salía).
+        int diasEnTotal = EjeFechas.porDia(fechas, valores, EjeFechas.DelDia.MAYOR).size();
+        if (PuntosGrafica.de(diasEnTotal) == PuntosGrafica.Que.VACIO) {
             card.setVisibility(View.GONE);
             return;
         }
+        TextView pista = findViewById(R.id.tvProgresionPista);
+        boolean primeraVez = PuntosGrafica.de(diasEnTotal) == PuntosGrafica.Que.UN_PUNTO;
         card.setVisibility(View.VISIBLE);
         marcarPeriodo();
         ((TextView) findViewById(R.id.tvProgresionTitulo)).setText(enKilos
@@ -438,6 +446,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         for (EjeFechas.Punto pt : puntos) entradas.add(new Entry(pt.x, pt.y));
         final Locale idioma = FechaUtils.localeDeLaApp(this);
         final String patron = getString(R.string.inicio_fecha_corta_patron);
+        pista.setVisibility(primeraVez && !entradas.isEmpty() ? View.VISIBLE : View.GONE);
         if (entradas.isEmpty()) {
             // Ninguna sesión en el período: se dice, en la gráfica y a TalkBack, en vez de dejar
             // la tarjeta en blanco con la descripción del período anterior (DEC-019, DEC-022).
@@ -482,6 +491,15 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         ds.setCircleRadius(4.5f);
         // Con muchas sesiones los círculos tapan la línea: por encima de 30 solo la línea.
         ds.setDrawCircles(entradas.size() <= 30);
+        boolean unPunto = PuntosGrafica.de(entradas.size()) == PuntosGrafica.Que.UN_PUNTO;
+        if (unPunto) {
+            float y = entradas.get(0).getY();
+            PuntosGrafica.unPunto(ds, this, enKilos ? Marcas.kilos(this, y)
+                    : enSegundos ? Marcas.tiempo(Math.round(y))
+                    : getResources().getQuantityString(R.plurals.record_repeticiones, Math.round(y), Math.round(y)));
+            // El punto solo es el récord: en dorado, como en la línea.
+            ds.setCircleColor(oro);
+        }
         // Al cambiar de período no se queda marcado un punto del anterior, y los extremos tienen aire
         // para no pisar las cifras del eje (revisor, GP-228).
         chart.highlightValues(null);
@@ -494,6 +512,13 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         // Lo que se ha subido en el periodo (solo en kilos): verde si sube, neutro si no (DEC-055).
         pintarDelta(enKilos && entradas.size() >= 2
                 ? (double) entradas.get(entradas.size() - 1).getY() - entradas.get(0).getY() : null);
+        if (unPunto) {
+            chart.setContentDescription(FrasesA11y.unir(getString(R.string.detalle_progresion_un_punto_a11y,
+                    ((TextView) findViewById(R.id.tvProgresionTitulo)).getText(),
+                    EjeFechas.etiqueta(puntos.get(0).x, idioma, patron)),
+                    pista.getVisibility() == View.VISIBLE ? pista.getText().toString() : null));
+            return;
+        }
         chart.setContentDescription(getString(R.string.detalle_progresion_a11y,
                 ((TextView) findViewById(R.id.tvProgresionTitulo)).getText(),
                 EjeFechas.etiqueta(puntos.get(0).x, idioma, patron),
@@ -586,8 +611,16 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         sub.setVisibility(subTexto.isEmpty() ? View.GONE : View.VISIBLE);
 
         TextView dif = v.findViewById(R.id.tvVezDiferencia);
-        if (!porTiempo && t.diferenciaKg != null && Math.round(t.diferenciaKg) != 0) {
-            boolean mas = t.diferenciaKg > 0;
+        es.pmdm.gymprofit.utils.DiferenciaVez.Que que = es.pmdm.gymprofit.utils.DiferenciaVez.de(t.diferenciaKg, porTiempo);
+        if (que == es.pmdm.gymprofit.utils.DiferenciaVez.Que.IGUAL) {
+            // La misma marca que la anterior: «—», neutro (GP-225).
+            dif.setVisibility(View.VISIBLE);
+            dif.setText(R.string.detalle_vez_igual);
+            dif.setContentDescription(getString(R.string.detalle_vez_igual_a11y));
+            dif.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+            dif.setBackgroundTintList(null);
+        } else if (que != es.pmdm.gymprofit.utils.DiferenciaVez.Que.NADA) {
+            boolean mas = que == es.pmdm.gymprofit.utils.DiferenciaVez.Que.MAS;
             dif.setVisibility(View.VISIBLE);
             dif.setText(getString(mas ? R.string.detalle_kg_mas : R.string.detalle_kg_menos, numero(Math.abs(t.diferenciaKg))));
             // Subir, en verde; bajar, neutro: una sesión más floja no es un fallo (DEC-055).

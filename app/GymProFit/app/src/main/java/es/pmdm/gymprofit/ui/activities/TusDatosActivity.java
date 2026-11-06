@@ -138,6 +138,9 @@ public class TusDatosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefs = new PreferencesManager(this);
         setContentView(R.layout.activity_tus_datos);
+        // La descripción de la actividad, al alto de la más larga: con letra 1,3, «Mucha» va en dos
+        // líneas y bajaba el selector de experiencia al elegirla (GP-225).
+        es.pmdm.gymprofit.utils.AltoReservado.para(findViewById(R.id.tvActividadTexto), ACTIVIDAD_DESC);
 
         // Lo guardado en el móvil primero; lo de la API lo corrige al llegar.
         nivelGuardado = prefs.getNivel();

@@ -22,12 +22,14 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginBottom="14dp"
         android:layout_weight="1"
         android:background="@drawable/bg_burbuja_profi"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="@dimen/espacio_24"
+        android:paddingEnd="@dimen/espacio_16"
+        android:paddingTop="@dimen/espacio_16"
+        android:paddingBottom="@dimen/espacio_16">
 
         <TextView
             android:id="@+id/tvMensajeProfi"

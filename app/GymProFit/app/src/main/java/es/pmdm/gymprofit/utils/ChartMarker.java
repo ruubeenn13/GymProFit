@@ -62,6 +62,32 @@ public class ChartMarker extends MarkerView {
         return new MPPointF(-(getWidth() / 2f), -getHeight() - dp(getContext(), 8));
     }
 
+    // Sin esto, MPAndroidChart pega arriba la burbuja que no cabe encima del punto, y con el récord
+    // (el punto más alto) la ponía justo encima de él, tapándolo (GP-225).
+    @Override
+    public MPPointF getOffsetForDrawingAtPoint(float posX, float posY) {
+        float ancho = getChartView() != null ? getChartView().getWidth() : Float.MAX_VALUE;
+        float alto = getChartView() != null ? getChartView().getHeight() : Float.MAX_VALUE;
+        float[] o = desplazamiento(posX, posY, getWidth(), getHeight(), ancho, alto, dp(getContext(), 8));
+        return new MPPointF(o[0], o[1]);
+    }
+
+    /**
+     * Dónde va la burbuja respecto al punto (x, y): centrada y encima, a {@code hueco}; si arriba
+     * no cabe, debajo, también a {@code hueco}; y dentro de la gráfica por los lados.
+     *
+     * @return {dx, dy} desde el punto hasta la esquina de arriba a la izquierda de la burbuja.
+     */
+    static float[] desplazamiento(float x, float y, float w, float h, float ancho, float alto, float hueco) {
+        float ox = -w / 2f;
+        if (x + ox < 0) ox = -x;
+        else if (x + ox + w > ancho) ox = ancho - w - x;
+        float oy = -h - hueco;
+        if (y + oy < 0) oy = hueco;
+        if (y + oy + h > alto && y - h - hueco >= 0) oy = -h - hueco;
+        return new float[]{ ox, oy };
+    }
+
     private static float dp(Context ctx, float v) {
         return v * ctx.getResources().getDisplayMetrics().density;
     }

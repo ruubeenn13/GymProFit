@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  boton_capa — la capa de estado del botón relleno (GP-225): pulsado, el 10 % del color de su
+  texto; con el foco, ninguna: el anillo de 2 dp lo pone FocoVisible, como en todo lo pulsable.
+  La capa de foco de Material cambiaba el naranja (#B83E00 → #BF521A) y bajaba su texto.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="?attr/colorOnPrimary" android:alpha="0.10" />
+    <item android:color="@android:color/transparent" />
+</selector>

@@ -229,6 +229,18 @@
                             android:layout_height="170dp"
                             android:layout_marginTop="@dimen/espacio_8" />
 
+                        <!-- Con un solo entreno: la próxima vez se verá el progreso (GP-229). -->
+                        <TextView
+                            android:id="@+id/tvProgresionPista"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_4"
+                            android:gravity="center"
+                            android:text="@string/detalle_progresion_pista"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                            android:textColor="@color/gp_text_secondary"
+                            android:visibility="gone" />
+
                         <!-- Ninguna sesión en el período elegido: ocupa el sitio de la gráfica. -->
                         <TextView
                             android:id="@+id/tvProgresionVacia"

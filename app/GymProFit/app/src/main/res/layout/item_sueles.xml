@@ -87,10 +87,8 @@
         </FrameLayout>
     </LinearLayout>
 
+    <!-- Hasta el texto, 70 dp (GP-225): antes, de lado a lado. -->
     <View
         android:id="@+id/rayaSueles"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorOutlineVariant"
-        android:importantForAccessibility="no" />
+        style="@style/Widget.GymProFit.Separador" />
 </LinearLayout>

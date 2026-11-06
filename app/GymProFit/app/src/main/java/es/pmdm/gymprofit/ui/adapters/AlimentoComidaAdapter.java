@@ -89,6 +89,8 @@ public class AlimentoComidaAdapter extends RecyclerView.Adapter<AlimentoComidaAd
         // Un plato (lote 1.6.6): el icono de Mis platos y su marca junto al nombre.
         h.icono.setImageResource(item.isAlimentoEsPlato() ? R.drawable.ic_ms_menu_book
                 : Categorias.icono(item.getCategoriaAlimento()));
+        // Teñido por su categoría, como en Añadir (GP-225).
+        Categorias.tenir(h.icono, item.isAlimentoEsPlato() ? null : item.getCategoriaAlimento());
         h.nombre.setText(es.pmdm.gymprofit.ui.nutricion.MarcaPlato.nombre(ctx, nombre, item.isAlimentoEsPlato()));
         h.cantidad.setText(cantidad);
         h.kcal.setText(ctx.getString(R.string.comida_fila_kcal, kcal));

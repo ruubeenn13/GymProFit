@@ -131,6 +131,26 @@ public class SelectorPildora extends FrameLayout {
         }
     }
 
+    // Los 4 dp de relleno de cada lado de la pista no tenían nada debajo y un toque ahí se perdía
+    // (GP-225): se le da a la opción del borde, llevando el toque dentro de la fila.
+    @Override
+    public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
+        float x = xDentro(ev.getX(), getWidth(), getPaddingLeft());
+        if (x == ev.getX()) return super.dispatchTouchEvent(ev);
+        ev.offsetLocation(x - ev.getX(), 0);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * La x de un toque llevada dentro de la fila de opciones: en el relleno izquierdo, su borde; en
+     * el derecho, el último píxel de la última opción; dentro, igual.
+     */
+    static float xDentro(float x, int ancho, int relleno) {
+        if (x < relleno) return relleno;
+        if (x > ancho - relleno - 1) return ancho - relleno - 1;
+        return x;
+    }
+
     /**
      * Las opciones.
      *

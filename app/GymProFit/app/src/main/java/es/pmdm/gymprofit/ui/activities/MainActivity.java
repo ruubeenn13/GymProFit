@@ -428,7 +428,33 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     private void pintarPestana(int index) {
         barra.setActiva(index);
         atrasAInicio.setEnabled(NavTabs.atrasVuelveAInicio(index));
-        pager.post(() -> ocultarPestanasNoVisibles(index));
+        pager.post(() -> {
+            ocultarPestanasNoVisibles(index);
+            focoAlContenido(index);
+        });
+    }
+
+    // Con teclado, si al cambiar de pestaña el foco se queda en la que se aparta (en un enlace,
+    // como «Ver todo» de «Tu progreso» en Inicio, que ya no se ve) o en ninguna parte, va a lo
+    // primero de la nueva: si no, el siguiente Tab salía de una vista escondida (GP-225). Si está
+    // en la barra (se cambió con ella), se queda. Con el dedo no se toca.
+    private void focoAlContenido(int index) {
+        if (pager.isInTouchMode()) return;
+        Fragment f = getSupportFragmentManager().findFragmentByTag("f" + index);
+        View v = f != null ? f.getView() : null;
+        if (!(v instanceof android.view.ViewGroup)) return;
+        View actual = getCurrentFocus();
+        if (actual != null && (dentroDe(actual, v) || dentroDe(actual, barra))) return;
+        View primero = android.view.FocusFinder.getInstance()
+                .findNextFocus((android.view.ViewGroup) v, null, View.FOCUS_FORWARD);
+        if (primero != null) primero.requestFocus();
+    }
+
+    private static boolean dentroDe(View hijo, View padre) {
+        for (android.view.ViewParent p = hijo.getParent(); p != null; p = p.getParent()) {
+            if (p == padre) return true;
+        }
+        return hijo == padre;
     }
 
     // Las cuatro pestañas siguen vivas en el pager: sin esto el foco de teclado (Tab) y

@@ -326,8 +326,7 @@ public class FichaAlimentoActivity extends BaseActivity {
 
         ((TextView) findViewById(R.id.tvNombreFicha)).setText(a.getNombre());
         ((TextView) findViewById(R.id.tvOrigenFicha)).setText(origen(a));
-        ((ImageView) findViewById(R.id.ivIconoFicha)).setImageResource(
-                es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter.icono(a));
+        es.pmdm.gymprofit.ui.adapters.BusquedaAlimentoAdapter.pintarIcono(findViewById(R.id.ivIconoFicha), a);
         findViewById(R.id.ivRevisadoFicha).setVisibility(a.isRevisado() ? View.VISIBLE : View.GONE);
         // Lo tuyo no se reporta: se edita, y el administrador no ve los alimentos de nadie.
         findViewById(R.id.btnReportar).setVisibility(a.esPropio() ? View.GONE : View.VISIBLE);

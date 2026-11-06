@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -57,17 +58,26 @@ public class EstadisticasYFormulariosTest {
         }
     }
 
+    // GP-225: los gramos ya no van dentro de las porciones del donut (no cabían y, con letra 1,3,
+    // montaban sobre el agujero), sino en la leyenda; con ellos se fue el color del texto sobre
+    // cada macro que pedía GP-228.
     @Test
-    public void elTextoSobreCadaMacroPasaCuatroYMedio() throws IOException {
-        List<String> fallos = new ArrayList<>();
-        for (String tema : TEMAS) {
-            String texto = color(tema, "gp_texto_sobre_macro");
-            for (String macro : new String[]{ "gp_macro_proteinas", "gp_macro_carbos", "gp_macro_grasas" }) {
-                double r = MedidorNivelTest.contraste(texto, color(tema, macro));
-                if (r < 4.5) fallos.add(String.format("%s: texto sobre %s = %.2f", tema, macro, r));
-            }
+    public void elDonutDiceLosGramosEnLaLeyenda() throws IOException {
+        String estilo = leer(Paths.get("src", "main", "java", "es", "pmdm", "gymprofit", "utils", "ChartStyler.java"));
+        assertTrue("sin valores en las porciones", estilo.contains("ds.setDrawValues(false);")
+                && !estilo.contains("INSIDE_SLICE"));
+        String a = leer(Paths.get("src", "main", "java", "es", "pmdm", "gymprofit", "ui", "activities",
+                "EstadisticasNutricionActivity.java"));
+        assertTrue(a.contains("new PieEntry((float) prot, leyendaMacro(R.string.macro_prot, prot))"));
+        for (String idioma : new String[]{ "values", "values-en" }) {
+            assertTrue(idioma, leer(RES.resolve(idioma + "/strings.xml"))
+                    .contains("<string name=\"estadisticas_macro_leyenda\">%1$s · %2$s</string>"));
         }
-        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+        // Las tarjetas de las cifras, a la altura de su fila: en código, porque un match_parent en
+        // la fila de pesos las aplastaba a 3 px.
+        String l = leer(RES.resolve("layout/activity_estadisticas_nutricion.xml"));
+        assertFalse(l.contains("android:layout_height=\"match_parent\" android:layout_weight=\"1\""));
+        assertTrue(a.contains("AltoIgual.fila(findViewById(R.id.cardKpiMedia), findViewById(R.id.cardKpiDias))"));
     }
 
     @Test
