@@ -130,6 +130,13 @@ android {
         }
     }
 
+    // Solo los dos idiomas de la app (GP-240). Sin el filtro, la APK lleva las traducciones
+    // de AppCompat y Material: con el sistema en [francés, inglés] Android elegía su francés
+    // y la app salía en español (values/), con las librerías en francés.
+    androidResources {
+        localeFilters += ["es", "en"]
+    }
+
     buildFeatures {
         buildConfig true
     }

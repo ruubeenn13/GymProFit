@@ -17,17 +17,19 @@ public final class FechaUtils {
     private FechaUtils() {}
 
     /**
-     * Idioma de la interfaz, el que eligió el usuario en la app.
+     * Idioma en que se pinta la app: en-US si los recursos son los ingleses, es-ES si no.
      *
      * <p>No es {@code Locale.getDefault()}: ese es el del proceso, y con el idioma por
      * app puede seguir en el del sistema. Con él, la fecha de Inicio llegó a salir en
-     * inglés con la app en español (GP-071).
+     * inglés con la app en español (GP-071). Tampoco es el primer idioma de la
+     * configuración: sin idioma elegido y con el sistema en [catalán, español], ese es el
+     * catalán y la app se pinta en español (GP-240, ver {@link IdiomaApp}).
      *
      * @param ctx contexto con la configuración de la app
-     * @return el locale con el que se están resolviendo los recursos
+     * @return el locale de los recursos con que se pinta la app
      */
     public static java.util.Locale localeDeLaApp(android.content.Context ctx) {
-        return ctx.getResources().getConfiguration().getLocales().get(0);
+        return IdiomaApp.locale(ctx.getResources().getBoolean(es.pmdm.gymprofit.R.bool.recursos_en_ingles));
     }
 
     /**
