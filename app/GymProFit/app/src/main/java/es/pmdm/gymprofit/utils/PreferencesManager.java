@@ -174,6 +174,19 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public void saveLanguage(String code) { editor.putString(KEY_LANGUAGE, code); editor.apply(); }
     public String getLanguage() { return prefs.getString(KEY_LANGUAGE, ""); }
 
+    /**
+     * El idioma que marca el diálogo de idioma: el elegido en la app o, sin elegir, el de
+     * los recursos con que se pinta (GP-233). Antes marcaba «Español» aunque se viera en inglés.
+     *
+     * @param guardado         lo que da {@link #getLanguage()}: «es», «en» o vacío.
+     * @param recursosEnIngles el bool {@code recursos_en_ingles} de la pantalla.
+     * @return «es» o «en».
+     */
+    public static String idiomaMarcado(String guardado, boolean recursosEnIngles) {
+        if (guardado == null || guardado.isEmpty()) return recursosEnIngles ? "en" : "es";
+        return "en".equals(guardado) ? "en" : "es";
+    }
+
     // Token y refresh se guardan/leen SIEMPRE del almacén cifrado (securePrefs), nunca en claro.
     public void saveToken(String token) { securePrefs.edit().putString(KEY_TOKEN, token).apply(); }
     public String getToken() { return securePrefs.getString(KEY_TOKEN, null); }

@@ -147,10 +147,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         fondo.setColor(tv.data);
         root.setBackground(fondo);
 
-        String idiomaActual = prefsManager.getLanguage();
+        String idiomaActual = PreferencesManager.idiomaMarcado(prefsManager.getLanguage(),
+                getResources().getBoolean(R.bool.recursos_en_ingles));
         ImageView ivCheckEspanol = dialog.findViewById(R.id.ivCheckEspanol);
         ImageView ivCheckIngles = dialog.findViewById(R.id.ivCheckIngles);
-        if ("es".equals(idiomaActual) || idiomaActual.isEmpty()) {
+        if ("es".equals(idiomaActual)) {
             ivCheckEspanol.setVisibility(View.VISIBLE);
         } else {
             ivCheckIngles.setVisibility(View.VISIBLE);

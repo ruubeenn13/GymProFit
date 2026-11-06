@@ -48,6 +48,7 @@ import es.pmdm.gymprofit.utils.Correo;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.NombreVisible;
+import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
 
@@ -264,8 +265,12 @@ public class PerfilActivity extends BaseActivity {
         pintarNotificaciones(null);
     }
 
+    // El idioma que se ve, con el mismo criterio que el diálogo de la bienvenida (GP-233):
+    // con el sistema en francés y luego inglés, la configuración dice «fr» y la app sale
+    // en inglés.
     private boolean esIngles() {
-        return "en".equals(FechaUtils.localeDeLaApp(this).getLanguage());
+        return "en".equals(PreferencesManager.idiomaMarcado(prefsManager.getLanguage(),
+                getResources().getBoolean(R.bool.recursos_en_ingles)));
     }
 
     private void cargarCuenta() {
