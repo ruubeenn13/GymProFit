@@ -165,6 +165,42 @@ public class PulidoTest {
                 leer(JAVA.resolve("ui/activities/RegistrarSesionActivity.java")).contains("R.string.sesiones_rutina_a11y"));
     }
 
+    // Primera pasada del revisor: el escáner de Añadir (y todo MaterialButton con un estilo de
+    // Material puesto a mano) cambiaba el naranja con el foco. La capa se apaga en su raíz.
+    @Test
+    public void ningunComponenteDeMaterialLlevaCapaDeFoco() throws IOException {
+        // Material las redefine en values-v21, v28, v33 y v34: cada carpeta tapa a la de values.
+        for (String carpeta : new String[]{ "values", "values-v21", "values-v28", "values-v33", "values-v34" }) {
+            String f = leer(RES.resolve(carpeta + "/material_foco.xml"));
+            for (String n : new String[]{ "m3_sys_state_focus_state_layer_opacity", "mtrl_high_ripple_focused_alpha",
+                    "mtrl_low_ripple_focused_alpha", "m3_control_ripple_color_selector_focused_alpha" }) {
+                assertTrue(carpeta + ": " + n, Pattern.compile("name=\"" + n + "\"[^>]*>0\\.0<").matcher(f).find());
+            }
+        }
+    }
+
+    @Test
+    public void primeraPasadaDelRevisorEnNutricion() throws IOException {
+        String dia = leer(RES.resolve("layout/item_dia_semana.xml"));
+        assertTrue("el anillo de un día no toca al de al lado", dia.contains("android:layout_marginStart=\"@dimen/espacio_4\""));
+        assertTrue("la capa al pulsar un día, redondeada", leer(JAVA.resolve("ui/fragments/NutricionFragment.java"))
+                .contains("celda.setBackgroundResource(R.drawable.bg_dia_pulsable);"));
+        assertTrue(leer(RES.resolve("drawable/bg_dia_pulsable.xml")).contains("@dimen/radio_miniatura"));
+        assertTrue("el reparto de la ficha, con aire para el anillo", Pattern.compile(
+                "android:id=\"@\\+id/repartoFicha\"[^>]*android:padding=\"@dimen/aire_anillo\"", Pattern.DOTALL)
+                .matcher(leer(RES.resolve("layout/activity_ficha_alimento.xml"))).find());
+        String en = leer(RES.resolve("values-en/strings.xml"));
+        assertTrue("la fecha del bocadillo, como el resto en inglés",
+                en.contains("<string name=\"reciente_fecha_patron\">MMMM d</string>"));
+        assertTrue(en.contains("<string name=\"nutricion_grasas\">Fat</string>"));
+        String est = leer(JAVA.resolve("ui/activities/EstadisticasNutricionActivity.java"));
+        assertTrue("un solo día no es «entre 379 y 379»", est.contains("R.string.estadisticas_kcal_a11y_igual"));
+        assertTrue(est.contains("RolBoton.aplicar(findViewById(R.id.btnPrev))"));
+        assertTrue(leer(JAVA.resolve("ui/activities/AnadirAlimentoActivity.java")).contains("RolBoton.aplicar(etiqueta);"));
+        assertTrue(leer(JAVA.resolve("ui/activities/ComidaActivity.java"))
+                .contains("RolBoton.aplicar(tarjeta.findViewById(R.id.btnNoCopiar))"));
+    }
+
     private static int cuenta(String s, String trozo) {
         int n = 0;
         for (int i = s.indexOf(trozo); i >= 0; i = s.indexOf(trozo, i + 1)) n++;

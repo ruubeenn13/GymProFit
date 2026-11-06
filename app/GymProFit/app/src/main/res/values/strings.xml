@@ -1956,7 +1956,7 @@
     <string name="encaja_quedan_kcal">Te quedan %1$s</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g de proteína</string>
-    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g de proteína</string>
+    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g de proteína</string>
     <string name="encaja_cubre">%1$s %% de lo que falta</string>
     <string name="encaja_cubre_a11y">Cubre el %1$s por ciento de la proteína que te falta</string>
     <string name="encaja_sueles_desayuno">Lo sueles tomar en el desayuno</string>
@@ -2488,6 +2488,8 @@
     <string name="medicion_grasa_valor">%1$s %%</string>
     <!-- GP-228 (revisor): Estadísticas de nutrición. %1$s y %2$s: primera y última fecha; %3$s y %4$s: la menor y la mayor; %5$s: el objetivo. -->
     <string name="estadisticas_kcal_a11y">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal; objetivo, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_igual">Calorías por día del %1$s al %2$s: %3$s\u00A0kcal; objetivo, %4$s\u00A0kcal</string>
+    <string name="estadisticas_kcal_a11y_igual_sin_objetivo">Calorías por día del %1$s al %2$s: %3$s\u00A0kcal</string>
     <string name="estadisticas_kcal_a11y_sin_objetivo">Calorías por día del %1$s al %2$s: entre %3$s y %4$s kcal</string>
     <string name="estadisticas_macro_leyenda">%1$s · %2$s</string>
     <string name="estadisticas_macros_a11y">Reparto de macros: proteína %1$s, carbohidratos %2$s, grasa %3$s</string>

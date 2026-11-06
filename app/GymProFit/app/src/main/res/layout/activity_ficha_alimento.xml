@@ -307,7 +307,11 @@
                     android:id="@+id/repartoFicha"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="@dimen/aire_anillo_fuera"
+                    android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                    android:layout_marginBottom="@dimen/aire_anillo_fuera"
+                    android:padding="@dimen/aire_anillo"
                     android:orientation="vertical"
                     android:focusable="true">
 

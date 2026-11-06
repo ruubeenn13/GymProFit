@@ -123,6 +123,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         tvMacrosVacia = findViewById(R.id.tvMacrosVacia);
         gridHeatmap  = findViewById(R.id.gridHeatmap);
         btnNext      = findViewById(R.id.btnNext);
+        // Son ImageView pulsables: TalkBack los anuncia como botón (revisor, GP-225).
+        es.pmdm.gymprofit.utils.RolBoton.aplicar(findViewById(R.id.btnPrev));
+        es.pmdm.gymprofit.utils.RolBoton.aplicar(btnNext);
 
         coloresMacros = new int[]{ ContextCompat.getColor(this, R.color.gp_macro_proteinas),
                 ContextCompat.getColor(this, R.color.gp_macro_carbos), ContextCompat.getColor(this, R.color.gp_macro_grasas) };
@@ -292,11 +295,17 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal.setData(data);
         chartKcal.invalidate();
         // Las barras no son nada para TalkBack sin descripción (DEC-019).
+        // Con un solo día (o todos iguales) no es «entre 379 y 379» (revisor, GP-225).
+        boolean igual = nf.format(minKcal).equals(nf.format(maxKcal));
         chartKcal.setContentDescription(conObjetivo
-                ? getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
-                        nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal))
-                : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
-                        nf.format(minKcal), nf.format(maxKcal)));
+                ? (igual ? getString(R.string.estadisticas_kcal_a11y_igual, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(objetivoKcal))
+                        : getString(R.string.estadisticas_kcal_a11y, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal), nf.format(objetivoKcal)))
+                : (igual ? getString(R.string.estadisticas_kcal_a11y_igual_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal))
+                        : getString(R.string.estadisticas_kcal_a11y_sin_objetivo, inicioPeriodo, finPeriodo,
+                        nf.format(minKcal), nf.format(maxKcal))));
     }
 
     // Donut del reparto de macros (gramos totales de proteína/carbohidratos/grasa del periodo).

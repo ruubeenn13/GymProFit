@@ -97,7 +97,7 @@
     <!-- NUTRITION -->
     <string name="nutricion_proteinas">Protein</string>
     <string name="nutricion_carbohidratos">Carbs</string>
-    <string name="nutricion_grasas">Fats</string>
+    <string name="nutricion_grasas">Fat</string>
     <string name="nutricion_desayuno">Breakfast</string>
     <string name="nutricion_almuerzo">Mid-morning</string>
     <string name="nutricion_comida">Lunch</string>
@@ -1802,9 +1802,9 @@
     <string name="reciente_ayer">Yesterday\'s %1$s</string>
     <!-- %2$s: the weekday («Monday»). -->
     <string name="reciente_semana">%2$s\'s %1$s</string>
-    <!-- %2$s: the date, with reciente_fecha_patron («28 September»). -->
+    <!-- %2$s: the date, with reciente_fecha_patron («September 28»). -->
     <string name="reciente_fecha">%1$s on %2$s</string>
-    <string name="reciente_fecha_patron">d MMMM</string>
+    <string name="reciente_fecha_patron">MMMM d</string>
     <string name="reciente_a11y">%1$s: %2$s, %3$s\u00A0kcal</string>
     <!-- %1$s: «Yesterday's snack»; %2$s: «to dinner». -->
     <string name="reciente_copiar_a11y">Copy %1$s %2$s</string>
@@ -1925,7 +1925,7 @@
     <string name="encaja_quedan_kcal">You have %1$s left</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g of protein</string>
-    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g protein</string>
+    <string name="encaja_detalle">%1$s · %2$s kcal · %3$s g protein</string>
     <string name="encaja_cubre">%1$s%% of what\'s left</string>
     <string name="encaja_cubre_a11y">Covers %1$s percent of the protein you still need</string>
     <string name="encaja_sueles_desayuno">You usually have it at breakfast</string>
@@ -2445,6 +2445,8 @@
     <string name="medicion_detalles_cerrados">Collapsed</string>
     <string name="medicion_grasa_valor">%1$s%%</string>
     <string name="estadisticas_kcal_a11y">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal; goal, %5$s kcal</string>
+    <string name="estadisticas_kcal_a11y_igual">Calories per day from %1$s to %2$s: %3$s\u00A0kcal; goal, %4$s\u00A0kcal</string>
+    <string name="estadisticas_kcal_a11y_igual_sin_objetivo">Calories per day from %1$s to %2$s: %3$s\u00A0kcal</string>
     <string name="estadisticas_kcal_a11y_sin_objetivo">Calories per day from %1$s to %2$s: between %3$s and %4$s kcal</string>
     <string name="estadisticas_macro_leyenda">%1$s · %2$s</string>
     <string name="estadisticas_macros_a11y">Macro split: protein %1$s, carbs %2$s, fat %3$s</string>

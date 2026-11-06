@@ -295,7 +295,7 @@ public class NutricionFragment extends BaseFragment {
                 tvNumero.setTextColor(texto);
                 tvNumero.setTypeface(tvNumero.getTypeface(), android.graphics.Typeface.BOLD);
             } else {
-                celda.setBackgroundResource(fondoPulsable());
+                celda.setBackgroundResource(R.drawable.bg_dia_pulsable);
                 tvInicial.setTextColor(futuro ? apagado : secundario);
                 tvNumero.setTextColor(futuro ? apagado : texto);
             }

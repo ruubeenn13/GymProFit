@@ -751,6 +751,8 @@ public class ComidaActivity extends BaseActivity {
             pintarProfi(tarjeta, ayer);
             tarjeta.findViewById(R.id.btnSiCopiar).setOnClickListener(v -> copiarAyer(tarjeta, ayer));
             tarjeta.findViewById(R.id.btnNoCopiar).setOnClickListener(v -> noCopiarAyer(tarjeta));
+            // «Ahora no» es un TextView pulsable: rol de botón para TalkBack (revisor, GP-225).
+            es.pmdm.gymprofit.utils.RolBoton.aplicar(tarjeta.findViewById(R.id.btnNoCopiar));
             ranura.addView(tarjeta);
             if (entra && copiaNueva) Movimiento.entrarUna(tarjeta, 100, Movimiento.ENTRA, 16);
         }

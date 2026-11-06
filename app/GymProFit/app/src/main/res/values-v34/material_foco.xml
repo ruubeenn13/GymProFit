@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copia de values/material_foco.xml: Material redefine estas opacidades en values-v34 y
+  taparían la de values.
+  material_foco — sin capa de foco en los componentes de Material (GP-225).
+
+  Material 3 saca la capa de estado del foco de una sola opacidad (m3_sys_state_focus_state_layer_opacity,
+  0,1) que heredan botones, chips, tarjetas, pestañas…; los de Material 2, de las dos alfas mtrl_*. Esa
+  capa cambiaba el naranja de un botón con el foco (#B83E00 → #BF521A) y bajaba su texto a 4,73:1, y
+  quedaba en todos los MaterialButton con un estilo de Material puesto a mano (el escáner de Añadir,
+  «+ Vaso»…). El foco se ve con el anillo de 2 dp de FocoVisible, el mismo para todo lo pulsable.
+  Se sobrescriben recursos de la librería a propósito (mismo nombre).
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <item name="m3_sys_state_focus_state_layer_opacity" format="float" type="dimen" tools:ignore="PrivateResource">0.0</item>
+    <item name="m3_control_ripple_color_selector_focused_alpha" format="float" type="dimen" tools:ignore="PrivateResource">0.0</item>
+    <item name="mtrl_high_ripple_focused_alpha" format="float" type="dimen" tools:ignore="PrivateResource">0.0</item>
+    <item name="mtrl_low_ripple_focused_alpha" format="float" type="dimen" tools:ignore="PrivateResource">0.0</item>
+</resources>
