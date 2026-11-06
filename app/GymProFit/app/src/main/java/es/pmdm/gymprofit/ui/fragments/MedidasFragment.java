@@ -370,9 +370,9 @@ public class MedidasFragment extends BaseFragment {
         });
 
         // Tooltip: valor + unidad + fecha del punto tocado.
-        chartPeso.setMarker(new ChartMarker(requireContext(), (e, h) -> {
+        ChartMarker.poner(chartPeso, (e, h) -> {
             return getString(formatoTooltip, e.getY(), EjeFechas.etiqueta(e.getX(), idioma, patron));
-        }));
+        });
 
         LineDataSet ds = new LineDataSet(entradas, "m");
         ChartStyler.styleLineDataSet(ds, requireContext());

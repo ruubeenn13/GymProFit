@@ -293,7 +293,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, opciones);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // El menú marca la elegida con una ✓ (revisor, GP-225).
+        spinnerAdapter.setDropDownViewResource(R.layout.item_desplegable);
 
         posicionSincronizada = posicionDe(vm.getRutinaId());
         spRutina.setAdapter(spinnerAdapter);

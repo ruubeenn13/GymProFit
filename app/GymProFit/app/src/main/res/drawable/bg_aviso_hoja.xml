@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_aviso_hoja — un aviso dentro de una hoja inferior (seguir un programa): superficie 2 y radio de
+     tarjeta pequeña. La hoja ya es colorSurface (GP-225): una caja de tarjeta encima no se veía en
+     oscuro. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="?attr/colorSurfaceVariant" />
+    <corners android:radius="@dimen/radio_tarjeta_pequena" />
+</shape>

@@ -268,8 +268,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         }
 
         // Tooltip: kcal + fecha.
-        chartKcal.setMarker(new ChartMarker(this, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
-                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron))));
+        ChartMarker.poner(chartKcal, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
+                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron)));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
         ChartStyler.styleBarDataSet(ds, this);

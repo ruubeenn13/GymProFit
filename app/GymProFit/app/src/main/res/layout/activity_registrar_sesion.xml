@@ -30,7 +30,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="@dimen/margen_pantalla"
+            android:paddingEnd="@dimen/margen_pantalla"
+            android:paddingTop="@dimen/espacio_16"
+            android:paddingBottom="@dimen/espacio_16">
 
             <!-- Rutina: el rótulo nombra al desplegable para TalkBack (revisor, GP-228). -->
             <TextView
@@ -45,16 +48,21 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:layout_marginBottom="6dp" />
 
+            <!-- Con contorno, como los campos de debajo, y su texto a la misma altura (GP-225). -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardCornerRadius="@dimen/radio_chip"
+                app:strokeColor="?attr/colorOutline"
+                app:strokeWidth="1dp">
 
                 <Spinner
                     android:id="@+id/spRutina"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:paddingStart="16dp"
+                    android:paddingStart="@dimen/espacio_8"
                     android:paddingEnd="16dp" />
 
             </com.google.android.material.card.MaterialCardView>

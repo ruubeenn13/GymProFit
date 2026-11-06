@@ -240,6 +240,37 @@ public class PulidoTest {
                 .contains("DiaNutricion.deConEsta(comidasDelDia, tipoComida, lineas, meta)"));
     }
 
+    // Revisor en el grupo Entrenar (primera pasada).
+    @Test
+    public void primeraPasadaDelRevisorEnEntrenar() throws IOException {
+        // El tooltip conoce su gráfica (si no, no sabe su área y se salía por la derecha).
+        for (String f : new String[]{ "ui/activities/DetalleEjercicioActivity.java", "ui/activities/EstadisticasNutricionActivity.java",
+                "ui/fragments/MedidasFragment.java" }) {
+            String c = leer(JAVA.resolve(f));
+            assertFalse(f, c.contains("setMarker(new ChartMarker"));
+            assertTrue(f, c.contains("ChartMarker.poner("));
+        }
+        assertTrue("con un punto solo, sin tooltip que tape su valor",
+                leer(JAVA.resolve("utils/PuntosGrafica.java")).contains("ds.setHighlightEnabled(false);"));
+        // El menú del desplegable, distinguible del fondo y con la elegida marcada.
+        assertTrue(leer(RES.resolve("values/themes.xml")).contains("<item name=\"android:popupBackground\">@drawable/bg_menu_desplegable</item>"));
+        assertTrue(leer(JAVA.resolve("ui/activities/RegistrarSesionActivity.java")).contains("R.layout.item_desplegable"));
+        assertTrue(leer(RES.resolve("layout/item_desplegable.xml")).contains("android:checkMarkTint=\"@color/marca_elegida\""));
+        // Los chips de Programas, los de la app y no el lavanda de Material.
+        String prog = leer(RES.resolve("layout/activity_programas.xml"));
+        assertFalse(prog.contains("Widget.Material3.Chip"));
+        // La hoja de seguir programa: a toda la altura y el aviso en superficie 2.
+        assertTrue(leer(JAVA.resolve("ui/widget/SeguirProgramaHoja.java")).contains("setFitToContents(false)"));
+        assertTrue(leer(RES.resolve("layout/dialog_seguir_programa.xml")).contains("@drawable/bg_aviso_hoja"));
+        // La pista del selector se vuelve a medir con la píldora de ahora.
+        assertTrue(leer(JAVA.resolve("ui/widget/SelectorPildora.java")).contains("post(this::requestLayout);"));
+        assertTrue("la cola apunta a la cara en Tus datos", leer(RES.resolve("layout/activity_tus_datos.xml"))
+                .contains("android:gravity=\"center_vertical\""));
+        assertTrue(leer(RES.resolve("values/strings.xml")).contains("<string name=\"ficha_atras\">Volver</string>"));
+        assertTrue("Registrar sesión a margen_pantalla", leer(RES.resolve("layout/activity_registrar_sesion.xml"))
+                .contains("android:paddingStart=\"@dimen/margen_pantalla\""));
+    }
+
     private static int cuenta(String s, String trozo) {
         int n = 0;
         for (int i = s.indexOf(trozo); i >= 0; i = s.indexOf(trozo, i + 1)) n++;

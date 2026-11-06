@@ -352,6 +352,10 @@ public class SelectorPildora extends FrameLayout {
             lp.topMargin = relleno;
             ((GradientDrawable) pildora.getBackground()).setCornerRadius(radioCompleto());
             pildora.setLayoutParams(lp);
+            // La pista se midió con la píldora de antes (en la ficha del ejercicio, más alta: la
+            // pista quedaba 5 dp más alta que la opción y la píldora pegada arriba; revisor,
+            // GP-225). Otro pase, fuera de este, la mide con la de ahora.
+            post(this::requestLayout);
         }
         // Y se coloca ya: cambiar los LayoutParams dentro de onLayout no vuelve a medir la píldora
         // hasta otro pase, que puede no llegar (se quedaba con el ancho de las opciones de antes).

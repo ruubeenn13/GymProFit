@@ -1534,7 +1534,7 @@
     <string name="cantidad_raciones">%1$s × %2$s (%3$s\u00A0g)</string>
     <string name="cantidad_con_unidad">%1$s %2$s (%3$s\u00A0g)</string>
     <string name="cantidad_gramos">%1$s\u00A0g</string>
-    <string name="ficha_atras">Atrás</string>
+    <string name="ficha_atras">Volver</string>
     <string name="ficha_por">Por %1$s</string>
     <string name="ficha_kcal">kcal</string>
     <string name="ficha_proteina">proteína</string>

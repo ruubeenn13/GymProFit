@@ -59,5 +59,7 @@ public final class PuntosGrafica {
         ds.setCircleRadius(6f);
         ds.setDrawCircleHole(false);
         ds.setDrawFilled(false);
+        // Valor y fecha ya están escritos: el tooltip al tocarlo los tapaba (revisor, GP-225).
+        ds.setHighlightEnabled(false);
     }
 }

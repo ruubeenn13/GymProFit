@@ -468,7 +468,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
         });
         // Tooltip: marca + fecha, con «· PR» en el récord.
-        chart.setMarker(new ChartMarker(this, (e, h) -> {
+        ChartMarker.poner(chart, (e, h) -> {
             String fecha = EjeFechas.etiqueta(e.getX(), idioma, patron);
             String sufijo = e.getY() >= pr ? " · " + getString(R.string.detalle_progresion_pr) : "";
             if (enKilos) return getString(R.string.grafica_kg_fecha, numero(e.getY()), sufijo, fecha);
@@ -478,7 +478,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             int reps = Math.round(e.getY());
             return getString(R.string.grafica_reps_fecha,
                     getResources().getQuantityString(R.plurals.record_repeticiones, reps, reps), sufijo, fecha);
-        }));
+        });
 
         LineDataSet ds = new LineDataSet(entradas, "");
         ChartStyler.styleLineDataSet(ds, this);
