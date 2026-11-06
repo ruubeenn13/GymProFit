@@ -78,6 +78,41 @@ public final class DiaNutricion {
     }
 
     /**
+     * El día con una de sus comidas tal como está en la pantalla (GP-225): las demás, como las da
+     * la API; esta, con sus líneas de ahora. Al quitar líneas, el borrado se manda cuando se va el
+     * aviso de «Deshacer», y mientras tanto la API aún las cuenta.
+     *
+     * @param tipoEsta   el tipo de la comida que está en la pantalla («MERIENDA»).
+     * @param lineasEsta sus líneas en la pantalla.
+     */
+    public static DiaNutricion deConEsta(@Nullable List<Comida> comidas, @Nullable String tipoEsta,
+                                         @Nullable List<es.pmdm.gymprofit.model.comida.AlimentoComida> lineasEsta,
+                                         @Nullable ResultadoNutricional objetivo) {
+        java.util.List<Comida> otras = new java.util.ArrayList<>();
+        if (comidas != null) {
+            for (Comida c : comidas) if (tipoEsta == null || !tipoEsta.equals(c.getTipoComida())) otras.add(c);
+        }
+        Comida esta = new Comida();
+        esta.setTipoComida(tipoEsta);
+        int kcal = 0;
+        double p = 0, cb = 0, g = 0;
+        if (lineasEsta != null) {
+            for (es.pmdm.gymprofit.model.comida.AlimentoComida l : lineasEsta) {
+                kcal += l.getCaloriasTotales();
+                p += l.getProteinasTotales();
+                cb += l.getCarbohidratosTotales();
+                g += l.getGrasasTotales();
+            }
+        }
+        esta.setTotalCalorias(kcal);
+        esta.setTotalProteinas(p);
+        esta.setTotalCarbohidratos(cb);
+        esta.setTotalGrasas(g);
+        otras.add(esta);
+        return de(otras, objetivo);
+    }
+
+    /**
      * El objetivo diario guardado. Lo guardado no se recalcula solo (GP-206, DEC-054): solo se
      * calcula si no hay nada, y recalculan el alta, Editar perfil y el perfil remoto con
      * {@link #recalcular}. Así un cambio en la regla no mueve el objetivo de nadie al abrir una

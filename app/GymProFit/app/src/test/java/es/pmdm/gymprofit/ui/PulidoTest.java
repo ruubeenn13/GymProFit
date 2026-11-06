@@ -223,6 +223,23 @@ public class PulidoTest {
         }
     }
 
+    // Tercera pasada: el aire de las ideas quitaba ancho al texto por la derecha; los anillos del
+    // mensaje de Profi, de «Ahora no» y de la unidad de la ficha se pegaban a lo de al lado.
+    @Test
+    public void terceraPasadaDelRevisorEnNutricion() throws IOException {
+        assertTrue(Pattern.compile("android:id=\"@\\+id/textosSueles\"[^>]*android:layout_marginEnd=\"@dimen/aire_anillo_fuera\"",
+                Pattern.DOTALL).matcher(leer(RES.resolve("layout/item_sueles.xml"))).find());
+        String p = leer(RES.resolve("layout/view_profi_copiar.xml"));
+        assertTrue(Pattern.compile("android:id=\"@\\+id/btnSiCopiar\"[^>]*android:layout_marginTop=\"@dimen/espacio_8\"",
+                Pattern.DOTALL).matcher(p).find());
+        assertTrue(Pattern.compile("android:id=\"@\\+id/btnNoCopiar\"[^>]*android:layout_marginTop=\"@dimen/espacio_8\"",
+                Pattern.DOTALL).matcher(p).find());
+        assertTrue(Pattern.compile("android:id=\"@\\+id/btnUnidadVarias\"[^>]*android:layout_marginTop=\"@dimen/espacio_16\"",
+                Pattern.DOTALL).matcher(leer(RES.resolve("layout/activity_ficha_alimento.xml"))).find());
+        assertTrue("las ideas cuentan esta comida como está en la pantalla", leer(JAVA.resolve("ui/activities/ComidaActivity.java"))
+                .contains("DiaNutricion.deConEsta(comidasDelDia, tipoComida, lineas, meta)"));
+    }
+
     private static int cuenta(String s, String trozo) {
         int n = 0;
         for (int i = s.indexOf(trozo); i >= 0; i = s.indexOf(trozo, i + 1)) n++;

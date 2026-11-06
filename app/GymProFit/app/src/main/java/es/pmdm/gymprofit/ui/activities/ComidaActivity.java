@@ -646,7 +646,8 @@ public class ComidaActivity extends BaseActivity {
     private LoQueTeEncaja.Resultado calcularIdeas() {
         ResultadoNutricional meta = DiaNutricion.objetivo(prefsManager);
         if (meta == null || comidasDelDia == null) return null;
-        DiaNutricion d = DiaNutricion.de(comidasDelDia, meta);
+        // Esta comida, como está en la pantalla: lo recién quitado aún no se ha borrado en la API.
+        DiaNutricion d = DiaNutricion.deConEsta(comidasDelDia, tipoComida, lineas, meta);
         java.util.Set<Integer> suele = new java.util.HashSet<>();
         if (sueles != null) for (Alimento a : sueles) suele.add(a.getId());
         java.util.Set<Integer> ayer = new java.util.HashSet<>();
