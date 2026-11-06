@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `7e08af6` | feat(api): **`GET /sesiones/historial`**, las tarjetas de sesión por semanas en una petición por página (hasta 8 semanas sin partir ninguna, con cursor): kilos, series, ejercicios, **los récords que batió cada sesión ese día** (también si otro los superó después), la anterior de la misma rutina, las series por músculo y las barras de sus 6 últimas veces con esa rutina. `GET /rutinas/usuario/{id}/activas` trae además `musculos` y `ultimas`. Aditivo (GP-232). |
 | `5283e96` | fix(android): **la release ya no se cierra al abrir Inicio**: R8 quitaba el dibujo nuevo del bocadillo de Profi, que solo se nombra desde su XML; una regla lo conserva y un test exige una por cada drawable con clase (GP-225). |
 | `0ff3764` | fix(android): tercera pasada del revisor en Progreso: con un punto solo, sin cuadrícula que cruce su cifra y la cifra en la condensada; la descripción de la gráfica de la ficha dice de cuánto a cuánto (GP-225). |
 | `5eb4c7f` | fix(android): segunda pasada del revisor en Progreso: la pista del punto único de Medidas no pisa el eje y **el eje Y de las gráficas va en el idioma de la app** («79.2» en inglés) (GP-225). |
