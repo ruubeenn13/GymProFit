@@ -137,6 +137,31 @@ public interface IEjercicioRealizadoRepository extends JpaRepository<EjercicioRe
                                              @Param("hasta") LocalDateTime hasta);
 
     /**
+     * Kilos serie a serie de todas las sesiones terminadas del usuario (GP-232). Misma
+     * definición que {@link #volumenDeSeries}, sin rango: las barras de una sesión miran
+     * sus seis últimas con la misma rutina, caigan en la semana que caigan.
+     *
+     * @return filas {@code [sesionId, kilos]}; solo salen las sesiones con series.
+     */
+    @Query("SELECT s.id, SUM(sr.peso * sr.repeticiones) " +
+           "FROM SerieRealizada sr JOIN sr.ejercicioRealizado er JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true AND sr.segundos IS NULL " +
+           "GROUP BY s.id")
+    List<Object[]> volumenDeSeriesDeUsuario(@Param("usuarioId") Integer usuarioId);
+
+    /**
+     * Como {@link #volumenDeSeriesDeUsuario} pero desde el resumen por ejercicio, para las
+     * sesiones anteriores al registro por serie.
+     *
+     * @return filas {@code [sesionId, kilos]}.
+     */
+    @Query("SELECT s.id, SUM(er.pesoUsado * er.repeticionesReales * er.seriesCompletadas) " +
+           "FROM EjercicioRealizado er JOIN er.sesion s " +
+           "WHERE s.usuario.id = :usuarioId AND s.completada = true " +
+           "GROUP BY s.id")
+    List<Object[]> volumenDeResumenDeUsuario(@Param("usuarioId") Integer usuarioId);
+
+    /**
      * Los ejercicios con más sesiones terminadas del usuario (GP-216, «Los que más haces»).
      * Una sesión cuenta una vez por ejercicio aunque lo repita. Las filas llegan ordenadas de más
      * a menos y, a igualdad, por id de ejercicio.

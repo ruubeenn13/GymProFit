@@ -3,6 +3,7 @@ package com.gymprofit.api.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import java.time.LocalDateTime;
 import com.gymprofit.api.dto.common.CountDTO;
+import com.gymprofit.api.dto.entity.sesionentrenamiento.HistorialSesionesDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.ResumenSesionDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionCompletaCreateDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.SesionEntrenamientoCreateDTO;
@@ -12,6 +13,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.UltimaVezDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenMuscularDTO;
 import com.gymprofit.api.dto.entity.sesionentrenamiento.VolumenSemanalDTO;
 import com.gymprofit.api.exceptions.Response;
+import com.gymprofit.api.service.sesionentrenamiento.HistorialSesionesService;
 import com.gymprofit.api.service.sesionentrenamiento.IGuardadoSesionCompletaService;
 import com.gymprofit.api.service.sesionentrenamiento.ISesionEntrenamientoService;
 import com.gymprofit.api.service.sesionentrenamiento.ResumenSesionService;
@@ -53,6 +55,9 @@ public class SesionEntrenamientoController {
 
     // El resumen del entreno: kilos y series por ejercicio y su comparación (GP-210, GP-023).
     private final ResumenSesionService resumenSesionService;
+
+    // Las tarjetas de sesión por semanas (GP-232).
+    private final HistorialSesionesService historialSesionesService;
 
     @Operation(summary = "Las sesiones de quien llama (solo ADMIN)")
     @ApiResponses(value = {
@@ -483,5 +488,24 @@ public class SesionEntrenamientoController {
     @GetMapping("/sesiones/{id}/resumen")
     public ResponseEntity<ResumenSesionDTO> resumen(@PathVariable Integer id) {
         return ResponseEntity.ok(resumenSesionService.resumir(id));
+    }
+
+    @Operation(summary = "Historial por semanas, con lo que pinta cada tarjeta de sesión (GP-232)",
+            description = "Del usuario del token: hasta 8 semanas con sesiones terminadas por página, de la más " +
+                    "nueva a la más vieja, sin partir ninguna. Por semana, su lunes en la hora local, entrenos y " +
+                    "kilos; por sesión, rutina, inicio, minutos, kilos (GP-011), series, ejercicios, récords que " +
+                    "batió ese día, kilos de la anterior de la misma rutina, series por músculo y sus barras: " +
+                    "las 6 últimas sesiones con la misma rutina hasta ella, aunque caigan en otra página. " +
+                    "Para la página siguiente, pasa el cursor «siguiente» como ?antes=.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Una página del historial",
+                    content = @Content(schema = @Schema(implementation = HistorialSesionesDTO.class)))
+    })
+    @GetMapping("/sesiones/historial")
+    public ResponseEntity<HistorialSesionesDTO> historial(
+            @Parameter(description = "Cursor: solo semanas cuyo lunes es anterior a esta fecha (p. ej. 2026-09-14). "
+                    + "Sin él, la primera página.")
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate antes) {
+        return ResponseEntity.ok(historialSesionesService.historial(antes));
     }
 }

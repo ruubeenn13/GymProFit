@@ -41,6 +41,16 @@ public interface IRecordService {
     List<List<RecordDTO>> cambiosDeMarcaDeSesion(Integer usuarioId, Integer sesionId);
 
     /**
+     * Récords batidos en cada sesión del usuario, sin primeras marcas (GP-232): los mismos
+     * que {@link #cambiosDeMarcaDeSesion} da como batidos. No comprueba la propiedad: el
+     * usuario lo pone quien llama, sacado del token.
+     *
+     * @param usuarioId dueño de las sesiones.
+     * @return por sesión con algún récord, cuántos batió.
+     */
+    java.util.Map<Integer, Integer> recordsPorSesion(Integer usuarioId);
+
+    /**
      * El récord de más peso del usuario, para la ruta vieja de la tarjeta de inicio.
      *
      * @param usuarioId usuario (se comprueba la propiedad).

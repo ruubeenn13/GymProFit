@@ -37,6 +37,8 @@ public class RutinaService implements IRutinaService {
     private final IUsuarioRepository usuarioRepository;
     private final IAdminRutinaJooqRepository adminRutinaJooqRepository;
     private final RutinaMapper rutinaMapper;
+    // Músculos y últimas veces de cada rutina, solo para la lista de activas (GP-232).
+    private final com.gymprofit.api.service.sesionentrenamiento.HistorialSesionesService historialSesionesService;
     private final Logger logger = LoggerFactory.getLogger(RutinaService.class);
 
     // Obtiene el usuario autenticado desde el contexto de seguridad de Spring.
@@ -253,7 +255,9 @@ public class RutinaService implements IRutinaService {
             throw new UnauthorizedException("error.rutina.deOtro");
         }
 
-        return rutinaMapper.toDTOList(rutinaRepository.findByUsuarioIdAndActivaTrue(usuarioId));
+        List<RutinaDTO> rutinas = rutinaMapper.toDTOList(rutinaRepository.findByUsuarioIdAndActivaTrue(usuarioId));
+        historialSesionesService.completarRutinas(usuarioId, rutinas);
+        return rutinas;
     }
 
     // Lista las rutinas predefinidas filtradas por nivel de dificultad.

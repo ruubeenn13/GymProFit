@@ -30,6 +30,8 @@ public interface RutinaMapper {
     @Mapping(target = "programaUsuarioId", source = "programaUsuario.id")
     @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
     @Mapping(target = "programaNombre", source = "programaUsuario.programa.nombre")
+    @Mapping(target = "musculos", ignore = true)   // solo en /activas, los pone el servicio (GP-232)
+    @Mapping(target = "ultimas", ignore = true)
     RutinaDTO toDTO(Rutina rutina);
 
     // La misma conversión, en el DTO que además lleva los ejercicios (GP-074). Los
@@ -41,6 +43,8 @@ public interface RutinaMapper {
     @Mapping(target = "programaCodigo", source = "programaUsuario.programa.codigo")
     @Mapping(target = "programaNombre", source = "programaUsuario.programa.nombre")
     @Mapping(target = "ejercicios", ignore = true)
+    @Mapping(target = "musculos", ignore = true)
+    @Mapping(target = "ultimas", ignore = true)
     @Named("conEjercicios") // fuera de la selección automática: si no, toDTOList no sabría cuál usar
     RutinaConEjerciciosDTO toConEjercicios(Rutina rutina);
 

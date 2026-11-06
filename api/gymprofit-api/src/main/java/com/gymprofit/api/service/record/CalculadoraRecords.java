@@ -120,6 +120,19 @@ public final class CalculadoraRecords {
             return eventos.stream().filter(e -> e.marca().sesionId().equals(sesionId))
                     .collect(Collectors.toList());
         }
+
+        /**
+         * Récords batidos por sesión, sin primeras marcas (GP-232). Para cada sesión es lo
+         * mismo que contar los récords de {@link #deSesion}: un récord superado después
+         * sigue contando en la sesión que lo batió.
+         *
+         * @return por sesión con algún récord, cuántos batió.
+         */
+        public Map<Integer, Integer> recordsPorSesion() {
+            Map<Integer, Integer> porSesion = new HashMap<>();
+            for (Evento e : records()) porSesion.merge(e.marca().sesionId(), 1, Integer::sum);
+            return porSesion;
+        }
     }
 
     // Orden de una sesión dentro de la historia: por fecha y, en empate, por id.
