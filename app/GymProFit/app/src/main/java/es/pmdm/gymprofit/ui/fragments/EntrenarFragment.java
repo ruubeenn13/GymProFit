@@ -72,6 +72,8 @@ public class EntrenarFragment extends BaseFragment {
 
     private ActivityResultLauncher<Intent> recargar;
     private TuProgramaVista tuPrograma;
+    // Las tarjetas de rutina entran una sola vez (GP-232).
+    private final es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta entradaRutinas = new es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta();
 
     // Lo cargado: las rutinas activas (propias y del programa), las sesiones y el
     // programa que sigue. «Mis rutinas» se pinta con las tres; «Tu programa», con él.
@@ -171,7 +173,12 @@ public class EntrenarFragment extends BaseFragment {
         }
         cargarPrograma();
         rutinaApi.getDeUsuarioActivas(uid).enqueue(new ApiCallback<List<Rutina>>() {
-            @Override public void onOk(List<Rutina> l) { propias = l != null ? l : new ArrayList<>(); listo(); }
+            @Override public void onOk(List<Rutina> l) {
+                propias = l != null ? l : new ArrayList<>();
+                // Las del programa son también rutinas activas: de aquí salen sus últimas veces (GP-232).
+                if (isAdded()) tuPrograma.setUltimas(propias);
+                listo();
+            }
             @Override public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 falloPropias = true;
@@ -237,66 +244,35 @@ public class EntrenarFragment extends BaseFragment {
 
         // Siguiendo un programa, lo que toca está arriba: aquí no se marca ninguna.
         HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
         int primario = com.google.android.material.color.MaterialColors.getColor(lista,
                 androidx.appcompat.R.attr.colorPrimary);
-        int sobrePrimario = com.google.android.material.color.MaterialColors.getColor(lista,
-                com.google.android.material.R.attr.colorOnPrimary);
-        for (int i = 0; i < mias.size(); i++) {
-            Rutina r = mias.get(i);
+        es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta textos = new es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta(requireContext());
+        for (Rutina r : mias) {
             boolean toca = hoy != null && !hoy.delPrograma && hoy.rutina.getId() == r.getId();
             // La de la sesión en curso dice «En curso» y vuelve a ella (GP-012).
             Integer enCursoId = rutinaEnCurso();
             boolean enCurso = enCursoId != null && enCursoId == r.getId();
-            boolean destacada = toca || enCurso;
 
-            View fila = inflater.inflate(R.layout.item_rutina_fila, lista, false);
-            ((TextView) fila.findViewById(R.id.tvNombre)).setText(r.getNombre());
-            String resumen = TuProgramaVista.resumen(requireContext(), r);
-            ((TextView) fila.findViewById(R.id.tvMusculos)).setText(resumen);
-            fila.findViewById(R.id.tvResumen).setVisibility(View.GONE);
-
-            TextView etiqueta = fila.findViewById(R.id.tvCuando);
-            etiqueta.setText(enCurso ? R.string.envivo_en_curso : R.string.toca_hoy);
-            etiqueta.setVisibility(destacada ? View.VISIBLE : View.GONE);
-            etiqueta.setTextColor(primario);
-            fila.findViewById(R.id.ivRutinaFlecha).setVisibility(View.GONE);
-            if (destacada) {
-                fila.findViewById(R.id.fondoIconoRutina).setBackgroundTintList(ColorStateList.valueOf(primario));
-                ((android.widget.ImageView) fila.findViewById(R.id.ivRutinaIcono))
-                        .setImageTintList(ColorStateList.valueOf(sobrePrimario));
-            }
-
-            android.widget.ImageButton empezar = fila.findViewById(R.id.btnEmpezarFila);
-            empezar.setVisibility(View.VISIBLE);
-            empezar.setContentDescription(enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
-                    : getString(R.string.empezar_rutina_a11y, r.getNombre()));
-            empezar.setOnClickListener(v -> empezar(r));
-
-            fila.setContentDescription(r.getNombre() + ". " + resumen
-                    + (enCurso ? ". " + getString(R.string.envivo_en_curso) : toca ? ". " + getString(R.string.toca_hoy) : ""));
-            fila.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
-            fila.setOnLongClickListener(v -> {
+            // Una tarjeta por rutina (GP-232): zonas, pauta, la última vez con sus barras y ▶.
+            es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.Datos d = new es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.Datos();
+            d.id = r.getId();
+            d.nombre = r.getNombre();
+            d.zonas = textos.zonas(r.getMusculos());
+            d.ejercicios = r.getNumEjercicios();
+            d.minutos = r.getDuracionMinutos();
+            d.ultimas = r.getUltimas();
+            d.cuando = enCurso ? getString(R.string.envivo_en_curso) : toca ? getString(R.string.toca_hoy) : null;
+            d.colorCuando = primario;
+            d.empezarA11y = enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
+                    : getString(R.string.empezar_rutina_a11y, r.getNombre());
+            View tarjeta = es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.pintar(lista, d, textos, entradaRutinas,
+                    () -> empezar(r));
+            tarjeta.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
+            tarjeta.setOnLongClickListener(v -> {
                 MenuRutina.mostrar(requireActivity(), v, r, recargar, this::cargarMisRutinas);
                 return true;
             });
-            lista.addView(fila);
-            if (i < mias.size() - 1) lista.addView(raya());
         }
-    }
-
-    // La raya entre filas, con la sangría del texto.
-    private View raya() {
-        View v = new View(requireContext());
-        v.setBackgroundColor(com.google.android.material.color.MaterialColors.getColor(v,
-                com.google.android.material.R.attr.colorSurfaceVariant));
-        v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        float dp = getResources().getDisplayMetrics().density;
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, Math.max(1, Math.round(dp)));
-        lp.setMarginStart(Math.round(80 * dp));
-        v.setLayoutParams(lp);
-        return v;
     }
 
     private void pintarErrorMisRutinas() {

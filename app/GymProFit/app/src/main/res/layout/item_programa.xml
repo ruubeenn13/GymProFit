@@ -1,78 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_programa — un programa en la lista de Programas (lote 1.2.1): nombre, «Lo sigues»
-  si es el suyo, «3 días · 45–55 min · Intermedio» y, en el recomendado, su porqué.
-  Tocar abre el detalle.
+  item_programa — un programa en la lista de Programas (lote 1.2.1; rehecho en GP-232, tablero
+  «Programas»): el nombre con «Lo sigues» si es el suyo, el nivel con su punto (NivelColor) y
+  «Intermedio, 4 días, de 50 a 55 minutos» en frase, y la tira de su ciclo (Siglas sobre
+  Programa.semana) con el icono de que se repite. Sin barras. Tocar abre el detalle; TalkBack la
+  lee de una vez. El recomendado va en item_programa_recomendado, en la tarjeta protagonista.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.GymProFit.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="@dimen/espacio_12"
     android:clickable="true"
     android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp">
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:padding="@dimen/espacio_16">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:importantForAccessibility="no">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvProgramaNombre"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.GymProFit.Display"
-                android:textSize="@dimen/text_headline" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvLoSigues"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:background="@drawable/bg_chip_zona_hecha"
-                android:text="@string/programas_lo_sigues"
-                android:textSize="@dimen/text_eyebrow"
-                android:textColor="?attr/colorOnPrimaryContainer"
-                android:visibility="gone" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tvProgramaResumen"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="@dimen/text_caption"
-                android:textColor="?attr/colorOnSurfaceVariant" />
+                    <TextView
+                        android:id="@+id/tvProgramaNombre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                        android:textSize="@dimen/text_programa_nombre"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tvLoSigues"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tvProgramaMotivo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorOnSurface"
-                android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/tvLoSigues"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/espacio_8"
+                        android:background="@drawable/bg_chip_zona_hecha"
+                        android:gravity="center_vertical"
+                        android:minHeight="22dp"
+                        android:paddingStart="@dimen/espacio_8"
+                        android:paddingEnd="@dimen/espacio_8"
+                        android:text="@string/programas_lo_sigues"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvProgramaNombre"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:gravity="top"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:id="@+id/puntoNivel"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/bg_punto_nivel" />
+
+                    <TextView
+                        android:id="@+id/tvProgramaResumen"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                        android:textColor="@color/gp_text_secondary" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_chevron_right"
+                app:tint="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_ms_chevron_right"
-            app:tint="?attr/colorOnSurfaceVariant"
-            android:importantForAccessibility="no" />
+        <LinearLayout
+            android:id="@+id/tiraCiclo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/tvProgramaMotivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_12"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+            android:visibility="gone" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

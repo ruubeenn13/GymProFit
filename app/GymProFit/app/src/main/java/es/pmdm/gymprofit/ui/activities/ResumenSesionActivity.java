@@ -113,7 +113,17 @@ public class ResumenSesionActivity extends AppCompatActivity {
             fromRegistrar = true;
         }
 
-        ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
+        MaterialToolbar barra = findViewById(R.id.toolbar);
+        barra.setNavigationOnClickListener(v -> finish());
+        // Borrar desde el resumen (GP-232): el Historial ya no tiene papelera. Aquí sí se pregunta,
+        // porque al salir no queda un «Deshacer» a la vista.
+        android.view.MenuItem borrar = barra.getMenu().add(R.string.resumen_borrar);
+        borrar.setIcon(R.drawable.ic_ms_delete);
+        borrar.setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
+        borrar.setOnMenuItemClickListener(i -> {
+            confirmarBorrar();
+            return true;
+        });
         findViewById(R.id.btnHechoResumen).setOnClickListener(v -> finish());
         scroll = findViewById(R.id.scrollResumen);
         estado = new VistaEstado(findViewById(R.id.estadoResumen));
@@ -124,6 +134,24 @@ public class ResumenSesionActivity extends AppCompatActivity {
         ViewCompat.setAccessibilityHeading(findViewById(R.id.tvRecordsTituloResumen), true);
 
         cargar();
+    }
+
+    private void confirmarBorrar() {
+        es.pmdm.gymprofit.utils.UIHelper.mostrarDialogoConIcono(this, getString(R.string.sesiones_eliminar),
+                getString(R.string.sesiones_confirmar_eliminar), R.drawable.ic_ms_delete, () ->
+                        sesionApi.eliminar(sesionId).enqueue(new ApiCallback<Void>() {
+                            @Override public void onOk(Void ignorado) {
+                                if (isFinishing()) return;
+                                setResult(RESULT_OK);
+                                finish();
+                            }
+                            @Override public void onFail(int code, String message) {
+                                if (isFinishing()) return;
+                                com.google.android.material.snackbar.Snackbar.make(findViewById(android.R.id.content),
+                                        es.pmdm.gymprofit.utils.UiFeedback.mensaje(ResumenSesionActivity.this, code, message),
+                                        5000).show();
+                            }
+                        }));
     }
 
     // ── Carga ───────────────────────────────────────────────────────────────

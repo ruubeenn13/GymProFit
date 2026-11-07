@@ -299,7 +299,8 @@ public class PulidoTest {
         String l = leer(JAVA.resolve("ui/progreso/ListasProgreso.java"));
         assertTrue("dorado solo el récord más reciente, como en la lista", l.contains("boolean dorado = i == 0;"));
         assertTrue(leer(RES.resolve("layout/item_record.xml")).contains("android:minHeight=\"@dimen/fila_alto_min\""));
-        assertTrue(leer(JAVA.resolve("ui/adapters/SesionAdapter.java")).contains("RolBoton.aplicar(btnEliminar)"));
+        // La papelera del historial se fue en GP-232: se borra deslizando o con la acción de TalkBack.
+        assertFalse(leer(RES.resolve("layout/item_sesion.xml")).contains("btnEliminarSesion"));
     }
 
     // Tercera pasada en Progreso: con un punto, sin cuadrícula que cruce su cifra, la cifra en la

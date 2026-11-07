@@ -46,8 +46,32 @@ public class Rutina {
     private Integer programaUsuarioId;
     private String programaCodigo;
     private String programaNombre;
+    // Solo en la lista de activas (GP-232): las series pautadas por músculo, de más a menos, y
+    // sus 6 últimas veces, de la más vieja a la más nueva. Null en el resto de rutas.
+    private java.util.List<es.pmdm.gymprofit.model.sesion.SeriesMusculo> musculos;
+    private java.util.List<es.pmdm.gymprofit.model.sesion.VezRutina> ultimas;
 
     public Rutina() {}
+
+    /** Series pautadas por músculo (GP-232); vacío si la ruta no las trae. */
+    @androidx.annotation.NonNull
+    public java.util.List<es.pmdm.gymprofit.model.sesion.SeriesMusculo> getMusculos() {
+        return musculos != null ? musculos : new java.util.ArrayList<>();
+    }
+
+    public void setMusculos(java.util.List<es.pmdm.gymprofit.model.sesion.SeriesMusculo> musculos) {
+        this.musculos = musculos;
+    }
+
+    /** Sus 6 últimas veces, de la más vieja a la más nueva (GP-232); vacío si nunca se hizo o la ruta no las trae. */
+    @androidx.annotation.NonNull
+    public java.util.List<es.pmdm.gymprofit.model.sesion.VezRutina> getUltimas() {
+        return ultimas != null ? ultimas : new java.util.ArrayList<>();
+    }
+
+    public void setUltimas(java.util.List<es.pmdm.gymprofit.model.sesion.VezRutina> ultimas) {
+        this.ultimas = ultimas;
+    }
 
     // Constructor con los datos básicos para crear una rutina nueva.
     public Rutina(String nombre, String nivel, String descripcion,

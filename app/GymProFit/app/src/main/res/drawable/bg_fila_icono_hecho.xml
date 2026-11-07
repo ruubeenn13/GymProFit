@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- bg_fila_icono_hecho — el círculo de 40 dp del icono de una sesión terminada en una fila
-     (GP-216, lote 4): el contenedor verde de lo hecho. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="@color/gp_success_container" />
-</shape>

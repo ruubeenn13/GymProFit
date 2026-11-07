@@ -23,4 +23,16 @@ public final class NivelColor {
             default:             return R.color.gp_nivel_intermedio;
         }
     }
+
+    /**
+     * El color del nivel sobre la tarjeta protagonista (gp_hero), que es oscura en los dos temas:
+     * el del tema oscuro siempre (GP-232: el de claro, #99620E sobre #3A2110, daba 2,92).
+     */
+    @androidx.annotation.ColorInt
+    public static int sobreHero(@androidx.annotation.NonNull android.content.Context ctx, @Nullable String nivel) {
+        android.content.res.Configuration c = new android.content.res.Configuration(ctx.getResources().getConfiguration());
+        c.uiMode = (c.uiMode & ~android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                | android.content.res.Configuration.UI_MODE_NIGHT_YES;
+        return ctx.createConfigurationContext(c).getColor(de(nivel));
+    }
 }

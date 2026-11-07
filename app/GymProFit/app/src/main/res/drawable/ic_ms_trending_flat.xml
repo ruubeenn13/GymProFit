@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ic_ms_trending_flat — Material Symbols Rounded «trending_flat», peso 400 (GP-232).
+  Importado sin redibujar de @material-symbols/svg-400@0.47.5, rounded/trending_flat.svg.
+  Licencia Apache 2.0 (Google). El viewBox del SVG es 0 -960 960 960: el grupo
+  traslada 960 hacia abajo para que el trazado caiga en el viewport 0..960.
+  Color por defecto ?attr/colorOnSurfaceVariant; quien lo tiñe, manda.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="960" android:viewportHeight="960">
+    <group android:translateY="960">
+        <path
+            android:fillColor="?attr/colorOnSurfaceVariant"
+            android:pathData="M765-449H150q-13 0-21.5-8.5T120-479q0-13 8.5-21.5T150-509h616l-85-85q-9-9-9-21t9-21q9-9 21-9t21 9l136 136q9 9 9 21t-9 21L723-322q-9 9-21 9t-21-9q-9-9-9-21.5t9-21.5l84-84Z"/>
+    </group>
+</vector>

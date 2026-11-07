@@ -116,4 +116,13 @@ public interface SesionApi {
      */
     @GET("sesiones/{id}/resumen")
     Call<ResumenSesion> resumen(@Path("id") int id);
+
+    /**
+     * Una página del historial por semanas (GP-232): lo que pinta cada tarjeta de sesión, sin
+     * otra petición por tarjeta. El usuario sale del token.
+     *
+     * @param antes el cursor «siguiente» de la página anterior, o null para la primera.
+     */
+    @GET("sesiones/historial")
+    Call<es.pmdm.gymprofit.model.sesion.PaginaHistorial> historial(@Query("antes") String antes);
 }

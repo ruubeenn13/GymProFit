@@ -1,26 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- item_elegir_rutina — una fila de la hoja de elegir rutina (GP-105). -->
+<!--
+  item_elegir_rutina — una fila de la hoja «¿Qué rutina hoy?» (GP-105; rehecha en GP-232): el
+  nombre con «Toca hoy» en la que elige HoyToca, las zonas en frase, «La última vez, …», las
+  barras pequeñas de sus últimas veces y ▶. También es la fila de «Empezar sin rutina», con su
+  icono delante y sin lo demás. Toda la fila empieza; TalkBack la lee de una vez.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.GymProFit.FilaAccion"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp">
+    android:minHeight="76dp"
+    android:paddingStart="@dimen/margen_pantalla"
+    android:paddingTop="10dp"
+    android:paddingEnd="@dimen/espacio_16"
+    android:paddingBottom="10dp">
 
     <ImageView
         android:id="@+id/ivIcono"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:importantForAccessibility="no" />
+        android:layout_marginEnd="14dp"
+        android:importantForAccessibility="no"
+        android:visibility="gone"
+        app:tint="?attr/colorOnSurfaceVariant" />
 
-    <LinearLayout style="@style/Widget.GymProFit.FilaAccion.Textos">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvTitulo"
-            style="@style/Widget.GymProFit.FilaAccion.Titulo" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvTocaHoy"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTocaHoy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:background="@drawable/bg_chip_zona_hecha"
+                android:minHeight="22dp"
+                android:paddingStart="@dimen/espacio_8"
+                android:paddingEnd="@dimen/espacio_8"
+                android:gravity="center_vertical"
+                android:text="@string/toca_hoy"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvTitulo"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tvSub"
-            style="@style/Widget.GymProFit.FilaAccion.Sub" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvUltima"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary"
+            android:visibility="gone" />
     </LinearLayout>
+
+    <es.pmdm.gymprofit.ui.widget.BarrasVecesView
+        android:id="@+id/barrasElegir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:visibility="gone"
+        app:barrasAlto="@dimen/barras_fila_alto"
+        app:barrasAncho="@dimen/barras_fila_ancho"
+        app:barrasHueco="@dimen/barras_fila_hueco" />
+
+    <ImageView
+        android:id="@+id/ivEmpezar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_play_arrow_fill"
+        android:visibility="gone"
+        app:tint="?attr/colorPrimary" />
 </LinearLayout>

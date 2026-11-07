@@ -40,6 +40,28 @@ public class SiglasTest {
     }
 
     @Test
+    public void enUnCicloDosNombresDistintosNoCompartenSiglas() {
+        // «Push» y «Pull» darían PU las dos (GP-232): la segunda letra pasa a la primera en que difieren.
+        java.util.Map<String, String> s = Siglas.deCiclo(java.util.Arrays.asList(
+                "Upper A", "Lower A", "Push", "Pull", "Lower B", "Push"));
+        assertEquals("PS", s.get("Push"));
+        assertEquals("PL", s.get("Pull"));
+        // Las que no chocan, como siempre.
+        assertEquals("UA", s.get("Upper A"));
+        assertEquals("LA", s.get("Lower A"));
+        assertEquals("LB", s.get("Lower B"));
+    }
+
+    @Test
+    public void enUnCicloSinChoquesLasDeSiempre() {
+        java.util.Map<String, String> s = Siglas.deCiclo(java.util.Arrays.asList("Empuje", "Tirón", "Pierna", null));
+        assertEquals("EM", s.get("Empuje"));
+        assertEquals("TI", s.get("Tirón"));
+        assertEquals("PI", s.get("Pierna"));
+        assertEquals("—", s.get(null));
+    }
+
+    @Test
     public void sinNombreUnGuion() {
         assertEquals("—", Siglas.de(null));
         assertEquals("—", Siglas.de("   "));

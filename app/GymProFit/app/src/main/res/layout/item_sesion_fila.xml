@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_sesion_fila — una sesión en el Historial de Progreso (GP-232, tablero «Progreso»): fila
+  compacta con la rutina, «Ayer, 13.640 kg y 1 récord» (el récord en dorado), las barras pequeñas
+  de sus últimas veces a la derecha y la flecha. Abre el resumen; TalkBack la lee de una vez.
+  Ya no lleva el ✓ verde igual en todas.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Fila"
+    android:minHeight="72dp"
+    android:paddingEnd="@dimen/espacio_12">
+
+    <LinearLayout
+        style="@style/Widget.GymProFit.Fila.Textos"
+        android:layout_marginStart="0dp"
+        android:importantForAccessibility="noHideDescendants">
+
+        <TextView
+            android:id="@+id/tvTituloFila"
+            style="@style/Widget.GymProFit.Fila.Titulo"
+            android:layout_width="match_parent" />
+
+        <TextView
+            android:id="@+id/tvApoyoFila"
+            style="@style/Widget.GymProFit.Fila.Apoyo"
+            android:layout_width="match_parent" />
+    </LinearLayout>
+
+    <es.pmdm.gymprofit.ui.widget.BarrasVecesView
+        android:id="@+id/barrasFila"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_12"
+        app:barrasAlto="@dimen/barras_fila_alto"
+        app:barrasAncho="@dimen/barras_fila_ancho"
+        app:barrasHueco="@dimen/barras_fila_hueco" />
+
+    <ImageView
+        android:layout_width="@dimen/espacio_24"
+        android:layout_height="@dimen/espacio_24"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_chevron_right"
+        app:tint="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

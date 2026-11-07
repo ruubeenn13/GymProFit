@@ -17,6 +17,10 @@
     <!-- La vista dibuja su propio anillo de foco (la pestaña de la barra, en su píldora; las
          opciones del selector). FocoVisible no le pone otro. -->
     <item name="tag_anillo_propio" type="id"/>
+    <!-- GP-232: la cuenta de los kilos de una tarjeta, para pararla si la fila se recicla. -->
+    <item name="tag_cuenta_kilos" type="id"/>
+    <!-- GP-232: la acción de TalkBack «Borrar …» de una tarjeta del Historial. -->
+    <item name="accion_borrar_sesion" type="id"/>
     <!-- La ventana ya escucha el foco para el anillo. Ver FocoVisible. -->
     <item name="tag_foco_tarjeta" type="id"/>
     <!-- Si la raíz de una pestaña era enfocable antes de apartarla del foco. Ver MainActivity. -->

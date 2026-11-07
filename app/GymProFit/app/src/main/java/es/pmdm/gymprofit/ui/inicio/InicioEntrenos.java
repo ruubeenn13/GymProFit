@@ -8,40 +8,34 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.color.MaterialColors;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.model.record.Record;
-import es.pmdm.gymprofit.model.record.Records;
-import es.pmdm.gymprofit.model.sesion.ResumenSesion;
-import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
+import es.pmdm.gymprofit.model.sesion.PaginaHistorial;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
-import es.pmdm.gymprofit.utils.ExtraEntreno;
-import es.pmdm.gymprofit.utils.FechaUtils;
-import es.pmdm.gymprofit.utils.HistorialSesiones;
+import es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta;
+import es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta;
+import es.pmdm.gymprofit.ui.widget.BarrasVecesView;
+import es.pmdm.gymprofit.utils.CifraTarjeta;
+import es.pmdm.gymprofit.utils.ComparacionSesion;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// InicioEntrenos — «Tus últimos entrenos» de Inicio (GP-216, tablero 13): un carrusel con los
-// cinco últimos entrenos terminados, cada uno con cuándo, la rutina, los kilos y los minutos, y una
-// línea de color con lo que tuvo (ExtraEntreno).
+// InicioEntrenos — «Tus últimos entrenos» de Inicio (GP-216, tablero 13; rehecho en GP-232): un
+// carrusel con los cinco últimos entrenos terminados, cada uno con cuándo, la rutina, los kilos
+// con las barras de sus últimas veces y una sola línea destacada: sus récords en dorado o, si no
+// los hubo, la comparación con la anterior de la misma rutina. Sin récords ni comparación, nada:
+// ya no sale «Sin récords».
 //
-// La lista de sesiones no trae kilos ni la sesión anterior: salen de GET /sesiones/{id}/resumen,
-// una sola vez por sesión (una sesión terminada no cambia, así que se guarda). Los récords de cada
-// sesión salen de la lista de récords vigentes, por su sesión: cuenta los que siguen en pie, un
-// récord que otro después superó ya no se cuenta. Cada tarjeta abre el resumen de esa sesión.
+// Todo sale de la primera página de GET /sesiones/historial, una petición: ya no se pide el
+// resumen de cada tarjeta. Los récords son los que batió cada sesión ese día, como en el
+// Historial y en el resumen; uno superado después sigue contando en su sesión.
 // ============================================================
 public final class InicioEntrenos {
 
@@ -51,178 +45,128 @@ public final class InicioEntrenos {
     private final Fragment fragment;
     private final View raiz;
     private final VistaEstado estado;
+    private final Runnable alCargar;
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
-    // Resúmenes ya pedidos, por sesión: una sesión terminada no cambia.
-    private final Map<Integer, ResumenSesion> resumenes = new HashMap<>();
-    private final Map<Integer, View> tarjetas = new HashMap<>();
+    private final EntradaTarjeta entrada = new EntradaTarjeta();
+    @Nullable private PaginaHistorial pagina;
+    private int tanda;
 
-    @Nullable private List<SesionEntrenamiento> sesiones;
-    @Nullable private Records records;
-    private boolean recordsListos;
-
-    public InicioEntrenos(@NonNull Fragment fragment, @NonNull View raiz, @NonNull Runnable abrirHistorial) {
+    /**
+     * @param alCargar avisa cuando llegan los entrenos (Profi dice los récords de la última).
+     */
+    public InicioEntrenos(@NonNull Fragment fragment, @NonNull View raiz, @NonNull Runnable abrirHistorial,
+                          @NonNull Runnable alCargar) {
         this.fragment = fragment;
         this.raiz = raiz;
+        this.alCargar = alCargar;
         this.estado = new VistaEstado(raiz.findViewById(R.id.estadoEntrenos));
         raiz.findViewById(R.id.enlaceEntrenos).setOnClickListener(v -> abrirHistorial.run());
     }
 
-    /** Las sesiones del usuario, en cualquier orden. */
-    public void setSesiones(@Nullable List<SesionEntrenamiento> sesiones) {
-        this.sesiones = sesiones;
-        pintar();
-    }
-
-    /** Los récords vigentes (o null si no llegaron): con ellos se cuenta lo de cada sesión. */
-    public void setRecords(@Nullable Records records) {
-        this.records = records;
-        this.recordsListos = true;
-        pintar();
-    }
-
-    /** Las sesiones no llegaron: se dice dentro de la sección. */
-    public void fallo(int code, @Nullable String message, @NonNull Runnable alReintentar) {
-        raiz.findViewById(R.id.scrollEntrenos).setVisibility(View.GONE);
-        estado.error(VistaEstado.mensaje(fragment.requireContext(), R.string.inicio_entrenos_error, code, message),
-                alReintentar);
-    }
-
-    /** Los récords batidos en esa sesión: los vigentes que salieron de ella. */
-    public static int recordsDe(@Nullable Records records, int sesionId) {
-        if (records == null) return 0;
-        int n = 0;
-        for (Record r : records.getRecords()) {
-            if (r.getSesionId() != null && r.getSesionId() == sesionId) n++;
+    /** Pide la primera página del historial. Lo que ya se ve se queda hasta que llega lo nuevo. */
+    public void cargar() {
+        int esta = ++tanda;
+        if (pagina == null) {
+            raiz.findViewById(R.id.scrollEntrenos).setVisibility(View.GONE);
+            estado.cargando();
         }
-        return n;
+        sesionApi.historial(null).enqueue(new ApiCallback<PaginaHistorial>() {
+            @Override
+            public void onOk(PaginaHistorial p) {
+                if (!fragment.isAdded() || esta != tanda) return;
+                pagina = p;
+                pintar();
+                alCargar.run();
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                if (!fragment.isAdded() || esta != tanda) return;
+                if (pagina != null) return;   // Lo que había se queda.
+                raiz.findViewById(R.id.scrollEntrenos).setVisibility(View.GONE);
+                estado.error(VistaEstado.mensaje(fragment.requireContext(), R.string.inicio_entrenos_error, code,
+                        message), InicioEntrenos.this::cargar);
+            }
+        });
+    }
+
+    /** Los récords que batió la última sesión terminada; -1 mientras no se sabe. */
+    public int recordsDeLaUltima() {
+        if (pagina == null) return -1;
+        List<PaginaHistorial.Sesion> s = pagina.sesiones();
+        return s.isEmpty() ? 0 : s.get(0).getRecords();
     }
 
     // ── Pintar ───────────────────────────────────────────────────────────────
 
     private void pintar() {
-        if (!fragment.isAdded() || sesiones == null) return;
-        List<SesionEntrenamiento> ultimas = new ArrayList<>();
-        for (SesionEntrenamiento s : HistorialSesiones.masRecientePrimero(sesiones)) {
-            if (s.isCompletada()) ultimas.add(s);
-            if (ultimas.size() == MAXIMO) break;
-        }
+        List<PaginaHistorial.Sesion> todas = pagina == null ? java.util.Collections.emptyList() : pagina.sesiones();
         View scroll = raiz.findViewById(R.id.scrollEntrenos);
-        if (ultimas.isEmpty()) {
+        if (todas.isEmpty()) {
             scroll.setVisibility(View.GONE);
             estado.vacio(R.string.inicio_entrenos_vacio);
             return;
         }
         estado.oculto();
         scroll.setVisibility(View.VISIBLE);
-
+        TextosTarjeta textos = new TextosTarjeta(fragment.requireContext());
         LinearLayout lista = raiz.findViewById(R.id.listaEntrenos);
         lista.removeAllViews();
-        tarjetas.clear();
         LayoutInflater inflater = LayoutInflater.from(fragment.requireContext());
-        for (SesionEntrenamiento s : ultimas) {
+        for (PaginaHistorial.Sesion s : todas.subList(0, Math.min(MAXIMO, todas.size()))) {
             View tarjeta = inflater.inflate(R.layout.item_ultimo_entreno, lista, false);
-            tarjetas.put(s.getId(), tarjeta);
             lista.addView(tarjeta);
-            rellenar(tarjeta, s);
-            if (!resumenes.containsKey(s.getId())) pedirResumen(s);
+            rellenar(tarjeta, s, textos);
         }
     }
 
-    private void rellenar(View tarjeta, SesionEntrenamiento s) {
-        String cuando = FechaUtils.diaRelativo(fragment.requireContext(), s.getFechaInicio());
-        String rutina = s.getRutinaNombre() != null ? s.getRutinaNombre() : fragment.getString(R.string.hecho_hoy_libre);
+    private void rellenar(View tarjeta, PaginaHistorial.Sesion s, TextosTarjeta textos) {
+        String cuando = textos.cuandoRelativo(s.getFechaInicio());
+        String rutina = textos.titulo(s);
         ((TextView) tarjeta.findViewById(R.id.tvEntrenoCuando)).setText(cuando);
         ((TextView) tarjeta.findViewById(R.id.tvEntrenoRutina)).setText(rutina);
-        String minutos = fragment.getString(R.string.duracion_min, s.getDuracionMinutos());
-        ((TextView) tarjeta.findViewById(R.id.tvEntrenoMin)).setText(minutos);
+        TextView kilos = tarjeta.findViewById(R.id.tvEntrenoKilos);
+        BarrasVecesView barras = tarjeta.findViewById(R.id.barrasEntreno);
+        TextView destaca = tarjeta.findViewById(R.id.tvEntrenoExtra);
 
-        TextView tvKilos = tarjeta.findViewById(R.id.tvEntrenoKilos);
-        TextView tvExtra = tarjeta.findViewById(R.id.tvEntrenoExtra);
-        ResumenSesion resumen = resumenes.get(s.getId());
-        String kilos = null;
-        String extra = null;
-        if (resumen != null && resumen.getVolumenKg() > 0) {
-            kilos = fragment.getString(R.string.inicio_kilos_n, java.text.NumberFormat.getIntegerInstance(
-                    FechaUtils.localeDeLaApp(fragment.requireContext())).format(Math.round(resumen.getVolumenKg())));
-            tvKilos.setText(kilos);
+        StringBuilder a11y = new StringBuilder(rutina);
+        String cuandoA11y = textos.cuandoA11y(s.getFechaInicio());
+        if (!cuandoA11y.isEmpty()) a11y.append(", ").append(cuandoA11y);
+        a11y.append(". ");
+        CifraTarjeta cifra = textos.cifra(s);
+        textos.pintarCifra(kilos, cifra, entrada, "s:" + s.getId(), R.style.TextAppearance_GymProFit_Cifra_Pequena,
+                R.dimen.text_tarjeta_kg_carrusel, barras,
+                s.esLibre() ? java.util.Collections.emptyList() : s.getBarras());
+        a11y.append(textos.cifraA11y(cifra));
+        if (cifra.esAviso()) {
+            // Un aviso: debajo, los minutos (si se saben), sin icono y en el texto secundario.
+            String minutos = textos.minutos(s);
+            // En la letra de apoyo, no en la de la línea destacada: no es un dato que destaque.
+            destaca.setTextAppearance(R.style.TextAppearance_GymProFit_Apoyo_Pequeno);
+            textos.pintarNeutra(destaca, minutos);
+            a11y.append('.');
+            if (!minutos.isEmpty()) a11y.append(' ').append(minutos).append('.');
+        } else if (s.getRecords() > 0) {
+            // Una sola línea destacada: el récord manda sobre la comparación.
+            textos.pintarRecords(destaca, s.getRecords());
+            a11y.append(fragment.getString(R.string.enumeracion_y)).append(destaca.getText()).append('.');
         } else {
-            tvKilos.setText(null);
+            // Sin kilos no hay comparación: entonces, sin línea destacada.
+            ComparacionSesion c = textos.comparacion(s);
+            textos.pintarComparacion(destaca, c);
+            if (c != null) a11y.append(", ").append(Character.toLowerCase(destaca.getText().charAt(0)))
+                    .append(destaca.getText().subSequence(1, destaca.getText().length()));
+            a11y.append('.');
         }
-        tvKilos.setVisibility(kilos == null ? View.GONE : View.VISIBLE);
-
-        // La línea de color espera los dos datos: sin ellos diría «Sin récords» sin saberlo.
-        if (resumen != null && recordsListos) {
-            ResumenSesion.SesionAnterior ant = resumen.getAnterior();
-            ExtraEntreno e = ExtraEntreno.de(recordsDe(records, s.getId()), resumen.getVolumenKg(),
-                    ant == null ? 0 : ant.getVolumenKg());
-            extra = pintarExtra(tvExtra, e);
-        } else {
-            tvExtra.setText(null);
-            tvExtra.setVisibility(View.GONE);
-        }
-
-        tarjeta.setContentDescription(cuando + ". " + rutina + ". " + (kilos == null ? "" : kilos + ". ")
-                + minutos + (extra == null ? "" : ". " + extra));
+        String b = s.esLibre() || !cifra.conKilos() ? null : textos.barrasA11y(s.getBarras());
+        if (b != null) a11y.append(' ').append(b).append('.');
+        tarjeta.setContentDescription(a11y.toString());
         tarjeta.setOnClickListener(v -> abrirResumen(s, v));
     }
 
-    // La línea de color de un entreno: dorado con récords, verde si sube, neutro si no.
-    private String pintarExtra(TextView tv, ExtraEntreno e) {
-        String texto;
-        int color;
-        switch (e.tipo) {
-            case RECORDS:
-                texto = fragment.getResources().getQuantityString(R.plurals.inicio_entreno_records, e.n, e.n);
-                color = ContextCompat.getColor(fragment.requireContext(), R.color.gp_gold_text);
-                break;
-            case SUBE:
-                texto = fragment.getString(R.string.inicio_entreno_sube, e.n);
-                color = ContextCompat.getColor(fragment.requireContext(), R.color.gp_success);
-                break;
-            case BAJA:
-                texto = fragment.getString(R.string.inicio_entreno_baja, e.n);
-                color = MaterialColors.getColor(tv, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                break;
-            default:
-                texto = fragment.getString(R.string.inicio_entreno_sin_records);
-                color = MaterialColors.getColor(tv, com.google.android.material.R.attr.colorOnSurfaceVariant);
-                break;
-        }
-        tv.setText(texto);
-        tv.setTextColor(color);
-        tv.setVisibility(View.VISIBLE);
-        return texto;
-    }
-
-    private void pedirResumen(SesionEntrenamiento s) {
-        sesionApi.resumen(s.getId()).enqueue(new ApiCallback<ResumenSesion>() {
-            @Override
-            public void onOk(ResumenSesion r) {
-                if (r == null || !fragment.isAdded()) return;
-                resumenes.put(s.getId(), r);
-                View tarjeta = tarjetas.get(s.getId());
-                if (tarjeta != null) rellenar(tarjeta, s);
-            }
-
-            @Override
-            public void onFail(int code, String message) {
-                // Se ignora a propósito: sin el resumen la tarjeta se queda con su rutina y sus minutos,
-                // que ya dicen lo esencial, y abrirla pide el resumen entero y sí enseña su fallo.
-            }
-        });
-    }
-
-    private void abrirResumen(SesionEntrenamiento s, View tarjeta) {
+    private void abrirResumen(PaginaHistorial.Sesion s, View tarjeta) {
         Intent intent = new Intent(fragment.requireContext(), ResumenSesionActivity.class);
         intent.putExtra("sesionId", s.getId());
         Transiciones.abrirTarjeta(fragment.requireActivity(), tarjeta, intent);
-    }
-
-    /** Para quien necesita saber cuántos récords tuvo la última sesión terminada de la lista. */
-    public static int recordsDeLaUltima(@Nullable List<SesionEntrenamiento> sesiones, @Nullable Records records) {
-        for (SesionEntrenamiento s : HistorialSesiones.masRecientePrimero(sesiones)) {
-            if (s.isCompletada()) return recordsDe(records, s.getId());
-        }
-        return 0;
     }
 }

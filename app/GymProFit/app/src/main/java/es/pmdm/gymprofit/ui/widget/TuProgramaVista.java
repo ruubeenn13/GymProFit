@@ -64,6 +64,9 @@ public class TuProgramaVista {
 
     @Nullable private ProgramaQueSigue ultimo;
     @Nullable private Map<Integer, Ejercicio> catalogo;
+    // Las últimas veces de cada rutina, por id (GP-232).
+    private final Map<Integer, java.util.List<es.pmdm.gymprofit.model.sesion.VezRutina>> ultimas = new java.util.HashMap<>();
+    private final es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta entrada = new es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta();
 
     public TuProgramaVista(View raiz, Acciones acciones) {
         this.ctx = raiz.getContext();
@@ -197,45 +200,43 @@ public class TuProgramaVista {
         LinearLayout lista = raiz.findViewById(R.id.listaRestoPrograma);
         lista.removeAllViews();
         if (!hay) return;
-        LayoutInflater inflater = LayoutInflater.from(ctx);
+        // Una tarjeta por rutina (GP-232): cuándo toca, zonas, pauta y la última vez con sus barras.
         int primario = color(androidx.appcompat.R.attr.colorPrimary);
-        int sobrePrimario = color(com.google.android.material.R.attr.colorOnPrimary);
+        int apagado = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
+        es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta textos = new es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta(ctx);
         for (int i = 0; i < rutinas.size(); i++) {
             RutinaConEjercicios r = rutinas.get(i);
-            View fila = inflater.inflate(R.layout.item_rutina_fila, lista, false);
-            ((TextView) fila.findViewById(R.id.tvNombre)).setText(r.getNombre());
-            String musculos = musculos(r);
-            String resumen = resumen(ctx, r);
-            TextView tvMusculos = fila.findViewById(R.id.tvMusculos);
-            tvMusculos.setText(musculos.isEmpty() ? resumen : musculos);
-            TextView tvResumen = fila.findViewById(R.id.tvResumen);
-            tvResumen.setText(resumen);
-            tvResumen.setVisibility(musculos.isEmpty() ? View.GONE : View.VISIBLE);
-
             boolean enCurso = enCurso(r);
             CuandoTocaRutina c = CuandoTocaRutina.de(i);
-            String cuando = enCurso ? ctx.getString(R.string.envivo_en_curso) : cuando(c);
-            TextView tvCuando = fila.findViewById(R.id.tvCuando);
-            tvCuando.setText(cuando);
+            es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.Datos d = new es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.Datos();
+            d.id = r.getId();
+            d.nombre = r.getNombre();
+            d.zonas = textos.zonasEnFrase(zonas(r));
+            d.ejercicios = r.getEjercicios() != null && !r.getEjercicios().isEmpty() ? r.getEjercicios().size()
+                    : r.getNumEjercicios();
+            d.minutos = r.getDuracionMinutos();
+            java.util.List<es.pmdm.gymprofit.model.sesion.VezRutina> u = ultimas.get(r.getId());
+            d.ultimas = u != null ? u : java.util.Collections.emptyList();
+            d.cuando = enCurso ? ctx.getString(R.string.envivo_en_curso) : cuando(c);
             // El de hoy, en el naranja de la marca; los demás, apagados.
-            boolean toca = c.tipo == CuandoTocaRutina.Tipo.HOY || enCurso;
-            tvCuando.setTextColor(toca ? primario : color(com.google.android.material.R.attr.colorOnSurfaceVariant));
-            View fondo = fila.findViewById(R.id.fondoIconoRutina);
-            fondo.setBackgroundTintList(toca ? ColorStateList.valueOf(primario) : null);
-            ((android.widget.ImageView) fila.findViewById(R.id.ivRutinaIcono)).setImageTintList(
-                    toca ? ColorStateList.valueOf(sobrePrimario)
-                            : ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnSurface)));
-
-            fila.setContentDescription(r.getNombre() + ". " + (musculos.isEmpty() ? "" : musculos + ". ") + resumen
-                    + ". " + cuando);
-            fila.setOnClickListener(v -> acciones.abrirRutina(r, v));
-            fila.setOnLongClickListener(v -> {
+            d.colorCuando = c.tipo == CuandoTocaRutina.Tipo.HOY || enCurso ? primario : apagado;
+            View tarjeta = es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.pintar(lista, d, textos, entrada, null);
+            tarjeta.setOnClickListener(v -> acciones.abrirRutina(r, v));
+            tarjeta.setOnLongClickListener(v -> {
                 acciones.menuRutina(v, r);
                 return true;
             });
-            lista.addView(fila);
-            if (i < rutinas.size() - 1) lista.addView(raya());
         }
+    }
+
+    /**
+     * Las últimas veces de cada rutina (GP-232), de la lista de activas: las del programa son
+     * también rutinas del usuario. Repinta si ya había programa.
+     */
+    public void setUltimas(@androidx.annotation.NonNull java.util.List<es.pmdm.gymprofit.model.rutina.Rutina> activas) {
+        ultimas.clear();
+        for (es.pmdm.gymprofit.model.rutina.Rutina r : activas) ultimas.put(r.getId(), r.getUltimas());
+        if (ultimo != null) pintar(ultimo);
     }
 
     private String cuando(CuandoTocaRutina c) {
@@ -246,32 +247,25 @@ public class TuProgramaVista {
         }
     }
 
-    // Los músculos que trabaja, de más a menos series: «Pecho · Espalda · Hombros» (hasta tres).
-    private String musculos(RutinaConEjercicios r) {
-        if (catalogo == null || r.getEjercicios() == null) return "";
+    // Las zonas que trabaja, de más a menos series (como mucho tres), del catálogo (ZonasDelDia).
+    private java.util.List<Zonas.Zona> zonas(RutinaConEjercicios r) {
+        if (catalogo == null || r.getEjercicios() == null) return new ArrayList<>();
         List<ZonasDelDia.Ejercicio> lista = new ArrayList<>();
         for (RutinaEjercicio re : r.getEjercicios()) {
             Ejercicio e = catalogo.get(re.getEjercicioId());
             lista.add(new ZonasDelDia.Ejercicio(e == null ? null
                     : Musculos.normalizar(e.getMusculoPrimario(), e.getGrupoMuscular()), re.getSeries()));
         }
+        return ZonasDelDia.de(lista).zonas;
+    }
+
+    // Los músculos del bloque «Hoy», como estaban: «Pecho · Espalda · Hombros» (hasta tres).
+    private String musculos(RutinaConEjercicios r) {
         List<String> nombres = new ArrayList<>();
-        for (Zonas.Zona z : ZonasDelDia.de(lista).zonas) {
+        for (Zonas.Zona z : zonas(r)) {
             if (nombres.size() < 3) nombres.add(ctx.getString(z.titulo));
         }
         return android.text.TextUtils.join(" · ", nombres);
-    }
-
-    private View raya() {
-        View v = new View(ctx);
-        v.setBackgroundColor(color(com.google.android.material.R.attr.colorSurfaceVariant));
-        v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        float dp = ctx.getResources().getDisplayMetrics().density;
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, Math.max(1, Math.round(dp)));
-        lp.setMarginStart(Math.round(80 * dp));
-        v.setLayoutParams(lp);
-        return v;
     }
 
     // ── Ciclo ───────────────────────────────────────────────────────────────
@@ -350,6 +344,9 @@ public class TuProgramaVista {
         int neutro = color(com.google.android.material.R.attr.colorSurfaceVariant);
         int apoyo = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         StringBuilder voz = new StringBuilder();
+        java.util.List<String> delCiclo = new java.util.ArrayList<>();
+        for (ProgramaQueSigue.DiaCiclo d : ciclo) delCiclo.add(d.getRutinaNombre());
+        java.util.Map<String, String> todas = Siglas.deCiclo(delCiclo);
         for (int i = 0; i < ciclo.size() && i < dias.size(); i++) {
             ProgramaQueSigue.DiaCiclo d = ciclo.get(i);
             View v = inflater.inflate(R.layout.item_dia_programa, tira, false);
@@ -357,7 +354,7 @@ public class TuProgramaVista {
             v.setLayoutParams(lp);
             ((TextView) v.findViewById(R.id.tvDiaNumero)).setText(String.valueOf(i + 1));
             TextView siglas = v.findViewById(R.id.tvDiaSiglas);
-            siglas.setText(Siglas.de(d.getRutinaNombre()));
+            siglas.setText(todas.get(d.getRutinaNombre()));
             GradientDrawable fondo = new GradientDrawable();
             fondo.setShape(GradientDrawable.OVAL);
             int estadoTxt;

@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_ultimo_entreno — un entreno del carrusel «Tus últimos entrenos» de Inicio (GP-216,
-  tablero 13): cuándo, la rutina, los kilos y los minutos, y una línea de color con lo que
-  tuvo (récords en dorado, subida en verde, lo demás en neutro). La rellena InicioEntrenos.
-  Pulsable: abre el resumen de esa sesión y la tarjeta crece hasta él.
+  tablero 13; rehecho en GP-232): cuándo («Ayer, martes»), la rutina, los kilos con las barras
+  pequeñas de sus últimas veces (bajan bajo los kilos si no caben) y una sola línea destacada:
+  los récords en dorado o, si no hubo, la comparación con la anterior. La rellena
+  InicioEntrenos. Pulsable: abre el resumen de esa sesión y la tarjeta crece hasta él.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.GymProFit.Card.Pequena"
     android:layout_width="220dp"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:importantForAccessibility="noHideDescendants"
         android:orientation="vertical"
         android:padding="@dimen/espacio_16">
 
@@ -22,44 +25,47 @@
             android:id="@+id/tvEntrenoCuando"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="@color/gp_text_secondary" />
 
+        <!-- La rutina en dos líneas como mucho: a letra 1,3 no se corta («Torso y pierna B»). -->
         <TextView
             android:id="@+id/tvEntrenoRutina"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/espacio_8"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+            android:layout_marginTop="6dp"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
-        <LinearLayout
+        <es.pmdm.gymprofit.ui.widget.FilaQueBaja
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/espacio_8"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/espacio_8">
 
             <TextView
                 android:id="@+id/tvEntrenoKilos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
 
-            <TextView
-                android:id="@+id/tvEntrenoMin"
+            <es.pmdm.gymprofit.ui.widget.BarrasVecesView
+                android:id="@+id/barrasEntreno"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/espacio_12"
-                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
-                android:textColor="?attr/colorOnSurface" />
-        </LinearLayout>
+                app:barrasAlto="@dimen/barras_carrusel_alto"
+                app:barrasAncho="@dimen/barras_carrusel_ancho"
+                app:barrasHueco="@dimen/barras_carrusel_hueco" />
+        </es.pmdm.gymprofit.ui.widget.FilaQueBaja>
 
         <TextView
             android:id="@+id/tvEntrenoExtra"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/espacio_8"
-            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+            android:drawablePadding="@dimen/espacio_4"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+            android:textStyle="bold"
+            android:visibility="gone" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

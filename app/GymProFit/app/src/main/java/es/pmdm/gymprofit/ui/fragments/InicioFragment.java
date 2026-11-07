@@ -149,7 +149,7 @@ public class InicioFragment extends BaseFragment {
         tuDia = new InicioTuDia(this, view, prefsManager, () -> irATab(NavTabs.NUTRICION), this::registrarComida,
                 this::alTenerComidas);
         progreso = new InicioProgreso(this, view, prefsManager, () -> irATab(NavTabs.PROGRESO), this::alTenerRecords);
-        entrenos = new InicioEntrenos(this, view, () -> irAProgreso(ProgresoFragment.HISTORIAL));
+        entrenos = new InicioEntrenos(this, view, () -> irAProgreso(ProgresoFragment.HISTORIAL), this::pintarProfi);
         estadoMusculos = new VistaEstado(view.findViewById(R.id.estadoMusculos));
         findViewById(R.id.enlaceMusculos).setOnClickListener(v -> irAProgreso(ProgresoFragment.RECORDS));
         prepararPrimerDia();
@@ -183,6 +183,7 @@ public class InicioFragment extends BaseFragment {
     private void cargarTodo() {
         cargarHoyTocaYSemana();
         cargarVolumenSemana();
+        entrenos.cargar();
         progreso.cargar();
         tuDia.cargar();
     }
@@ -227,14 +228,15 @@ public class InicioFragment extends BaseFragment {
         d.entrenadoHoy = HoyToca.sesionDeHoy(sesiones, TiempoRelativo.hoy()) != null;
         if (d.hayEntrenos) {
             d.ultimaRutina = hechas.get(0).getRutinaNombre();
-            d.recordsUltima = InicioEntrenos.recordsDe(records, hechas.get(0).getId());
+            // Los que batió ese día, como en el Historial (GP-232); -1 mientras no llegan.
+            d.recordsUltima = Math.max(0, entrenos.recordsDeLaUltima());
         }
         d.rutinaHoy = eleccion == null ? null : eleccion.rutina.getNombre();
         d.primerEjercicioHoy = primerEjercicioHoy;
         d.sesionesSemana = contarSemana();
         d.proteinaFalta = proteinaFalta;
         // Los récords de la última sesión se saben cuando llegan: antes, Profi no los da por ceros.
-        if (!recordsListos) d.recordsUltima = 0;
+        if (entrenos.recordsDeLaUltima() < 0) d.recordsUltima = 0;
 
         FraseProfi f = FraseProfi.elegir(d);
         CharSequence texto = textoProfi(f);
@@ -295,7 +297,6 @@ public class InicioFragment extends BaseFragment {
     private void alTenerRecords(@Nullable Records r) {
         records = r;
         recordsListos = true;
-        entrenos.setRecords(r);
         pintarProfi();
     }
 
@@ -356,7 +357,6 @@ public class InicioFragment extends BaseFragment {
         if (!isAdded() || falloHoyToca) return;
         falloHoyToca = true;
         pintarHoyTocaError();
-        entrenos.fallo(code, message, this::cargarHoyTocaYSemana);
         ((TextView) findViewById(R.id.tvSemanaResumen)).setText(R.string.semana_error);
         pintarProfi();
     }
@@ -366,7 +366,6 @@ public class InicioFragment extends BaseFragment {
         if (--pendientesHoyToca > 0) return;
         pintarHoyToca();
         pintarSemanaSesiones();
-        entrenos.setSesiones(sesiones);
         pintarPrimerDia();
         pintarProfi();
     }
@@ -599,7 +598,10 @@ public class InicioFragment extends BaseFragment {
     }
 
     private void elegirRutina() {
-        ElegirRutinaHoja.mostrar(requireActivity(), propias != null ? propias : new ArrayList<>(), this::empezar);
+        // «Toca hoy» en la que elige HoyToca, la misma de la tarjeta de arriba (GP-232).
+        HoyToca.Eleccion e = sesiones == null || propias == null ? null : HoyToca.elegir(seguido, propias, sesiones);
+        ElegirRutinaHoja.mostrar(requireActivity(), propias != null ? propias : new ArrayList<>(),
+                e == null ? null : e.rutina.getId(), this::empezar);
     }
 
     // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,

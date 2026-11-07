@@ -59,24 +59,23 @@
                 android:text="@string/mis_rutinas"
                 android:textAppearance="@style/TextAppearance.GymProFit.Seccion" />
 
-            <com.google.android.material.card.MaterialCardView
+            <!-- Una tarjeta por rutina (GP-232): item_rutina_tarjeta, que pinta TarjetaRutina. -->
+            <LinearLayout
                 android:id="@+id/cardMisRutinas"
-                style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
                 android:layout_marginTop="@dimen/espacio_12"
                 android:layout_marginEnd="@dimen/margen_pantalla"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/listaMisRutinas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingTop="@dimen/espacio_4"
-                    android:paddingBottom="@dimen/espacio_4" />
-            </com.google.android.material.card.MaterialCardView>
+                    android:orientation="vertical" />
+            </LinearLayout>
 
             <!-- Sin rutinas propias -->
             <LinearLayout
