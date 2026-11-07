@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_hero_cuadro — un cuadro de cifra en la cabecera de Apuntar entreno (GP-241): duración, kilos y
+  series. Radio de miniatura (16) en gp_hero_superficie; el de la duración se pulsa y lleva la capa.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/capa_hero">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/gp_hero_superficie" />
+            <corners android:radius="@dimen/radio_miniatura" />
+        </shape>
+    </item>
+</ripple>

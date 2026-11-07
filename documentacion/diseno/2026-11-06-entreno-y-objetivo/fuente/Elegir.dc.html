@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Elegir la rutina del entreno</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700;800&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+</style>
+</helmet>
+<div style="width: 390px; height: 820px; overflow: hidden; box-sizing: border-box; background: #040405; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; justify-content: flex-end">
+<section aria-labelledby="el-titulo" style="box-sizing: border-box; padding: 8px 0 24px; border-radius: 28px 28px 0 0; background: #1B1E24; display: flex; flex-direction: column">
+<span aria-hidden="true" style="align-self: center; width: 32px; height: 4px; margin: 8px 0 12px; border-radius: 2px; background: #676F7E"></span>
+<div style="padding: 0 8px 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<h2 id="el-titulo" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; line-height: 32px">¿Qué entrenaste?</h2>
+<button type="button" aria-label="Cerrar" style="width: 48px; height: 48px; padding: 0; border: 0; border-radius: 24px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">close</span></button>
+</div>
+
+<div role="radiogroup" aria-labelledby="el-titulo" style="display: flex; flex-direction: column">
+<span style="margin: 8px 20px 4px; font-size: 13px; line-height: 18px; font-weight: 600; color: #A1A9B6">De tu programa, Cuerpo completo</span>
+<sc-for list="{{ programa }}" as="r" hint-placeholder-count="3">
+<button type="button" role="radio" aria-checked="{{ r.marcada }}" aria-label="{{ r.a11y }}" style="min-height: 80px; box-sizing: border-box; margin: 0 8px; padding: 10px 12px; border: 0; border-radius: 18px; background: {{ r.fondo }}; color: #F2F2F3; text-align: left; display: flex; align-items: center; gap: 12px; cursor: pointer">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 21px; font-weight: 600">{{ r.nombre }}</span><sc-if value="{{ r.hoy }}" hint-placeholder-val="{{ false }}"><span style="height: 22px; padding: 0 8px; border-radius: 11px; background: #3A2110; color: #FFB27A; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center">Toca hoy</span></sc-if></span>
+<span style="font-family: 'Barlow', sans-serif; font-size: 13px; line-height: 17px; color: #A1A9B6">{{ r.zonas }}</span>
+<span style="font-family: 'Barlow', sans-serif; font-size: 13px; line-height: 17px; color: #A1A9B6">{{ r.ultima }}</span>
+</span>
+<span aria-hidden="true" style="height: 24px; display: flex; align-items: flex-end; gap: 3px">
+<sc-for list="{{ r.barras }}" as="b" hint-placeholder-count="6"><span style="width: 5px; height: {{ b.alto }}; border-radius: 2px 2px 0 0; background: {{ b.color }}"></span></sc-for>
+</span>
+<span class="ms f" aria-hidden="true" style="width: 24px; color: #FF6A00; opacity: {{ r.check }}">check_circle</span>
+</button>
+</sc-for>
+
+<span style="margin: 16px 20px 4px; font-size: 13px; line-height: 18px; font-weight: 600; color: #A1A9B6">Tus rutinas</span>
+<sc-for list="{{ tuyas }}" as="r" hint-placeholder-count="3">
+<button type="button" role="radio" aria-checked="{{ r.marcada }}" aria-label="{{ r.a11y }}" style="min-height: 80px; box-sizing: border-box; margin: 0 8px; padding: 10px 12px; border: 0; border-radius: 18px; background: {{ r.fondo }}; color: #F2F2F3; text-align: left; display: flex; align-items: center; gap: 12px; cursor: pointer">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+<span style="font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 21px; font-weight: 600">{{ r.nombre }}</span>
+<span style="font-family: 'Barlow', sans-serif; font-size: 13px; line-height: 17px; color: #A1A9B6">{{ r.zonas }}</span>
+<span style="font-family: 'Barlow', sans-serif; font-size: 13px; line-height: 17px; color: #A1A9B6">{{ r.ultima }}</span>
+</span>
+<span aria-hidden="true" style="height: 24px; display: flex; align-items: flex-end; gap: 3px">
+<sc-for list="{{ r.barras }}" as="b" hint-placeholder-count="3"><span style="width: 5px; height: {{ b.alto }}; border-radius: 2px 2px 0 0; background: {{ b.color }}"></span></sc-for>
+</span>
+<span class="ms f" aria-hidden="true" style="width: 24px; color: #FF6A00; opacity: {{ r.check }}">check_circle</span>
+</button>
+</sc-for>
+
+<span aria-hidden="true" style="height: 1px; margin: 12px 20px; background: #353A43"></span>
+<button type="button" role="radio" aria-checked="false" style="min-height: 72px; box-sizing: border-box; margin: 0 8px; padding: 10px 12px; border: 0; border-radius: 18px; background: transparent; color: #F2F2F3; text-align: left; display: flex; align-items: center; gap: 14px; cursor: pointer">
+<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px; background: #252A31; color: #FFB27A; display: flex; align-items: center; justify-content: center"><span class="ms" aria-hidden="true">bolt</span></span>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'Barlow', sans-serif; font-size: 16px; line-height: 21px; font-weight: 600">Entreno libre</span><span style="font-family: 'Barlow', sans-serif; font-size: 13px; line-height: 17px; color: #A1A9B6">Sin rutina: añades tú los ejercicios</span></span>
+</button>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const barras = (kilos, record) => {
+      const max = Math.max(...kilos);
+      return kilos.map((k, i) => ({
+        alto: Math.round(k / max * 24) + 'px',
+        color: i === kilos.length - 1 ? '#FF6A00' : (record.includes(i) ? '#E8B84B' : '#676F7E')
+      }));
+    };
+    const fila = (nombre, zonas, ultima, b, marcada, hoy) => ({
+      nombre, zonas, ultima, marcada, hoy,
+      barras: b,
+      check: marcada ? 1 : 0,
+      fondo: marcada ? '#252A31' : 'transparent',
+      a11y: nombre + (hoy ? ', la que toca hoy' : '') + '. ' + zonas + '. ' + ultima + '.'
+    });
+    return {
+      programa: [
+        fila('Cuerpo completo A', 'Pierna, pecho y espalda', 'La última vez, hace 6 días', barras([9800, 10150, 10400, 10620, 10900, 11240], [2]), true, true),
+        fila('Cuerpo completo B', 'Pierna, hombros y espalda', 'La última vez, hace 4 días', barras([8900, 9250, 9400, 9610, 9880], [3]), false, false),
+        fila('Cuerpo completo C', 'Pierna, pecho y espalda', 'La última vez, hace 2 días', barras([8400, 8650, 8800, 9120, 9300, 9560], [4]), false, false)
+      ],
+      tuyas: [
+        fila('Empuje', 'Pecho, hombros y brazos', 'La última vez, hace 9 días', barras([6100, 6350, 6520], [1]), false, false),
+        fila('Tirón', 'Espalda y brazos', 'La última vez, hace 8 días', barras([5400, 5650], []), false, false),
+        fila('Prueba', 'Pecho', 'Sin hacer todavía', [], false, false)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

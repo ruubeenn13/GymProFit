@@ -20,6 +20,7 @@
         app:title="@string/perfil_datos_titulo" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollTusDatos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -132,6 +133,7 @@
 
             <!-- Tu objetivo -->
             <TextView
+                android:id="@+id/tvRotuloObjetivo"
                 style="@style/Widget.GymProFit.RotuloGrupo"
                 android:layout_marginTop="@dimen/separacion_subpantalla"
                 android:text="@string/datos_tu_objetivo" />

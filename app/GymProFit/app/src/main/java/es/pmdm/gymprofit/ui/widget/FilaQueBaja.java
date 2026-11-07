@@ -24,6 +24,8 @@ public class FilaQueBaja extends ViewGroup {
     private final int hueco;
     private final int separacion;
     private boolean abajo;
+    // En la misma línea, centrados en vez de por abajo: un título junto a un botón (GP-241).
+    private boolean centrados;
 
     public FilaQueBaja(@NonNull Context context) { this(context, null); }
 
@@ -31,6 +33,12 @@ public class FilaQueBaja extends ViewGroup {
         super(context, attrs);
         hueco = getResources().getDimensionPixelSize(R.dimen.espacio_12);
         separacion = getResources().getDimensionPixelSize(R.dimen.espacio_8);
+    }
+
+    /** Centra los dos hijos en vertical cuando van en la misma línea (por defecto, por abajo). */
+    public void setCentrados(boolean centrados) {
+        this.centrados = centrados;
+        requestLayout();
     }
 
     /** true si las barras han bajado bajo los kilos (para los tests y el revisor). */
@@ -76,6 +84,16 @@ public class FilaQueBaja extends ViewGroup {
             return;
         }
         int fondo = arriba + Math.max(kilos.getMeasuredHeight(), hayBarras ? barras.getMeasuredHeight() : 0);
+        if (centrados) {
+            int alto = fondo - arriba;
+            int yk = arriba + (alto - kilos.getMeasuredHeight()) / 2;
+            kilos.layout(izq, yk, izq + kilos.getMeasuredWidth(), yk + kilos.getMeasuredHeight());
+            if (hayBarras) {
+                int yb = arriba + (alto - barras.getMeasuredHeight()) / 2;
+                barras.layout(der - barras.getMeasuredWidth(), yb, der, yb + barras.getMeasuredHeight());
+            }
+            return;
+        }
         kilos.layout(izq, fondo - kilos.getMeasuredHeight(), izq + kilos.getMeasuredWidth(), fondo);
         if (hayBarras) {
             barras.layout(der - barras.getMeasuredWidth(), fondo - barras.getMeasuredHeight(), der, fondo);

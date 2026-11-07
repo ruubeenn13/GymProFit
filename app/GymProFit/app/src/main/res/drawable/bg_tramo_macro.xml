@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_tramo_macro — un tramo de la barra del reparto del Perfil (GP-242): radio completo, teñido con el
+     color de su macro (gp_macro_*, los de Nutrición; 3:1 o más contra la tarjeta en los dos temas). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/white" />
+    <corners android:radius="999dp" />
+</shape>

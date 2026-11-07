@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- marca_elegida — la ✓ de la opción elegida en el menú de un desplegable, en naranja; las demás
-     llevan la misma ✓ transparente, para que el texto no se mueva (GP-225: el menú solo decía la
-     elegida a TalkBack). -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true" android:color="?attr/colorPrimary" />
-    <item android:color="@android:color/transparent" />
-</selector>

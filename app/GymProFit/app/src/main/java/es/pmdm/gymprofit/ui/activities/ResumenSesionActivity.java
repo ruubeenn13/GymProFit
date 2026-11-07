@@ -39,6 +39,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.nutricion.ParaRecuperarSeccion;
+import es.pmdm.gymprofit.utils.CifraTarjeta;
 import es.pmdm.gymprofit.utils.ComparacionEntreno;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Marcas;
@@ -137,8 +138,9 @@ public class ResumenSesionActivity extends AppCompatActivity {
     }
 
     private void confirmarBorrar() {
-        es.pmdm.gymprofit.utils.UIHelper.mostrarDialogoConIcono(this, getString(R.string.sesiones_eliminar),
-                getString(R.string.sesiones_confirmar_eliminar), R.drawable.ic_ms_delete, () ->
+        es.pmdm.gymprofit.utils.UIHelper.mostrarDialogoConIcono(this, getString(R.string.resumen_borrar_titulo),
+                getString(R.string.resumen_borrar_mensaje), R.drawable.ic_ms_delete,
+                getString(R.string.resumen_borrar), getString(R.string.dialog_cancelar), () ->
                         sesionApi.eliminar(sesionId).enqueue(new ApiCallback<Void>() {
                             @Override public void onOk(Void ignorado) {
                                 if (isFinishing()) return;
@@ -221,20 +223,34 @@ public class ResumenSesionActivity extends AppCompatActivity {
         }
     }
 
-    // Los kilos desde cero y las tres fichas. Sin pesos que contar el número enorme celebraría
-    // un cero: se dice y se siguen enseñando la duración y las series.
+    // La cifra grande en cascada, como las tarjetas (GP-250, DEC-060): con kilos, los kilos que
+    // cuentan desde cero con la comparación y las tres fichas; con 0 kg y series, las series son la
+    // cifra («12 series»), contadas igual, sin la ficha de comparación ni la de series (antes salía
+    // «−100 % que la última vez»); sin series, el aviso de la cascada en el sitio de tvSinKilos.
     private void pintarCabecera() {
-        double kilos = resumen.getVolumenKg();
+        ComparacionEntreno.Cabecera cabecera = ComparacionEntreno.cabecera(resumen);
+        CifraTarjeta cifra = cabecera.cifra;
         TextView sinKilos = findViewById(R.id.tvSinKilos);
-        if (kilos <= 0) {
+        if (cifra.esAviso()) {
             layoutCelebracion.setVisibility(View.GONE);
             sinKilos.setVisibility(View.VISIBLE);
+            sinKilos.setText(cifra.tipo == CifraTarjeta.Tipo.SIN_EJERCICIOS
+                    ? R.string.tarjeta_sin_ejercicios : R.string.tarjeta_sin_series);
         } else {
+            boolean conKilos = cifra.conKilos();
+            long valor = conKilos ? cifra.kilos : cifra.series;
             sinKilos.setVisibility(View.GONE);
             layoutCelebracion.setVisibility(View.VISIBLE);
-            String total = formatoMiles(Math.round(kilos));
-            // Una sola frase para TalkBack: el número no se anuncia contando.
-            layoutCelebracion.setContentDescription(getString(R.string.resumen_a11y_kilos, total));
+            ((TextView) findViewById(R.id.tvCelebracionEyebrow)).setText(conKilos
+                    ? R.string.resumen_celebracion_eyebrow : R.string.resumen_celebracion_eyebrow_series);
+            int n = (int) Math.min(Integer.MAX_VALUE, valor);
+            ((TextView) findViewById(R.id.tvCelebracionUnidad)).setText(conKilos
+                    ? getString(R.string.resumen_celebracion_unidad)
+                    : getResources().getQuantityString(R.plurals.resumen_celebracion_unidad_series, n));
+            // Una sola frase para TalkBack: el número no se anuncia contando, y nunca «0 kilos».
+            layoutCelebracion.setContentDescription(conKilos
+                    ? getString(R.string.resumen_a11y_kilos, formatoMiles(valor))
+                    : getResources().getQuantityString(R.plurals.resumen_a11y_series, n, n));
             ViewCompat.setImportantForAccessibility(layoutCelebracion, ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
             layoutCelebracion.setFocusable(true);
             for (int i = 0; i < ((LinearLayout) layoutCelebracion).getChildCount(); i++) {
@@ -243,17 +259,16 @@ public class ResumenSesionActivity extends AppCompatActivity {
             }
             tvVolumenHero.setText(formatoMiles(0));
             Movimiento.entrar(0, layoutCelebracion);
-            // Momento 28: los kilos cuentan desde cero (CIFRAS).
+            // Momento 28: la cifra cuenta desde cero (CIFRAS).
             Movimiento.contar(0, Movimiento.CIFRAS,
-                    f -> tvVolumenHero.setText(formatoMiles(Math.round(kilos * f))));
+                    f -> tvVolumenHero.setText(formatoMiles(Math.round(valor * f))));
         }
 
         fichas.removeAllViews();
-        ComparacionEntreno.Variacion v = ComparacionEntreno.variacionDeSesion(resumen);
-        if (v != null) anadirFichaVariacion(v);
+        if (cabecera.variacion != null) anadirFichaVariacion(cabecera.variacion);
         anadirFicha(R.drawable.ic_ms_timer, getString(R.string.sesiones_min, sesion.getDuracionMinutos()), false);
-        int series = resumen.getSeries();
-        if (series > 0) {
+        if (cabecera.fichaSeries) {
+            int series = resumen.getSeries();
             anadirFicha(R.drawable.ic_ms_fitness_center,
                     getResources().getQuantityString(R.plurals.resumen_series_chip, series, series), false);
         }

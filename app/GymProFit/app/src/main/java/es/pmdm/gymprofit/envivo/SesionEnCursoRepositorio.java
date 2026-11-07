@@ -358,7 +358,11 @@ public class SesionEnCursoRepositorio {
         });
     }
 
-    private static SesionEnCurso.Ejercicio deRutina(SesionEnCurso s, RutinaEjercicio re) {
+    /**
+     * Un ejercicio de la rutina con su pauta y sus series vacías, con ids de {@code s}. Lo usa
+     * también Apuntar entreno (GP-241), que arma su borrador igual que la sesión en vivo.
+     */
+    public static SesionEnCurso.Ejercicio deRutina(SesionEnCurso s, RutinaEjercicio re) {
         SesionEnCurso.Ejercicio e = new SesionEnCurso.Ejercicio();
         e.id = s.siguienteId++;
         e.ejercicioId = re.getEjercicioId();
@@ -377,7 +381,8 @@ public class SesionEnCursoRepositorio {
         return e;
     }
 
-    private static SesionEnCurso.Serie nuevaSerie(SesionEnCurso s) {
+    /** Una serie vacía con el siguiente id de {@code s}. */
+    public static SesionEnCurso.Serie nuevaSerie(SesionEnCurso s) {
         SesionEnCurso.Serie serie = new SesionEnCurso.Serie();
         serie.id = s.siguienteId++;
         return serie;

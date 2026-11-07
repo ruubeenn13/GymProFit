@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_check_pendiente — el botón de marcar de una serie sin marcar en Apuntar entreno (GP-241, tablero
+  Entreno-B): un aro de 2 dp en gp_stroke (3:1 contra la tarjeta) y sin relleno. Marcada, el círculo
+  lleno (bg_check): la diferencia es de forma, no solo de color (DEC-019).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="@color/gp_stroke" />
+</shape>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  dialog_elegir_rutina — la hoja de «Cambiar» en Hoy toca (GP-105): las rutinas
-  propias y, al final, «Empezar sin rutina». Las filas las añade ElegirRutinaHoja.
+  dialog_elegir_rutina — la hoja de elegir rutina (GP-105; GP-241): «¿Qué rutina hoy?» de Hoy toca
+  y «¿Qué entrenaste?» de Apuntar entreno, que cambia el título y lleva «Cerrar». Las filas, los
+  títulos de sección y «Entreno libre» los añade ElegirRutinaHoja.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -18,16 +20,34 @@
         android:background="@drawable/bg_asa_hoja"
         android:importantForAccessibility="no" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="8dp"
-        android:accessibilityHeading="true"
-        android:text="@string/cambiar_rutina_titulo"
-        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/espacio_8">
+
+        <TextView
+            android:id="@+id/tvTituloHojaRutina"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:accessibilityHeading="true"
+            android:text="@string/cambiar_rutina_titulo"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+        <ImageButton
+            android:id="@+id/btnCerrarHojaRutina"
+            style="@style/Widget.GymProFit.BotonIcono"
+            android:contentDescription="@string/anadir_cerrar"
+            android:src="@drawable/ic_ms_close"
+            android:visibility="gone"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

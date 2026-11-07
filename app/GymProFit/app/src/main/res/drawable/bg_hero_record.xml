@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_hero_record — el récord de hoy en la cabecera de Apuntar entreno (GP-241): el contenedor dorado
+  de oscuro (gp_hero_oro_fondo) en los dos temas, porque la tarjeta protagonista no cambia.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/gp_hero_oro_fondo" />
+    <corners android:radius="@dimen/radio_chip" />
+</shape>

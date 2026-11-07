@@ -87,23 +87,271 @@
                     android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
             </LinearLayout>
 
-            <!-- Tus datos y objetivos: los datos en píldoras y el plan -->
+            <!-- Tu objetivo (GP-242, tablero Objetivo-1): el icono del objetivo de Tus datos, el nombre
+                 con «Cambiar», lo que supone en una frase y el plan: las kcal y el reparto de los macros. -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardObjetivo"
+                style="@style/Widget.GymProFit.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margen_pantalla"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:layout_marginEnd="@dimen/margen_pantalla">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/espacio_20">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_icono_objetivo"
+                            android:importantForAccessibility="no">
+
+                            <ImageView
+                                android:id="@+id/ivObjetivo"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                app:tint="?attr/colorPrimary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_12"
+                            android:layout_weight="1"
+                            android:importantForAccessibility="no"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/perfil_objetivo_rotulo"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                android:textColor="@color/gp_text_secondary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvObjetivoNombre"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCambiarObjetivo"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                            android:contentDescription="@string/perfil_objetivo_cambiar_a11y"
+                            android:minHeight="@dimen/zona_tactil"
+                            android:minWidth="@dimen/zona_tactil"
+                            android:text="@string/apuntar_cambiar"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                            android:textColor="?attr/colorPrimary"
+                            app:rippleColor="@color/tarjeta_capa" />
+                    </LinearLayout>
+
+                    <!-- Lo de debajo se lee de una vez: «Tu objetivo, perder grasa. Comes… 2.150 kcal
+                         al día: 160 gramos de proteína, 210 de hidratos y 74 de grasa.» -->
+                    <LinearLayout
+                        android:id="@+id/bloqueObjetivo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_16"
+                        android:focusable="true"
+                        android:importantForAccessibility="yes"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvObjetivoFrase"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+                            android:textColor="@color/gp_text_secondary" />
+
+                        <LinearLayout
+                            android:id="@+id/bloquePlan"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="noHideDescendants"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/separador_alto"
+                                android:layout_marginTop="@dimen/espacio_16"
+                                android:background="?attr/colorSurfaceVariant" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_16"
+                                android:baselineAligned="true"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvPlanKcal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Number" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/espacio_8"
+                                    android:layout_weight="1"
+                                    android:text="@string/perfil_kcal_al_dia"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+                                    android:textColor="@color/gp_text_secondary" />
+                            </LinearLayout>
+
+                            <!-- La barra del reparto: un tramo por macro, del ancho de sus kcal. -->
+                            <LinearLayout
+                                android:id="@+id/barraMacros"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_marginTop="@dimen/espacio_8"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:id="@+id/tramoProteina"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/bg_tramo_macro"
+                                    android:backgroundTint="@color/gp_macro_proteinas" />
+
+                                <View
+                                    android:id="@+id/tramoHidratos"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="@dimen/reparto_hueco"
+                                    android:background="@drawable/bg_tramo_macro"
+                                    android:backgroundTint="@color/gp_macro_carbos" />
+
+                                <View
+                                    android:id="@+id/tramoGrasa"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="@dimen/reparto_hueco"
+                                    android:background="@drawable/bg_tramo_macro"
+                                    android:backgroundTint="@color/gp_macro_grasas" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/filaMacros"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_8"
+                                android:baselineAligned="false"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:id="@+id/columnaProteina"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvPlanProteina"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                                        android:textColor="@color/gp_macro_proteinas" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/perfil_macro_proteina"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                        android:textColor="@color/gp_text_secondary" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/columnaHidratos"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/reparto_hueco"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvPlanHidratos"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                                        android:textColor="@color/gp_macro_carbos" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/perfil_macro_hidratos"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                        android:textColor="@color/gp_text_secondary" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/columnaGrasa"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/reparto_hueco"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvPlanGrasa"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Headline"
+                                        android:textColor="@color/gp_macro_grasas" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/perfil_macro_grasa"
+                                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                        android:textColor="@color/gp_text_secondary" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tus datos en rejilla: peso, altura y edad; nivel y actividad. «Editar» abre Tus datos. -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTusDatos"
                 style="@style/Widget.GymProFit.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
-                android:layout_marginTop="@dimen/separacion_subpantalla"
-                android:layout_marginEnd="@dimen/margen_pantalla"
-                android:clickable="true"
-                android:focusable="true">
+                android:layout_marginTop="@dimen/espacio_16"
+                android:layout_marginEnd="@dimen/margen_pantalla">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/espacio_16">
+                    android:paddingStart="@dimen/espacio_20"
+                    android:paddingTop="@dimen/espacio_8"
+                    android:paddingEnd="@dimen/espacio_20"
+                    android:paddingBottom="@dimen/espacio_20">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -115,74 +363,43 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:accessibilityHeading="true"
                             android:text="@string/perfil_datos_titulo"
-                            android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
-                            android:textSize="@dimen/text_subtitle" />
+                            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
-                        <TextView
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEditarDatos"
+                            style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                            android:contentDescription="@string/perfil_datos_editar_a11y"
+                            android:minHeight="@dimen/zona_tactil"
+                            android:minWidth="@dimen/zona_tactil"
                             android:text="@string/perfil_datos_editar"
-                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace" />
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                            android:textColor="?attr/colorPrimary"
+                            app:icon="@drawable/ic_ms_edit"
+                            app:iconSize="20dp"
+                            app:iconTint="?attr/colorPrimary"
+                            app:rippleColor="@color/tarjeta_capa" />
                     </LinearLayout>
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/grupoDatos"
+                    <LinearLayout
+                        android:id="@+id/filaDatos1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/espacio_12"
-                        app:chipSpacingHorizontal="@dimen/espacio_8"
-                        app:chipSpacingVertical="@dimen/espacio_8" />
+                        android:layout_marginTop="@dimen/espacio_8"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
-                        android:id="@+id/bloquePlan"
+                        android:id="@+id/filaDatos2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/espacio_16"
-                        android:background="@drawable/div_superior_plan"
-                        android:paddingTop="@dimen/espacio_16"
                         android:baselineAligned="false"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvPlanKcal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/perfil_plan_al_dia"
-                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvPlanProteina"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
-                                android:textColor="@color/gp_macro_proteinas" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/perfil_plan_proteina"
-                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
-                        </LinearLayout>
-                    </LinearLayout>
+                        android:orientation="horizontal" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

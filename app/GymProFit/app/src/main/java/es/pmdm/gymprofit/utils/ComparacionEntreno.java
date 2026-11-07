@@ -94,11 +94,42 @@ public final class ComparacionEntreno {
     /**
      * La ficha de la cabecera: los kilos de la sesión frente a la anterior de la misma rutina.
      *
-     * @return null si no hay sesión anterior (la primera vez, o un entrenamiento libre).
+     * @return null si no hay sesión anterior (la primera vez, o un entrenamiento libre) o si esta
+     *         no movió kilos: 0 kg frente a la anterior no es un «−100 %» (GP-250).
      */
     @Nullable
     public static Variacion variacionDeSesion(@Nullable ResumenSesion resumen) {
-        if (resumen == null || resumen.getAnterior() == null) return null;
+        if (resumen == null || resumen.getAnterior() == null || resumen.getVolumenKg() <= 0) return null;
         return variacion(resumen.getVolumenKg(), resumen.getAnterior().getVolumenKg());
+    }
+
+    /** La cabecera del resumen: qué cifra lleva y qué fichas. */
+    public static final class Cabecera {
+        /** La cifra, en la cascada de las tarjetas (DEC-060). */
+        @NonNull public final CifraTarjeta cifra;
+        /** La ficha de la comparación, o null si no lleva. */
+        @Nullable public final Variacion variacion;
+        /** Si lleva la ficha de las series: solo con kilos, porque sin ellos las series son la cifra. */
+        public final boolean fichaSeries;
+
+        Cabecera(@NonNull CifraTarjeta cifra, @Nullable Variacion variacion, boolean fichaSeries) {
+            this.cifra = cifra;
+            this.variacion = variacion;
+            this.fichaSeries = fichaSeries;
+        }
+    }
+
+    /**
+     * La cabecera del resumen en cascada (GP-250, DEC-060): con kilos, los kilos con la comparación
+     * y las fichas de siempre; con 0 kg y series, las series son la cifra grande, sin comparación
+     * ni ficha de series; sin series, el aviso («Sin ejercicios apuntados» o «Sin series hechas»).
+     */
+    @NonNull
+    public static Cabecera cabecera(@NonNull ResumenSesion resumen) {
+        CifraTarjeta cifra = CifraTarjeta.deSesion(resumen.getVolumenKg(), resumen.getSeries(),
+                resumen.getEjercicios().size());
+        boolean conKilos = cifra.conKilos();
+        return new Cabecera(cifra, conKilos ? variacionDeSesion(resumen) : null,
+                conKilos && resumen.getSeries() > 0);
     }
 }

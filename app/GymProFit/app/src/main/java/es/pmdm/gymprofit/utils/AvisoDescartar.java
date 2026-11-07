@@ -4,11 +4,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 
 // ============================================================
 // AvisoDescartar — GP-098: salir de un formulario ya no tira lo apuntado sin avisar.
@@ -128,25 +126,5 @@ public final class AvisoDescartar {
         String a = actual == null ? "" : actual.toString().trim();
         String i = inicial == null ? "" : inicial.trim();
         return !a.equals(i);
-    }
-
-    /**
-     * Si en Registrar sesión hay algo apuntado: duración, notas, valoración o alguna
-     * serie tocada. Las series nacen con las repeticiones del plan ya puestas, así que
-     * eso solo no cuenta; cuenta el peso, unas repeticiones distintas, marcarla hecha
-     * o añadir o quitar series. Elegir otra rutina tampoco: no se ha tecleado nada.
-     */
-    public static boolean sesionConDatos(CharSequence duracion, CharSequence notas, float estrellas,
-                                         List<EjercicioPesoAdapter.Item> items) {
-        if (hayTexto(duracion, notas) || estrellas > 0f) return true;
-        for (EjercicioPesoAdapter.Item item : items) {
-            if (item.realizadas.size() != Math.max(1, item.series)) return true;
-            String planReps = String.valueOf(item.repeticiones);
-            for (EjercicioPesoAdapter.Serie s : item.realizadas) {
-                if (s.completada || hayTexto(s.peso, s.segundos)) return true;
-                if (!item.porTiempo() && distinto(planReps, s.repeticiones)) return true;
-            }
-        }
-        return false;
     }
 }

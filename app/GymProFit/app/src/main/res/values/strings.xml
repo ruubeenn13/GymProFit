@@ -146,11 +146,6 @@
     <string name="onboarding_activo">Activo</string>
 
     <!-- SESIONES -->
-    <string name="sesiones_rutina">Rutina</string>
-    <string name="sesiones_rutina_a11y">Rutina: %1$s</string>
-    <string name="sesiones_duracion">Duración (min) *</string>
-    <string name="sesiones_notas">Notas (opcional)</string>
-    <string name="sesiones_guardar">Guardar sesión</string>
     <string name="sesiones_exito">Sesión registrada correctamente</string>
     <string name="sesiones_duracion_invalida">La duración tiene que estar entre 1 y 600 minutos</string>
     <string name="sesiones_error_guardar_titulo">No se ha guardado</string>
@@ -164,7 +159,6 @@
     <string name="sesiones_eliminar">Eliminar sesión</string>
     <string name="sesiones_confirmar_eliminar">¿Eliminar esta sesión?</string>
     <string name="sesiones_sin_rutina">Sin rutina asociada</string>
-    <string name="sesiones_valoracion">Valoración (opcional)</string>
     <string name="sesiones_sin_valorar">Sin valorar</string>
     <string name="sesiones_valoracion_estado">%1$d de 5</string>
     <string name="sesiones_valoracion_a11y">%1$d de 5 estrellas</string>
@@ -174,11 +168,6 @@
     <!-- Se guarda como texto en las notas de la sesión, no es una etiqueta de
          pantalla: por eso dice de qué es la cifra en vez de llevar un símbolo
          delante. La estrella que llevaba antes viajaba dentro del fichero de idioma. -->
-    <string name="sesiones_ejercicios_sesion">Ejercicios de la sesión</string>
-    <string name="sesiones_peso_hint">Peso (kg)</string>
-    <string name="sesiones_reps_hint">Reps</string>
-    <string name="sesiones_serie_por">×</string>
-    <string name="sesiones_serie_completada">Marcar serie como completada</string>
 
     <!-- MEDICIONES -->
     <string name="mediciones_sin_mediciones">No hay mediciones registradas</string>
@@ -1072,12 +1061,6 @@
         <item quantity="other">%d\u00A0días</item>
     </plurals>
     <!-- Registro por tiempo y por lado (GP-125) -->
-    <string name="registro_reps_por_pierna">Reps por pierna</string>
-    <string name="registro_reps_por_brazo">Reps por brazo</string>
-    <string name="registro_reps_por_lado">Reps por lado</string>
-    <string name="registro_segundos_por_pierna">Segundos por pierna</string>
-    <string name="registro_segundos_por_brazo">Segundos por brazo</string>
-    <string name="registro_segundos_por_lado">Segundos por lado</string>
     <!-- Sesión en vivo (GP-012) y la última vez (GP-014) -->
     <string name="envivo_minimizar">Minimizar</string>
     <string name="envivo_terminar">Terminar</string>
@@ -1171,8 +1154,6 @@
     <string name="envivo_volver_rutina_a11y">Volver a la sesión de %1$s, en curso</string>
     <string name="accion_apuntar">Apuntar un entrenamiento hecho</string>
     <string name="accion_apuntar_sub">Con su fecha y su duración</string>
-    <string name="sesiones_fecha">Fecha</string>
-    <string name="sesiones_fecha_a11y">Fecha del entrenamiento: %1$s. Cambiar</string>
     <plurals name="envivo_series_hechas_de">
         <item quantity="one">%1$d de %2$d serie hecha</item>
         <item quantity="other">%1$d de %2$d series hechas</item>
@@ -1186,7 +1167,7 @@
         <item quantity="other">%d\u00A0reps</item>
     </plurals>
     <string name="envivo_anadido">Añadido: %1$s</string>
-    <string name="apuntar_titulo">Entrenamiento hecho</string>
+    <string name="apuntar_titulo">Apuntar entreno</string>
     <!-- Descanso entre series (GP-013) -->
     <string name="envivo_descanso">Descanso</string>
     <string name="envivo_descanso_despues">Después: %1$s, serie %2$d</string>
@@ -2085,7 +2066,7 @@
     <string name="recuperar_barra_a11y">Proteína de hoy: %1$d de %2$d gramos</string>
     <string name="recuperar_barra_a11y_falta">Proteína de hoy: %1$d de %2$d gramos, te faltan %3$d</string>
     <string name="recuperar_barra_a11y_conseguida">Proteína de hoy: %1$d de %2$d gramos, conseguida</string>
-    <string name="recuperar_idea_detalle">%1$s · %2$d g de proteína · %3$d kcal</string>
+    <string name="recuperar_idea_detalle">%1$s, %2$d\u00A0g de proteína y %3$d\u00A0kcal</string>
     <string name="recuperar_idea_apuntar">Apuntar %1$s, %2$s</string>
     <string name="recuperar_idea_quitar">Quitar %1$s</string>
     <string name="recuperar_nota_desayuno">Se apuntan en el desayuno, la comida que toca ahora</string>
@@ -2222,7 +2203,7 @@
     <!-- Perfil y ajustes (GP-216, tablero 17) -->
     <string name="perfil_titulo">Perfil y ajustes</string>
     <string name="perfil_cambiar_foto_a11y">Cambiar la foto de perfil</string>
-    <string name="perfil_datos_titulo">Tus datos y objetivos</string>
+    <string name="perfil_datos_titulo">Tus datos</string>
     <string name="perfil_datos_editar">Editar</string>
     <string name="perfil_plan_al_dia">al día</string>
     <string name="perfil_plan_proteina">de proteína</string>
@@ -2496,7 +2477,6 @@
     <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>
     <string name="estadisticas_periodo_vacio">No hay comidas apuntadas en estas fechas.</string>
     <string name="estadisticas_porcentaje">%1$d %%</string>
-    <string name="sesiones_fecha_elegir">Elegir la fecha</string>
     <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
     <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>
     <!-- GP-228 (revisor): lo que abre una tarjeta pulsable de Inicio o Entrenar. -->
@@ -2603,4 +2583,145 @@
         <item quantity="other">Ciclo de %1$d rutinas que se repite: %2$s</item>
     </plurals>
     <string name="programa_recomendado_a11y">, recomendado para ti</string>
+    <!-- Apuntar entreno (GP-241), su hoja «¿Qué entrenaste?», el objetivo del Perfil (GP-242)
+         y el resumen sin kilos (GP-250). Tableros en documentacion/diseno/2026-11-06-entreno-y-objetivo/. -->
+    <string name="apuntar_resumen_a11y">Resumen del entreno</string>
+    <string name="apuntar_fecha_hoy">Hoy, %1$s</string>
+    <string name="apuntar_fecha_ayer">Ayer, %1$s</string>
+    <string name="apuntar_fecha_patron_dia">EEEE d</string>
+    <string name="apuntar_fecha_patron_otro">EEEE d \'de\' MMMM</string>
+    <string name="apuntar_fecha_patron_otro_anio">EEEE d \'de\' MMMM \'de\' yyyy</string>
+    <string name="apuntar_fecha_a11y">Fecha del entreno, %1$s. Cambiar</string>
+    <string name="apuntar_fecha_titulo">¿Qué día entrenaste?</string>
+    <string name="apuntar_fecha_otro_dia">Otro día</string>
+    <string name="apuntar_cambiar">Cambiar</string>
+    <string name="apuntar_cambiar_rutina_a11y">Cambiar la rutina, %1$s</string>
+    <string name="apuntar_porque_programa">La que te toca en tu programa</string>
+    <string name="apuntar_porque_mas_tiempo">La que más tiempo llevas sin hacer</string>
+    <string name="apuntar_libre">Entreno libre</string>
+    <string name="apuntar_libre_sub">Sin rutina: añades tú los ejercicios</string>
+    <string name="apuntar_cargando">Cargando tus rutinas</string>
+    <string name="apuntar_duracion">Duración</string>
+    <string name="apuntar_volumen">Volumen</string>
+    <string name="apuntar_series">Series</string>
+    <string name="apuntar_unidad_min"> min</string>
+    <string name="apuntar_unidad_kg"> kg</string>
+    <string name="apuntar_unidad_de"> de %1$d</string>
+    <plurals name="apuntar_duracion_a11y">
+        <item quantity="one">Duración, %1$d minuto. Cambiar</item>
+        <item quantity="other">Duración, %1$d minutos. Cambiar</item>
+    </plurals>
+    <plurals name="apuntar_volumen_a11y">
+        <item quantity="one">Volumen, %1$s kilo</item>
+        <item quantity="other">Volumen, %1$s kilos</item>
+    </plurals>
+    <plurals name="apuntar_series_de_a11y">
+        <item quantity="one">Series, %1$d de %2$d</item>
+        <item quantity="other">Series, %1$d de %2$d</item>
+    </plurals>
+    <plurals name="apuntar_series_a11y">
+        <item quantity="one">%1$d serie</item>
+        <item quantity="other">%1$d series</item>
+    </plurals>
+    <string name="apuntar_duracion_titulo">¿Cuánto duró?</string>
+    <string name="apuntar_menos_5">Quitar 5 minutos</string>
+    <string name="apuntar_mas_5">Añadir 5 minutos</string>
+    <string name="apuntar_listo">Listo</string>
+    <string name="apuntar_ultima_kilos">La última vez moviste %1$s kg.</string>
+    <plurals name="apuntar_ultima_series">
+        <item quantity="one">La última vez hiciste %1$d serie.</item>
+        <item quantity="other">La última vez hiciste %1$d series.</item>
+    </plurals>
+    <string name="apuntar_ultima_sin_series">La última vez, sin series hechas.</string>
+    <string name="apuntar_record_uno">Récord en %1$s: %2$s</string>
+    <plurals name="apuntar_records">
+        <item quantity="one">%1$d récord: %2$s</item>
+        <item quantity="other">%1$d récords: %2$s</item>
+    </plurals>
+    <string name="apuntar_ejercicios">Ejercicios</string>
+    <string name="apuntar_como_ultima">Todo como la última vez</string>
+    <string name="apuntar_sin_empezar">Sin empezar</string>
+    <string name="apuntar_abrir_ejercicio_a11y">%1$s. %2$s. Sin empezar</string>
+    <string name="apuntar_plegado">Plegado</string>
+    <string name="apuntar_desplegado">Desplegado</string>
+    <string name="apuntar_anadir_ejercicios">Añadir ejercicios</string>
+    <string name="apuntar_libre_vacio">Añade los ejercicios que has hecho.</string>
+    <string name="apuntar_error_rutinas">No hemos podido cargar tus rutinas.</string>
+    <string name="apuntar_error_ejercicios">No hemos podido cargar los ejercicios de la rutina.</string>
+    <string name="apuntar_serie_apuntada_a11y">Serie %1$d apuntada</string>
+    <string name="apuntar_apuntar_serie_a11y">Apuntar la serie %1$d</string>
+    <string name="resumen_borrar_titulo">¿Borrar este entreno?</string>
+    <string name="resumen_borrar_mensaje">Se borra con todas sus series. No se puede deshacer.</string>
+    <string name="apuntar_serie_record">Récord</string>
+    <plurals name="apuntar_pauta_series">
+        <item quantity="one">%1$d serie de %2$s</item>
+        <item quantity="other">%1$d series de %2$s</item>
+    </plurals>
+    <string name="apuntar_pauta_rango">%1$d a %2$d</string>
+    <plurals name="apuntar_pauta_reps">
+        <item quantity="one">%1$s repetición</item>
+        <item quantity="other">%1$s repeticiones</item>
+    </plurals>
+    <plurals name="apuntar_pauta_segundos">
+        <item quantity="one">%1$s segundo</item>
+        <item quantity="other">%1$s segundos</item>
+    </plurals>
+    <string name="apuntar_pauta_por_pierna">%1$s por pierna</string>
+    <string name="apuntar_pauta_por_brazo">%1$s por brazo</string>
+    <string name="apuntar_pauta_por_lado">%1$s por lado</string>
+    <string name="apuntar_que_tal">¿Qué tal fue?</string>
+    <string name="cara_fatal">Fatal</string>
+    <string name="cara_flojo">Flojo</string>
+    <string name="cara_normal">Normal</string>
+    <string name="cara_bien">Bien</string>
+    <string name="cara_genial">Genial</string>
+    <string name="apuntar_nota_anadir">Añadir una nota</string>
+    <string name="apuntar_nota">Nota</string>
+    <string name="apuntar_guardar">Guardar entreno</string>
+    <plurals name="apuntar_pie_con_kilos">
+        <item quantity="one">%1$d serie apuntada y %2$s kg. Lo que no marques no se guarda.</item>
+        <item quantity="other">%1$d series apuntadas y %2$s kg. Lo que no marques no se guarda.</item>
+    </plurals>
+    <plurals name="apuntar_pie_sin_kilos">
+        <item quantity="one">%1$d serie apuntada. Lo que no marques no se guarda.</item>
+        <item quantity="other">%1$d series apuntadas. Lo que no marques no se guarda.</item>
+    </plurals>
+    <string name="apuntar_pie_vacio">Sin series apuntadas: se guardan el día y la duración.</string>
+    <string name="apuntar_cambiar_titulo">¿Cambiar de rutina?</string>
+    <plurals name="apuntar_cambiar_mensaje">
+        <item quantity="one">Has marcado %1$d serie y se quitará.</item>
+        <item quantity="other">Has marcado %1$d series y se quitarán.</item>
+    </plurals>
+    <string name="apuntar_cambiar_si">Cambiar</string>
+    <string name="resumen_celebracion_eyebrow_series">HAS HECHO</string>
+    <plurals name="resumen_celebracion_unidad_series">
+        <item quantity="one">serie en esta sesión</item>
+        <item quantity="other">series en esta sesión</item>
+    </plurals>
+    <plurals name="resumen_a11y_series">
+        <item quantity="one">%1$d serie en esta sesión</item>
+        <item quantity="other">%1$d series en esta sesión</item>
+    </plurals>
+    <string name="elegir_que_entrenaste">¿Qué entrenaste?</string>
+    <string name="elegir_de_tu_programa">De tu programa, %1$s</string>
+    <string name="elegir_de_tu_programa_sin_nombre">De tu programa</string>
+    <string name="elegir_tus_rutinas">Tus rutinas</string>
+    <string name="perfil_sub">%1$s, %2$s</string>
+    <string name="perfil_objetivo_rotulo">Tu objetivo</string>
+    <string name="perfil_objetivo_cambiar_a11y">Cambiar tu objetivo</string>
+    <string name="perfil_objetivo_frase_perder">Comes un poco menos de lo que gastas y mucha proteína, para que lo que bajes sea grasa y no músculo.</string>
+    <string name="perfil_objetivo_frase_ganar">Comes algo más de lo que gastas y mucha proteína, para que lo que subas sea sobre todo músculo.</string>
+    <string name="perfil_objetivo_frase_fuerza">Comes algo más de lo que gastas, con la proteína y la energía para entrenar pesado.</string>
+    <string name="perfil_objetivo_frase_mantener">Comes lo que gastas, con la proteína que necesitas para conservar tu músculo.</string>
+    <string name="perfil_kcal_al_dia">kcal al día</string>
+    <string name="perfil_macro_gramos">%1$d g</string>
+    <string name="perfil_macro_proteina">de proteína</string>
+    <string name="perfil_macro_hidratos">de hidratos</string>
+    <string name="perfil_macro_grasa">de grasa</string>
+    <string name="perfil_objetivo_a11y">Tu objetivo, %1$s. %2$s %3$s kcal al día: %4$d gramos de proteína, %5$d de hidratos y %6$d de grasa.</string>
+    <string name="perfil_objetivo_sin_plan_a11y">Tu objetivo, %1$s. %2$s</string>
+    <string name="perfil_dato_nivel">Nivel</string>
+    <string name="perfil_dato_actividad">Actividad</string>
+    <string name="perfil_datos_editar_a11y">Editar tus datos</string>
+    <string name="perfil_dato_a11y">%1$s, %2$s</string>
 </resources>

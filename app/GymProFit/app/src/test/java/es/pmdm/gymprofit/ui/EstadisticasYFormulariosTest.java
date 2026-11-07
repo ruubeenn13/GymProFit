@@ -94,10 +94,17 @@ public class EstadisticasYFormulariosTest {
 
     @Test
     public void registrarSesionNombraSusControles() throws IOException {
+        // Apuntar entreno (GP-241): sin desplegable ni estrellas; la fecha, la rutina, las caras y la
+        // nota dicen su nombre, y la fecha y las caras son botones de opción.
         String l = leer(RES.resolve("layout/activity_registrar_sesion.xml"));
-        assertTrue("el rótulo nombra el desplegable", l.contains("android:labelFor=\"@+id/spRutina\""));
-        assertTrue("el calendario tiene nombre", l.contains("app:endIconContentDescription=\"@string/sesiones_fecha_elegir\""));
-        assertTrue("las estrellas vacías a 3:1", l.contains("android:progressBackgroundTint=\"@color/gp_stroke\""));
+        assertTrue("el lápiz de la nota tiene nombre", l.contains("android:contentDescription=\"@string/apuntar_nota_anadir\""));
+        assertFalse("fuera el desplegable de la rutina", l.contains("spRutina"));
+        assertFalse("fuera las estrellas", l.contains("RatingBar"));
+        String a = leer(UI.resolve("activities/RegistrarSesionActivity.java"));
+        assertTrue("la fecha dice cuál es y que se cambia", a.contains("R.string.apuntar_fecha_a11y"));
+        assertTrue("«Cambiar» dice qué rutina cambia", a.contains("R.string.apuntar_cambiar_rutina_a11y"));
+        assertTrue("las caras son botones de opción", a.contains("info.setClassName(\"android.widget.RadioButton\")"));
+        assertTrue("la fecha se elige en la hoja de opciones", a.contains("HojaElegir.mostrar(this, R.string.apuntar_fecha_titulo"));
     }
 
     @Test

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  capa_hero — la capa de pulsar dentro de la tarjeta protagonista (GP-241): el 10 % de gp_on_hero,
+  como tarjeta_capa lo es de gp_on_surface. La tarjeta es oscura en los dos temas, y la capa de
+  tarjeta_capa en claro (el 10 % de un texto casi negro) no se veía sobre ella.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:color="@color/gp_on_hero" android:alpha="0.10" />
+    <item android:color="@android:color/transparent" />
+</selector>

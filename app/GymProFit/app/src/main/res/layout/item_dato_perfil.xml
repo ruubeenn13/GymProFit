@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_dato_perfil — un dato de «Tus datos» en el Perfil (GP-242, tablero Objetivo-1): la cifra en
+  condensada encima y su nombre debajo. Para TalkBack, una frase: «Peso, 78 kg».
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:focusable="true"
+    android:importantForAccessibility="yes"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvDatoValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+    <TextView
+        android:id="@+id/tvDatoNombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+        android:textColor="@color/gp_text_secondary" />
+</LinearLayout>

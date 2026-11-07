@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_duracion — la hoja de la duración de «Apuntar entreno» (GP-241): − y + de 5 en 5, de 5 a
+  300 minutos, sin teclado. Mantener un botón repite. «Listo» cierra; el cambio ya está hecho.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/margen_pantalla"
+    android:paddingTop="@dimen/espacio_8"
+    android:paddingEnd="@dimen/margen_pantalla"
+    android:paddingBottom="@dimen/espacio_24">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/espacio_12"
+        android:background="@drawable/bg_asa_hoja"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tvTituloDuracion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:text="@string/apuntar_duracion_titulo"
+        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_24"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnMenosDuracion"
+            style="@style/Widget.GymProFit.BotonRedondo"
+            android:contentDescription="@string/apuntar_menos_5"
+            android:src="@drawable/ic_ms_remove" />
+
+        <TextView
+            android:id="@+id/tvMinutosDuracion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Grande" />
+
+        <ImageButton
+            android:id="@+id/btnMasDuracion"
+            style="@style/Widget.GymProFit.BotonRedondo"
+            android:contentDescription="@string/apuntar_mas_5"
+            android:src="@drawable/ic_ms_add" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnListoDuracion"
+        style="@style/Widget.GymProFit.BotonPildora"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_24"
+        android:minHeight="@dimen/zona_tactil"
+        android:text="@string/apuntar_listo" />
+</LinearLayout>

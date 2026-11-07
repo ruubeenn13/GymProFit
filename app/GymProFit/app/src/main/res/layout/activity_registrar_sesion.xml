@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_registrar_sesion.xml — Apuntar un entrenamiento ya hecho (GP-012), con su
-  fecha y su duración. Empezar a entrenar abre la sesión en vivo, no esto.
-  Selección de rutina, duración, cálculo automático de calorías estimadas,
-  lista de ejercicios de la rutina con peso, notas y valoración con estrellas.
+  activity_registrar_sesion.xml — «Apuntar entreno» (GP-241, tablero Entreno-B de
+  documentacion/diseno/2026-11-06-entreno-y-objetivo/): apuntar un entrenamiento ya hecho, desde
+  el «+». Arriba, la tarjeta protagonista con la fecha, la rutina con «Cambiar» y tres cuadros que
+  suman al marcar; debajo, los ejercicios con las filas de la sesión en vivo, «¿Qué tal fue?» con
+  cinco caras y la nota plegada; y el pie fijo, con lo que se va a guardar y «Guardar entreno».
+  Empezar a entrenar abre la sesión en vivo, no esto.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,7 +15,6 @@
     android:orientation="vertical"
     android:background="?attr/android:colorBackground">
 
-    <!-- Cabecera -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         style="@style/Widget.GymProFit.Cabecera"
@@ -22,6 +23,7 @@
         app:title="@string/apuntar_titulo" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollApuntar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -31,232 +33,409 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="@dimen/margen_pantalla"
+            android:paddingTop="@dimen/espacio_4"
             android:paddingEnd="@dimen/margen_pantalla"
-            android:paddingTop="@dimen/espacio_16"
-            android:paddingBottom="@dimen/espacio_16">
+            android:paddingBottom="@dimen/espacio_24">
 
-            <!-- Rutina: el rótulo nombra al desplegable para TalkBack (revisor, GP-228). -->
-            <TextView
-                android:labelFor="@+id/spRutina"
-                android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sesiones_rutina"
-                android:textSize="@dimen/text_caption"
-                android:textAllCaps="true"
-                android:letterSpacing="0.12"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:layout_marginBottom="6dp" />
-
-            <!-- Con contorno, como los campos de debajo, y su texto a la misma altura (GP-225). -->
+            <!-- La cabecera: la tarjeta protagonista. -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardResumen"
+                style="@style/Widget.GymProFit.Card.Protagonista"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/radio_chip"
-                app:strokeColor="?attr/colorOutline"
-                app:strokeWidth="1dp">
-
-                <Spinner
-                    android:id="@+id/spRutina"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:paddingStart="@dimen/espacio_8"
-                    android:paddingEnd="16dp" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Fecha (GP-012): hoy por defecto, nunca futura. Se elige en el calendario;
-                 el campo no se escribe. -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilFecha"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:hint="@string/sesiones_fecha"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:endIconDrawable="@drawable/ic_ms_calendar_month"
-                app:endIconContentDescription="@string/sesiones_fecha_elegir"
-                app:endIconMode="custom">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFecha"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:inputType="none"
-                    android:minHeight="48dp" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Duración -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:hint="@string/sesiones_duracion"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etDuracion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- AQUÍ HABÍA UNA TARJETA DE «CALORÍAS ESTIMADAS», Y SE RETIRA
-                 (DEC-004 / GP-010). El número salía de multiplicar series × reps ×
-                 una constante del catálogo, sin saber la carga ni quién entrena. -->
-
-            <!-- Ejercicios de la rutina con peso -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardEjercicios"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:paddingBottom="8dp"
-                        android:text="@string/sesiones_ejercicios_sesion"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvEjercicios"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Notas -->
-            <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:hint="@string/sesiones_notas"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etNotas"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"
-                    android:gravity="top" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Valoración -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:paddingStart="@dimen/espacio_20"
+                    android:paddingTop="@dimen/espacio_16"
+                    android:paddingEnd="@dimen/espacio_20"
+                    android:paddingBottom="@dimen/espacio_20">
 
-                    <TextView
-                        android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                    <!-- La fecha: Hoy de entrada; al tocarla, Hoy, Ayer u Otro día. -->
+                    <LinearLayout
+                        android:id="@+id/btnFecha"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/sesiones_valoracion"
-                        android:textSize="@dimen/text_caption"
-                        android:textAllCaps="true"
-                        android:letterSpacing="0.12"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:layout_marginBottom="8dp" />
+                        android:background="@drawable/bg_hero_pildora"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/zona_tactil"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/espacio_12"
+                        android:paddingEnd="@dimen/espacio_8">
 
-                    <!-- Arranca en 0, «sin valorar» (GP-077). Antes arrancaba en 3 y
-                         quien no tocaba las estrellas guardaba un 3 que no había dado. -->
-                    <RatingBar
-                        android:id="@+id/ratingBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:numStars="5"
-                        android:stepSize="1"
-                        android:rating="0"
-                        android:progressBackgroundTint="@color/gp_stroke"
-                        style="@style/Widget.AppCompat.RatingBar" />
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_ms_calendar_month"
+                            app:tint="@color/gp_on_hero_variant" />
 
-                    <!-- Estado en palabras, y la salida para deshacer un toque por error:
-                         con el dedo no se puede bajar un RatingBar a cero. -->
+                        <TextView
+                            android:id="@+id/tvFecha"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_8"
+                            android:importantForAccessibility="no"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                            android:textColor="@color/gp_on_hero_variant"
+                            android:textSize="@dimen/text_caption" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="@dimen/espacio_4"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_ms_keyboard_arrow_down"
+                            app:tint="@color/gp_on_hero_variant" />
+                    </LinearLayout>
+
+                    <!-- La rutina en grande con «Cambiar». -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:layout_marginTop="@dimen/espacio_12"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvEstadoValoracion"
+                            android:id="@+id/tvRutina"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:importantForAccessibility="no"
-                            android:text="@string/sesiones_sin_valorar"
-                            android:textSize="@dimen/text_label"
-                            android:textColor="?attr/colorOnSurfaceVariant" />
+                            android:accessibilityHeading="true"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                            android:textColor="@color/gp_on_hero" />
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnQuitarValoracion"
+                            android:id="@+id/btnCambiarRutina"
                             style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:minHeight="48dp"
-                            android:text="@string/sesiones_quitar_valoracion"
-                            android:visibility="invisible" />
-
+                            android:layout_marginStart="@dimen/espacio_8"
+                            android:layout_marginEnd="@dimen/aire_anillo_fuera"
+                            android:minHeight="@dimen/zona_tactil"
+                            android:minWidth="@dimen/zona_tactil"
+                            android:text="@string/apuntar_cambiar"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                            android:textColor="@color/gp_primary_sobre_hero"
+                            app:rippleColor="@color/capa_hero" />
                     </LinearLayout>
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvPorque"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                        android:textColor="@color/gp_on_hero_variant" />
 
+                    <!-- Los tres cuadros que suman al marcar. Sin peso, el de los kilos no sale y los
+                         otros dos se reparten el ancho. -->
+                    <LinearLayout
+                        android:id="@+id/filaCuadros"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_16"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/cuadroDuracion"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_hero_cuadro"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:minHeight="@dimen/zona_tactil"
+                            android:orientation="vertical"
+                            android:padding="@dimen/espacio_12">
+
+                            <TextView
+                                android:id="@+id/tvDuracion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:importantForAccessibility="no"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="@color/gp_on_hero" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_4"
+                                android:gravity="center_vertical"
+                                android:importantForAccessibility="noHideDescendants"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/apuntar_duracion"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                    android:textColor="@color/gp_on_hero_variant" />
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginStart="@dimen/espacio_4"
+                                    android:src="@drawable/ic_ms_edit"
+                                    app:tint="@color/gp_on_hero_variant" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/cuadroKilos"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/espacio_8"
+                            android:background="@drawable/bg_hero_cuadro"
+                            android:focusable="true"
+                            android:importantForAccessibility="yes"
+                            android:orientation="vertical"
+                            android:padding="@dimen/espacio_12">
+
+                            <TextView
+                                android:id="@+id/tvKilos"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:importantForAccessibility="no"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="@color/gp_on_hero" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_4"
+                                android:importantForAccessibility="no"
+                                android:text="@string/apuntar_volumen"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                android:textColor="@color/gp_on_hero_variant" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/cuadroSeries"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/espacio_8"
+                            android:background="@drawable/bg_hero_cuadro"
+                            android:focusable="true"
+                            android:importantForAccessibility="yes"
+                            android:orientation="vertical"
+                            android:padding="@dimen/espacio_12">
+
+                            <TextView
+                                android:id="@+id/tvSeries"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:importantForAccessibility="no"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                                android:textColor="@color/gp_on_hero" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/espacio_4"
+                                android:importantForAccessibility="no"
+                                android:text="@string/apuntar_series"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                                android:textColor="@color/gp_on_hero_variant" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- La última vez de esa rutina, en cascada; la primera vez, nada. -->
+                    <TextView
+                        android:id="@+id/tvUltimaVez"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_12"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                        android:textColor="@color/gp_on_hero_variant"
+                        android:visibility="gone" />
+
+                    <!-- El récord en dorado en cuanto una serie marcada lo bate. -->
+                    <TextView
+                        android:id="@+id/tvRecordHoy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_12"
+                        android:accessibilityLiveRegion="polite"
+                        android:background="@drawable/bg_hero_record"
+                        android:drawablePadding="@dimen/espacio_8"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/espacio_12"
+                        android:paddingTop="@dimen/espacio_8"
+                        android:paddingEnd="@dimen/espacio_12"
+                        android:paddingBottom="@dimen/espacio_8"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                        android:textColor="@color/gp_hero_oro"
+                        android:textSize="@dimen/text_caption"
+                        android:visibility="gone"
+                        app:drawableStartCompat="@drawable/ic_ms_trophy_fill"
+                        app:drawableTint="@color/gp_hero_oro" />
+                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
+            <!-- Los ejercicios. Si «Todo como la última vez» no cabe al lado del título (letra 1,3),
+                 baja debajo: el título no se parte. -->
+            <es.pmdm.gymprofit.ui.widget.FilaQueBaja
+                android:id="@+id/filaEjercicios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_24">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/apuntar_ejercicios"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Seccion" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnComoUltima"
+                    style="@style/Widget.GymProFit.BotonPildora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/zona_tactil"
+                    android:text="@string/apuntar_como_ultima"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    android:visibility="gone"
+                    app:backgroundTint="?attr/colorPrimaryContainer"
+                    app:icon="@drawable/ic_ms_done_all"
+                    app:iconTint="?attr/colorOnPrimaryContainer" />
+            </es.pmdm.gymprofit.ui.widget.FilaQueBaja>
+
+            <LinearLayout
+                android:id="@+id/listaEjercicios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <include
+                android:id="@+id/estadoEjercicios"
+                layout="@layout/view_estado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_12" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnadirEjercicios"
+                style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_12"
+                android:minHeight="@dimen/zona_tactil"
+                android:text="@string/apuntar_anadir_ejercicios"
+                android:visibility="gone"
+                app:icon="@drawable/ic_ms_add"
+                app:iconGravity="textStart" />
+
+            <!-- ¿Qué tal fue? Cinco caras de 1 a 5; sin tocar, NULL (GP-077). -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_24"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvQueTal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:accessibilityHeading="true"
+                    android:text="@string/apuntar_que_tal"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Seccion" />
+
+                <TextView
+                    android:id="@+id/tvCaraElegida"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:importantForAccessibility="no"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                    android:textColor="?attr/colorOnPrimaryContainer" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_12"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/grupoCaras"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <ImageButton
+                    android:id="@+id/btnNota"
+                    android:layout_width="@dimen/zona_tactil"
+                    android:layout_height="@dimen/zona_tactil"
+                    android:background="@drawable/bg_boton_nota"
+                    android:contentDescription="@string/apuntar_nota_anadir"
+                    android:foreground="@drawable/fondo_pulsable_redondo"
+                    android:src="@drawable/ic_ms_edit_note"
+                    app:tint="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNota"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_12"
+                android:hint="@string/apuntar_nota"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNota"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="2" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Botón fijo para guardar la sesión -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnGuardar"
+    <!-- El pie fijo: lo que se va a guardar, en una frase, y «Guardar entreno». -->
+    <LinearLayout
+        android:id="@+id/piePantalla"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginStart="@dimen/margen_pantalla"
-        android:layout_marginEnd="@dimen/margen_pantalla"
-        android:layout_marginTop="@dimen/espacio_16"
-        android:layout_marginBottom="@dimen/espacio_16"
-        android:text="@string/sesiones_guardar" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_barra_inferior"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_16">
 
+        <TextView
+            android:id="@+id/tvPie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardar"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_12"
+            android:minHeight="56dp"
+            android:text="@string/apuntar_guardar" />
+    </LinearLayout>
 </LinearLayout>
