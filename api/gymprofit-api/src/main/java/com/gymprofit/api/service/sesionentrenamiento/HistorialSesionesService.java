@@ -37,6 +37,7 @@ import java.util.TreeMap;
 //   · los kilos de todas ellas, serie a serie y desde el resumen, con la definición de
 //     GP-011 (dos, agrupadas por sesión);
 //   · los récords que batió cada una, con CalculadoraRecords (la de RecordService);
+//   · las series hechas de todas ellas, para las barras (una, agrupada por sesión);
 //   · y para las de la página, sus series y sus músculos (una, agrupada).
 // Con todas las sesiones en memoria, las barras de una sesión (sus 6 últimas con la misma
 // rutina) y la anterior salen aunque caigan en una página anterior del historial.
@@ -103,6 +104,7 @@ public class HistorialSesionesService {
 
         Map<Integer, BigDecimal> kilos = kilosPorSesion(usuarioId);
         Map<Integer, Integer> records = recordService.recordsPorSesion(usuarioId);
+        Map<Integer, Integer> series = seriesPorSesion(usuarioId);
         Map<Integer, List<Fila>> porRutina = porRutina(sesiones);
 
         List<Integer> ids = new ArrayList<>();
@@ -116,7 +118,7 @@ public class HistorialSesionesService {
             BigDecimal total = BigDecimal.ZERO;
             List<HistorialSesionesDTO.Sesion> tarjetas = new ArrayList<>(deLaSemana.size());
             for (Fila f : deLaSemana) {
-                HistorialSesionesDTO.Sesion s = tarjeta(f, kilos, records, porRutina,
+                HistorialSesionesDTO.Sesion s = tarjeta(f, kilos, records, series, porRutina,
                         detalles.getOrDefault(f.id(), new Detalle()));
                 total = total.add(s.getKilos());
                 tarjetas.add(s);
@@ -143,24 +145,27 @@ public class HistorialSesionesService {
         boolean alguna = ids.stream().anyMatch(porRutina::containsKey);
         Map<Integer, BigDecimal> kilos = alguna ? kilosPorSesion(usuarioId) : Map.of();
         Map<Integer, Integer> records = alguna ? recordService.recordsPorSesion(usuarioId) : Map.of();
+        Map<Integer, Integer> series = alguna ? seriesPorSesion(usuarioId) : Map.of();
 
         for (RutinaDTO r : rutinas) {
             r.setMusculos(musculos.getOrDefault(r.getId(), List.of()));
             List<Fila> hechas = porRutina.getOrDefault(r.getId(), List.of());
-            r.setUltimas(veces(hechas.subList(Math.max(0, hechas.size() - BARRAS), hechas.size()), kilos, records));
+            r.setUltimas(veces(hechas.subList(Math.max(0, hechas.size() - BARRAS), hechas.size()), kilos, records,
+                    series));
         }
     }
 
     // --- Armado -------------------------------------------------------------
 
     private HistorialSesionesDTO.Sesion tarjeta(Fila f, Map<Integer, BigDecimal> kilos, Map<Integer, Integer> records,
-                                               Map<Integer, List<Fila>> porRutina, Detalle d) {
+                                               Map<Integer, Integer> series, Map<Integer, List<Fila>> porRutina,
+                                               Detalle d) {
         List<VezRutinaDTO> barras = List.of();
         BigDecimal anterior = null;
         if (f.rutinaId() != null) {
             List<Fila> deLaRutina = porRutina.get(f.rutinaId());
             int pos = deLaRutina.indexOf(f);
-            barras = veces(deLaRutina.subList(Math.max(0, pos + 1 - BARRAS), pos + 1), kilos, records);
+            barras = veces(deLaRutina.subList(Math.max(0, pos + 1 - BARRAS), pos + 1), kilos, records, series);
             if (pos > 0) anterior = kilos.getOrDefault(deLaRutina.get(pos - 1).id(), BigDecimal.ZERO);
         }
         return new HistorialSesionesDTO.Sesion(f.id(), f.rutinaId(), f.rutinaNombre(), f.inicio(), f.minutos(),
@@ -169,11 +174,11 @@ public class HistorialSesionesService {
     }
 
     private static List<VezRutinaDTO> veces(List<Fila> filas, Map<Integer, BigDecimal> kilos,
-                                            Map<Integer, Integer> records) {
+                                            Map<Integer, Integer> records, Map<Integer, Integer> series) {
         List<VezRutinaDTO> lista = new ArrayList<>(filas.size());
         for (Fila f : filas) {
             lista.add(new VezRutinaDTO(f.id(), f.inicio(), kilos.getOrDefault(f.id(), BigDecimal.ZERO),
-                    records.getOrDefault(f.id(), 0) > 0));
+                    records.getOrDefault(f.id(), 0) > 0, series.getOrDefault(f.id(), 0)));
         }
         return lista;
     }
@@ -222,6 +227,21 @@ public class HistorialSesionesService {
             if (k.signum() > 0) kilos.put(id, k);
         });
         return kilos;
+    }
+
+    // Series hechas de cada sesión del usuario, en una consulta: las de las barras pueden caer
+    // fuera de la página. Cuenta como detallesDe (SERIES_DEL_EJERCICIO, ejercicio a ejercicio).
+    private Map<Integer, Integer> seriesPorSesion(Integer usuarioId) {
+        Map<Integer, Integer> series = new HashMap<>();
+        jdbc.query("SELECT x.sesion_id, SUM(x.hechas) AS hechas FROM ("
+                        + "SELECT er.sesion_id, " + ResumenSesionService.SERIES_DEL_EJERCICIO + " AS hechas "
+                        + "FROM ejercicios_realizados er JOIN sesiones_entrenamiento s ON s.id = er.sesion_id "
+                        + "LEFT JOIN series_realizadas sr ON sr.ejercicio_realizado_id = er.id "
+                        + "WHERE s.usuario_id = ? AND s.completada = 1 GROUP BY er.id) x GROUP BY x.sesion_id",
+                rs -> {
+                    series.put(rs.getInt("sesion_id"), rs.getInt("hechas"));
+                }, usuarioId);
+        return series;
     }
 
     // Series hechas, ejercicios y series por músculo de las sesiones pedidas, en una consulta.
