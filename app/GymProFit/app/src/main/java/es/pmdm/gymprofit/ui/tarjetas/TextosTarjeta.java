@@ -359,7 +359,7 @@ public final class TextosTarjeta {
         String hace = TiempoRelativo.texto(ctx, u.getFecha());
         String antes = ctx.getString(R.string.tarjeta_ultima_vez, hace == null ? "" : hace);
         return conOro(FrasesTarjeta.conRecords(antes, ctx.getString(R.string.tarjeta_enlace_con),
-                u.isRecord() ? 1 : 0, frases));
+                u.getRecords(), frases));
     }
 
     /** «La última vez, hace 6 días», sin récords: la de la hoja de elegir rutina. */
@@ -381,7 +381,9 @@ public final class TextosTarjeta {
         String hace = TiempoRelativo.texto(ctx, u.getFecha());
         String cifra = CifraTarjeta.deVez(u).enFrase(cifras);
         String texto = ctx.getString(R.string.tarjeta_ultima_a11y, hace == null ? "" : hace, cifra);
-        if (u.isRecord()) texto += ctx.getString(R.string.tarjeta_enlace_con) + FrasesTarjeta.records(1, frases);
+        if (u.getRecords() > 0) {
+            texto += ctx.getString(R.string.tarjeta_enlace_con) + FrasesTarjeta.records(u.getRecords(), frases);
+        }
         return texto;
     }
 

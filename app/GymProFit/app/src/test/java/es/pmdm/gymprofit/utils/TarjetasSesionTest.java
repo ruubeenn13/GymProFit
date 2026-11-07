@@ -283,6 +283,16 @@ public class TarjetasSesionTest {
     }
 
     @Test
+    public void cadaVezDiceCuantosRecordsNoSoloSiHubo() {
+        // Visto en producción: una sesión de dos récords salía «con 1 récord» en Entrenar.
+        assertEquals(2, new VezRutina(1, null, 2880, true, 6, 2).getRecords());
+        assertEquals(0, new VezRutina(2, null, 2160, false, 6, 0).getRecords());
+        // Una API sin el recuento (builds viejas contra una API vieja): si hubo, al menos uno.
+        assertEquals(1, new VezRutina(3, null, 850, true, 4).getRecords());
+        assertEquals(0, new VezRutina(4, null, 850, false, 4).getRecords());
+    }
+
+    @Test
     public void laUltimaVezDeUnaRutinaSigueLaMismaCascada() throws IOException {
         assertEquals(CifraTarjeta.Tipo.KILOS, CifraTarjeta.deVez(new VezRutina(1, null, 850, false, 4)).tipo);
         CifraTarjeta series = CifraTarjeta.deVez(new VezRutina(2, null, 0, true, 3));
