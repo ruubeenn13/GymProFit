@@ -151,7 +151,6 @@
     <string name="objetivo_fuerza">Gain strength</string>
 
     <!-- SESSIONS -->
-    <string name="sesiones_sin_sesiones">No sessions recorded</string>
     <string name="sesiones_rutina">Routine</string>
     <string name="sesiones_rutina_a11y">Routine: %1$s</string>
     <string name="sesiones_duracion">Duration (min) *</string>

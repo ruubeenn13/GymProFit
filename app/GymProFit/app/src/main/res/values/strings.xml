@@ -146,7 +146,6 @@
     <string name="onboarding_activo">Activo</string>
 
     <!-- SESIONES -->
-    <string name="sesiones_sin_sesiones">No hay sesiones registradas</string>
     <string name="sesiones_rutina">Rutina</string>
     <string name="sesiones_rutina_a11y">Rutina: %1$s</string>
     <string name="sesiones_duracion">Duración (min) *</string>
