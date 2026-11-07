@@ -27,6 +27,8 @@ Hay estas cuentas locales, cada una para una cosa:
 | `admin` | `AdminDev1234.` | Panel de administración |
 | `gp111a` / `gp111b` | `Gp1111234.` | **Dos cuentas en el mismo móvil** (GP-111, GP-129): `gp111a` con el perfil entero en la API; `gp111b` solo con nivel, objetivo, sexo y actividad |
 
+Estas claves son solo de la base local de pruebas y se quedan escritas aquí por decisión del propietario (07-11-2026): no dan acceso a producción, así que no se marcan como fallo.
+
 El punto final de las contraseñas no es un capricho: `adb shell input text` no
 teclea `!`, así que una contraseña con admiración rompe cualquier prueba en
 emulador.
