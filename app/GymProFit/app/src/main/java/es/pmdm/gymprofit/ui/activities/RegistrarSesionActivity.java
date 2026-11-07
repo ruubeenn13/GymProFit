@@ -366,7 +366,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             estadoEjercicios.oculto();
         }
         btnAnadirEjercicios.setVisibility(libre && datos != Carga.ERROR ? View.VISIBLE : View.GONE);
-        btnComoUltima.setVisibility(vm.hayUltimaVez() ? View.VISIBLE : View.GONE);
+        btnComoUltima.setVisibility(vm.hayUltimaVez() ? View.VISIBLE
+                : vm.tuvoUltimaVez() ? View.INVISIBLE : View.GONE);
 
         String forma = forma(s);
         if (!forma.equals(estructura)) {
@@ -689,7 +690,11 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     private void marcar(FilaSerie f) {
         SesionEnCurso.Serie antes = serie(f.serieId);
         boolean estabaHecha = antes != null && antes.hecha;
+        // Lo que hay encima puede cambiar de alto al marcar (entra el récord en la cabecera, se va
+        // «Todo como la última vez») o la lista rehacerse: la fila tocada se queda bajo el dedo.
+        int yAntes = yEnPantalla(f.raiz);
         LogicaSesion.Marcado m = vm.marcar(f.serieId, idioma);
+        anclar(f.serieId, yAntes);
         switch (m) {
             case FALTAN_REPS:
             case FALTAN_SEGUNDOS:
@@ -702,14 +707,42 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 avisar(R.string.envivo_no_valido);
                 break;
             case HECHA:
-                if (!estabaHecha && !seriesRecord.contains(f.serieId)) {
-                    f.btnMarcar.setBackgroundResource(R.drawable.bg_check);
-                    Movimiento.marcarSerie(f.btnMarcar, fondo(false, false), fondo(true, false), true);
+                if (!estabaHecha) {
+                    // El círculo crece al marcar (momento 24), también el del récord, que va a dorado;
+                    // ese ya vibra al dorarse la fila, así que aquí no vibra otra vez.
+                    boolean record = seriesRecord.contains(f.serieId);
+                    FilaSerie ahora = filas.get(f.serieId);
+                    ImageButton boton = ahora != null ? ahora.btnMarcar : f.btnMarcar;
+                    boton.setBackgroundResource(R.drawable.bg_check);
+                    Movimiento.marcarSerie(boton, fondo(false, false), fondo(true, record), !record);
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    private static int yEnPantalla(View v) {
+        int[] xy = new int[2];
+        v.getLocationOnScreen(xy);
+        return xy[1];
+    }
+
+    // Tras el siguiente layout, desplaza lo justo para que la fila de la serie vuelva a su altura.
+    private void anclar(long serieId, int yAntes) {
+        androidx.core.widget.NestedScrollView scroll = findViewById(R.id.scrollApuntar);
+        scroll.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                scroll.getViewTreeObserver().removeOnPreDrawListener(this);
+                FilaSerie f = filas.get(serieId);
+                if (f == null || !f.raiz.isAttachedToWindow()) return true;
+                int salto = yEnPantalla(f.raiz) - yAntes;
+                if (salto == 0) return true;
+                scroll.scrollBy(0, salto);
+                return false;
+            }
+        });
     }
 
     @Nullable

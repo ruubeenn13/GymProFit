@@ -461,6 +461,15 @@ public class RegistrarSesionViewModel extends ViewModel {
     }
 
     /**
+     * Si algún ejercicio tuvo última vez: entonces el sitio de «Todo como la última vez» se guarda
+     * aunque ya no quede nada que rellenar, para que la lista no salte al irse el botón.
+     */
+    public boolean tuvoUltimaVez() {
+        for (SesionEnCurso.Ejercicio e : borrador.ejercicios) if (!e.anterior.isEmpty()) return true;
+        return false;
+    }
+
+    /**
      * «Todo como la última vez»: cada serie sin marcar que tuvo su igual la última vez se queda con
      * aquellos valores y se marca. Las ya marcadas no se tocan.
      *
