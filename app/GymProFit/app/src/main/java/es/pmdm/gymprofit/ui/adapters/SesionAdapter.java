@@ -250,9 +250,9 @@ public class SesionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             String t = textos.semana(w.lunes);
             titulo.setText(t);
             resumen.setText(textos.resumenSemana(w.entrenos, w.kilos));
-            // En mayúsculas TalkBack deletrea: se le da en frase.
-            String enFrase = t.isEmpty() ? t : t.charAt(0) + t.substring(1).toLowerCase(textos.idioma());
-            itemView.setContentDescription(enFrase + ": " + textos.resumenSemanaA11y(w.entrenos, w.kilos));
+            // En mayúsculas TalkBack deletrea: se le da en frase, con el mes como se escribe.
+            itemView.setContentDescription(textos.semanaA11y(w.lunes) + ": "
+                    + textos.resumenSemanaA11y(w.entrenos, w.kilos));
         }
     }
 
@@ -296,19 +296,11 @@ public class SesionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             zonas.setText(z);
             zonas.setVisibility(z.isEmpty() ? View.GONE : View.VISIBLE);
 
-            boolean sinEjercicios = s.getEjercicios() == 0;
-            if (sinEjercicios) {
-                // Sin ejercicios apuntados: el aviso en el sitio de los kilos, sin barras.
-                barras.setVeces(new ArrayList<>());
-                kilos.setTextAppearance(R.style.TextAppearance_GymProFit_Cuerpo);
-                kilos.setTextColor(itemView.getContext().getColor(R.color.gp_text_secondary));
-                kilos.setText(R.string.tarjeta_sin_ejercicios);
-            } else {
-                kilos.setTextAppearance(R.style.TextAppearance_GymProFit_Cifra_Pequena);
-                barras.setVeces(s.esLibre() ? new ArrayList<>() : s.getBarras());
-                entrada.pintar("s:" + s.getId(), kilos, s.getKilos(), R.dimen.text_tarjeta_kg, textos, barras);
-            }
-            ComparacionSesion c = sinEjercicios ? null : textos.comparacion(s);
+            // Kilos con sus barras, «3 series» o el aviso (CifraTarjeta).
+            textos.pintarCifra(kilos, textos.cifra(s), entrada, "s:" + s.getId(),
+                    R.style.TextAppearance_GymProFit_Cifra_Pequena, R.dimen.text_tarjeta_kg, barras,
+                    s.esLibre() ? new ArrayList<>() : s.getBarras());
+            ComparacionSesion c = textos.comparacion(s);
             textos.pintarComparacion(comparacion, c);
             CharSequence m = textos.meta(s);
             meta.setText(m);

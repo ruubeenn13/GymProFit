@@ -116,16 +116,19 @@ public final class FrasesTarjeta {
 
     /**
      * Minutos, series y récords de una sesión: «58 minutos, 18 series y 1 récord». Los récords
-     * solo si los hubo; sin ejercicios apuntados, solo los minutos (los kilos dicen el resto).
+     * solo si los hubo. Sin las series cuando la cifra grande no son kilos (CifraTarjeta): o ya
+     * son la cifra («3 series») o no hubo ninguna, y «0 series» no se dice.
+     *
+     * @param sinSeries true si las series no van en esta línea.
      *
      * @param minutos null si no se sabe.
      */
     @NonNull
-    public static Linea meta(@Nullable Integer minutos, int series, int records, boolean sinEjercicios,
+    public static Linea meta(@Nullable Integer minutos, int series, int records, boolean sinSeries,
                              @NonNull Textos t) {
         List<String> partes = new ArrayList<>();
         if (minutos != null && minutos > 0) partes.add(t.minutos.de(minutos));
-        if (!sinEjercicios) partes.add(t.series.de(series));
+        if (!sinSeries) partes.add(t.series.de(series));
         String record = records > 0 ? t.records.de(records) : null;
         if (record != null) partes.add(record);
         String texto = lista(partes, t);

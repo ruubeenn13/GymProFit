@@ -21,6 +21,7 @@ import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
 import es.pmdm.gymprofit.ui.tarjetas.EntradaTarjeta;
 import es.pmdm.gymprofit.ui.tarjetas.TextosTarjeta;
 import es.pmdm.gymprofit.ui.widget.BarrasVecesView;
+import es.pmdm.gymprofit.utils.CifraTarjeta;
 import es.pmdm.gymprofit.utils.ComparacionSesion;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.VistaEstado;
@@ -132,31 +133,33 @@ public final class InicioEntrenos {
         String cuandoA11y = textos.cuandoA11y(s.getFechaInicio());
         if (!cuandoA11y.isEmpty()) a11y.append(", ").append(cuandoA11y);
         a11y.append(". ");
-        if (s.getEjercicios() == 0) {
-            barras.setVeces(java.util.Collections.emptyList());
-            kilos.setTextAppearance(R.style.TextAppearance_GymProFit_Cuerpo);
-            kilos.setTextColor(fragment.requireContext().getColor(R.color.gp_text_secondary));
-            kilos.setText(R.string.tarjeta_sin_ejercicios);
-            destaca.setVisibility(View.GONE);
-            a11y.append(fragment.getString(R.string.tarjeta_sin_ejercicios)).append('.');
-        } else {
-            barras.setVeces(s.esLibre() ? java.util.Collections.emptyList() : s.getBarras());
-            entrada.pintar("s:" + s.getId(), kilos, s.getKilos(), R.dimen.text_tarjeta_kg_carrusel, textos, barras);
-            a11y.append(textos.kilosA11y(s.getKilos()));
-            // Una sola línea destacada: el récord manda sobre la comparación.
-            if (s.getRecords() > 0) {
-                textos.pintarRecords(destaca, s.getRecords());
-                a11y.append(", ").append(destaca.getText());
-            } else {
-                ComparacionSesion c = textos.comparacion(s);
-                textos.pintarComparacion(destaca, c);
-                if (c != null) a11y.append(", ").append(Character.toLowerCase(destaca.getText().charAt(0)))
-                        .append(destaca.getText().subSequence(1, destaca.getText().length()));
-            }
+        CifraTarjeta cifra = textos.cifra(s);
+        textos.pintarCifra(kilos, cifra, entrada, "s:" + s.getId(), R.style.TextAppearance_GymProFit_Cifra_Pequena,
+                R.dimen.text_tarjeta_kg_carrusel, barras,
+                s.esLibre() ? java.util.Collections.emptyList() : s.getBarras());
+        a11y.append(textos.cifraA11y(cifra));
+        if (cifra.esAviso()) {
+            // Un aviso: debajo, los minutos (si se saben), sin icono y en el texto secundario.
+            String minutos = textos.minutos(s);
+            // En la letra de apoyo, no en la de la línea destacada: no es un dato que destaque.
+            destaca.setTextAppearance(R.style.TextAppearance_GymProFit_Apoyo_Pequeno);
+            textos.pintarNeutra(destaca, minutos);
             a11y.append('.');
-            String b = s.esLibre() ? null : textos.barrasA11y(s.getBarras());
-            if (b != null) a11y.append(' ').append(b).append('.');
+            if (!minutos.isEmpty()) a11y.append(' ').append(minutos).append('.');
+        } else if (s.getRecords() > 0) {
+            // Una sola línea destacada: el récord manda sobre la comparación.
+            textos.pintarRecords(destaca, s.getRecords());
+            a11y.append(fragment.getString(R.string.enumeracion_y)).append(destaca.getText()).append('.');
+        } else {
+            // Sin kilos no hay comparación: entonces, sin línea destacada.
+            ComparacionSesion c = textos.comparacion(s);
+            textos.pintarComparacion(destaca, c);
+            if (c != null) a11y.append(", ").append(Character.toLowerCase(destaca.getText().charAt(0)))
+                    .append(destaca.getText().subSequence(1, destaca.getText().length()));
+            a11y.append('.');
         }
+        String b = s.esLibre() || !cifra.conKilos() ? null : textos.barrasA11y(s.getBarras());
+        if (b != null) a11y.append(' ').append(b).append('.');
         tarjeta.setContentDescription(a11y.toString());
         tarjeta.setOnClickListener(v -> abrirResumen(s, v));
     }

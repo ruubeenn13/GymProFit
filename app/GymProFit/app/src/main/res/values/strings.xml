@@ -2544,6 +2544,8 @@
     <string name="tarjeta_comparacion_igual">Igual que la anterior</string>
     <string name="tarjeta_comparacion_primera">Primera vez con esta rutina</string>
     <string name="tarjeta_sin_ejercicios">Sin ejercicios apuntados</string>
+    <!-- Una sesión con ejercicios pero sin ninguna serie hecha (GP-232). -->
+    <string name="tarjeta_sin_series">Sin series hechas</string>
     <string name="tarjeta_sin_hacer">Sin hacer todavía</string>
     <!-- %1$s: «hace 6 días», «ayer». -->
     <string name="tarjeta_ultima_vez">La última vez, %1$s</string>
@@ -2557,6 +2559,11 @@
         <item quantity="one">Tu última vez con esta rutina, %2$s kilos</item>
         <item quantity="other">Tus %1$d últimas veces con esta rutina, de %2$s a %3$s kilos</item>
     </plurals>
+    <!-- La primera y la última con los mismos kilos: «de 1.475 a 1.475» no se dice. -->
+    <plurals name="tarjeta_barras_iguales_a11y">
+        <item quantity="one">Tu última vez con esta rutina, %2$s kilos</item>
+        <item quantity="other">Tus %1$d últimas veces con esta rutina, la primera y la última con %2$s kilos</item>
+    </plurals>
     <!-- %1$s: «hace 6 días»; %2$s: «7.920 kilos». -->
     <string name="tarjeta_ultima_a11y">La última vez, %1$s, %2$s</string>
     <string name="tarjeta_toca_hoy_a11y">, la que toca hoy</string>
@@ -2564,10 +2571,17 @@
     <string name="historial_esta_semana">Esta semana</string>
     <string name="historial_semana_pasada">Semana pasada</string>
     <string name="historial_semana_del">Semana del %1$s</string>
+    <!-- El lunes de la semana para TalkBack, con el mes entero: abreviado, el sintetizador lo lee a medias. -->
+    <string name="historial_semana_patron_a11y">d \'de\' MMMM</string>
     <!-- %1$d: entrenos; %2$s: los kilos ya con sus miles. -->
     <plurals name="historial_semana_resumen">
         <item quantity="one">%1$d entreno y %2$s kg</item>
         <item quantity="other">%1$d entrenos y %2$s kg</item>
+    </plurals>
+    <!-- La cabecera de una semana sin kilos (peso corporal o por tiempo), también para TalkBack. -->
+    <plurals name="historial_semana_sin_kilos">
+        <item quantity="one">%1$d entreno</item>
+        <item quantity="other">%1$d entrenos</item>
     </plurals>
     <plurals name="historial_semana_a11y">
         <item quantity="one">%1$d entreno y %2$s kilos</item>

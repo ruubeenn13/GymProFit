@@ -44,7 +44,15 @@ public final class ElegirRutinaHoja {
         TextosTarjeta textos = new TextosTarjeta(act);
         EntradaTarjeta entrada = new EntradaTarjeta();
 
-        for (Rutina r : propias) {
+        // La que toca hoy, la primera, como en el tablero; las demás en su orden.
+        List<Rutina> enOrden = new java.util.ArrayList<>(propias);
+        for (int i = 0; i < enOrden.size(); i++) {
+            if (tocaHoyId != null && tocaHoyId == enOrden.get(i).getId()) {
+                enOrden.add(0, enOrden.remove(i));
+                break;
+            }
+        }
+        for (Rutina r : enOrden) {
             boolean toca = tocaHoyId != null && tocaHoyId == r.getId();
             lista.addView(fila(act, lista, r, toca, textos, entrada, () -> {
                 hoja.dismiss();
@@ -70,7 +78,10 @@ public final class ElegirRutinaHoja {
         String ultima = textos.ultimaVezCorta(r.getUltimas());
         texto(f.findViewById(R.id.tvUltima), ultima);
         BarrasVecesView barras = f.findViewById(R.id.barrasElegir);
-        barras.setVeces(r.getUltimas());
+        // Las barras solo si la última vez tuvo kilos (CifraTarjeta).
+        List<es.pmdm.gymprofit.model.sesion.VezRutina> u = r.getUltimas();
+        boolean conKilos = !u.isEmpty() && es.pmdm.gymprofit.utils.CifraTarjeta.deVez(u.get(u.size() - 1)).conKilos();
+        barras.setVeces(conKilos ? u : new java.util.ArrayList<>());
         entrada.pintar("r:" + r.getId(), null, 0, R.dimen.text_tarjeta_kg, textos, barras);
         f.findViewById(R.id.ivEmpezar).setVisibility(View.VISIBLE);
 

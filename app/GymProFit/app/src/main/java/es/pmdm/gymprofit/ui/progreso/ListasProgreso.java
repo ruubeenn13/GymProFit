@@ -268,8 +268,9 @@ final class ListasProgreso {
             lista.addView(fila);
             String rutina = textos.titulo(s);
             String cuando = textos.cuandoRelativo(s.getFechaInicio());
-            String kilos = s.getEjercicios() == 0 ? ctx.getString(R.string.tarjeta_sin_ejercicios)
-                    : ctx.getString(R.string.inicio_kilos_n, textos.numero(s.getKilos()));
+            es.pmdm.gymprofit.utils.CifraTarjeta cifra = textos.cifra(s);
+            String kilos = cifra.conKilos() ? ctx.getString(R.string.inicio_kilos_n, textos.numero(s.getKilos()))
+                    : textos.cifraEnFrase(cifra);
             String antes = cuando.isEmpty() ? kilos : ctx.getString(R.string.tarjeta_cuando, cuando, kilos);
             FrasesTarjeta.Linea l = FrasesTarjeta.conRecords(antes, ctx.getString(R.string.enumeracion_y),
                     s.getRecords(), textos.frases());
@@ -279,17 +280,17 @@ final class ListasProgreso {
             apoyo.setText(textos.conOro(l));
             apoyo.setVisibility(View.VISIBLE);
             BarrasVecesView barras = fila.findViewById(R.id.barrasFila);
-            barras.setVeces(s.esLibre() ? new java.util.ArrayList<>() : s.getBarras());
+            barras.setVeces(s.esLibre() || !cifra.conKilos() ? new java.util.ArrayList<>() : s.getBarras());
             entrada.pintar("s:" + s.getId(), null, 0, R.dimen.text_tarjeta_kg, textos, barras);
 
             StringBuilder a11y = new StringBuilder(rutina);
             String cuandoA11y = textos.cuandoA11y(s.getFechaInicio());
             if (!cuandoA11y.isEmpty()) a11y.append(", ").append(cuandoA11y);
-            a11y.append(". ").append(s.getEjercicios() == 0 ? kilos : textos.kilosA11y(s.getKilos()));
+            a11y.append(". ").append(textos.cifraA11y(cifra));
             if (s.getRecords() > 0) a11y.append(ctx.getString(R.string.enumeracion_y))
                     .append(FrasesTarjeta.records(s.getRecords(), textos.frases()));
             a11y.append('.');
-            String b = s.esLibre() ? null : textos.barrasA11y(s.getBarras());
+            String b = s.esLibre() || !cifra.conKilos() ? null : textos.barrasA11y(s.getBarras());
             if (b != null) a11y.append(' ').append(b).append('.');
             a11y.append(' ').append(ctx.getString(R.string.tarjeta_abre_resumen_a11y)).append('.');
             fila.setContentDescription(a11y);

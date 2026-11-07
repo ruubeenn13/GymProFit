@@ -344,6 +344,9 @@ public class TuProgramaVista {
         int neutro = color(com.google.android.material.R.attr.colorSurfaceVariant);
         int apoyo = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
         StringBuilder voz = new StringBuilder();
+        java.util.List<String> delCiclo = new java.util.ArrayList<>();
+        for (ProgramaQueSigue.DiaCiclo d : ciclo) delCiclo.add(d.getRutinaNombre());
+        java.util.Map<String, String> todas = Siglas.deCiclo(delCiclo);
         for (int i = 0; i < ciclo.size() && i < dias.size(); i++) {
             ProgramaQueSigue.DiaCiclo d = ciclo.get(i);
             View v = inflater.inflate(R.layout.item_dia_programa, tira, false);
@@ -351,7 +354,7 @@ public class TuProgramaVista {
             v.setLayoutParams(lp);
             ((TextView) v.findViewById(R.id.tvDiaNumero)).setText(String.valueOf(i + 1));
             TextView siglas = v.findViewById(R.id.tvDiaSiglas);
-            siglas.setText(Siglas.de(d.getRutinaNombre()));
+            siglas.setText(todas.get(d.getRutinaNombre()));
             GradientDrawable fondo = new GradientDrawable();
             fondo.setShape(GradientDrawable.OVAL);
             int estadoTxt;

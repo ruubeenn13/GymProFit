@@ -91,9 +91,10 @@ public final class TarjetaRutina {
             kilos.setText(R.string.tarjeta_sin_hacer);
             ultima.setVisibility(View.GONE);
         } else {
-            barras.setVeces(d.ultimas);
+            // La de la última vez: sus kilos con las barras, «3 series» sin barras, o el aviso.
             VezRutina u = d.ultimas.get(d.ultimas.size() - 1);
-            entrada.pintar("r:" + d.id, kilos, u.getKilos(), R.dimen.text_tarjeta_kg, textos, barras);
+            textos.pintarCifra(kilos, es.pmdm.gymprofit.utils.CifraTarjeta.deVez(u), entrada, "r:" + d.id,
+                    R.style.TextAppearance_GymProFit_Cifra_Pequena, R.dimen.text_tarjeta_kg, barras, d.ultimas);
             ultima.setVisibility(View.VISIBLE);
             ultima.setText(textos.ultimaVez(d.ultimas));
         }
@@ -104,7 +105,8 @@ public final class TarjetaRutina {
         if (!d.zonas.isEmpty()) a11y.append(d.zonas).append(". ");
         if (!pauta.isEmpty()) a11y.append(pauta).append(". ");
         a11y.append(textos.ultimaVezA11y(d.ultimas)).append('.');
-        String b = textos.barrasA11y(d.ultimas);
+        String b = d.ultimas.isEmpty() || !es.pmdm.gymprofit.utils.CifraTarjeta
+                .deVez(d.ultimas.get(d.ultimas.size() - 1)).conKilos() ? null : textos.barrasA11y(d.ultimas);
         if (b != null) a11y.append(' ').append(b).append('.');
         t.setContentDescription(a11y);
         return t;

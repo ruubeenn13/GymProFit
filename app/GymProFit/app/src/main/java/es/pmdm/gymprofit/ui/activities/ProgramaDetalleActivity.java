@@ -187,10 +187,13 @@ public class ProgramaDetalleActivity extends BaseActivity {
         List<DiaPrograma> semana = p.getSemana() != null ? p.getSemana() : new ArrayList<>();
         LayoutInflater inflater = LayoutInflater.from(this);
         StringBuilder voz = new StringBuilder();
+        List<String> delCiclo = new ArrayList<>();
+        for (DiaPrograma d : semana) delCiclo.add(d.getRutinaNombre());
+        java.util.Map<String, String> siglas = Siglas.deCiclo(delCiclo);
         for (DiaPrograma d : semana) {
             View v = inflater.inflate(R.layout.item_dia_programa, ciclo, false);
             ((TextView) v.findViewById(R.id.tvDiaNumero)).setText(String.valueOf(d.getPosicion()));
-            ((TextView) v.findViewById(R.id.tvDiaSiglas)).setText(Siglas.de(d.getRutinaNombre()));
+            ((TextView) v.findViewById(R.id.tvDiaSiglas)).setText(siglas.get(d.getRutinaNombre()));
             ciclo.addView(v);
             if (voz.length() > 0) voz.append(", ");
             voz.append(getString(R.string.programa_ciclo_dia_a11y, d.getPosicion(), d.getRutinaNombre()));

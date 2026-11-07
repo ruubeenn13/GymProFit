@@ -2488,7 +2488,7 @@
     </plurals>
     <!-- %1$s: the day; %2$s: the time or the weekday. «Yesterday, 6:05 PM», «Yesterday, Tuesday». -->
     <string name="tarjeta_cuando">%1$s, %2$s</string>
-    <string name="tarjeta_dia_patron">EEEE, MMM d</string>
+    <string name="tarjeta_dia_patron">EEEE d</string>
     <string name="tarjeta_hora_patron">h:mm a</string>
     <string name="tarjeta_cuando_hoy_a11y">today at %1$s</string>
     <string name="tarjeta_cuando_ayer_a11y">yesterday at %1$s</string>
@@ -2499,6 +2499,8 @@
     <string name="tarjeta_comparacion_igual">Same as last time</string>
     <string name="tarjeta_comparacion_primera">First time with this routine</string>
     <string name="tarjeta_sin_ejercicios">No exercises logged</string>
+    <!-- Una sesión con ejercicios pero sin ninguna serie hecha (GP-232). -->
+    <string name="tarjeta_sin_series">No sets done</string>
     <string name="tarjeta_sin_hacer">Not done yet</string>
     <!-- %1$s: «6 days ago», «yesterday». -->
     <string name="tarjeta_ultima_vez">Last time, %1$s</string>
@@ -2512,6 +2514,11 @@
         <item quantity="one">Your last time with this routine, %2$s kilos</item>
         <item quantity="other">Your last %1$d times with this routine, from %2$s to %3$s kilos</item>
     </plurals>
+    <!-- La primera y la última con los mismos kilos: «from 1,475 to 1,475» no se dice. -->
+    <plurals name="tarjeta_barras_iguales_a11y">
+        <item quantity="one">Your last time with this routine, %2$s kilos</item>
+        <item quantity="other">Your last %1$d times with this routine, the first and the last at %2$s kilos</item>
+    </plurals>
     <!-- %1$s: «6 days ago»; %2$s: «7,920 kilos». -->
     <string name="tarjeta_ultima_a11y">Last time, %1$s, %2$s</string>
     <string name="tarjeta_toca_hoy_a11y">, the one up today</string>
@@ -2519,10 +2526,17 @@
     <string name="historial_esta_semana">This week</string>
     <string name="historial_semana_pasada">Last week</string>
     <string name="historial_semana_del">Week of %1$s</string>
+    <!-- El lunes de la semana para TalkBack, con el mes entero: abreviado, el sintetizador lo lee a medias. -->
+    <string name="historial_semana_patron_a11y">MMMM d</string>
     <!-- %1$d: workouts; %2$s: the kilos, already grouped. -->
     <plurals name="historial_semana_resumen">
         <item quantity="one">%1$d workout and %2$s kg</item>
         <item quantity="other">%1$d workouts and %2$s kg</item>
+    </plurals>
+    <!-- La cabecera de una semana sin kilos (peso corporal o por tiempo), también para TalkBack. -->
+    <plurals name="historial_semana_sin_kilos">
+        <item quantity="one">%1$d workout</item>
+        <item quantity="other">%1$d workouts</item>
     </plurals>
     <plurals name="historial_semana_a11y">
         <item quantity="one">%1$d workout and %2$s kilos</item>

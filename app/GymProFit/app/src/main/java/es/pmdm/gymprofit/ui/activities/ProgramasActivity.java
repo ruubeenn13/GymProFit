@@ -187,9 +187,17 @@ public class ProgramasActivity extends BaseActivity {
         String frase = frase(this, p);
         boolean loSigue = p.getCodigo().equals(codigoSeguido);
         ((TextView) card.findViewById(R.id.tvProgramaNombre)).setText(p.getNombre());
-        ((TextView) card.findViewById(R.id.tvProgramaResumen)).setText(frase);
-        card.findViewById(R.id.puntoNivel).setBackgroundTintList(android.content.res.ColorStateList.valueOf(
-                androidx.core.content.ContextCompat.getColor(this, es.pmdm.gymprofit.utils.NivelColor.de(p.getNivel()))));
+        TextView resumen = card.findViewById(R.id.tvProgramaResumen);
+        resumen.setText(frase);
+        // El punto, centrado en la primera línea: si la frase parte en dos (letra 1,3), no queda
+        // flotando entre las dos.
+        View punto = card.findViewById(R.id.puntoNivel);
+        android.view.ViewGroup.MarginLayoutParams lpPunto = (android.view.ViewGroup.MarginLayoutParams) punto.getLayoutParams();
+        lpPunto.topMargin = Math.max(0, (resumen.getLineHeight() - lpPunto.height) / 2);
+        punto.setLayoutParams(lpPunto);
+        card.findViewById(R.id.puntoNivel).setBackgroundTintList(android.content.res.ColorStateList.valueOf(recomendado
+                ? es.pmdm.gymprofit.utils.NivelColor.sobreHero(this, p.getNivel())
+                : androidx.core.content.ContextCompat.getColor(this, es.pmdm.gymprofit.utils.NivelColor.de(p.getNivel()))));
         card.findViewById(R.id.tvLoSigues).setVisibility(loSigue ? View.VISIBLE : View.GONE);
         TextView tvMotivo = card.findViewById(R.id.tvProgramaMotivo);
         tvMotivo.setText(motivo);
@@ -226,6 +234,9 @@ public class ProgramasActivity extends BaseActivity {
         int texto = recomendado ? androidx.core.content.ContextCompat.getColor(this, R.color.gp_on_hero)
                 : com.google.android.material.color.MaterialColors.getColor(tira, com.google.android.material.R.attr.colorOnSurface);
         android.graphics.Typeface condensada = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.barlow_condensed);
+        List<String> delCiclo = new ArrayList<>();
+        for (es.pmdm.gymprofit.model.programa.DiaPrograma d : semana) delCiclo.add(d.getRutinaNombre());
+        java.util.Map<String, String> siglas = es.pmdm.gymprofit.utils.Siglas.deCiclo(delCiclo);
         for (es.pmdm.gymprofit.model.programa.DiaPrograma d : semana) {
             nombres.add(d.getRutinaNombre());
             TextView c = new TextView(this);
@@ -234,7 +245,7 @@ public class ProgramasActivity extends BaseActivity {
             c.setLayoutParams(lp);
             c.setGravity(android.view.Gravity.CENTER);
             c.setBackgroundResource(recomendado ? R.drawable.bg_sigla_ciclo_hero : R.drawable.bg_sigla_ciclo);
-            c.setText(es.pmdm.gymprofit.utils.Siglas.de(d.getRutinaNombre()));
+            c.setText(siglas.get(d.getRutinaNombre()));
             c.setTextColor(texto);
             c.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_sigla_ciclo));
             if (condensada != null) c.setTypeface(android.graphics.Typeface.create(condensada, android.graphics.Typeface.BOLD));

@@ -185,7 +185,8 @@ public class TarjetasSesionTest {
         assertEquals("Hoy, 09:30", CuandoTarjeta.historial("2026-11-04T09:30:00", HOY, ES, es));
         assertEquals("Ayer, 18:05", CuandoTarjeta.historial("2026-11-03T18:05:00", HOY, ES, es));
         assertEquals("Lunes 2, 19:10", CuandoTarjeta.historial("2026-11-02T19:10:00", HOY, ES, es));
-        assertEquals("Monday, Nov 2, 7:10 PM", CuandoTarjeta.historial("2026-11-02T19:10:00", HOY, EN, cuando("values-en")));
+        // Sin el mes, como en español: lo da la cabecera de la semana.
+        assertEquals("Monday 2, 7:10 PM", CuandoTarjeta.historial("2026-11-02T19:10:00", HOY, EN, cuando("values-en")));
     }
 
     @Test
@@ -193,7 +194,7 @@ public class TarjetasSesionTest {
         CuandoTarjeta.Textos es = cuando("values");
         assertEquals("ayer a las 18:05", CuandoTarjeta.a11y("2026-11-03T18:05:00", HOY, ES, es));
         assertEquals("el lunes 2 a las 19:10", CuandoTarjeta.a11y("2026-11-02T19:10:00", HOY, ES, es));
-        assertEquals("on Monday, Nov 2 at 7:10 PM", CuandoTarjeta.a11y("2026-11-02T19:10:00", HOY, EN, cuando("values-en")));
+        assertEquals("on Monday 2 at 7:10 PM", CuandoTarjeta.a11y("2026-11-02T19:10:00", HOY, EN, cuando("values-en")));
     }
 
     @Test
@@ -209,6 +210,86 @@ public class TarjetasSesionTest {
         assertEquals("SEMANA PASADA", CuandoTarjeta.semana("2026-10-26", HOY, ES, es));
         assertEquals("SEMANA DEL 19 OCT", CuandoTarjeta.semana("2026-10-19", HOY, ES, es));
         assertEquals("WEEK OF OCT 19", CuandoTarjeta.semana("2026-10-19", HOY, EN, cuando("values-en")));
+    }
+
+    @Test
+    public void laCabeceraDeLaSemanaParaTalkBackVaEnFraseConElMesBienEscrito() throws IOException {
+        // El mes entero: abreviado, el sintetizador lo deletrea o lo lee a medias («sept»).
+        assertEquals("Week of October 19", CuandoTarjeta.semanaEnFrase("2026-10-19", HOY, EN, cuando("values-en")));
+        assertEquals("Semana del 19 de octubre", CuandoTarjeta.semanaEnFrase("2026-10-19", HOY, ES, cuando("values")));
+        assertEquals("Esta semana", CuandoTarjeta.semanaEnFrase("2026-11-02", HOY, ES, cuando("values")));
+    }
+
+    @Test
+    public void laCabeceraDeUnaSemanaSinKilosSoloCuentaLosEntrenos() throws IOException {
+        CifraTarjeta.Textos es = cifra("values"), en = cifra("values-en");
+        assertEquals("2 entrenos y 22.050 kg", sinDuros(CifraTarjeta.semana(2, 22050, es)));
+        assertEquals("3 entrenos", sinDuros(CifraTarjeta.semana(3, 0, es)));
+        assertEquals("1 entreno", sinDuros(CifraTarjeta.semana(1, 0, es)));
+        assertEquals("2 workouts and 22,050 kg", sinDuros(CifraTarjeta.semana(2, 22050, en)));
+        assertEquals("3 workouts", sinDuros(CifraTarjeta.semana(3, 0.3, en)));
+        // A TalkBack, igual: nunca «0 kilos».
+        assertEquals("2 entrenos y 22.050 kilos", sinDuros(CifraTarjeta.semanaA11y(2, 22050, es)));
+        assertEquals("3 entrenos", sinDuros(CifraTarjeta.semanaA11y(3, 0, es)));
+        assertEquals("1 workout", sinDuros(CifraTarjeta.semanaA11y(1, 0, en)));
+    }
+
+    // ── La cifra grande: kilos, series o aviso ────────────────────────────────
+
+    @Test
+    public void conKilosLaCifraSonLosKilosConSusBarrasYLaComparacion() throws IOException {
+        CifraTarjeta c = CifraTarjeta.deSesion(13640, 18, 5);
+        assertEquals(CifraTarjeta.Tipo.KILOS, c.tipo);
+        assertTrue(c.conKilos());
+        assertFalse(c.esAviso());
+        assertNull(c.texto(cifra("values")));
+        assertEquals("13.640 kilos", sinDuros(c.a11y(cifra("values"))));
+        assertEquals("13,640 kilos", sinDuros(c.a11y(cifra("values-en"))));
+    }
+
+    @Test
+    public void sinKilosYConSeriesLaCifraSonLasSeriesEnEspanolYEnIngles() throws IOException {
+        CifraTarjeta tres = CifraTarjeta.deSesion(0, 3, 2);
+        assertEquals(CifraTarjeta.Tipo.SERIES, tres.tipo);
+        assertFalse(tres.conKilos());
+        assertFalse(tres.esAviso());
+        assertEquals("3 series", sinDuros(tres.texto(cifra("values"))));
+        assertEquals("3 sets", sinDuros(tres.texto(cifra("values-en"))));
+        assertEquals("3 series", sinDuros(tres.a11y(cifra("values"))));
+        CifraTarjeta una = CifraTarjeta.deSesion(0, 1, 1);
+        assertEquals("1 serie", sinDuros(una.texto(cifra("values"))));
+        assertEquals("1 set", sinDuros(una.a11y(cifra("values-en"))));
+        // Medio kilo redondea a 0: no son kilos.
+        assertEquals(CifraTarjeta.Tipo.SERIES, CifraTarjeta.deSesion(0.4, 2, 1).tipo);
+    }
+
+    @Test
+    public void sinSeriesElAvisoDistingueSinEjerciciosDeSinSeries() throws IOException {
+        CifraTarjeta sinEjercicios = CifraTarjeta.deSesion(0, 0, 0);
+        assertEquals(CifraTarjeta.Tipo.SIN_EJERCICIOS, sinEjercicios.tipo);
+        assertTrue(sinEjercicios.esAviso());
+        assertEquals("Sin ejercicios apuntados", sinEjercicios.texto(cifra("values")));
+        assertEquals("No exercises logged", sinEjercicios.a11y(cifra("values-en")));
+        CifraTarjeta sinSeries = CifraTarjeta.deSesion(0, 0, 2);
+        assertEquals(CifraTarjeta.Tipo.SIN_SERIES, sinSeries.tipo);
+        assertTrue(sinSeries.esAviso());
+        assertFalse(sinSeries.conKilos());
+        assertEquals("Sin series hechas", sinSeries.texto(cifra("values")));
+        assertEquals("No sets done", sinSeries.texto(cifra("values-en")));
+        // Dentro de una frase («Hoy, sin series hechas»), el aviso va en minúscula; las cifras no cambian.
+        assertEquals("sin series hechas", sinSeries.enFrase(cifra("values")));
+        assertEquals("no exercises logged", sinEjercicios.enFrase(cifra("values-en")));
+        assertEquals("3 series", sinDuros(CifraTarjeta.deSesion(0, 3, 1).enFrase(cifra("values"))));
+    }
+
+    @Test
+    public void laUltimaVezDeUnaRutinaSigueLaMismaCascada() throws IOException {
+        assertEquals(CifraTarjeta.Tipo.KILOS, CifraTarjeta.deVez(new VezRutina(1, null, 850, false, 4)).tipo);
+        CifraTarjeta series = CifraTarjeta.deVez(new VezRutina(2, null, 0, true, 3));
+        assertEquals(CifraTarjeta.Tipo.SERIES, series.tipo);
+        assertEquals("3 sets", sinDuros(series.texto(cifra("values-en"))));
+        // De una vez no se sabe si tenía ejercicios: «Sin series hechas» vale en los dos casos.
+        assertEquals(CifraTarjeta.Tipo.SIN_SERIES, CifraTarjeta.deVez(new VezRutina(3, null, 0, false, 0)).tipo);
     }
 
     // ── Ayudas: las cadenas de verdad ───────────────────────────────────────
@@ -231,6 +312,23 @@ public class TarjetasSesionTest {
                 plural(carpeta, "tarjeta_records"), plural(carpeta, "tarjeta_ejercicios"));
     }
 
+    private static CifraTarjeta.Textos cifra(String carpeta) throws IOException {
+        Locale idioma = carpeta.endsWith("-en") ? EN : ES;
+        return new CifraTarjeta.Textos(idioma, plural(carpeta, "tarjeta_series"), pluralCon(carpeta, "tarjeta_kilos_a11y", false),
+                cadena(carpeta, "tarjeta_sin_ejercicios"), cadena(carpeta, "tarjeta_sin_series"),
+                pluralCon(carpeta, "historial_semana_resumen", true), pluralCon(carpeta, "historial_semana_a11y", true),
+                plural(carpeta, "historial_semana_sin_kilos"));
+    }
+
+    // Un plural con la cifra ya escrita: «%1$s kilos» (conN false) o «%1$d entrenos y %2$s kg».
+    private static CifraTarjeta.ContarCon pluralCon(String carpeta, String nombre, boolean conN) throws IOException {
+        Matcher m = Pattern.compile("<plurals name=\"" + nombre + "\">(.*?)</plurals>", Pattern.DOTALL).matcher(xml(carpeta));
+        if (!m.find()) throw new AssertionError(carpeta + ": falta el plural " + nombre);
+        String uno = item(m.group(1), "one"), otro = item(m.group(1), "other");
+        return (n, c) -> conN ? String.format(Locale.ROOT, n == 1 ? uno : otro, n, c)
+                : String.format(Locale.ROOT, n == 1 ? uno : otro, c);
+    }
+
     private static CuandoTarjeta.Textos cuando(String carpeta) throws IOException {
         return new CuandoTarjeta.Textos(cadena(carpeta, "tiempo_hoy_mayuscula"), cadena(carpeta, "tiempo_ayer_mayuscula"),
                 cadena(carpeta, "tarjeta_cuando"), cadena(carpeta, "tarjeta_dia_patron"),
@@ -240,7 +338,8 @@ public class TarjetasSesionTest {
                 cadena(carpeta, "historial_semana_del"), cadena(carpeta, "inicio_fecha_corta_patron"),
                 new FechaUtils.TextosDia(cadena(carpeta, "tiempo_hoy_mayuscula"), cadena(carpeta, "tiempo_ayer_mayuscula"),
                         cadena(carpeta, "tarjeta_cuando"), cadena(carpeta, "inicio_dia_pasado"),
-                        cadena(carpeta, "inicio_fecha_corta_patron")));
+                        cadena(carpeta, "inicio_fecha_corta_patron")),
+                cadena(carpeta, "historial_semana_patron_a11y"));
     }
 
     private static String sinDuros(String s) {

@@ -32,42 +32,52 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/tvProgramaNombre"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
-                        android:textColor="@color/gp_on_hero" />
+                        android:textColor="@color/gp_on_hero"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tvLoSigues"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tvLoSigues"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/espacio_8"
-                        android:background="@drawable/bg_chip_zona_hecha"
+                        android:background="@drawable/bg_chip_hero"
                         android:gravity="center_vertical"
                         android:minHeight="22dp"
                         android:paddingStart="@dimen/espacio_8"
                         android:paddingEnd="@dimen/espacio_8"
                         android:text="@string/programas_lo_sigues"
                         android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
-                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textColor="@color/gp_on_hero"
                         android:textStyle="bold"
-                        android:visibility="gone" />
-                </LinearLayout>
+                        android:visibility="gone"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvProgramaNombre"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/espacio_4"
-                    android:gravity="center_vertical"
+                    android:gravity="top"
                     android:orientation="horizontal">
 
                     <View

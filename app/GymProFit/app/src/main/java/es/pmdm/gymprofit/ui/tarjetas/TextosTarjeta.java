@@ -25,6 +25,8 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.sesion.PaginaHistorial;
 import es.pmdm.gymprofit.model.sesion.SeriesMusculo;
 import es.pmdm.gymprofit.model.sesion.VezRutina;
+import es.pmdm.gymprofit.ui.widget.BarrasVecesView;
+import es.pmdm.gymprofit.utils.CifraTarjeta;
 import es.pmdm.gymprofit.utils.ComparacionSesion;
 import es.pmdm.gymprofit.utils.CuandoTarjeta;
 import es.pmdm.gymprofit.utils.FechaUtils;
@@ -48,6 +50,7 @@ public final class TextosTarjeta {
     private final NumberFormat numeros;
     private final FrasesTarjeta.Textos frases;
     private final CuandoTarjeta.Textos cuando;
+    private final CifraTarjeta.Textos cifras;
     private final String hoy;
     private final int oro;
     private final int verde;
@@ -59,6 +62,7 @@ public final class TextosTarjeta {
         this.numeros = NumberFormat.getIntegerInstance(idioma);
         this.frases = FrasesTarjeta.Textos.de(ctx);
         this.cuando = CuandoTarjeta.Textos.de(ctx);
+        this.cifras = CifraTarjeta.Textos.de(ctx, idioma);
         this.hoy = TiempoRelativo.hoy();
         this.oro = ContextCompat.getColor(ctx, R.color.gp_gold_text);
         this.verde = ContextCompat.getColor(ctx, R.color.gp_success);
@@ -87,11 +91,49 @@ public final class TextosTarjeta {
         return s;
     }
 
-    /** «13.640 kilos», para TalkBack. */
+    // ── La cifra grande (CifraTarjeta) ───────────────────────────────────────
+
+    /** La de una sesión: kilos, series o el aviso. */
     @NonNull
-    public String kilosA11y(double kilos) {
-        int n = (int) Math.min(Integer.MAX_VALUE, Math.round(kilos));
-        return ctx.getResources().getQuantityString(R.plurals.tarjeta_kilos_a11y, n, numero(kilos));
+    public CifraTarjeta cifra(@NonNull PaginaHistorial.Sesion s) {
+        return CifraTarjeta.deSesion(s.getKilos(), s.getSeries(), s.getEjercicios());
+    }
+
+    /** «3 series» o «sin series hechas», dentro de una frase visible. */
+    @NonNull
+    public String cifraEnFrase(@NonNull CifraTarjeta c) {
+        return c.enFrase(cifras);
+    }
+
+    /** «13.640 kilos», «3 series» o «Sin ejercicios apuntados», para TalkBack: nunca «0 kilos». */
+    @NonNull
+    public String cifraA11y(@NonNull CifraTarjeta c) {
+        return c.a11y(cifras);
+    }
+
+    /**
+     * Pinta la cifra en su sitio. Con kilos, los kilos (que cuentan al entrar) y las barras; con
+     * series, «3 series» en la misma condensada y sin barras; si es un aviso, en el texto
+     * secundario y sin barras.
+     *
+     * @param clave       la de EntradaTarjeta: lo que ya entró no se vuelve a animar.
+     * @param estiloCifra la condensada de esa tarjeta.
+     * @param veces       las barras, si las lleva (vacío en un entrenamiento libre).
+     */
+    public void pintarCifra(@NonNull TextView tv, @NonNull CifraTarjeta c, @NonNull EntradaTarjeta entrada,
+                            @NonNull String clave, @androidx.annotation.StyleRes int estiloCifra,
+                            @DimenRes int tamanoKg, @NonNull BarrasVecesView barras, @NonNull List<VezRutina> veces) {
+        if (c.conKilos()) {
+            tv.setTextAppearance(estiloCifra);
+            barras.setVeces(veces);
+            entrada.pintar(clave, tv, c.kilos, tamanoKg, this, barras);
+            return;
+        }
+        barras.setVeces(new ArrayList<>());
+        entrada.pintar(clave, null, 0, tamanoKg, this, barras);
+        tv.setTextAppearance(c.esAviso() ? R.style.TextAppearance_GymProFit_Cuerpo : estiloCifra);
+        if (c.esAviso()) tv.setTextColor(neutro);
+        tv.setText(c.texto(cifras));
     }
 
     // ── Sesión ───────────────────────────────────────────────────────────────
@@ -144,35 +186,51 @@ public final class TextosTarjeta {
         return CuandoTarjeta.semana(lunes, hoy, idioma, cuando);
     }
 
-    /** «2 entrenos y 22.050 kg». */
+    /** La cabecera en frase, para TalkBack: «Semana del 19 oct», «Week of Oct 19». */
+    @NonNull
+    public String semanaA11y(@Nullable String lunes) {
+        return CuandoTarjeta.semanaEnFrase(lunes, hoy, idioma, cuando);
+    }
+
+    /** «2 entrenos y 22.050 kg», o «3 entrenos» si la semana no tuvo kilos. */
     @NonNull
     public String resumenSemana(int entrenos, double kilos) {
-        return ctx.getResources().getQuantityString(R.plurals.historial_semana_resumen, entrenos, entrenos, numero(kilos));
+        return CifraTarjeta.semana(entrenos, kilos, cifras);
     }
 
-    /** «2 entrenos y 22.050 kilos», para TalkBack. */
+    /** «2 entrenos y 22.050 kilos», o «3 entrenos», para TalkBack. */
     @NonNull
     public String resumenSemanaA11y(int entrenos, double kilos) {
-        return ctx.getResources().getQuantityString(R.plurals.historial_semana_a11y, entrenos, entrenos, numero(kilos));
+        return CifraTarjeta.semanaA11y(entrenos, kilos, cifras);
     }
 
-    /** «58 minutos, 18 series y 1 récord», con el récord en dorado. */
+    /**
+     * «58 minutos, 18 series y 1 récord», con el récord en dorado. Si la cifra no son kilos, las
+     * series no se repiten: o ya son la cifra o no hubo.
+     */
     @NonNull
     public CharSequence meta(@NonNull PaginaHistorial.Sesion s) {
         return conOro(FrasesTarjeta.meta(s.getDuracionMinutos(), s.getSeries(), s.getRecords(),
-                s.getEjercicios() == 0, frases));
+                !cifra(s).conKilos(), frases));
     }
 
     /** La misma línea, sin color, para TalkBack. */
     @NonNull
     public String metaA11y(@NonNull PaginaHistorial.Sesion s) {
-        return FrasesTarjeta.meta(s.getDuracionMinutos(), s.getSeries(), s.getRecords(), s.getEjercicios() == 0,
+        return FrasesTarjeta.meta(s.getDuracionMinutos(), s.getSeries(), s.getRecords(), !cifra(s).conKilos(),
                 frases).texto;
     }
 
-    /** La comparación con la anterior de la misma rutina; null si no se compara. */
+    /** Los minutos solos («25 minutos»), para la línea de un aviso en Inicio; "" si no se saben. */
+    @NonNull
+    public String minutos(@NonNull PaginaHistorial.Sesion s) {
+        return FrasesTarjeta.meta(s.getDuracionMinutos(), 0, 0, true, frases).texto;
+    }
+
+    /** La comparación con la anterior de la misma rutina; null si no se compara (ni sin kilos). */
     @Nullable
     public ComparacionSesion comparacion(@NonNull PaginaHistorial.Sesion s) {
+        if (!cifra(s).conKilos()) return null;
         return ComparacionSesion.de(s.esLibre(), s.getKilos(), s.getKilosAnterior());
     }
 
@@ -217,6 +275,14 @@ public final class TextosTarjeta {
         pintarConIcono(tv, R.drawable.ic_ms_trophy_fill, oro);
     }
 
+    /** Una línea neutra, sin icono (los minutos bajo un aviso); sin texto, no se ve. */
+    public void pintarNeutra(@NonNull TextView tv, @NonNull String texto) {
+        tv.setVisibility(texto.isEmpty() ? android.view.View.GONE : android.view.View.VISIBLE);
+        tv.setText(texto);
+        tv.setTextColor(neutro);
+        tv.setCompoundDrawablesRelative(null, null, null, null);
+    }
+
     private void pintarConIcono(@NonNull TextView tv, int icono, int color) {
         tv.setTextColor(color);
         // El icono a 18 dp, como el lienzo: con el tamaño propio (24) descolocaba la línea.
@@ -230,13 +296,17 @@ public final class TextosTarjeta {
         TextViewCompat.setCompoundDrawableTintList(tv, ColorStateList.valueOf(color));
     }
 
-    /** «Tus 6 últimas veces con esta rutina, de 11.020 a 13.640 kilos»; null con menos de dos. */
+    /**
+     * «Tus 6 últimas veces con esta rutina, de 11.020 a 13.640 kilos», o «…, la primera y la
+     * última con 1.475 kilos» si coinciden; null con menos de dos.
+     */
     @Nullable
     public String barrasA11y(@NonNull List<VezRutina> veces) {
         if (veces.size() < 2) return null;
         List<VezRutina> v = es.pmdm.gymprofit.utils.BarrasVeces.recortar(veces);
-        return ctx.getResources().getQuantityString(R.plurals.tarjeta_barras_a11y, v.size(), v.size(),
-                numero(v.get(0).getKilos()), numero(v.get(v.size() - 1).getKilos()));
+        String primera = numero(v.get(0).getKilos()), ultima = numero(v.get(v.size() - 1).getKilos());
+        int plural = primera.equals(ultima) ? R.plurals.tarjeta_barras_iguales_a11y : R.plurals.tarjeta_barras_a11y;
+        return ctx.getResources().getQuantityString(plural, v.size(), v.size(), primera, ultima);
     }
 
     /**
@@ -252,18 +322,15 @@ public final class TextosTarjeta {
         b.append(". ");
         String z = zonas(s.getMusculos());
         if (!z.isEmpty()) b.append(z).append(". ");
-        if (s.getEjercicios() == 0) {
-            b.append(ctx.getString(R.string.tarjeta_sin_ejercicios)).append(". ");
-        } else {
-            b.append(kilosA11y(s.getKilos()));
-            ComparacionSesion c = comparacion(s);
-            if (c != null) b.append(", ").append(Character.toLowerCase(textoComparacion(c).charAt(0)))
-                    .append(textoComparacion(c).substring(1));
-            b.append(". ");
-        }
+        CifraTarjeta cifra = cifra(s);
+        b.append(cifraA11y(cifra));
+        ComparacionSesion c = comparacion(s);
+        if (c != null) b.append(", ").append(Character.toLowerCase(textoComparacion(c).charAt(0)))
+                .append(textoComparacion(c).substring(1));
+        b.append(". ");
         String meta = metaA11y(s);
         if (!meta.isEmpty()) b.append(meta).append(". ");
-        String barras = s.esLibre() ? null : barrasA11y(s.getBarras());
+        String barras = s.esLibre() || !cifra.conKilos() ? null : barrasA11y(s.getBarras());
         if (barras != null) b.append(barras).append('.');
         return b.toString().trim();
     }
@@ -303,13 +370,17 @@ public final class TextosTarjeta {
         return ctx.getString(R.string.tarjeta_ultima_vez, hace == null ? "" : hace);
     }
 
-    /** «La última vez, hace 6 días, 7.920 kilos», para TalkBack; «Sin hacer todavía» si nunca. */
+    /**
+     * «La última vez, hace 6 días, 7.920 kilos» (o «…, 3 series», o «…, sin series hechas»), para
+     * TalkBack; «Sin hacer todavía» si nunca.
+     */
     @NonNull
     public String ultimaVezA11y(@NonNull List<VezRutina> ultimas) {
         if (ultimas.isEmpty()) return ctx.getString(R.string.tarjeta_sin_hacer);
         VezRutina u = ultimas.get(ultimas.size() - 1);
         String hace = TiempoRelativo.texto(ctx, u.getFecha());
-        String texto = ctx.getString(R.string.tarjeta_ultima_a11y, hace == null ? "" : hace, kilosA11y(u.getKilos()));
+        String cifra = CifraTarjeta.deVez(u).enFrase(cifras);
+        String texto = ctx.getString(R.string.tarjeta_ultima_a11y, hace == null ? "" : hace, cifra);
         if (u.isRecord()) texto += ctx.getString(R.string.tarjeta_enlace_con) + FrasesTarjeta.records(1, frases);
         return texto;
     }
