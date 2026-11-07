@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_objetivo — la casilla del icono del objetivo en el Perfil (GP-242): el contenedor naranja
+     con el radio de miniatura (16), como la casilla del objetivo en Tus datos. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="?attr/colorPrimaryContainer" />
+    <corners android:radius="@dimen/radio_miniatura" />
+</shape>

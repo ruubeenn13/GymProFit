@@ -598,10 +598,11 @@ public class InicioFragment extends BaseFragment {
     }
 
     private void elegirRutina() {
-        // «Toca hoy» en la que elige HoyToca, la misma de la tarjeta de arriba (GP-232).
+        // «Toca hoy» en la que elige HoyToca, la misma de la tarjeta de arriba (GP-232), y el orden de
+        // las dos hojas: la de hoy, el resto del ciclo tras ella y las tuyas (OrdenRutinas, GP-241).
         HoyToca.Eleccion e = sesiones == null || propias == null ? null : HoyToca.elegir(seguido, propias, sesiones);
-        ElegirRutinaHoja.mostrar(requireActivity(), propias != null ? propias : new ArrayList<>(),
-                e == null ? null : e.rutina.getId(), this::empezar);
+        ElegirRutinaHoja.mostrar(requireActivity(), es.pmdm.gymprofit.utils.OrdenRutinas.ordenar(
+                propias, seguido, e == null ? null : e.rutina.getId()), this::empezar);
     }
 
     // La sesión en vivo con esa rutina, o vacía si es null (GP-012). Con otra en curso,

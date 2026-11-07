@@ -72,6 +72,12 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // ============================================================
 public class TusDatosActivity extends AppCompatActivity {
 
+    /**
+     * Abrir en el objetivo: «Cambiar» de la tarjeta del objetivo del Perfil (GP-242). La pantalla
+     * baja hasta «Tu objetivo» y el foco de TalkBack va a su rótulo.
+     */
+    public static final String EXTRA_EN_OBJETIVO = "enObjetivo";
+
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
     protected void attachBaseContext(android.content.Context newBase) {
@@ -87,8 +93,7 @@ public class TusDatosActivity extends AppCompatActivity {
     };
     private static final int[] OBJETIVO_TEXTOS = {R.string.objetivo_perder_peso, R.string.objetivo_mantener,
             R.string.objetivo_ganar_musculo, R.string.objetivo_fuerza};
-    private static final int[] OBJETIVO_ICONOS = {R.drawable.ic_ms_local_fire_department, R.drawable.ic_ms_balance,
-            R.drawable.ic_ms_fitness_center, R.drawable.ic_ms_bolt};
+    // El icono de cada objetivo sale de ObjetivoPerfil: el mismo en esta rejilla y en el Perfil (GP-242).
     private static final String[] SEXOS = {"HOMBRE", "MUJER"};
     private static final String[] ACTIVIDADES = {
             CalculadoraNutricional.ACTIVIDAD_SEDENTARIO, CalculadoraNutricional.ACTIVIDAD_LIGERO,
@@ -170,6 +175,20 @@ public class TusDatosActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(v -> guardar());
         cargarPerfil();
         cargarGrasa();
+        if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_EN_OBJETIVO, false)) irAlObjetivo();
+    }
+
+    // Baja hasta «Tu objetivo» en cuanto la pantalla tiene su alto, y el foco va a su rótulo.
+    private void irAlObjetivo() {
+        View rotulo = findViewById(R.id.tvRotuloObjetivo);
+        androidx.core.widget.NestedScrollView scroll = findViewById(R.id.scrollTusDatos);
+        scroll.post(() -> {
+            android.graphics.Rect r = new android.graphics.Rect();
+            rotulo.getDrawingRect(r);
+            scroll.offsetDescendantRectToMyCoords(rotulo, r);
+            scroll.scrollTo(0, Math.max(0, r.top - getResources().getDimensionPixelSize(R.dimen.espacio_8)));
+            rotulo.sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        });
     }
 
     // El formulario sin guardar sobrevive al giro (GP-224): lo que se ha tocado, no lo de la API.
@@ -373,7 +392,7 @@ public class TusDatosActivity extends AppCompatActivity {
             }
             View op = inflater.inflate(R.layout.item_objetivo_dato, fila, false);
             if (i % 2 == 1) ((LinearLayout.LayoutParams) op.getLayoutParams()).setMarginStart(separacion);
-            ((ImageView) op.findViewById(R.id.ivObjetivo)).setImageResource(OBJETIVO_ICONOS[i]);
+            ((ImageView) op.findViewById(R.id.ivObjetivo)).setImageResource(es.pmdm.gymprofit.utils.ObjetivoPerfil.icono(OBJETIVOS[i]));
             ((TextView) op.findViewById(R.id.tvObjetivo)).setText(OBJETIVO_TEXTOS[i]);
             op.setContentDescription(getString(OBJETIVO_TEXTOS[i]));
             final int indice = i;

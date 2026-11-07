@@ -151,11 +151,6 @@
     <string name="objetivo_fuerza">Gain strength</string>
 
     <!-- SESSIONS -->
-    <string name="sesiones_rutina">Routine</string>
-    <string name="sesiones_rutina_a11y">Routine: %1$s</string>
-    <string name="sesiones_duracion">Duration (min) *</string>
-    <string name="sesiones_notas">Notes (optional)</string>
-    <string name="sesiones_guardar">Save session</string>
     <string name="sesiones_exito">Session saved successfully</string>
     <string name="sesiones_duracion_invalida">Duration must be between 1 and 600 minutes</string>
     <string name="sesiones_error_guardar_titulo">Not saved</string>
@@ -169,18 +164,12 @@
     <string name="sesiones_eliminar">Delete session</string>
     <string name="sesiones_confirmar_eliminar">Delete this session?</string>
     <string name="sesiones_sin_rutina">No routine linked</string>
-    <string name="sesiones_valoracion">Rating (optional)</string>
     <string name="sesiones_sin_valorar">Not rated</string>
     <string name="sesiones_valoracion_estado">%1$d of 5</string>
     <string name="sesiones_valoracion_a11y">%1$d of 5 stars</string>
     <string name="sesiones_valoracion_desc">Session rating, optional</string>
     <string name="sesiones_valoracion_desc_sin">Session rating, optional, not rated</string>
     <string name="sesiones_quitar_valoracion">Clear rating</string>
-    <string name="sesiones_ejercicios_sesion">Session exercises</string>
-    <string name="sesiones_peso_hint">Weight (kg)</string>
-    <string name="sesiones_reps_hint">Reps</string>
-    <string name="sesiones_serie_por">×</string>
-    <string name="sesiones_serie_completada">Mark set as done</string>
 
     <!-- MEASUREMENTS -->
     <string name="mediciones_sin_mediciones">No measurements recorded</string>
@@ -1052,12 +1041,6 @@
         <item quantity="other">%d\u00A0days</item>
     </plurals>
     <!-- Registro por tiempo y por lado (GP-125) -->
-    <string name="registro_reps_por_pierna">Reps per leg</string>
-    <string name="registro_reps_por_brazo">Reps per arm</string>
-    <string name="registro_reps_por_lado">Reps per side</string>
-    <string name="registro_segundos_por_pierna">Seconds per leg</string>
-    <string name="registro_segundos_por_brazo">Seconds per arm</string>
-    <string name="registro_segundos_por_lado">Seconds per side</string>
     <!-- Live workout (GP-012) and last time (GP-014) -->
     <string name="envivo_minimizar">Minimize</string>
     <string name="envivo_terminar">Finish</string>
@@ -1151,8 +1134,6 @@
     <string name="envivo_volver_rutina_a11y">Back to the %1$s workout, in progress</string>
     <string name="accion_apuntar">Log a past workout</string>
     <string name="accion_apuntar_sub">With its date and duration</string>
-    <string name="sesiones_fecha">Date</string>
-    <string name="sesiones_fecha_a11y">Workout date: %1$s. Change</string>
     <plurals name="envivo_series_hechas_de">
         <item quantity="one">%1$d of %2$d set done</item>
         <item quantity="other">%1$d of %2$d sets done</item>
@@ -1166,7 +1147,7 @@
         <item quantity="other">%d\u00A0reps</item>
     </plurals>
     <string name="envivo_anadido">Added: %1$s</string>
-    <string name="apuntar_titulo">Past workout</string>
+    <string name="apuntar_titulo">Log a workout</string>
     <!-- Rest between sets (GP-013) -->
     <string name="envivo_descanso">Rest</string>
     <string name="envivo_descanso_despues">Next: %1$s, set %2$d</string>
@@ -2052,7 +2033,7 @@
     <string name="recuperar_barra_a11y">Protein today: %1$d of %2$d grams</string>
     <string name="recuperar_barra_a11y_falta">Protein today: %1$d of %2$d grams, %3$d to go</string>
     <string name="recuperar_barra_a11y_conseguida">Protein today: %1$d of %2$d grams, reached</string>
-    <string name="recuperar_idea_detalle">%1$s · %2$d g of protein · %3$d kcal</string>
+    <string name="recuperar_idea_detalle">%1$s, %2$d\u00A0g of protein, and %3$d\u00A0kcal</string>
     <string name="recuperar_idea_apuntar">Log %1$s, %2$s</string>
     <string name="recuperar_idea_quitar">Remove %1$s</string>
     <string name="recuperar_nota_desayuno">They go in your breakfast, the meal that\'s up now</string>
@@ -2189,7 +2170,7 @@
     <!-- Perfil y ajustes (GP-216, tablero 17) -->
     <string name="perfil_titulo">Profile and settings</string>
     <string name="perfil_cambiar_foto_a11y">Change profile photo</string>
-    <string name="perfil_datos_titulo">Your data and goals</string>
+    <string name="perfil_datos_titulo">Your details</string>
     <string name="perfil_datos_editar">Edit</string>
     <string name="perfil_plan_al_dia">per day</string>
     <string name="perfil_plan_proteina">of protein</string>
@@ -2453,7 +2434,6 @@
     <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
     <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
     <string name="estadisticas_porcentaje">%1$d%%</string>
-    <string name="sesiones_fecha_elegir">Pick the date</string>
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
     <string name="abrir_rutina_a11y">Open %1$s</string>
     <string name="abrir_resumen_a11y">See the summary of %1$s</string>
@@ -2558,4 +2538,145 @@
         <item quantity="other">A %1$d-routine cycle that repeats: %2$s</item>
     </plurals>
     <string name="programa_recomendado_a11y">, recommended for you</string>
+    <!-- Log a workout (GP-241), its «What did you train?» sheet, the Profile goal (GP-242)
+         and the summary without kilos (GP-250). -->
+    <string name="apuntar_resumen_a11y">Workout summary</string>
+    <string name="apuntar_fecha_hoy">Today, %1$s</string>
+    <string name="apuntar_fecha_ayer">Yesterday, %1$s</string>
+    <string name="apuntar_fecha_patron_dia">EEEE d</string>
+    <string name="apuntar_fecha_patron_otro">EEEE, MMMM d</string>
+    <string name="apuntar_fecha_patron_otro_anio">EEEE, MMMM d, yyyy</string>
+    <string name="apuntar_fecha_a11y">Workout date, %1$s. Change</string>
+    <string name="apuntar_fecha_titulo">When did you train?</string>
+    <string name="apuntar_fecha_otro_dia">Another day</string>
+    <string name="apuntar_cambiar">Change</string>
+    <string name="apuntar_cambiar_rutina_a11y">Change the routine, %1$s</string>
+    <string name="apuntar_porque_programa">The one that\'s next in your program</string>
+    <string name="apuntar_porque_mas_tiempo">The one you haven\'t done in the longest</string>
+    <string name="apuntar_libre">Free workout</string>
+    <string name="apuntar_libre_sub">No routine: you add the exercises</string>
+    <string name="apuntar_cargando">Loading your routines</string>
+    <string name="apuntar_duracion">Duration</string>
+    <string name="apuntar_volumen">Volume</string>
+    <string name="apuntar_series">Sets</string>
+    <string name="apuntar_unidad_min"> min</string>
+    <string name="apuntar_unidad_kg"> kg</string>
+    <string name="apuntar_unidad_de"> of %1$d</string>
+    <plurals name="apuntar_duracion_a11y">
+        <item quantity="one">Duration, %1$d minute. Change</item>
+        <item quantity="other">Duration, %1$d minutes. Change</item>
+    </plurals>
+    <plurals name="apuntar_volumen_a11y">
+        <item quantity="one">Volume, %1$s kilo</item>
+        <item quantity="other">Volume, %1$s kilos</item>
+    </plurals>
+    <plurals name="apuntar_series_de_a11y">
+        <item quantity="one">Sets, %1$d of %2$d</item>
+        <item quantity="other">Sets, %1$d of %2$d</item>
+    </plurals>
+    <plurals name="apuntar_series_a11y">
+        <item quantity="one">%1$d set</item>
+        <item quantity="other">%1$d sets</item>
+    </plurals>
+    <string name="apuntar_duracion_titulo">How long was it?</string>
+    <string name="apuntar_menos_5">Take off 5 minutes</string>
+    <string name="apuntar_mas_5">Add 5 minutes</string>
+    <string name="apuntar_listo">Done</string>
+    <string name="apuntar_ultima_kilos">Last time you moved %1$s kg.</string>
+    <plurals name="apuntar_ultima_series">
+        <item quantity="one">Last time you did %1$d set.</item>
+        <item quantity="other">Last time you did %1$d sets.</item>
+    </plurals>
+    <string name="apuntar_ultima_sin_series">Last time, no sets done.</string>
+    <string name="apuntar_record_uno">Record in %1$s: %2$s</string>
+    <plurals name="apuntar_records">
+        <item quantity="one">%1$d record: %2$s</item>
+        <item quantity="other">%1$d records: %2$s</item>
+    </plurals>
+    <string name="apuntar_ejercicios">Exercises</string>
+    <string name="apuntar_como_ultima">Same as last time</string>
+    <string name="apuntar_sin_empezar">Not started</string>
+    <string name="apuntar_abrir_ejercicio_a11y">%1$s. %2$s. Not started</string>
+    <string name="apuntar_plegado">Collapsed</string>
+    <string name="apuntar_desplegado">Expanded</string>
+    <string name="apuntar_anadir_ejercicios">Add exercises</string>
+    <string name="apuntar_libre_vacio">Add the exercises you did.</string>
+    <string name="apuntar_error_rutinas">We couldn\'t load your routines.</string>
+    <string name="apuntar_error_ejercicios">We couldn\'t load the routine\'s exercises.</string>
+    <string name="apuntar_serie_apuntada_a11y">Set %1$d logged</string>
+    <string name="apuntar_apuntar_serie_a11y">Log set %1$d</string>
+    <string name="resumen_borrar_titulo">Delete this workout?</string>
+    <string name="resumen_borrar_mensaje">It\'s deleted with all its sets. This can\'t be undone.</string>
+    <string name="apuntar_serie_record">Record</string>
+    <plurals name="apuntar_pauta_series">
+        <item quantity="one">%1$d set of %2$s</item>
+        <item quantity="other">%1$d sets of %2$s</item>
+    </plurals>
+    <string name="apuntar_pauta_rango">%1$d to %2$d</string>
+    <plurals name="apuntar_pauta_reps">
+        <item quantity="one">%1$s rep</item>
+        <item quantity="other">%1$s reps</item>
+    </plurals>
+    <plurals name="apuntar_pauta_segundos">
+        <item quantity="one">%1$s second</item>
+        <item quantity="other">%1$s seconds</item>
+    </plurals>
+    <string name="apuntar_pauta_por_pierna">%1$s per leg</string>
+    <string name="apuntar_pauta_por_brazo">%1$s per arm</string>
+    <string name="apuntar_pauta_por_lado">%1$s per side</string>
+    <string name="apuntar_que_tal">How did it go?</string>
+    <string name="cara_fatal">Awful</string>
+    <string name="cara_flojo">Poor</string>
+    <string name="cara_normal">Okay</string>
+    <string name="cara_bien">Good</string>
+    <string name="cara_genial">Great</string>
+    <string name="apuntar_nota_anadir">Add a note</string>
+    <string name="apuntar_nota">Note</string>
+    <string name="apuntar_guardar">Save workout</string>
+    <plurals name="apuntar_pie_con_kilos">
+        <item quantity="one">%1$d set logged and %2$s kg. Anything you don\'t check isn\'t saved.</item>
+        <item quantity="other">%1$d sets logged and %2$s kg. Anything you don\'t check isn\'t saved.</item>
+    </plurals>
+    <plurals name="apuntar_pie_sin_kilos">
+        <item quantity="one">%1$d set logged. Anything you don\'t check isn\'t saved.</item>
+        <item quantity="other">%1$d sets logged. Anything you don\'t check isn\'t saved.</item>
+    </plurals>
+    <string name="apuntar_pie_vacio">No sets logged: the day and the duration are saved.</string>
+    <string name="apuntar_cambiar_titulo">Change routine?</string>
+    <plurals name="apuntar_cambiar_mensaje">
+        <item quantity="one">You\'ve checked %1$d set and it will be cleared.</item>
+        <item quantity="other">You\'ve checked %1$d sets and they will be cleared.</item>
+    </plurals>
+    <string name="apuntar_cambiar_si">Change</string>
+    <string name="resumen_celebracion_eyebrow_series">YOU DID</string>
+    <plurals name="resumen_celebracion_unidad_series">
+        <item quantity="one">set in this session</item>
+        <item quantity="other">sets in this session</item>
+    </plurals>
+    <plurals name="resumen_a11y_series">
+        <item quantity="one">%1$d set in this session</item>
+        <item quantity="other">%1$d sets in this session</item>
+    </plurals>
+    <string name="elegir_que_entrenaste">What did you train?</string>
+    <string name="elegir_de_tu_programa">From your program, %1$s</string>
+    <string name="elegir_de_tu_programa_sin_nombre">From your program</string>
+    <string name="elegir_tus_rutinas">Your routines</string>
+    <string name="perfil_sub">%1$s, %2$s</string>
+    <string name="perfil_objetivo_rotulo">Your goal</string>
+    <string name="perfil_objetivo_cambiar_a11y">Change your goal</string>
+    <string name="perfil_objetivo_frase_perder">You eat a little less than you burn, with plenty of protein, so what you lose is fat, not muscle.</string>
+    <string name="perfil_objetivo_frase_ganar">You eat a little more than you burn, with plenty of protein, so what you gain is mostly muscle.</string>
+    <string name="perfil_objetivo_frase_fuerza">You eat a little more than you burn, with the protein and energy to lift heavy.</string>
+    <string name="perfil_objetivo_frase_mantener">You eat what you burn, with the protein you need to keep your muscle.</string>
+    <string name="perfil_kcal_al_dia">kcal a day</string>
+    <string name="perfil_macro_gramos">%1$d g</string>
+    <string name="perfil_macro_proteina">protein</string>
+    <string name="perfil_macro_hidratos">carbs</string>
+    <string name="perfil_macro_grasa">fat</string>
+    <string name="perfil_objetivo_a11y">Your goal, %1$s. %2$s %3$s kcal a day: %4$d grams of protein, %5$d of carbs, and %6$d of fat.</string>
+    <string name="perfil_objetivo_sin_plan_a11y">Your goal, %1$s. %2$s</string>
+    <string name="perfil_dato_nivel">Level</string>
+    <string name="perfil_dato_actividad">Activity</string>
+    <string name="perfil_datos_editar_a11y">Edit your details</string>
+    <string name="perfil_dato_a11y">%1$s, %2$s</string>
 </resources>

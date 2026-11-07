@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_libre — la casilla del rayo de «Entreno libre» en «¿Qué entrenaste?» (GP-241, tablero
+     Elegir): superficie 2 con el radio de miniatura; el rayo va en colorOnPrimaryContainer. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="?attr/colorSurfaceVariant" />
+    <corners android:radius="@dimen/radio_miniatura" />
+</shape>

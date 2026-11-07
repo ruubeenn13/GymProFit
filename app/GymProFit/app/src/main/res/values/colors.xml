@@ -131,6 +131,16 @@
     <!-- El botón principal dentro de la tarjeta protagonista: el naranja de oscuro y su texto. -->
     <color name="gp_primary_sobre_hero">#FF6A00</color>
     <color name="gp_on_primary_sobre_hero">#1A0E00</color>
+    <!-- Dentro de la tarjeta protagonista de Apuntar entreno (GP-241, tablero Entreno-B): la píldora de
+         la fecha y los tres cuadros. Igual en los dos temas, como la tarjeta: #FFF4E8 encima da 11,53:1
+         y #FFD3B0, 9,05:1. Contra #3A2110 da 1,19:1: es un relleno, no delimita (el cuadro que se pulsa
+         lo dice su texto y su lápiz). -->
+    <color name="gp_hero_superficie">#4C2C15</color>
+    <!-- El récord dentro de la tarjeta protagonista: el dorado y su contenedor de oscuro en los dos
+         temas, como los macros (el de claro sobre #3A2110 era una píldora clara sobre oscuro). Texto
+         #E8B84B sobre #3A2E12: 7,21:1. -->
+    <color name="gp_hero_oro">#E8B84B</color>
+    <color name="gp_hero_oro_fondo">#3A2E12</color>
 
     <!-- ── Alias legados (layouts existentes; apuntan a la paleta nueva) ──── -->
     <color name="primary_light">@color/gp_primary</color>

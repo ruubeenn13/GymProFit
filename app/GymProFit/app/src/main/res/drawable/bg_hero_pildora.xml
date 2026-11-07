@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_hero_pildora — la píldora de la fecha en la cabecera de Apuntar entreno (GP-241, tablero
+  Entreno-B): gp_hero_superficie con radio completo y la capa de pulsar de la tarjeta protagonista.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/capa_hero">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/gp_hero_superficie" />
+            <corners android:radius="999dp" />
+        </shape>
+    </item>
+</ripple>

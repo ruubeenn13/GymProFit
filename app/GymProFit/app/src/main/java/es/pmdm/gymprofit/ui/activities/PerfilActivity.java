@@ -21,7 +21,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.text.DateFormatSymbols;
@@ -47,6 +46,8 @@ import es.pmdm.gymprofit.utils.AvisosCuenta;
 import es.pmdm.gymprofit.utils.Correo;
 import es.pmdm.gymprofit.utils.DiaNutricion;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.Enumeracion;
+import es.pmdm.gymprofit.utils.ObjetivoPerfil;
 import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
@@ -93,7 +94,11 @@ public class PerfilActivity extends BaseActivity {
         findViewById(R.id.btnCamaraPerfil).setOnClickListener(v -> fotoPerfil.elegir());
         ((TextView) avatar.findViewById(R.id.tvInicial)).setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimension(R.dimen.text_number));
-        findViewById(R.id.cardTusDatos).setOnClickListener(v -> startActivity(new Intent(this, TusDatosActivity.class)));
+        // «Editar» abre Tus datos; «Cambiar» la abre en el objetivo. Al volver, onResume repinta el plan
+        // recalculado (GP-242).
+        findViewById(R.id.btnEditarDatos).setOnClickListener(v -> startActivity(new Intent(this, TusDatosActivity.class)));
+        findViewById(R.id.btnCambiarObjetivo).setOnClickListener(v -> startActivity(
+                new Intent(this, TusDatosActivity.class).putExtra(TusDatosActivity.EXTRA_EN_OBJETIVO, true)));
 
         // Cuenta
         fila(R.id.filaCorreo, R.drawable.ic_ms_mail, R.string.ajustes_correo,
@@ -165,67 +170,122 @@ public class PerfilActivity extends BaseActivity {
         return nombre.isEmpty() ? getString(R.string.home_usuario_defecto) : nombre;
     }
 
-    // El nombre, «@usuario · desde septiembre», los datos en píldoras y el plan.
+    // El nombre, «@usuario, desde septiembre», la tarjeta del objetivo con su plan y Tus datos en
+    // rejilla (GP-242, tablero Objetivo-1). Todo sale de lo guardado: ninguna petición nueva.
     private void pintarResumen() {
         ((TextView) findViewById(R.id.tvPerfilNombre)).setText(nombreVisible());
         String sub = "@" + prefsManager.getUsername();
         String desde = desde(usuario == null ? null : usuario.getFechaRegistro());
-        ((TextView) findViewById(R.id.tvPerfilSub)).setText(
-                desde == null ? sub : getString(R.string.hoy_toca_separador, sub, desde));
+        ((TextView) findViewById(R.id.tvPerfilSub)).setText(desde == null ? sub : getString(R.string.perfil_sub, sub, desde));
 
         Locale idioma = FechaUtils.localeDeLaApp(this);
-        ChipGroup grupo = findViewById(R.id.grupoDatos);
-        grupo.removeAllViews();
-        List<String> a11y = new ArrayList<>();
         String objetivo = usuario != null && usuario.getObjetivo() != null ? usuario.getObjetivo() : prefsManager.getObjetivo();
-        String nivel = usuario != null && usuario.getNivelExperiencia() != null
-                ? usuario.getNivelExperiencia() : prefsManager.getNivel();
-        anadirDato(grupo, a11y, UIHelper.traducirObjetivo(this, objetivo), true);
-        anadirDato(grupo, a11y, nivel.isEmpty() ? null : UIHelper.traducirNivel(this, nivel), false);
-        anadirDato(grupo, a11y, UIHelper.traducirActividad(this, prefsManager.getActividad()), false);
+        pintarObjetivo(objetivo, idioma);
+        pintarDatos(idioma);
+    }
+
+    // El objetivo con su icono, la frase de lo que supone y el plan: las kcal y la barra del reparto
+    // con los gramos de cada macro, en sus colores de Nutrición. TalkBack lo lee en frases.
+    private void pintarObjetivo(@Nullable String objetivo, Locale idioma) {
+        String nombre = UIHelper.traducirObjetivo(this, objetivo);
+        ((android.widget.ImageView) findViewById(R.id.ivObjetivo)).setImageResource(ObjetivoPerfil.icono(objetivo));
+        ((TextView) findViewById(R.id.tvObjetivoNombre)).setText(nombre);
+
+        ResultadoNutricional plan = DiaNutricion.objetivo(prefsManager);
+        int frase = ObjetivoPerfil.frase(objetivo, plan != null && plan.mantenimientoPorEdad);
+        String fraseTexto = frase == 0 ? "" : getString(frase);
+        TextView tvFrase = findViewById(R.id.tvObjetivoFrase);
+        tvFrase.setText(fraseTexto);
+        tvFrase.setVisibility(frase == 0 ? View.GONE : View.VISIBLE);
+        String enFrase = Enumeracion.enMedio(nombre, idioma);
+
+        View bloque = findViewById(R.id.bloquePlan);
+        View lectura = findViewById(R.id.bloqueObjetivo);
+        if (plan == null) {
+            bloque.setVisibility(View.GONE);
+            lectura.setContentDescription(getString(R.string.perfil_objetivo_sin_plan_a11y, enFrase, fraseTexto));
+            return;
+        }
+        NumberFormat entero = NumberFormat.getIntegerInstance(idioma);
+        bloque.setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tvPlanKcal)).setText(entero.format(plan.calorias));
+        ((TextView) findViewById(R.id.tvPlanProteina)).setText(getString(R.string.perfil_macro_gramos, plan.proteinas));
+        ((TextView) findViewById(R.id.tvPlanHidratos)).setText(getString(R.string.perfil_macro_gramos, plan.carbohidratos));
+        ((TextView) findViewById(R.id.tvPlanGrasa)).setText(getString(R.string.perfil_macro_gramos, plan.grasas));
+        int[] reparto = ObjetivoPerfil.reparto(plan.proteinas, plan.carbohidratos, plan.grasas);
+        int[] tramos = {R.id.tramoProteina, R.id.tramoHidratos, R.id.tramoGrasa};
+        int[] columnas = {R.id.columnaProteina, R.id.columnaHidratos, R.id.columnaGrasa};
+        // Las cifras bajo su tramo, sin bajar del 30 % del ancho: con letra 1,3 un tramo estrecho
+        // partiría «de proteína» (revisor, pasada 2).
+        int[] anchos = ObjetivoPerfil.columnas(reparto, 30);
+        for (int i = 0; i < 3; i++) {
+            pesar(findViewById(tramos[i]), reparto[i]);
+            pesar(findViewById(columnas[i]), anchos[i]);
+        }
+        lectura.setContentDescription(getString(R.string.perfil_objetivo_a11y, enFrase, fraseTexto,
+                entero.format(plan.calorias), plan.proteinas, plan.carbohidratos, plan.grasas));
+    }
+
+    private static void pesar(View v, int peso) {
+        android.widget.LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) v.getLayoutParams();
+        lp.weight = Math.max(peso, 1);
+        v.setLayoutParams(lp);
+    }
+
+    // Tus datos en rejilla: peso, altura y edad arriba; nivel y actividad abajo. Lo que no se sabe no sale.
+    private void pintarDatos(Locale idioma) {
+        android.widget.LinearLayout fila1 = findViewById(R.id.filaDatos1);
+        android.widget.LinearLayout fila2 = findViewById(R.id.filaDatos2);
+        fila1.removeAllViews();
+        fila2.removeAllViews();
         double peso = prefsManager.getPeso();
         if (peso > 0) {
             NumberFormat nf = NumberFormat.getNumberInstance(idioma);
             nf.setMaximumFractionDigits(1);
-            anadirDato(grupo, a11y, getString(R.string.perfil_dato_kg, nf.format(peso)), false);
+            anadirDato(fila1, getString(R.string.perfil_dato_kg, nf.format(peso)), getString(R.string.perfil_peso));
         }
         if (prefsManager.getAltura() > 0) {
-            anadirDato(grupo, a11y, getString(R.string.perfil_dato_cm, (int) Math.round(prefsManager.getAltura())), false);
+            anadirDato(fila1, getString(R.string.perfil_dato_cm, (int) Math.round(prefsManager.getAltura())),
+                    getString(R.string.perfil_altura));
         }
         if (prefsManager.getEdad() > 0) {
-            anadirDato(grupo, a11y, getResources().getQuantityString(R.plurals.perfil_dato_anios,
-                    prefsManager.getEdad(), prefsManager.getEdad()), false);
+            anadirDato(fila1, getResources().getQuantityString(R.plurals.perfil_dato_anios,
+                    prefsManager.getEdad(), prefsManager.getEdad()), getString(R.string.perfil_edad));
         }
-
-        ResultadoNutricional plan = DiaNutricion.objetivo(prefsManager);
-        View bloque = findViewById(R.id.bloquePlan);
-        String descripcion = getString(R.string.perfil_datos_titulo) + ". " + android.text.TextUtils.join(", ", a11y);
-        if (plan == null) {
-            bloque.setVisibility(View.GONE);
-        } else {
-            NumberFormat entero = NumberFormat.getIntegerInstance(idioma);
-            bloque.setVisibility(View.VISIBLE);
-            ((TextView) findViewById(R.id.tvPlanKcal)).setText(getString(R.string.perfil_plan_kcal, entero.format(plan.calorias)));
-            ((TextView) findViewById(R.id.tvPlanProteina)).setText(getString(R.string.inicio_cifra_g, plan.proteinas));
-            descripcion += ". " + getString(R.string.perfil_plan_a11y, entero.format(plan.calorias), plan.proteinas);
+        String nivel = usuario != null && usuario.getNivelExperiencia() != null
+                ? usuario.getNivelExperiencia() : prefsManager.getNivel();
+        if (!nivel.isEmpty()) anadirDato(fila2, UIHelper.traducirNivel(this, nivel), getString(R.string.perfil_dato_nivel));
+        String actividad = actividadCorta(prefsManager.getActividad());
+        if (actividad != null && !actividad.isEmpty()) {
+            anadirDato(fila2, actividad, getString(R.string.perfil_dato_actividad));
         }
-        findViewById(R.id.cardTusDatos).setContentDescription(descripcion);
+        fila1.setVisibility(fila1.getChildCount() == 0 ? View.GONE : View.VISIBLE);
+        fila2.setVisibility(fila2.getChildCount() == 0 ? View.GONE : View.VISIBLE);
     }
 
-    private void anadirDato(ChipGroup grupo, List<String> a11y, @Nullable String texto, boolean destacado) {
-        if (texto == null || texto.isEmpty()) return;
-        TextView tv = new TextView(this);
-        tv.setText(texto);
-        tv.setTextAppearance(R.style.TextAppearance_GymProFit_Apoyo);
-        tv.setTextColor(destacado ? colorDe(com.google.android.material.R.attr.colorOnPrimaryContainer)
-                : colorDe(com.google.android.material.R.attr.colorOnSurface));
-        tv.setBackgroundResource(destacado ? R.drawable.bg_chip_dato_destacado : R.drawable.bg_chip_dato);
-        int h = getResources().getDimensionPixelSize(R.dimen.espacio_12);
-        int v = getResources().getDimensionPixelSize(R.dimen.espacio_8);
-        tv.setPadding(h, v, h, v);
-        tv.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        grupo.addView(tv);
-        a11y.add(texto);
+    // La actividad con el nombre corto de Tus datos («Moderada»), el mismo que se elige allí.
+    @Nullable
+    private String actividadCorta(@Nullable String actividad) {
+        if (actividad == null) return null;
+        switch (actividad) {
+            case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_SEDENTARIO: return getString(R.string.actividad_corta_poca);
+            case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_LIGERO: return getString(R.string.actividad_corta_ligera);
+            case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_MODERADO: return getString(R.string.actividad_corta_moderada);
+            case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_ACTIVO: return getString(R.string.actividad_corta_mucha);
+            default: return UIHelper.traducirActividad(this, actividad);
+        }
+    }
+
+    private void anadirDato(android.widget.LinearLayout fila, String valor, String nombre) {
+        View dato = getLayoutInflater().inflate(R.layout.item_dato_perfil, fila, false);
+        ((TextView) dato.findViewById(R.id.tvDatoValor)).setText(valor);
+        ((TextView) dato.findViewById(R.id.tvDatoNombre)).setText(nombre);
+        dato.setContentDescription(getString(R.string.perfil_dato_a11y, nombre, valor));
+        if (fila.getChildCount() > 0) {
+            ((android.widget.LinearLayout.LayoutParams) dato.getLayoutParams())
+                    .setMarginStart(getResources().getDimensionPixelSize(R.dimen.espacio_12));
+        }
+        fila.addView(dato);
     }
 
     private int colorDe(int attr) {

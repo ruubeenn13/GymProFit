@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_fila_elegida — la rutina elegida en «¿Qué entrenaste?» (GP-241, tablero Elegir): superficie 2
+  con el radio de la tarjeta pequeña y la capa de pulsar de siempre. La elección la dice también el
+  check y, para TalkBack, el estado del botón de opción: no depende solo del fondo.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/colorSurfaceVariant" />
+            <corners android:radius="@dimen/radio_tarjeta_pequena" />
+        </shape>
+    </item>
+</ripple>

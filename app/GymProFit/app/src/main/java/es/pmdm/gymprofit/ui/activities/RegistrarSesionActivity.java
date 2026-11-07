@@ -2,67 +2,106 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.RatingBar;
-import android.widget.Spinner;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.lifecycle.AbstractSavedStateViewModelFactory;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.envivo.CabeceraEntreno;
+import es.pmdm.gymprofit.envivo.LogicaSesion;
+import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
+import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
+import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 import es.pmdm.gymprofit.network.RegistroSesionRepositorioApi;
-import es.pmdm.gymprofit.ui.adapters.EjercicioPesoAdapter;
 import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel;
+import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel.Carga;
 import es.pmdm.gymprofit.ui.viewmodels.RegistrarSesionViewModel.EstadoGuardado;
+import es.pmdm.gymprofit.ui.widget.ElegirRutinaHoja;
+import es.pmdm.gymprofit.ui.widget.HojaDuracion;
+import es.pmdm.gymprofit.ui.widget.HojaElegir;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
+import es.pmdm.gymprofit.utils.Caras;
+import es.pmdm.gymprofit.utils.CifraTarjeta;
+import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
-import es.pmdm.gymprofit.utils.Valoracion;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// RegistrarSesionActivity — Apuntar un entrenamiento ya hecho (GP-012), desde el «+»:
-// con su fecha (hoy por defecto, nunca futura) y su duración; el inicio es ese día a la
-// hora de ahora menos la duración. Empezar a entrenar abre la sesión en vivo.
+// RegistrarSesionActivity — «Apuntar entreno» (GP-241; antes Registrar sesión, GP-012), desde el
+// «+»: un entrenamiento ya hecho. Diseño en documentacion/diseno/2026-11-06-entreno-y-objetivo/
+// (tablero Entreno-B).
 //
-// Formulario para registrar una sesión de entrenamiento.
-// Permite elegir una rutina (propia o predefinida), carga sus ejercicios con sus
-// series, y guarda la sesión ENTERA en una sola llamada, navegando al resumen.
+//   · La cabecera, en la tarjeta protagonista: la fecha (Hoy de entrada; Hoy, Ayer u Otro día,
+//     nunca futuro), la rutina que elige HoyToca con su porqué y «Cambiar» (la hoja «¿Qué
+//     entrenaste?»), tres cuadros que suman al marcar (duración, kilos y series), la última vez
+//     de esa rutina en cascada y el récord en dorado en cuanto una serie marcada lo bate.
+//   · Los ejercicios, con las filas de la sesión en vivo (item_envivo_serie), la última vez de
+//     pista y «Todo como la última vez». Los que no se han empezado, plegados.
+//   · «¿Qué tal fue?», cinco caras de 1 a 5 (sin tocar, NULL), y la nota tras el lápiz.
+//   · El pie fijo: lo que se va a guardar, en una frase, y «Guardar entreno».
 //
-// GUARDADO (GP-006). Todo va en POST /sesiones/completa, la pantalla NO se cierra
-// hasta recibir el éxito, y si falla se ofrece reintentar con lo tecleado intacto y
-// la misma clave de idempotencia.
+// GUARDADO (GP-006). Todo va en POST /sesiones/completa, la pantalla NO se cierra hasta recibir el
+// éxito y, si falla, se ofrece reintentar con lo marcado intacto y la misma clave.
 //
-// BORRADOR (GP-016). La pantalla ya no guarda nada: lo tecleado, la rutina elegida,
-// la clave y el guardado en marcha viven en RegistrarSesionViewModel, que los escribe
-// en su SavedStateHandle. Girar, «No conservar actividades» o que Android mate la app
-// en segundo plano no pierden nada. Aquí solo se pinta ese estado y se le pasa cada
-// cambio; la red tampoco se llama desde aquí, sino desde el repositorio.
-//
-// Retoque mínimo de interfaz a propósito: GP-012 rehará esta pantalla como sesión
-// en vivo.
+// BORRADOR (GP-016). La pantalla no guarda nada: el borrador, la clave y el guardado en marcha
+// viven en RegistrarSesionViewModel, que los escribe en su SavedStateHandle. Girar, «No conservar
+// actividades» o que Android mate la app no pierden nada. Aquí solo se pinta ese estado y se le
+// pasa cada cambio; la red tampoco se llama desde aquí, sino desde el repositorio.
 // ============================================================
 public class RegistrarSesionActivity extends AppCompatActivity {
 
@@ -73,48 +112,76 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     }
 
     /**
-     * Id de la rutina con la que se ha entrado, o -1 si se abrió sin rutina.
-     *
-     * <p>Lo manda quien lanza la pantalla desde el detalle de una rutina o desde
-     * el Home. Solo cuenta la primera vez: al restaurar manda lo que eligió el usuario.
+     * Id de la rutina con la que se ha entrado, o -1 si se abrió sin rutina (desde el «+»: entonces
+     * se pone la que toca hoy). Solo cuenta la primera vez: al restaurar manda lo que eligió el usuario.
      */
     public static final String EXTRA_RUTINA_ID = "rutinaId";
 
-    private Spinner spRutina;
-    private TextInputEditText etDuracion, etNotas;
-    private View cardEjercicios;
-    private RatingBar ratingBar;
-    private TextView tvEstadoValoracion;
-    private View btnQuitarValoracion;
-
     private RegistrarSesionViewModel vm;
-    private final List<EjercicioPesoAdapter.Item> ejercicioItems = new ArrayList<>();
-    private EjercicioPesoAdapter ejercicioPesoAdapter;
+    private Locale idioma;
+    private CabeceraEntreno.Textos textos;
+    private LogicaSesion.Textos textosSesion;
 
-    // Las rutinas que hay ahora en el selector, en su orden (posición 0 = libre).
-    private List<Rutina> rutinasMostradas = new ArrayList<>();
-    // Posición del selector que ya refleja el borrador. El Spinner avisa también de las
-    // selecciones que pone el código (al montarlo, al restaurar): esas no son una
-    // elección del usuario y no deben recargar ejercicios encima de lo tecleado.
-    private int posicionSincronizada = -1;
+    private TextView tvFecha, tvRutina, tvPorque, tvDuracion, tvKilos, tvSeries, tvUltimaVez, tvRecordHoy, tvPie,
+            tvCaraElegida;
+    private View btnFecha, cuadroDuracion, cuadroKilos, cuadroSeries, btnCambiarRutina, btnComoUltima,
+            btnAnadirEjercicios, tilNota;
+    private ImageButton btnNota;
+    private EditText etNota;
+    private LinearLayout listaEjercicios, grupoCaras;
+    private VistaEstado estadoEjercicios;
+    private final List<ImageButton> caras = new ArrayList<>();
+
+    // Las filas de serie que hay en pantalla, por id de serie, y la forma de la lista: si cambia
+    // (otra rutina, plegar, añadir) se rehace; si no, cada fila se repinta en su sitio.
+    private final Map<Long, FilaSerie> filas = new HashMap<>();
+    @Nullable private String estructura;
+    // Las cifras que se ven, para contar desde ellas (Movimiento.contar) y no desde cero.
+    private long kilosVistos = -1;
+    private int seriesVistas = -1;
+    private boolean recordVisto;
+    // Las series que eran récord en el último repintado: la que lo pasa a ser ahora se dora.
+    private Set<Long> seriesRecord = new HashSet<>();
+    // Si ya se pintó una vez: hasta entonces nada se anima como recién conseguido.
+    private boolean pintado;
     // El aviso de fallo abierto, para no apilar otro y cerrarlo al destruir la pantalla.
     private Dialog avisoFallo;
+    private ActivityResultLauncher<Intent> anadirEjercicios;
 
-    // Inicializa la pantalla: monta las vistas, crea (o recupera) el ViewModel, pinta
-    // el borrador que tenga y se suscribe a sus cambios.
+    // Inicializa la pantalla: monta las vistas, crea (o recupera) el ViewModel y se suscribe a sus
+    // cambios.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferencesManager prefsManager = new PreferencesManager(this);
         setContentView(R.layout.activity_registrar_sesion);
+        idioma = FechaUtils.localeDeLaApp(this);
+        textos = textos();
+        textosSesion = textosSesion();
 
-        spRutina             = findViewById(R.id.spRutina);
-        etDuracion           = findViewById(R.id.etDuracion);
-        etNotas              = findViewById(R.id.etNotas);
-        cardEjercicios       = findViewById(R.id.cardEjercicios);
-        ratingBar            = findViewById(R.id.ratingBar);
-        tvEstadoValoracion   = findViewById(R.id.tvEstadoValoracion);
-        btnQuitarValoracion  = findViewById(R.id.btnQuitarValoracion);
+        tvFecha = findViewById(R.id.tvFecha);
+        tvRutina = findViewById(R.id.tvRutina);
+        tvPorque = findViewById(R.id.tvPorque);
+        tvDuracion = findViewById(R.id.tvDuracion);
+        tvKilos = findViewById(R.id.tvKilos);
+        tvSeries = findViewById(R.id.tvSeries);
+        tvUltimaVez = findViewById(R.id.tvUltimaVez);
+        tvRecordHoy = findViewById(R.id.tvRecordHoy);
+        tvPie = findViewById(R.id.tvPie);
+        tvCaraElegida = findViewById(R.id.tvCaraElegida);
+        btnFecha = findViewById(R.id.btnFecha);
+        cuadroDuracion = findViewById(R.id.cuadroDuracion);
+        cuadroKilos = findViewById(R.id.cuadroKilos);
+        cuadroSeries = findViewById(R.id.cuadroSeries);
+        btnCambiarRutina = findViewById(R.id.btnCambiarRutina);
+        btnComoUltima = findViewById(R.id.btnComoUltima);
+        btnAnadirEjercicios = findViewById(R.id.btnAnadirEjercicios);
+        tilNota = findViewById(R.id.tilNota);
+        btnNota = findViewById(R.id.btnNota);
+        etNota = findViewById(R.id.etNota);
+        listaEjercicios = findViewById(R.id.listaEjercicios);
+        grupoCaras = findViewById(R.id.grupoCaras);
+        estadoEjercicios = new VistaEstado(findViewById(R.id.estadoEjercicios));
 
         int usuarioId = prefsManager.getUsuarioId();
         vm = new ViewModelProvider(this, new AbstractSavedStateViewModelFactory(this, null) {
@@ -130,227 +197,719 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         int rutinaDeEntrada = getIntent().getIntExtra(EXTRA_RUTINA_ID, -1);
         vm.iniciar(rutinaDeEntrada != -1 ? rutinaDeEntrada : null);
 
-        pintarCamposDelBorrador();
-        configurarFecha();
-        configurarValoracion();
-
-        RecyclerView rvEjercicios = findViewById(R.id.rvEjercicios);
-        ejercicioPesoAdapter = new EjercicioPesoAdapter(ejercicioItems, vm);
-        rvEjercicios.setLayoutManager(new LinearLayoutManager(this));
-        rvEjercicios.setNestedScrollingEnabled(false);
-        rvEjercicios.setAdapter(ejercicioPesoAdapter);
-
         // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
         AvisoDescartar.instalar(this, findViewById(R.id.toolbar), vm::hayDatos);
-        findViewById(R.id.btnGuardar).setOnClickListener(v -> pulsarGuardar());
 
-        vm.getRutinas().observe(this, this::pintarRutinas);
-        vm.getEjercicios().observe(this, this::pintarEjercicios);
-        vm.getErrorEjercicios().observe(this, evento -> {
-            RegistrarSesionViewModel.Fallo fallo = evento.tomar();
-            if (fallo != null) UiFeedback.toastError(this, fallo.codigo, fallo.mensaje);
+        anadirEjercicios = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            if (r.getResultCode() != RESULT_OK || r.getData() == null) return;
+            vm.anadirEjercicios(leerAnadidos(r.getData().getStringExtra("ejerciciosJson")));
         });
+
+        btnFecha.setOnClickListener(v -> elegirFecha());
+        btnCambiarRutina.setOnClickListener(v -> elegirRutina());
+        cuadroDuracion.setOnClickListener(v -> HojaDuracion.mostrar(this, vm::getDuracion, vm::sumarDuracion,
+                RegistrarSesionViewModel.DURACION_PASO, RegistrarSesionViewModel.DURACION_MIN,
+                RegistrarSesionViewModel.DURACION_MAX));
+        btnComoUltima.setOnClickListener(v -> {
+            Movimiento.vibrar(v, Movimiento.Vibracion.LIGERA);
+            vm.comoLaUltimaVez(idioma);
+        });
+        btnAnadirEjercicios.setOnClickListener(v -> {
+            Intent i = new Intent(this, AnadirEjerciciosActivity.class);
+            i.putExtra("editMode", true);
+            i.putExtra(AnadirEjerciciosActivity.EXTRA_MODO_SESION, true);
+            anadirEjercicios.launch(i);
+        });
+        findViewById(R.id.btnGuardar).setOnClickListener(v -> vm.guardar());
+        // Con el teclado abierto el pie se aparta: le quitaba media pantalla a las filas que se
+        // están escribiendo, y un toque que iba a una fila caía en «Guardar entreno».
+        View pie = findViewById(R.id.piePantalla);
+        View raiz = findViewById(android.R.id.content);
+        raiz.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            androidx.core.view.WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(raiz);
+            boolean teclado = insets != null && insets.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime());
+            int visible = teclado ? View.GONE : View.VISIBLE;
+            if (pie.getVisibility() != visible) pie.setVisibility(visible);
+        });
+        ((es.pmdm.gymprofit.ui.widget.FilaQueBaja) findViewById(R.id.filaEjercicios)).setCentrados(true);
+        montarCaras();
+        montarNota();
+
+        vm.getCambios().observe(this, n -> pintar());
+        vm.getDatos().observe(this, c -> pintar());
+        vm.getCargaEjercicios().observe(this, c -> pintar());
         vm.getEstadoGuardado().observe(this, this::pintarGuardado);
     }
 
-    /**
-     * Pone en los campos lo que tenga el borrador y engancha la escritura hacia él.
-     *
-     * <p>El guardado de estado propio de estas vistas se apaga: la verdad es el
-     * ViewModel, y que Android restaure por su cuenta la posición del selector —de una
-     * lista que se ha vuelto a pedir y puede venir en otro orden— elegiría otra rutina.
-     */
-    private void pintarCamposDelBorrador() {
-        etDuracion.setSaveEnabled(false);
-        etNotas.setSaveEnabled(false);
-        ratingBar.setSaveEnabled(false);
-        spRutina.setSaveEnabled(false);
-        // Nombre propio con lo elegido («Rutina: Full body A»): el labelFor del rótulo no llegaba a
-        // todos los lectores y el desplegable solo decía la rutina (GP-225, DEC-019).
-        androidx.core.view.ViewCompat.setAccessibilityDelegate(spRutina, new androidx.core.view.AccessibilityDelegateCompat() {
+    // ── Pintar ────────────────────────────────────────────────
+
+    private void pintar() {
+        pintarCabecera();
+        pintarEjercicios();
+        pintarCaras();
+        CabeceraEntreno c = vm.cabecera();
+        tvPie.setText(c.pie(textos, idioma));
+    }
+
+    private void pintarCabecera() {
+        String fecha = textoFecha(vm.getFecha());
+        tvFecha.setText(fecha);
+        btnFecha.setContentDescription(getString(R.string.apuntar_fecha_a11y, fecha));
+
+        boolean decidida = vm.rutinaDecidida();
+        Integer rutinaId = vm.getRutinaId();
+        String nombre = rutinaId == null ? getString(R.string.apuntar_libre) : vm.nombreRutina();
+        tvRutina.setVisibility(decidida ? View.VISIBLE : View.INVISIBLE);
+        tvRutina.setText(nombre != null ? nombre : "");
+        btnCambiarRutina.setVisibility(decidida && vm.hayRutinas() ? View.VISIBLE : View.GONE);
+        btnCambiarRutina.setContentDescription(getString(R.string.apuntar_cambiar_rutina_a11y, nombre != null ? nombre : ""));
+
+        String porque;
+        if (!decidida) porque = getString(R.string.apuntar_cargando);
+        else if (rutinaId == null) porque = getString(R.string.apuntar_libre_sub);
+        else {
+            switch (vm.porque()) {
+                case PROGRAMA: porque = getString(R.string.apuntar_porque_programa); break;
+                case MAS_TIEMPO: porque = getString(R.string.apuntar_porque_mas_tiempo); break;
+                default: porque = null;
+            }
+        }
+        tvPorque.setText(porque);
+        tvPorque.setVisibility(porque == null ? View.GONE : View.VISIBLE);
+
+        CabeceraEntreno c = vm.cabecera();
+        int minutos = vm.getDuracion();
+        tvDuracion.setText(conUnidad(String.valueOf(minutos), getString(R.string.apuntar_unidad_min)));
+        cuadroDuracion.setContentDescription(getResources().getQuantityString(R.plurals.apuntar_duracion_a11y, minutos, minutos));
+
+        // Sin peso, ni en la última vez ni en lo marcado, no hay cuadro de kilos: los otros dos se
+        // reparten el ancho (DEC-060: ningún «0 kg» fijo).
+        cuadroKilos.setVisibility(c.cuadroKilos ? View.VISIBLE : View.GONE);
+        long kilos = Math.round(c.kilos);
+        contar(tvKilos, kilosVistos, kilos, n -> conUnidad(CifraTarjeta.numero(n, idioma), getString(R.string.apuntar_unidad_kg)));
+        kilosVistos = kilos;
+        String kilosTexto = CifraTarjeta.numero(kilos, idioma);
+        cuadroKilos.setContentDescription(getResources().getQuantityString(R.plurals.apuntar_volumen_a11y,
+                (int) Math.min(Integer.MAX_VALUE, kilos), kilosTexto));
+
+        String de = c.conRutina ? getString(R.string.apuntar_unidad_de, c.previstas) : "";
+        int marcadas = c.marcadas;
+        contar(tvSeries, seriesVistas, marcadas, n -> conUnidad(String.valueOf(n), de));
+        seriesVistas = marcadas;
+        cuadroSeries.setContentDescription(c.conRutina
+                ? getResources().getQuantityString(R.plurals.apuntar_series_de_a11y, marcadas, marcadas, c.previstas)
+                : getString(R.string.apuntar_series) + ", "
+                        + getResources().getQuantityString(R.plurals.apuntar_series_a11y, marcadas, marcadas));
+
+        String ultima = CabeceraEntreno.ultimaVez(vm.ultimaVez(), textos, idioma);
+        tvUltimaVez.setText(ultima);
+        tvUltimaVez.setVisibility(ultima == null ? View.GONE : View.VISIBLE);
+
+        List<CabeceraEntreno.RecordHoy> records = CabeceraEntreno.records(vm.getBorrador().ejercicios, textos);
+        String record = CabeceraEntreno.frase(records, textos, idioma);
+        tvRecordHoy.setText(record);
+        boolean hayRecord = record != null;
+        tvRecordHoy.setVisibility(hayRecord ? View.VISIBLE : View.GONE);
+        if (hayRecord && !recordVisto && pintado) Movimiento.entrar(0, tvRecordHoy);
+        recordVisto = hayRecord;
+    }
+
+    // «55 min», «2.740 kg», «5 de 21»: la cifra en condensada y lo de detrás en Barlow pequeño.
+    private CharSequence conUnidad(String cifra, String unidad) {
+        SpannableString s = new SpannableString(cifra + unidad);
+        if (unidad.isEmpty()) return s;
+        int desde = cifra.length();
+        s.setSpan(new AbsoluteSizeSpan(getResources().getDimensionPixelSize(R.dimen.text_caption)), desde, s.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(this, R.color.gp_on_hero_variant)), desde, s.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        Typeface barlow = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.barlow);
+        if (barlow != null) s.setSpan(new Fuente(barlow), desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return s;
+    }
+
+    private interface Cifra { CharSequence de(long n); }
+
+    // La cifra cuenta desde la que se veía hasta la nueva (Movimiento.contar); la primera vez y con
+    // «Quitar animaciones», se pone sin contar.
+    private void contar(TextView tv, long antes, long ahora, Cifra cifra) {
+        // Una cuenta en marcha se para antes: si no, al acabar pisaría con su texto viejo (el
+        // «0 de 0» de antes de llegar los ejercicios) lo que se pinta ahora.
+        Object enMarcha = tv.getTag(R.id.tvSeries);
+        if (enMarcha instanceof android.animation.ValueAnimator) ((android.animation.ValueAnimator) enMarcha).cancel();
+        tv.setTag(R.id.tvSeries, null);
+        if (antes < 0 || antes == ahora || Movimiento.quieto(this)) {
+            tv.setText(cifra.de(ahora));
+            return;
+        }
+        tv.setTag(R.id.tvSeries, Movimiento.contar(0, Movimiento.CIFRA,
+                f -> tv.setText(cifra.de(Math.round(antes + (ahora - antes) * f)))));
+    }
+
+    // ── Los ejercicios ────────────────────────────────────────
+
+    private void pintarEjercicios() {
+        Carga datos = vm.getDatos().getValue();
+        Carga ejercicios = vm.getCargaEjercicios().getValue();
+        SesionEnCurso s = vm.getBorrador();
+        boolean libre = vm.rutinaDecidida() && vm.getRutinaId() == null;
+
+        if (datos == Carga.ERROR) {
+            estadoEjercicios.error(getString(R.string.apuntar_error_rutinas), vm::reintentar);
+        } else if (!vm.rutinaDecidida() || ejercicios == Carga.CARGANDO) {
+            estadoEjercicios.cargando();
+        } else if (ejercicios == Carga.ERROR) {
+            estadoEjercicios.error(getString(R.string.apuntar_error_ejercicios), vm::reintentar);
+        } else if (libre && s.ejercicios.isEmpty()) {
+            estadoEjercicios.vacio(R.string.apuntar_libre_vacio);
+        } else {
+            estadoEjercicios.oculto();
+        }
+        btnAnadirEjercicios.setVisibility(libre && datos != Carga.ERROR ? View.VISIBLE : View.GONE);
+        btnComoUltima.setVisibility(vm.hayUltimaVez() ? View.VISIBLE : View.GONE);
+
+        String forma = forma(s);
+        if (!forma.equals(estructura)) {
+            estructura = forma;
+            rehacerLista(s);
+        }
+        Set<Long> recordAhora = new HashSet<>();
+        for (CabeceraEntreno.RecordHoy r : CabeceraEntreno.records(s.ejercicios, textos)) recordAhora.add(r.serieId);
+        for (SesionEnCurso.Ejercicio e : s.ejercicios) {
+            for (int i = 0; i < e.series.size(); i++) {
+                FilaSerie f = filas.get(e.series.get(i).id);
+                // Al entrar (o tras girar) los récords que ya había no se celebran otra vez.
+                if (f != null) f.pintar(e, i, recordAhora.contains(f.serieId), pintado && !seriesRecord.contains(f.serieId));
+            }
+        }
+        seriesRecord = recordAhora;
+        pintado = true;
+    }
+
+    // La forma de la lista: qué ejercicios, abiertos o plegados, y qué series tiene cada uno.
+    private String forma(SesionEnCurso s) {
+        StringBuilder sb = new StringBuilder();
+        for (SesionEnCurso.Ejercicio e : s.ejercicios) {
+            sb.append(e.id).append(vm.abierto(e) ? 'A' : 'P').append(RegistrarSesionViewModel.empezado(e) ? 'E' : '-')
+                    .append(LogicaSesion.porTiempo(e) ? 'T' : 'R');
+            for (SesionEnCurso.Serie serie : e.series) sb.append(',').append(serie.id);
+            sb.append(';');
+        }
+        return sb.toString();
+    }
+
+    private void rehacerLista(SesionEnCurso s) {
+        listaEjercicios.removeAllViews();
+        filas.clear();
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout grupo = null;
+        for (int i = 0; i < s.ejercicios.size(); i++) {
+            SesionEnCurso.Ejercicio e = s.ejercicios.get(i);
+            String nombre = e.nombre != null ? e.nombre : getString(R.string.ejercicio_sin_nombre, i + 1);
+            if (vm.abierto(e)) {
+                grupo = null;
+                listaEjercicios.addView(tarjetaAbierta(inflater, e, nombre));
+            } else {
+                if (grupo == null) {
+                    grupo = new LinearLayout(this);
+                    grupo.setOrientation(LinearLayout.VERTICAL);
+                    grupo.setBackgroundResource(R.drawable.bg_tarjeta_filas);
+                    grupo.setClipToOutline(true);
+                    int borde = getResources().getDimensionPixelSize(R.dimen.tarjeta_borde);
+                    grupo.setPadding(borde, borde, borde, borde);
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lp.topMargin = getResources().getDimensionPixelSize(R.dimen.espacio_12);
+                    listaEjercicios.addView(grupo, lp);
+                } else {
+                    grupo.addView(raya());
+                }
+                grupo.addView(filaPlegada(inflater, grupo, e, nombre));
+            }
+        }
+    }
+
+    private View tarjetaAbierta(LayoutInflater inflater, SesionEnCurso.Ejercicio e, String nombre) {
+        View tarjeta = inflater.inflate(R.layout.item_apuntar_ejercicio, listaEjercicios, false);
+        ((TextView) tarjeta.findViewById(R.id.tvNombreEjercicio)).setText(nombre);
+        String pauta = pauta(e, true);
+        TextView tvPauta = tarjeta.findViewById(R.id.tvPautaEjercicio);
+        tvPauta.setText(pauta);
+        tvPauta.setVisibility(pauta == null ? View.GONE : View.VISIBLE);
+
+        // Sin empezar se puede volver a plegar; empezado, se queda abierto.
+        View cabecera = tarjeta.findViewById(R.id.cabeceraEjercicio);
+        boolean plegable = !RegistrarSesionViewModel.empezado(e);
+        tarjeta.findViewById(R.id.ivPliegue).setVisibility(plegable ? View.VISIBLE : View.GONE);
+        String a11y = pauta == null ? nombre : nombre + ". " + pauta;
+        cabecera.setContentDescription(a11y);
+        if (plegable) {
+            cabecera.setOnClickListener(v -> vm.alternarPliegue(e.id));
+            plegado(cabecera, false);
+        } else {
+            cabecera.setClickable(false);
+            cabecera.setBackground(null);
+            ViewCompat.setAccessibilityHeading(cabecera, true);
+        }
+
+        boolean tiempo = LogicaSesion.porTiempo(e);
+        TextView rotuloKg = tarjeta.findViewById(R.id.tvRotuloKg);
+        rotuloKg.setText(tiempo ? R.string.envivo_col_tiempo : R.string.envivo_col_kg);
+        ((LinearLayout.LayoutParams) rotuloKg.getLayoutParams()).weight = tiempo ? 2f : 1f;
+        tarjeta.findViewById(R.id.tvRotuloReps).setVisibility(tiempo ? View.GONE : View.VISIBLE);
+
+        LinearLayout contenedor = tarjeta.findViewById(R.id.contenedorSeries);
+        for (SesionEnCurso.Serie serie : e.series) {
+            View fila = inflater.inflate(R.layout.item_envivo_serie, contenedor, false);
+            // La fila es la de la sesión en vivo, dentro de una tarjeta entera: sin sus márgenes ni
+            // su pieza de tarjeta partida.
+            fila.setBackground(null);
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) fila.getLayoutParams();
+            lp.setMarginStart(0);
+            lp.setMarginEnd(0);
+            contenedor.addView(fila, lp);
+            filas.put(serie.id, new FilaSerie(fila, serie.id));
+        }
+        return tarjeta;
+    }
+
+    private View filaPlegada(LayoutInflater inflater, ViewGroup padre, SesionEnCurso.Ejercicio e, String nombre) {
+        View f = inflater.inflate(R.layout.item_apuntar_plegado, padre, false);
+        ((TextView) f.findViewById(R.id.tvNombrePlegado)).setText(nombre);
+        String corta = pauta(e, false);
+        TextView tvPauta = f.findViewById(R.id.tvPautaPlegado);
+        tvPauta.setText(corta);
+        tvPauta.setVisibility(corta == null ? View.GONE : View.VISIBLE);
+        String larga = pauta(e, true);
+        f.setContentDescription(larga == null ? nombre + ". " + getString(R.string.apuntar_sin_empezar)
+                : getString(R.string.apuntar_abrir_ejercicio_a11y, nombre, larga));
+        f.setOnClickListener(v -> vm.alternarPliegue(e.id));
+        plegado(f, true);
+        return f;
+    }
+
+    // TalkBack: el estado («Plegado», «Desplegado») y la acción de abrir o plegar.
+    private void plegado(View v, boolean plegado) {
+        ViewCompat.setStateDescription(v, getString(plegado ? R.string.apuntar_plegado : R.string.apuntar_desplegado));
+        ViewCompat.setAccessibilityDelegate(v, new AccessibilityDelegateCompat() {
             @Override
-            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
-                    @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
                 super.onInitializeAccessibilityNodeInfo(host, info);
-                Object elegida = spRutina.getSelectedItem();
-                info.setContentDescription(getString(R.string.sesiones_rutina_a11y,
-                        elegida != null ? elegida.toString() : ""));
+                info.addAction(plegado ? AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_EXPAND
+                        : AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_COLLAPSE);
+            }
+
+            @Override
+            public boolean performAccessibilityAction(@NonNull View host, int action, @Nullable Bundle args) {
+                if (action == AccessibilityNodeInfoCompat.ACTION_EXPAND || action == AccessibilityNodeInfoCompat.ACTION_COLLAPSE) {
+                    return host.performClick();
+                }
+                return super.performAccessibilityAction(host, action, args);
             }
         });
+    }
 
-        etDuracion.setText(vm.getDuracion());
-        etNotas.setText(vm.getNotas());
-        ratingBar.setRating(vm.getValoracion());
-
-        etDuracion.addTextChangedListener(new AlCambiar(vm::setDuracion));
-        etNotas.addTextChangedListener(new AlCambiar(vm::setNotas));
+    private View raya() {
+        View v = new View(this);
+        v.setBackgroundColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceVariant, 0));
+        v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                getResources().getDimensionPixelSize(R.dimen.separador_alto));
+        lp.setMarginStart(getResources().getDimensionPixelSize(R.dimen.fila_padding_horizontal));
+        v.setLayoutParams(lp);
+        return v;
     }
 
     /**
-     * La fecha del entrenamiento (GP-012): hoy por defecto y nunca futura. El calendario
-     * no deja elegir un día posterior a hoy, y el ViewModel tampoco lo acepta.
+     * La pauta en frase: «3 series de 6 a 10 repeticiones» (larga) o «3 series de 6 a 10» (corta,
+     * la de los plegados). Por tiempo, «de 30 a 60 segundos»; por lado, «por pierna».
+     *
+     * @return null sin pauta (un ejercicio añadido a un entreno libre).
      */
-    private void configurarFecha() {
-        TextInputEditText etFecha = findViewById(R.id.etFecha);
-        etFecha.setSaveEnabled(false);
-        pintarFecha(etFecha);
-        View.OnClickListener abrir = v -> {
-            long hoyUtc = com.google.android.material.datepicker.MaterialDatePicker.todayInUtcMilliseconds();
-            com.google.android.material.datepicker.MaterialDatePicker<Long> picker =
-                    com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
-                            .setTitleText(R.string.sesiones_fecha)
-                            .setSelection(utcDe(vm.getFecha()))
-                            .setCalendarConstraints(new com.google.android.material.datepicker.CalendarConstraints.Builder()
-                                    .setEnd(hoyUtc)
-                                    .setValidator(com.google.android.material.datepicker.DateValidatorPointBackward.now())
-                                    .build())
-                            .build();
-            picker.addOnPositiveButtonClickListener(sel -> {
-                java.text.SimpleDateFormat f = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
-                f.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-                vm.setFecha(f.format(new java.util.Date(sel)));
-                pintarFecha(etFecha);
+    @Nullable
+    private String pauta(SesionEnCurso.Ejercicio e, boolean larga) {
+        if (e.seriesPauta <= 0) return null;
+        Integer min = LogicaSesion.minimoPauta(e), max = LogicaSesion.maximoPauta(e);
+        if (min == null) return null;
+        boolean rango = max != null && !max.equals(min);
+        String cifra = rango ? getString(R.string.apuntar_pauta_rango, min, max) : String.valueOf(min);
+        String cantidad = cifra;
+        if (larga) {
+            int cuantas = rango ? max : min;
+            cantidad = getResources().getQuantityString(LogicaSesion.porTiempo(e)
+                    ? R.plurals.apuntar_pauta_segundos : R.plurals.apuntar_pauta_reps, cuantas, cifra);
+            if (e.porLado != null) {
+                switch (e.porLado) {
+                    case "PIERNA": cantidad = getString(R.string.apuntar_pauta_por_pierna, cantidad); break;
+                    case "BRAZO": cantidad = getString(R.string.apuntar_pauta_por_brazo, cantidad); break;
+                    case "LADO": cantidad = getString(R.string.apuntar_pauta_por_lado, cantidad); break;
+                    default: break;
+                }
+            }
+        }
+        return getResources().getQuantityString(R.plurals.apuntar_pauta_series, e.seriesPauta, e.seriesPauta, cantidad);
+    }
+
+    // ── Una fila de serie ─────────────────────────────────────
+
+    /** Las vistas de una serie (item_envivo_serie) y lo que se escribe en ellas. */
+    private final class FilaSerie {
+        final View raiz, fila;
+        final TextView tvNumero, tvAnterior;
+        final EditText etKg, etReps, etTiempo;
+        final ImageButton btnMarcar;
+        final long serieId;
+        boolean pintando;
+
+        FilaSerie(View raiz, long serieId) {
+            this.raiz = raiz;
+            this.serieId = serieId;
+            fila = raiz.findViewById(R.id.filaSerie);
+            tvNumero = raiz.findViewById(R.id.tvNumero);
+            tvAnterior = raiz.findViewById(R.id.tvAnterior);
+            etKg = raiz.findViewById(R.id.etKg);
+            etReps = raiz.findViewById(R.id.etReps);
+            etTiempo = raiz.findViewById(R.id.etTiempo);
+            btnMarcar = raiz.findViewById(R.id.btnMarcar);
+            raiz.findViewById(R.id.btnCronometro).setVisibility(View.GONE);
+            // Lo escrito va al ViewModel; estas vistas no guardan su estado aparte (manda el borrador).
+            for (EditText et : new EditText[]{etKg, etReps, etTiempo}) et.setSaveEnabled(false);
+            etKg.addTextChangedListener(alCambiar(etKg, t -> vm.escribirPeso(serieId, t)));
+            etReps.addTextChangedListener(alCambiar(etReps, t -> vm.escribirRepeticiones(serieId, t)));
+            etTiempo.addTextChangedListener(alCambiar(etTiempo, t -> vm.escribirSegundos(serieId, t)));
+            btnMarcar.setOnClickListener(v -> marcar(this));
+        }
+
+        private TextWatcher alCambiar(EditText et, java.util.function.Consumer<String> destino) {
+            return new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+                @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+                @Override public void afterTextChanged(Editable s) {
+                    if (!pintando) destino.accept(s.toString());
+                    Object nombre = et.getTag(R.id.etKg);
+                    ViewCompat.setStateDescription(et, s.length() > 0 && nombre != null ? nombre.toString() : null);
+                }
+            };
+        }
+
+        /**
+         * Pinta la serie.
+         *
+         * @param recordNuevo si es récord y en el repintado anterior no lo era: entonces se dora.
+         */
+        void pintar(SesionEnCurso.Ejercicio e, int indice, boolean record, boolean recordNuevo) {
+            SesionEnCurso.Serie s = e.series.get(indice);
+            int numero = indice + 1;
+            boolean tiempo = LogicaSesion.porTiempo(e);
+            pintando = true;
+            tvNumero.setText(String.valueOf(numero));
+            tvAnterior.setText(LogicaSesion.textoAnterior(e, numero, textosSesion, idioma));
+            etKg.setVisibility(tiempo ? View.GONE : View.VISIBLE);
+            etReps.setVisibility(tiempo ? View.GONE : View.VISIBLE);
+            etTiempo.setVisibility(tiempo ? View.VISIBLE : View.GONE);
+            String pistaPeso = LogicaSesion.pistaPeso(e, numero, idioma);
+            String pistaReps = LogicaSesion.pistaReps(e, numero, textosSesion);
+            String pistaSeg = LogicaSesion.pistaSegundos(e, numero, textosSesion);
+            poner(etKg, s.peso, pistaPeso);
+            poner(etReps, s.repeticiones, pistaReps);
+            poner(etTiempo, s.segundos, pistaSeg);
+            rotular(etKg, getString(R.string.envivo_kg_a11y, numero), pistaPeso);
+            rotular(etReps, getString(R.string.envivo_reps_a11y, numero), pistaReps);
+            rotular(etTiempo, getString(R.string.envivo_tiempo_a11y, numero), pistaSeg);
+            pintando = false;
+
+            // La fila del récord, en dorado; al pasar a serlo, se dora con el momento 25.
+            int oroFila = ContextCompat.getColor(RegistrarSesionActivity.this, R.color.gp_gold_fila);
+            if (record && recordNuevo) {
+                // dorarFila deja el color final con «Quitar animaciones»; la vibración se queda.
+                Movimiento.dorarFila(fila, MaterialColors.getColor(fila, com.google.android.material.R.attr.colorSurface),
+                        ContextCompat.getColor(RegistrarSesionActivity.this, R.color.gp_gold_container), oroFila);
+                Movimiento.vibrar(fila, Movimiento.Vibracion.EXITO);
+            } else {
+                fila.setBackgroundColor(record ? oroFila : android.graphics.Color.TRANSPARENT);
+            }
+
+            // El botón: verde con su check si está hecha, dorado con el trofeo si es el récord y gris
+            // si no; el estado lo dice también para TalkBack, no solo el color.
+            btnMarcar.setImageResource(record ? R.drawable.ic_ms_trophy_fill : R.drawable.ic_ms_check);
+            // Sin marcar, un aro sin relleno (bg_check_pendiente, gp_stroke); marcada, el círculo lleno:
+            // la diferencia es de forma, no solo de color (DEC-019).
+            if (s.hecha || record) {
+                btnMarcar.setBackgroundResource(R.drawable.bg_check);
+                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo(s.hecha, record)));
+            } else {
+                btnMarcar.setBackgroundTintList(null);
+                btnMarcar.setBackgroundResource(R.drawable.bg_check_pendiente);
+            }
+            btnMarcar.setImageTintList(ColorStateList.valueOf(record
+                    ? MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnPrimary)
+                    : s.hecha ? ContextCompat.getColor(RegistrarSesionActivity.this, R.color.gp_success)
+                    : MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnSurfaceVariant)));
+            String estado = getString(s.hecha ? R.string.envivo_hecha : R.string.envivo_sin_hacer);
+            ViewCompat.setStateDescription(btnMarcar, record ? estado + ", " + getString(R.string.apuntar_serie_record) : estado);
+            btnMarcar.setContentDescription(getString(s.hecha ? R.string.apuntar_serie_apuntada_a11y
+                    : R.string.apuntar_apuntar_serie_a11y, numero));
+
+            // TalkBack: «Serie 2. Anterior: 57,5 × 12», donde entra en la fila.
+            tvNumero.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            SesionEnCurso.SerieAnterior a = LogicaSesion.anterior(e, numero);
+            String nombre = getString(R.string.envivo_serie_a11y, numero);
+            tvNumero.setContentDescription(a == null ? nombre
+                    : nombre + ". " + getString(R.string.envivo_anterior_a11y, tvAnterior.getText()));
+        }
+
+        private void poner(EditText et, String valor, String pista) {
+            if (!et.getText().toString().equals(valor)) et.setText(valor);
+            et.setHint(pista);
+        }
+
+        // El nombre del campo no va como descripción: taparía el valor. Vacío, va como pista del nodo
+        // («Kilos, serie 1, 57,5»); con valor, como estado, que TalkBack lee tras el valor.
+        private void rotular(EditText et, String nombre, String pista) {
+            et.setTag(R.id.etKg, nombre);
+            ViewCompat.setStateDescription(et, et.getText().length() > 0 ? nombre : null);
+            String texto = pista == null || pista.isEmpty() ? nombre : nombre + ", " + pista;
+            ViewCompat.setAccessibilityDelegate(et, new AccessibilityDelegateCompat() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setHintText(texto);
+                }
             });
-            picker.show(getSupportFragmentManager(), "fecha");
-        };
-        etFecha.setOnClickListener(abrir);
-        ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.tilFecha))
-                .setEndIconOnClickListener(abrir);
+        }
+    }
+
+    private int fondo(boolean hecha, boolean record) {
+        if (record) return ContextCompat.getColor(this, R.color.gp_gold);
+        if (hecha) return ContextCompat.getColor(this, R.color.gp_success_container);
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceVariant, 0);
+    }
+
+    // Marcar: el ViewModel decide (LogicaSesion.marcar); aquí se dice lo que falta y se anima.
+    private void marcar(FilaSerie f) {
+        SesionEnCurso.Serie antes = serie(f.serieId);
+        boolean estabaHecha = antes != null && antes.hecha;
+        LogicaSesion.Marcado m = vm.marcar(f.serieId, idioma);
+        switch (m) {
+            case FALTAN_REPS:
+            case FALTAN_SEGUNDOS:
+                // No se marca: el foco va al campo que falta y se dice qué escribir.
+                EditText campo = m == LogicaSesion.Marcado.FALTAN_REPS ? f.etReps : f.etTiempo;
+                campo.requestFocus();
+                avisar(m == LogicaSesion.Marcado.FALTAN_REPS ? R.string.envivo_falta_reps : R.string.envivo_falta_segundos);
+                break;
+            case NO_VALIDO:
+                avisar(R.string.envivo_no_valido);
+                break;
+            case HECHA:
+                if (!estabaHecha && !seriesRecord.contains(f.serieId)) {
+                    f.btnMarcar.setBackgroundResource(R.drawable.bg_check);
+                    Movimiento.marcarSerie(f.btnMarcar, fondo(false, false), fondo(true, false), true);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Nullable
+    private SesionEnCurso.Serie serie(long id) {
+        for (SesionEnCurso.Ejercicio e : vm.getBorrador().ejercicios) {
+            for (SesionEnCurso.Serie s : e.series) if (s.id == id) return s;
+        }
+        return null;
+    }
+
+    private void avisar(int texto) {
+        Snackbar.make(listaEjercicios, texto, Snackbar.LENGTH_LONG).show();
+    }
+
+    // ── La fecha ──────────────────────────────────────────────
+
+    // «Hoy, viernes 6», «Ayer, jueves 5», «Martes 3 de noviembre».
+    private String textoFecha(String dia) {
+        Calendar c = Calendar.getInstance();
+        c.clear();
+        c.set(Integer.parseInt(dia.substring(0, 4)), Integer.parseInt(dia.substring(5, 7)) - 1,
+                Integer.parseInt(dia.substring(8, 10)));
+        if (dia.equals(vm.hoy())) return getString(R.string.apuntar_fecha_hoy, formato(R.string.apuntar_fecha_patron_dia, c));
+        if (dia.equals(vm.ayer())) return getString(R.string.apuntar_fecha_ayer, formato(R.string.apuntar_fecha_patron_dia, c));
+        boolean esteAnio = dia.substring(0, 4).equals(vm.hoy().substring(0, 4));
+        String texto = formato(esteAnio ? R.string.apuntar_fecha_patron_otro : R.string.apuntar_fecha_patron_otro_anio, c);
+        return texto.substring(0, 1).toUpperCase(idioma) + texto.substring(1);
+    }
+
+    private String formato(int patron, Calendar c) {
+        return new SimpleDateFormat(getString(patron), idioma).format(c.getTime());
+    }
+
+    // Hoy, Ayer u Otro día, como botones de opción; Otro día abre el calendario, sin días futuros.
+    private void elegirFecha() {
+        String fecha = vm.getFecha();
+        int elegida = fecha.equals(vm.hoy()) ? 0 : fecha.equals(vm.ayer()) ? 1 : 2;
+        List<HojaElegir.Opcion> opciones = new ArrayList<>();
+        opciones.add(HojaElegir.Opcion.de(getString(R.string.tiempo_hoy_mayuscula)));
+        opciones.add(HojaElegir.Opcion.de(getString(R.string.tiempo_ayer_mayuscula)));
+        opciones.add(HojaElegir.Opcion.de(getString(R.string.apuntar_fecha_otro_dia)));
+        HojaElegir.mostrar(this, R.string.apuntar_fecha_titulo, opciones, elegida, 0, i -> {
+            if (i == 0) vm.setFecha(vm.hoy());
+            else if (i == 1) vm.setFecha(vm.ayer());
+            else abrirCalendario();
+        });
+    }
+
+    private void abrirCalendario() {
+        long hoyUtc = com.google.android.material.datepicker.MaterialDatePicker.todayInUtcMilliseconds();
+        com.google.android.material.datepicker.MaterialDatePicker<Long> picker =
+                com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
+                        .setTitleText(R.string.apuntar_fecha_titulo)
+                        .setSelection(utcDe(vm.getFecha()))
+                        .setCalendarConstraints(new com.google.android.material.datepicker.CalendarConstraints.Builder()
+                                .setEnd(hoyUtc)
+                                .setValidator(com.google.android.material.datepicker.DateValidatorPointBackward.now())
+                                .build())
+                        .build();
+        picker.addOnPositiveButtonClickListener(sel -> {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            f.setTimeZone(TimeZone.getTimeZone("UTC"));
+            vm.setFecha(f.format(new java.util.Date(sel)));
+        });
+        picker.show(getSupportFragmentManager(), "fecha");
     }
 
     // El día elegido, en medianoche UTC, que es como lo cuenta el calendario.
     private static long utcDe(String dia) {
-        java.util.Calendar c = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         c.clear();
         c.set(Integer.parseInt(dia.substring(0, 4)), Integer.parseInt(dia.substring(5, 7)) - 1,
                 Integer.parseInt(dia.substring(8, 10)));
         return c.getTimeInMillis();
     }
 
-    // «30 sept 2026», en el idioma de la app, y TalkBack lo dice con «Cambiar».
-    private void pintarFecha(TextInputEditText etFecha) {
-        String texto = es.pmdm.gymprofit.utils.FechaUtils.formatearFechaMedia(vm.getFecha(),
-                es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this));
-        etFecha.setText(texto);
-        etFecha.setContentDescription(getString(R.string.sesiones_fecha_a11y, texto));
-    }
+    // ── La rutina ─────────────────────────────────────────────
 
-    /**
-     * La valoración es opcional y arranca en «sin valorar» (GP-077).
-     *
-     * <p>Con el dedo, un RatingBar no baja a cero: el primer toque ya marca una
-     * estrella. Por eso, en cuanto hay una, aparece «Quitar valoración» para
-     * deshacer un toque por error.
-     *
-     * <p>TalkBack trata el RatingBar aparte: añade por su cuenta «N estrellas de 5»
-     * y NO lee el stateDescription. Con estrellas eso basta; sin ellas diría
-     * «0 estrellas de 5», que suena a nota y no a ausencia de nota, así que en
-     * ese caso el «sin valorar» va en la propia descripción.
-     */
-    private void configurarValoracion() {
-        ratingBar.setOnRatingBarChangeListener((bar, estrellas, delUsuario) -> {
-            vm.setValoracion(estrellas);
-            pintarValoracion();
-        });
-        btnQuitarValoracion.setOnClickListener(v -> {
-            ratingBar.setRating(0f);
-            // El botón desaparece con el toque: el foco vuelve a las estrellas, que
-            // anuncian «Sin valorar», en vez de perderse.
-            ratingBar.requestFocus();
-            ratingBar.sendAccessibilityEvent(android.view.accessibility.AccessibilityEvent.TYPE_VIEW_FOCUSED);
-        });
-        pintarValoracion();
-    }
-
-    // Refleja el estado de las estrellas en el rótulo, en TalkBack y en el botón.
-    private void pintarValoracion() {
-        Integer valor = Valoracion.paraEnviar(ratingBar.getRating());
-        if (valor == null) {
-            tvEstadoValoracion.setText(R.string.sesiones_sin_valorar);
-            ratingBar.setContentDescription(getString(R.string.sesiones_valoracion_desc_sin));
-            ViewCompat.setStateDescription(ratingBar, getString(R.string.sesiones_sin_valorar));
-            // INVISIBLE y no GONE: el hueco se queda y la tarjeta no salta al tocar.
-            btnQuitarValoracion.setVisibility(View.INVISIBLE);
-        } else {
-            tvEstadoValoracion.setText(getString(R.string.sesiones_valoracion_estado, valor));
-            ratingBar.setContentDescription(getString(R.string.sesiones_valoracion_desc));
-            ViewCompat.setStateDescription(ratingBar, getString(R.string.sesiones_valoracion_a11y, valor));
-            btnQuitarValoracion.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Monta el selector con las rutinas recién llegadas y deja marcada la del borrador.
-     *
-     * <p>La opción 0 crea la sesión sin rutinaId, que es exactamente lo que la lista y
-     * el resumen llaman «entrenamiento libre» (GP-057).
-     */
-    private void pintarRutinas(List<Rutina> rutinas) {
-        rutinasMostradas = rutinas != null ? rutinas : new ArrayList<>();
-        List<String> opciones = new ArrayList<>();
-        opciones.add(getString(R.string.sesiones_entrenamiento_libre));
-        for (Rutina r : rutinasMostradas) opciones.add(r.getNombre());
-
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, opciones);
-        // El menú marca la elegida con una ✓ (revisor, GP-225).
-        spinnerAdapter.setDropDownViewResource(R.layout.item_desplegable);
-
-        posicionSincronizada = posicionDe(vm.getRutinaId());
-        spRutina.setAdapter(spinnerAdapter);
-        spRutina.setSelection(posicionSincronizada, false);
-        spRutina.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == posicionSincronizada) return;
-                posicionSincronizada = position;
-                boolean deLista = position > 0 && position <= rutinasMostradas.size();
-                vm.elegirRutina(deLista ? rutinasMostradas.get(position - 1).getId() : null);
+    private void elegirRutina() {
+        ElegirRutinaHoja.mostrarParaApuntar(this, vm.orden(), vm.getRutinaId(), r -> {
+            Integer id = r != null ? r.getId() : null;
+            if (java.util.Objects.equals(id, vm.getRutinaId())) return;
+            int marcadas = vm.marcadas();
+            if (marcadas == 0) {
+                vm.elegirRutina(id);
+                return;
             }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
+            // Con series marcadas, cambiar las quita: se pregunta antes.
+            UIHelper.mostrarDialogoConIcono(this, getString(R.string.apuntar_cambiar_titulo),
+                    getResources().getQuantityString(R.plurals.apuntar_cambiar_mensaje, marcadas, marcadas),
+                    R.drawable.ic_ms_autorenew, getString(R.string.apuntar_cambiar_si), getString(R.string.dialog_cancelar),
+                    () -> vm.elegirRutina(id), null);
         });
     }
 
-    // Posición del selector para una rutina (+1 por el «Entrenamiento libre» del 0).
-    private int posicionDe(Integer rutinaId) {
-        if (rutinaId == null) return 0;
-        for (int i = 0; i < rutinasMostradas.size(); i++) {
-            if (rutinasMostradas.get(i).getId() == rutinaId) return i + 1;
+    // Lo que devuelve la biblioteca: [{ejercicioId, nombre, …}].
+    private static List<SesionEnCursoRepositorio.Nuevo> leerAnadidos(@Nullable String json) {
+        List<SesionEnCursoRepositorio.Nuevo> nuevos = new ArrayList<>();
+        if (json == null) return nuevos;
+        try {
+            JSONArray arr = new JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+                nuevos.add(new SesionEnCursoRepositorio.Nuevo(o.getInt("ejercicioId"), o.optString("nombre", null)));
+            }
+        } catch (JSONException e) {
+            // La biblioteca lo escribe siempre bien; si no, no se añade nada y el entreno sigue como
+            // estaba, que es lo seguro.
+            return Collections.emptyList();
         }
-        return 0;
+        return nuevos;
     }
 
-    // Pinta los ejercicios del borrador. Solo llega al cambiar de rutina o al restaurar:
-    // teclear no repinta la lista, que se llevaría el foco del campo.
-    //
-    // Antes esto también calculaba calorías y las pintaba en una tarjeta. Se retiró con
-    // DEC-004 / GP-010: esa multiplicación no conoce la carga, ni el peso, ni el descanso.
-    private void pintarEjercicios(List<EjercicioPesoAdapter.Item> items) {
-        ejercicioItems.clear();
-        if (items != null) ejercicioItems.addAll(items);
-        ejercicioPesoAdapter.notifyDataSetChanged();
-        cardEjercicios.setVisibility(ejercicioItems.isEmpty() ? View.GONE : View.VISIBLE);
-    }
+    // ── Las caras y la nota ───────────────────────────────────
 
-    // Pulsar Guardar: el ViewModel valida y manda; aquí solo se dice lo que falta.
-    private void pulsarGuardar() {
-        switch (vm.guardar()) {
-            case FALTA_DURACION:
-                UIHelper.mostrarToastError(this, getString(R.string.error_campo_requerido));
-                break;
-            case DURACION_INVALIDA:
-                UIHelper.mostrarToastError(this, getString(R.string.sesiones_duracion_invalida));
-                break;
-            default:
-                // ENVIADO lo pinta el estado; YA_EN_CURSO es un doble toque y no hace nada.
-                break;
+    // Cinco caras de 48 dp, botones de opción con su nombre; el grupo dice cuántas hay.
+    private void montarCaras() {
+        int lado = getResources().getDimensionPixelSize(R.dimen.zona_tactil);
+        int hueco = getResources().getDimensionPixelSize(R.dimen.espacio_4);
+        ViewCompat.setAccessibilityDelegate(grupoCaras, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setCollectionInfo(AccessibilityNodeInfoCompat.CollectionInfoCompat.obtain(1, Caras.NUMERO, false,
+                        AccessibilityNodeInfoCompat.CollectionInfoCompat.SELECTION_MODE_SINGLE));
+            }
+        });
+        grupoCaras.setContentDescription(getString(R.string.apuntar_que_tal));
+        for (int valor = 1; valor <= Caras.NUMERO; valor++) {
+            ImageButton cara = new ImageButton(this);
+            cara.setImageResource(Caras.icono(valor));
+            cara.setScaleType(ImageView.ScaleType.CENTER);
+            cara.setForeground(ContextCompat.getDrawable(this, R.drawable.fondo_pulsable_redondo));
+            cara.setContentDescription(getString(Caras.nombre(valor)));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(lado, lado);
+            if (valor > 1) lp.setMarginStart(hueco);
+            final int este = valor;
+            cara.setOnClickListener(v -> {
+                Movimiento.vibrar(v, Movimiento.Vibracion.LIGERA);
+                vm.tocarCara(este);
+            });
+            grupoCaras.addView(cara, lp);
+            caras.add(cara);
         }
     }
+
+    private void pintarCaras() {
+        Integer valor = vm.getValoracion();
+        int nombre = Caras.nombre(valor);
+        tvCaraElegida.setText(nombre == 0 ? "" : getString(nombre));
+        for (int i = 0; i < caras.size(); i++) {
+            ImageButton cara = caras.get(i);
+            boolean marcada = valor != null && valor == i + 1;
+            cara.setBackgroundResource(marcada ? R.drawable.bg_cara_elegida : R.drawable.bg_cara);
+            cara.setImageTintList(ColorStateList.valueOf(MaterialColors.getColor(cara, marcada
+                    ? com.google.android.material.R.attr.colorOnPrimary : com.google.android.material.R.attr.colorOnSurface)));
+            final int posicion = i;
+            ViewCompat.setAccessibilityDelegate(cara, new AccessibilityDelegateCompat() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setClassName("android.widget.RadioButton");
+                    info.setCheckable(true);
+                    info.setChecked(marcada);
+                    info.setCollectionItemInfo(AccessibilityNodeInfoCompat.CollectionItemInfoCompat.obtain(
+                            0, 1, posicion, 1, false, marcada));
+                }
+            });
+        }
+    }
+
+    // La nota, plegada tras el lápiz; con algo escrito sale abierta.
+    private void montarNota() {
+        etNota.setSaveEnabled(false);
+        etNota.setText(vm.getNotas());
+        etNota.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(Editable s) { vm.setNotas(s.toString()); }
+        });
+        mostrarNota(!vm.getNotas().isEmpty(), false);
+        btnNota.setOnClickListener(v -> mostrarNota(tilNota.getVisibility() != View.VISIBLE, true));
+    }
+
+    private void mostrarNota(boolean abierta, boolean enfocar) {
+        tilNota.setVisibility(abierta ? View.VISIBLE : View.GONE);
+        ViewCompat.setStateDescription(btnNota, getString(abierta ? R.string.apuntar_desplegado : R.string.apuntar_plegado));
+        if (abierta && enfocar) {
+            etNota.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (imm != null) imm.showSoftInput(etNota, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    // ── Guardar ───────────────────────────────────────────────
 
     /**
-     * Pinta el guardado. Tras girar, la pantalla nueva recibe el estado en curso: si
-     * sigue guardando, vuelve el «Cargando…»; si falló y nadie cerró el aviso, vuelve el
-     * aviso; y el éxito abre el resumen una sola vez, porque se marca como abierto.
+     * Pinta el guardado. Tras girar, la pantalla nueva recibe el estado en curso: si sigue
+     * guardando, vuelve el «Cargando…»; si falló y nadie cerró el aviso, vuelve el aviso; y el
+     * éxito abre el resumen una sola vez, porque se marca como abierto.
      */
     private void pintarGuardado(EstadoGuardado estado) {
         switch (estado.fase) {
@@ -376,11 +935,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
     }
 
     /**
-     * Avisa de que NO se ha guardado —o de que no se sabe— y ofrece repetir el envío.
-     *
-     * <p>Lo importante no es el diálogo, es lo que NO pasa: no se cierra la pantalla,
-     * no se borra nada de lo tecleado y no se cambia la clave. «Ahora no» deja al
-     * usuario donde estaba, con sus datos, para volver a guardar cuando quiera.
+     * Avisa de que NO se ha guardado —o de que no se sabe— y ofrece repetir el envío. No se cierra
+     * la pantalla, no se borra nada de lo marcado y no se cambia la clave.
      */
     private void ofrecerReintento(EstadoGuardado estado) {
         if (avisoFallo != null && avisoFallo.isShowing()) return;
@@ -403,7 +959,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 getString(R.string.sesiones_error_ahora_no),
                 () -> {
                     avisoFallo = null;
-                    pulsarGuardar();
+                    vm.guardar();
                 },
                 () -> {
                     avisoFallo = null;
@@ -411,8 +967,8 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                 });
     }
 
-    // Al volver de segundo plano con el guardado aún en marcha, el «Cargando…» vuelve:
-    // el LiveData no repite un estado que ya entregó.
+    // Al volver de segundo plano con el guardado aún en marcha, el «Cargando…» vuelve: el LiveData
+    // no repite un estado que ya entregó.
     @Override
     protected void onStart() {
         super.onStart();
@@ -422,16 +978,16 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         }
     }
 
-    // El «Cargando…» se quita al dejar de verse: cerrado a tiempo no queda colgado de
-    // una pantalla destruida al girar. onStart lo vuelve a poner si sigue guardando.
+    // El «Cargando…» se quita al dejar de verse: cerrado a tiempo no queda colgado de una pantalla
+    // destruida al girar. onStart lo vuelve a poner si sigue guardando.
     @Override
     protected void onStop() {
         LoadingDialog.hide(this);
         super.onStop();
     }
 
-    // El aviso de fallo se cierra sin contar como «Ahora no»: la pantalla nueva lo
-    // vuelve a enseñar, porque en el ViewModel sigue abierto.
+    // El aviso de fallo se cierra sin contar como «Ahora no»: la pantalla nueva lo vuelve a enseñar,
+    // porque en el ViewModel sigue abierto.
     @Override
     protected void onDestroy() {
         if (avisoFallo != null) {
@@ -443,10 +999,6 @@ public class RegistrarSesionActivity extends AppCompatActivity {
 
     // Abre el resumen de la sesión recién guardada.
     private void irAlResumen(SesionEntrenamiento sesion) {
-        // Sin rutina no es "no lo sé", es entrenamiento libre: se le dice al resumen
-        // para que no lo pinte como una rutina sin nombre.
-        Integer rutinaId = vm.getRutinaId();
-
         ArrayList<String> nuevosLogros = new ArrayList<>();
         if (sesion.getNuevosLogros() != null) nuevosLogros.addAll(sesion.getNuevosLogros());
 
@@ -459,16 +1011,73 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // TextWatcher mínimo: pasa el texto entero al borrador en cada cambio.
-    private static class AlCambiar implements TextWatcher {
-        interface Destino { void set(String valor); }
+    // ── Textos ────────────────────────────────────────────────
 
-        private final Destino destino;
+    private CabeceraEntreno.Textos textos() {
+        return new CabeceraEntreno.Textos() {
+            @NonNull @Override public String pieConKilos(int series, @NonNull String kilos) {
+                return getResources().getQuantityString(R.plurals.apuntar_pie_con_kilos, series, series, kilos);
+            }
+            @NonNull @Override public String pieSinKilos(int series) {
+                return getResources().getQuantityString(R.plurals.apuntar_pie_sin_kilos, series, series);
+            }
+            @NonNull @Override public String pieVacio() { return getString(R.string.apuntar_pie_vacio); }
+            @NonNull @Override public String ultimaKilos(@NonNull String kilos) { return getString(R.string.apuntar_ultima_kilos, kilos); }
+            @NonNull @Override public String ultimaSeries(int series) {
+                return getResources().getQuantityString(R.plurals.apuntar_ultima_series, series, series);
+            }
+            @NonNull @Override public String ultimaSinSeries() { return getString(R.string.apuntar_ultima_sin_series); }
+            @NonNull @Override public String recordUno(@NonNull String ejercicio, @NonNull String marca) {
+                return getString(R.string.apuntar_record_uno, ejercicio, marca);
+            }
+            @NonNull @Override public String recordVarios(int n, @NonNull String ejercicios) {
+                return getResources().getQuantityString(R.plurals.apuntar_records, n, n, ejercicios);
+            }
+            @NonNull @Override public String y() { return getString(R.string.enumeracion_y); }
+            @NonNull @Override public String ySerie() { return getString(R.string.tarjeta_y_serie); }
+            @NonNull @Override public String marca(@NonNull SesionEnCurso.Marca m) { return textoMarca(m); }
+            @NonNull @Override public String sinNombre(int posicion) { return getString(R.string.ejercicio_sin_nombre, posicion); }
+        };
+    }
 
-        AlCambiar(Destino destino) { this.destino = destino; }
+    // «72,5 kg × 8», «15 reps» o «1:15», como «Tu récord» de la sesión en vivo.
+    private String textoMarca(SesionEnCurso.Marca m) {
+        if (Record.TIPO_TIEMPO.equals(m.tipo)) return Marcas.tiempo(m.segundos);
+        if (Record.TIPO_PESO.equals(m.tipo)) {
+            double kilos;
+            try {
+                kilos = m.peso != null ? Double.parseDouble(m.peso) : 0;
+            } catch (NumberFormatException e) {
+                kilos = 0;
+            }
+            return sinPartir(getString(R.string.record_peso_por_reps, Marcas.kilos(this, kilos), m.repeticiones));
+        }
+        return sinPartir(getResources().getQuantityString(R.plurals.record_repeticiones, m.repeticiones, m.repeticiones));
+    }
 
-        @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
-        @Override public void onTextChanged(CharSequence s, int a, int b, int c) {}
-        @Override public void afterTextChanged(Editable s) { destino.set(s.toString()); }
+    // Una marca no se parte entre líneas: «95 kg × 10» va en una pieza.
+    private static String sinPartir(String marca) {
+        return marca.replace(' ', '\u00A0');
+    }
+
+    private LogicaSesion.Textos textosSesion() {
+        return new LogicaSesion.Textos() {
+            @Override public String pesoPorReps(String kilos, int reps) { return getString(R.string.envivo_peso_por_reps, kilos, reps); }
+            @Override public String reps(int reps) { return getResources().getQuantityString(R.plurals.envivo_reps, reps, reps); }
+            @Override public String rango(int min, int max) { return getString(R.string.pauta_rango, min, max); }
+            @Override public String segundos(String numero) { return getString(R.string.pauta_segundos, numero); }
+            @Override public String nada() { return getString(R.string.envivo_nada); }
+        };
+    }
+
+    // El «min», el «kg» o el «de 21» en Barlow regular dentro de una cifra condensada.
+    private static final class Fuente extends android.text.style.MetricAffectingSpan {
+        private final Typeface tf;
+
+        Fuente(Typeface tf) { this.tf = tf; }
+
+        @Override public void updateDrawState(android.text.TextPaint p) { p.setTypeface(tf); }
+
+        @Override public void updateMeasureState(@NonNull android.text.TextPaint p) { p.setTypeface(tf); }
     }
 }

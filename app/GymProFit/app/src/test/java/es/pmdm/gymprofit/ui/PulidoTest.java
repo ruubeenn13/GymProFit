@@ -161,8 +161,8 @@ public class PulidoTest {
     public void elTecladoYTalkBack() throws IOException {
         String main = leer(JAVA.resolve("ui/activities/MainActivity.java"));
         assertTrue("con teclado, al cambiar de pestaña el foco va a su contenido", main.contains("focoAlContenido(index);"));
-        assertTrue("el desplegable de la rutina dice su nombre y lo elegido",
-                leer(JAVA.resolve("ui/activities/RegistrarSesionActivity.java")).contains("R.string.sesiones_rutina_a11y"));
+        assertTrue("«Cambiar» la rutina dice su nombre y la elegida (GP-241: ya no hay desplegable)",
+                leer(JAVA.resolve("ui/activities/RegistrarSesionActivity.java")).contains("R.string.apuntar_cambiar_rutina_a11y"));
     }
 
     // Primera pasada del revisor: el escáner de Añadir (y todo MaterialButton con un estilo de
@@ -254,8 +254,6 @@ public class PulidoTest {
                 leer(JAVA.resolve("utils/PuntosGrafica.java")).contains("ds.setHighlightEnabled(false);"));
         // El menú del desplegable, distinguible del fondo y con la elegida marcada.
         assertTrue(leer(RES.resolve("values/themes.xml")).contains("<item name=\"android:popupBackground\">@drawable/bg_menu_desplegable</item>"));
-        assertTrue(leer(JAVA.resolve("ui/activities/RegistrarSesionActivity.java")).contains("R.layout.item_desplegable"));
-        assertTrue(leer(RES.resolve("layout/item_desplegable.xml")).contains("android:checkMarkTint=\"@color/marca_elegida\""));
         // Los chips de Programas, los de la app y no el lavanda de Material.
         String prog = leer(RES.resolve("layout/activity_programas.xml"));
         assertFalse(prog.contains("Widget.Material3.Chip"));
@@ -282,8 +280,8 @@ public class PulidoTest {
         assertFalse("un solo entreno no es un récord: sin dorado", ficha.contains("ds.setCircleColor(oro);"));
         assertTrue("sin cambios, Tus datos enseña el objetivo guardado",
                 leer(JAVA.resolve("ui/activities/TusDatosActivity.java")).contains("plan.cifras(hayCambios(), hayAntes)"));
-        assertTrue("«Guardar sesión» a margen_pantalla", Pattern.compile(
-                "android:id=\"@\\+id/btnGuardar\"[^>]*android:layout_marginStart=\"@dimen/margen_pantalla\"", Pattern.DOTALL)
+        assertTrue("«Guardar entreno», en el pie fijo a margen_pantalla", Pattern.compile(
+                "bg_barra_inferior\"[^>]*android:paddingStart=\"@dimen/margen_pantalla\"", Pattern.DOTALL)
                 .matcher(leer(RES.resolve("layout/activity_registrar_sesion.xml"))).find());
     }
 

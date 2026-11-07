@@ -16,6 +16,9 @@ import es.pmdm.gymprofit.model.sesion.SesionEntrenamiento;
 public class RegistroSesionRepositorioApi implements RegistroSesionRepositorio {
 
     private final RutinaApi rutinaApi = ApiClient.service(RutinaApi.class);
+    private final ProgramaApi programaApi = ApiClient.service(ProgramaApi.class);
+    // La última vez y las marcas, por el mismo camino que la sesión en vivo.
+    private final es.pmdm.gymprofit.envivo.RedSesionEnVivo enVivo = new es.pmdm.gymprofit.envivo.RedSesionEnVivo();
     private final SesionApi sesionApi = ApiClient.service(SesionApi.class);
     private final int usuarioId;
 
@@ -32,6 +35,33 @@ public class RegistroSesionRepositorioApi implements RegistroSesionRepositorio {
     @Override
     public void ejerciciosDeRutina(int rutinaId, Respuesta<List<RutinaEjercicio>> respuesta) {
         rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(reenviar(respuesta));
+    }
+
+    @Override
+    public void programaSeguido(Respuesta<es.pmdm.gymprofit.model.programa.ProgramaQueSigue> respuesta) {
+        programaApi.seguido().enqueue(reenviar(respuesta));
+    }
+
+    @Override
+    public void sesiones(Respuesta<List<SesionEntrenamiento>> respuesta) {
+        sesionApi.getDeUsuario(usuarioId).enqueue(reenviar(respuesta));
+    }
+
+    @Override
+    public void ultimaVez(List<Integer> ejercicioIds, Respuesta<List<es.pmdm.gymprofit.model.envivo.UltimaVez>> respuesta) {
+        enVivo.ultimaVez(ejercicioIds, new es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.Red.Respuesta<List<es.pmdm.gymprofit.model.envivo.UltimaVez>>() {
+            @Override public void ok(List<es.pmdm.gymprofit.model.envivo.UltimaVez> valor) { respuesta.ok(valor); }
+            @Override public void fallo(int codigo, String mensaje) { respuesta.fallo(codigo, mensaje); }
+        });
+    }
+
+    @Override
+    public void mejoresMarcas(List<Integer> ejercicioIds,
+                              Respuesta<Map<Integer, es.pmdm.gymprofit.model.envivo.SesionEnCurso.Marca>> respuesta) {
+        enVivo.mejoresMarcas(ejercicioIds, new es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.Red.Respuesta<Map<Integer, es.pmdm.gymprofit.model.envivo.SesionEnCurso.Marca>>() {
+            @Override public void ok(Map<Integer, es.pmdm.gymprofit.model.envivo.SesionEnCurso.Marca> valor) { respuesta.ok(valor); }
+            @Override public void fallo(int codigo, String mensaje) { respuesta.fallo(codigo, mensaje); }
+        });
     }
 
     @Override

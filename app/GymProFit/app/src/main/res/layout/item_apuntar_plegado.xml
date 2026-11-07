@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_apuntar_plegado — un ejercicio sin empezar en «Apuntar entreno» (GP-241, tablero Entreno-B):
+  plegado, con su nombre, su pauta corta y «Sin empezar». Se abre al tocarlo. Los plegados seguidos
+  van juntos en una tarjeta de filas (bg_tarjeta_filas), separados por una raya.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/fila_alto_min"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/fila_padding_horizontal"
+    android:paddingTop="@dimen/espacio_8"
+    android:paddingEnd="@dimen/espacio_12"
+    android:paddingBottom="@dimen/espacio_8">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombrePlegado"
+            style="@style/Widget.GymProFit.Fila.Titulo"
+            android:layout_width="match_parent"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvPautaPlegado"
+            style="@style/Widget.GymProFit.Fila.Apoyo"
+            android:layout_width="match_parent"
+            android:textColor="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:text="@string/apuntar_sin_empezar"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ms_keyboard_arrow_down"
+        app:tint="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

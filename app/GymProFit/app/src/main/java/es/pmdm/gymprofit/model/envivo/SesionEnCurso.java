@@ -19,8 +19,14 @@ import java.util.List;
 // y la lógica vive en LogicaSesion, que se prueba sin Android. Los campos son públicos
 // por lo mismo; quien los cambia es SesionEnCursoRepositorio, que escribe el fichero
 // después de cada cambio.
+//
+// Es Serializable para Apuntar entreno (GP-241), que usa estos mismos ejercicios y series como
+// borrador en su SavedStateHandle: así sus reglas (marcar, «Anterior», el récord y lo que se
+// manda) son las de LogicaSesion y no una copia. Gson no mira serialVersionUID, que es estático.
 // ============================================================
-public class SesionEnCurso {
+public class SesionEnCurso implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /** Versión del formato del fichero. Sube si cambia la forma de lo guardado. */
     public static final int FORMATO = 1;
@@ -82,7 +88,8 @@ public class SesionEnCurso {
     @Nullable public String mensajeFallo;
 
     /** Un ejercicio de la sesión: su pauta, lo hecho y lo de la última vez. */
-    public static class Ejercicio {
+    public static class Ejercicio implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public long id;
         public int ejercicioId;
         @Nullable public String nombre;
@@ -125,7 +132,8 @@ public class SesionEnCurso {
      * repeticiones, solo repeticiones o segundos. El peso va como texto con punto
      * decimal («82.5») para comparar sin errores de coma flotante.
      */
-    public static class Marca {
+    public static class Marca implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         /** PESO, REPETICIONES o TIEMPO, como {@code Record.TIPO_*}. */
         public String tipo;
         @Nullable public String peso;
@@ -143,7 +151,8 @@ public class SesionEnCurso {
     }
 
     /** Una serie tal como se va escribiendo. */
-    public static class Serie {
+    public static class Serie implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public long id;
         public String peso = "";
         public String repeticiones = "";
@@ -153,7 +162,8 @@ public class SesionEnCurso {
     }
 
     /** Una serie de la última vez, como la da la API. */
-    public static class SerieAnterior {
+    public static class SerieAnterior implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public int numero;
         /** Kilos como texto exacto de la API («57.50»); null en peso corporal. */
         @Nullable public String peso;
@@ -171,7 +181,8 @@ public class SesionEnCurso {
     }
 
     /** El cronómetro de una serie por tiempo, en marcha. Cuenta desde {@link #inicioMs}. */
-    public static class Cronometro {
+    public static class Cronometro implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         public long serieId;
         public long inicioMs;
         public boolean avisoMinimo;
@@ -182,7 +193,8 @@ public class SesionEnCurso {
      * El descanso entre series, en marcha (GP-013). Termina en {@link #finMs}; la cuenta
      * atrás se pinta desde ahí, así que no se para aunque Android cierre la app.
      */
-    public static class Descanso {
+    public static class Descanso implements java.io.Serializable {
+        private static final long serialVersionUID = 1L;
         /** La serie cuyo marcado lo empezó: desmarcarla lo quita. */
         public long serieId;
         /** Cuándo acaba, en milisegundos de época. */
