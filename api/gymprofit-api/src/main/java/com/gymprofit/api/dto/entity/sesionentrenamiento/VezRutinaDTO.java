@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 //
 // Las barras de una sesión y la «última vez» de una rutina son lo mismo: las sesiones
 // terminadas de esa rutina, cada una con sus kilos (GP-011), sus series hechas y si batió
-// algún récord. Las series son la cifra de una vez a 0 kilos (peso corporal o por tiempo).
+// algún récord y cuántos. Las series son la cifra de una vez a 0 kilos (peso corporal o por tiempo).
 // ============================================================
 @Data
 @AllArgsConstructor
@@ -31,4 +31,6 @@ public class VezRutinaDTO implements Serializable {
     private Boolean record;
     @Schema(description = "Series hechas; la cifra de la tarjeta cuando los kilos son 0", example = "18")
     private Integer series;
+    @Schema(description = "Cuántos récords batió ese día («La última vez, …, con 2 récords»)", example = "2")
+    private Integer records;
 }

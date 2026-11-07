@@ -178,7 +178,8 @@ public class HistorialSesionesService {
         List<VezRutinaDTO> lista = new ArrayList<>(filas.size());
         for (Fila f : filas) {
             lista.add(new VezRutinaDTO(f.id(), f.inicio(), kilos.getOrDefault(f.id(), BigDecimal.ZERO),
-                    records.getOrDefault(f.id(), 0) > 0, series.getOrDefault(f.id(), 0)));
+                    records.getOrDefault(f.id(), 0) > 0, series.getOrDefault(f.id(), 0),
+                    records.getOrDefault(f.id(), 0)));
         }
         return lista;
     }

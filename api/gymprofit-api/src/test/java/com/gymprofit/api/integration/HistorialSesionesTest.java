@@ -159,6 +159,26 @@ class HistorialSesionesTest extends AbstractOwnershipTest {
         assertThat(barras.get(2).get("kilos").asDouble()).isEqualTo(640);
     }
 
+    @Test
+    @DisplayName("cada barra y cada última vez dice cuántos récords batió, no solo si batió alguno")
+    void cuantos_records_de_cada_vez() throws Exception {
+        guardar(owner, "2026-10-27T18:00:00", rutina, ejercicio(press, serie(60, 8)), ejercicio(sentadilla, serie(100, 5)));
+        int dos = guardar(owner, "2026-11-03T18:00:00", rutina,
+                ejercicio(press, serie(70, 8)), ejercicio(sentadilla, serie(110, 5)));
+
+        JsonNode x = sesion(historial(owner, null), dos);
+        assertThat(x.get("records").asInt()).isEqualTo(2);
+        JsonNode barras = x.get("barras");
+        assertThat(barras.get(0).get("records").asInt()).isZero();
+        assertThat(barras.get(1).get("records").asInt()).isEqualTo(2);
+        assertThat(barras.get(1).get("record").asBoolean()).isTrue();
+
+        String json = pedir(owner, "GET /rutinas/usuario/" + owner.getId() + "/activas")
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        JsonNode ultimas = rutinaDe(objectMapper.readTree(json), rutina).get("ultimas");
+        assertThat(ultimas.get(1).get("records").asInt()).isEqualTo(2);
+    }
+
     // --- Series de cada vez (peso corporal y por tiempo) -------------------
 
     @Test
