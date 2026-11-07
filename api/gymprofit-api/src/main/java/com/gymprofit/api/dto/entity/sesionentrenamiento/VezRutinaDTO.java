@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 // VezRutinaDTO — una vez que se hizo una rutina: una barra de la tarjeta (GP-232).
 //
 // Las barras de una sesión y la «última vez» de una rutina son lo mismo: las sesiones
-// terminadas de esa rutina, cada una con sus kilos (GP-011) y si batió algún récord.
+// terminadas de esa rutina, cada una con sus kilos (GP-011), sus series hechas y si batió
+// algún récord. Las series son la cifra de una vez a 0 kilos (peso corporal o por tiempo).
 // ============================================================
 @Data
 @AllArgsConstructor
@@ -28,4 +29,6 @@ public class VezRutinaDTO implements Serializable {
     private BigDecimal kilos;
     @Schema(description = "true si batió algún récord ese día")
     private Boolean record;
+    @Schema(description = "Series hechas; la cifra de la tarjeta cuando los kilos son 0", example = "18")
+    private Integer series;
 }

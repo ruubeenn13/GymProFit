@@ -159,6 +159,35 @@ class HistorialSesionesTest extends AbstractOwnershipTest {
         assertThat(barras.get(2).get("kilos").asDouble()).isEqualTo(640);
     }
 
+    // --- Series de cada vez (peso corporal y por tiempo) -------------------
+
+    @Test
+    @DisplayName("cada barra y cada última vez trae sus series hechas, también a 0 kilos")
+    void series_de_cada_vez() throws Exception {
+        jdbc.update("INSERT INTO rutina_ejercicio (series, repeticiones, orden, rutina_id, ejercicio_id) "
+                + "VALUES (3, 10, 1, ?, ?)", rutina, sentadilla);
+        int conPeso = guardar(owner, "2026-10-27T18:00:00", rutina, ejercicio(press, serie(50, 10), serie(50, 10)));
+        int sinPeso = guardar(owner, "2026-11-03T18:00:00", rutina,
+                ejercicio(sentadilla, segundos(60), segundos(45)), ejercicio(press, serie(0, 15)));
+
+        JsonNode x = sesion(historial(owner, null), sinPeso);
+        assertThat(x.get("kilos").asDouble()).isZero();
+        assertThat(x.get("series").asInt()).isEqualTo(3);
+        JsonNode barras = x.get("barras");
+        assertThat(barras).hasSize(2);
+        assertThat(barras.get(0).get("sesionId").asInt()).isEqualTo(conPeso);
+        assertThat(barras.get(0).get("series").asInt()).isEqualTo(2);
+        assertThat(barras.get(1).get("series").asInt()).isEqualTo(3);
+
+        String json = pedir(owner, "GET /rutinas/usuario/" + owner.getId() + "/activas")
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        JsonNode ultimas = rutinaDe(objectMapper.readTree(json), rutina).get("ultimas");
+        assertThat(ultimas).hasSize(2);
+        assertThat(ultimas.get(0).get("series").asInt()).isEqualTo(2);
+        assertThat(ultimas.get(1).get("kilos").asDouble()).isZero();
+        assertThat(ultimas.get(1).get("series").asInt()).isEqualTo(3);
+    }
+
     // --- Semanas y páginas ------------------------------------------------
 
     @Test
@@ -228,6 +257,8 @@ class HistorialSesionesTest extends AbstractOwnershipTest {
         assertThat(barras).hasSize(3);
         assertThat(barras.get(0).get("sesionId").asInt()).isEqualTo(ids.get(0));
         assertThat(barras.get(0).get("kilos").asDouble()).isEqualTo(500);
+        // Las series también, aunque esa sesión caiga en la página siguiente.
+        assertThat(barras.get(0).get("series").asInt()).isEqualTo(1);
         assertThat(barras.get(2).get("sesionId").asInt()).isEqualTo(ids.get(2));
         assertThat(masAntigua.get("kilosAnterior").asDouble()).isEqualTo(510);
 
@@ -311,6 +342,10 @@ class HistorialSesionesTest extends AbstractOwnershipTest {
 
     private String serie(double peso, int repeticiones) {
         return "{\"repeticiones\":%d,\"peso\":%s,\"completada\":true}".formatted(repeticiones, peso);
+    }
+
+    private String segundos(int segundos) {
+        return "{\"repeticiones\":0,\"segundos\":%d,\"completada\":true}".formatted(segundos);
     }
 
     private String ejercicio(Integer id, String... series) {
