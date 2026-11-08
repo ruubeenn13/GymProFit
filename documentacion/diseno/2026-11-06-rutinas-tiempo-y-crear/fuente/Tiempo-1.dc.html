@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tiempo por sesión, opción 1</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700;800&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+</style>
+</helmet>
+<div style="width: 390px; height: 1300px; overflow: hidden; box-sizing: border-box; background: #040405; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column; justify-content: flex-end">
+<section aria-labelledby="t1-titulo" style="box-sizing: border-box; padding: 8px 20px 24px; border-radius: 28px 28px 0 0; background: #1B1E24; display: flex; flex-direction: column; gap: 20px">
+<span aria-hidden="true" style="align-self: center; width: 32px; height: 4px; margin-top: 8px; border-radius: 2px; background: #676F7E"></span>
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; line-height: 18px; color: #A1A9B6">Cuerpo completo, tu programa</span>
+<h2 id="t1-titulo" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 30px; line-height: 34px">¿Cuánto tiempo tienes por sesión?</h2>
+</div>
+
+<div role="radiogroup" aria-label="Minutos por sesión" style="height: 64px; box-sizing: border-box; padding: 4px; border-radius: 32px; background: #252A31; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{ tiempos }}" as="t" hint-placeholder-count="4">
+<button type="button" role="radio" aria-checked="{{ t.marcado }}" aria-label="{{ t.a11y }}" style="border: 0; border-radius: 28px; background: {{ t.fondo }}; color: {{ t.color }}; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer"><span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; line-height: 26px">{{ t.cifra }}</span><span style="font-family: 'Barlow', sans-serif; font-size: 12px; line-height: 14px; font-weight: 600; color: {{ t.colorSub }}">{{ t.sub }}</span></button>
+</sc-for>
+</div>
+
+<p style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 500">Con 30 minutos, cada rutina se queda en sus 3 básicos.</p>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{ rutinas }}" as="r" hint-placeholder-count="3">
+<div style="box-sizing: border-box; padding: 6px 8px 16px 16px; border-radius: 20px; background: #252A31; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px">
+<h3 style="flex: 1; min-width: 0; margin: 0; font-size: 17px; line-height: 22px; font-weight: 600">{{ r.nombre }}</h3>
+<span style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 26px; line-height: 28px">{{ r.minutos }}<span style="font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 500; color: #A1A9B6"> min</span></span>
+<button type="button" aria-expanded="{{ r.abierta }}" aria-label="{{ r.a11yBoton }}" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">{{ r.icono }}</span></button>
+</div>
+<div aria-hidden="true" style="margin-right: 8px; display: flex; gap: 4px">
+<sc-for list="{{ r.bloques }}" as="b" hint-placeholder-count="7">
+<span style="flex: 1; height: 30px; box-sizing: border-box; border-radius: 8px; border: {{ b.borde }}; background: {{ b.fondo }}; display: flex; align-items: center; justify-content: center; gap: 3px">
+<sc-for list="{{ b.marcas }}" as="m" hint-placeholder-count="2"><span style="width: 3px; height: 12px; border-radius: 2px; background: #1A0E00; opacity: 0.55"></span></sc-for>
+</span>
+</sc-for>
+</div>
+<p style="margin: 0 8px 0 0; font-size: 14px; line-height: 19px; color: #A1A9B6">{{ r.linea }}</p>
+<sc-if value="{{ r.abierta }}" hint-placeholder-val="{{ false }}">
+<ul style="margin: 2px 8px 0 0; padding: 12px 0 0; border-top: 1px solid #353A43; list-style: none; display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{ r.ejercicios }}" as="e" hint-placeholder-count="7">
+<li style="display: flex; align-items: center; gap: 10px; font-size: 15px; line-height: 20px; color: {{ e.color }}"><span class="ms" aria-hidden="true" style="font-size: 18px; color: {{ e.colorIcono }}">{{ e.icono }}</span><span style="flex: 1; min-width: 0; text-decoration: {{ e.tachado }}">{{ e.nombre }}</span><span style="font-size: 13px; color: #A1A9B6">{{ e.pauta }}</span></li>
+</sc-for>
+</ul>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<p style="margin: -4px 0 0; font-size: 14px; line-height: 19px; color: #A1A9B6">Con menos tiempo salen primero los extras, desde el final, y luego series de los básicos.</p>
+
+<div style="box-sizing: border-box; padding: 14px 16px; border-radius: 20px; background: #252A31; display: flex; align-items: flex-start; gap: 14px">
+<span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px; background: #3A2110; color: #FFB27A; display: flex; align-items: center; justify-content: center"><span class="ms" aria-hidden="true">restart_alt</span></span>
+<p style="margin: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; line-height: 20px; font-weight: 600">Se rehacen tus 3 rutinas</span><span style="font-size: 14px; line-height: 19px; color: #A1A9B6">Pierdes los cambios que les hiciste. Tus sesiones y récords se quedan.</span></p>
+</div>
+
+<button type="button" style="height: 56px; border: 0; border-radius: 28px; background: #FF6A00; color: #1A0E00; font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Cambiar a 30 min</button>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const tiempo = (cifra, sub, marcado, a11y) => ({
+      cifra, sub, marcado, a11y,
+      fondo: marcado ? '#FF6A00' : 'transparent',
+      color: marcado ? '#1A0E00' : '#F2F2F3',
+      colorSub: marcado ? '#1A0E00' : (sub === 'ahora' ? '#FFB27A' : '#A1A9B6')
+    });
+    const queda = (series) => ({ fondo: '#FF6A00', borde: '0', marcas: Array.from({ length: series }, () => ({})) });
+    const sale = () => ({ fondo: 'transparent', borde: '1.5px dashed #676F7E', marcas: [] });
+    const dentro = (nombre, pauta) => ({ nombre, pauta, icono: 'check', color: '#F2F2F3', colorIcono: '#FF6A00', tachado: 'none' });
+    const fuera = (nombre) => ({ nombre, pauta: 'fuera', icono: 'close', color: '#A1A9B6', colorIcono: '#A1A9B6', tachado: 'line-through' });
+    const rutina = (nombre, minutos, series, linea, abierta, ejercicios) => ({
+      nombre, minutos, linea, abierta, ejercicios,
+      icono: abierta ? 'expand_less' : 'expand_more',
+      a11yBoton: (abierta ? 'Ocultar los ejercicios de ' : 'Ver los ejercicios de ') + nombre,
+      bloques: [queda(series), queda(series), queda(series), sale(), sale(), sale(), sale()]
+    });
+    return {
+      tiempos: [
+        tiempo('30', 'min', true, '30 minutos'),
+        tiempo('45', 'min', false, '45 minutos'),
+        tiempo('60', 'ahora', false, '60 minutos, el que tienes ahora'),
+        tiempo('75+', 'min', false, '75 minutos o más')
+      ],
+      rutinas: [
+        rutina('Cuerpo completo A', 25, 2, '3 de 7 ejercicios. Los básicos, a 2 series.', true, [
+          dentro('Sentadilla con barra', '2 × 6–10'),
+          dentro('Press de banca con barra', '2 × 6–10'),
+          dentro('Remo con barra', '2 × 6–10'),
+          fuera('Curl femoral tumbado'),
+          fuera('Elevaciones laterales'),
+          fuera('Extensión de tríceps en polea'),
+          fuera('Plancha')
+        ]),
+        rutina('Cuerpo completo B', 30, 3, '3 de 7 ejercicios. Los básicos, con sus 3 series.', false, []),
+        rutina('Cuerpo completo C', 25, 2, '3 de 7 ejercicios. Los básicos, a 2 series.', false, [])
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

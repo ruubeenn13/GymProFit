@@ -22,4 +22,13 @@ public class RutinaEjercicioPatchDTO implements Serializable {
     private Integer tiempoDescanso;
     private Integer orden;
     private String notas;
+
+    // La pauta como rango (GP-244), opcional: «de 8 a 12» repeticiones o «de 30 a 45» s.
+    // Con el rango, repeticiones se guarda como el máximo, que es lo que leen las builds
+    // viejas; con solo repeticiones, el rango pasa a ser ese número (RutinaEjercicioService).
+    private Integer repeticionesMin;
+    private Integer repeticionesMax;
+
+    // REPETICIONES o SEGUNDOS; cualquier otra cosa es un 400.
+    private String medida;
 }

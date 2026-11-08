@@ -1,0 +1,18 @@
+# La duración de una rutina (GP-244, punto 9): la MISMA tabla la leen la API
+# (ReglasProgramaTest, sobre ReglasPrograma.centesimas y redondear) y la app
+# (DuracionRutinaTest, sobre su copia DuracionRutina). Si cambia una cifra aquí, cambia en las dos.
+#
+# ejercicios: series/min/max/medida/porLado/descanso, separados por «|»; medida R (repeticiones)
+#   o S (segundos); porLado «-» si no va por lado (PIERNA, BRAZO o LADO si sí); descanso en segundos.
+# centesimas: la duración sin redondear; minutos: redondeada a 5, la mitad hacia arriba.
+#
+# caso;ejercicios;centesimas;minutos
+vacia;-;48000;10
+uno_por_defecto;3/8/12/R/-/90;76500;15
+cuatro_por_defecto_tablero;3/8/12/R/-/90|3/8/12/R/-/90|3/8/12/R/-/90|3/8/12/R/-/90;207000;35
+formula_con_lado;2/8/12/R/-/120|2/20/40/S/LADO/60;103000;15
+mitad_sube;1/570/570/S/-/0;105000;20
+justo_por_debajo;1/569/570/S/-/0;104950;15
+por_pierna;3/10/12/R/PIERNA/60;83100;15
+seis_variados;4/6/10/R/-/180|3/8/12/R/-/120|3/10/15/R/BRAZO/60|3/12/15/R/-/60|2/30/45/S/-/45|3/15/20/R/-/45;328000;55
+cinco_minutos_justos;2/5/5/R/-/30;54500;10

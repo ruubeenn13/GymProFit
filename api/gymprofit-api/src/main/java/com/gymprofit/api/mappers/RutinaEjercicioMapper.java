@@ -46,6 +46,7 @@ public interface RutinaEjercicioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "rutina", ignore = true)
     @Mapping(target = "ejercicio", ignore = true)
+    // La pauta (rango y medida) la pone el servicio, que la valida (GP-244).
     @Mapping(target = "repeticionesMin", ignore = true)
     @Mapping(target = "repeticionesMax", ignore = true)
     @Mapping(target = "medida", ignore = true)

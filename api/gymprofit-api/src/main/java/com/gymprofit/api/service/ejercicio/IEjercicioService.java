@@ -50,5 +50,5 @@ public interface IEjercicioService {
 
     // Búsqueda paginada del catálogo de ejercicios activos con filtro por
     // texto, grupo muscular y dificultad.
-    PageDTO<EjercicioDTO> buscarCatalogo(String q, String grupoMuscular, String dificultad, int page, int size);
+    PageDTO<EjercicioDTO> buscarCatalogo(String q, List<String> gruposMusculares, String dificultad, int page, int size);
 }

@@ -55,7 +55,8 @@ public class EjercicioController {
 
     @Operation(summary = "Búsqueda paginada del catálogo de ejercicios",
             description = "Devuelve los ejercicios activos con filtro opcional por texto (nombre ES/EN), " +
-                    "grupo muscular y dificultad. Diseñado para scroll infinito: una página vacía " +
+                    "uno o varios grupos musculares (repetidos o separados por comas; GP-244) y dificultad. " +
+                    "Diseñado para scroll infinito: una página vacía " +
                     "devuelve 200 con content=[] (nunca 404).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Página de ejercicios",
@@ -66,7 +67,7 @@ public class EjercicioController {
     @GetMapping("/ejercicios/buscar")
     public ResponseEntity<PageDTO<EjercicioDTO>> buscarEjercicios(
             @RequestParam(required = false) String q,
-            @RequestParam(required = false) String grupoMuscular,
+            @RequestParam(required = false) List<String> grupoMuscular,
             @RequestParam(required = false) String dificultad,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {

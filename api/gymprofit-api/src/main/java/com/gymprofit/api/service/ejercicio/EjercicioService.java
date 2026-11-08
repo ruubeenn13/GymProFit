@@ -24,7 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 // ============================================================
 // EjercicioService — servicio del catálogo de ejercicios
@@ -244,17 +246,26 @@ public class EjercicioService implements IEjercicioService {
     // Búsqueda paginada del catálogo de ejercicios activos con filtros
     // opcionales por texto, grupo muscular y dificultad.
     @Override
-    public PageDTO<EjercicioDTO> buscarCatalogo(String q, String grupoMuscular, String dificultad, int page, int size) {
-        logger.info("Búsqueda paginada de ejercicios: q={}, grupo={}, dificultad={}, page={}, size={}",
-                q, grupoMuscular, dificultad, page, size);
+    public PageDTO<EjercicioDTO> buscarCatalogo(String q, List<String> gruposMusculares, String dificultad, int page, int size) {
+        logger.info("Búsqueda paginada de ejercicios: q={}, grupos={}, dificultad={}, page={}, size={}",
+                q, gruposMusculares, dificultad, page, size);
 
         // Normalizar filtros: blanco → null (sin filtro); enums inválidos → 400
         String texto = (q == null || q.isBlank()) ? null : q.trim();
-        GrupoMuscular grupo = parseGrupoMuscular(grupoMuscular);
+        // Una o varias zonas (GP-244). Sin ninguna, todas: grupo_muscular es NOT NULL, así
+        // que el IN con el enum entero no deja fuera ninguna fila y evita un IN vacío.
+        Set<GrupoMuscular> grupos = EnumSet.noneOf(GrupoMuscular.class);
+        if (gruposMusculares != null) {
+            for (String g : gruposMusculares) {
+                GrupoMuscular grupo = parseGrupoMuscular(g);
+                if (grupo != null) grupos.add(grupo);
+            }
+        }
+        if (grupos.isEmpty()) grupos = EnumSet.allOf(GrupoMuscular.class);
         Dificultad dif = parseDificultad(dificultad);
 
         Page<Ejercicio> resultado = ejercicioRepository.buscarCatalogo(
-                texto, grupo, dif, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100)));
+                texto, grupos, dif, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100)));
 
         return PageDTO.of(resultado, ejercicioMapper.toDTOList(resultado.getContent()));
     }
