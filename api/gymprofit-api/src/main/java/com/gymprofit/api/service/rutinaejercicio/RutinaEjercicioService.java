@@ -7,8 +7,10 @@ import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioPatchDTO;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.entity.Rutina;
 import com.gymprofit.api.entity.RutinaEjercicio;
+import com.gymprofit.api.enums.MedidaSerie;
 import com.gymprofit.api.exceptions.CreateEntityException;
 import com.gymprofit.api.exceptions.DeleteEntityException;
+import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.exceptions.UnauthorizedException;
 import com.gymprofit.api.exceptions.UpdateEntityException;
@@ -137,6 +139,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         try {
             RutinaEjercicio rutinaEjercicio = rutinaEjercicioMapper.toEntity(createDTO);
+            aplicarPauta(rutinaEjercicio, createDTO.getRepeticiones(), createDTO.getRepeticionesMin(),
+                    createDTO.getRepeticionesMax(), createDTO.getMedida());
             rutinaEjercicio.setRutina(rutina);
             rutinaEjercicio.setEjercicio(ejercicio);
 
@@ -146,6 +150,8 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
                     .orElseThrow(() -> new NotFoundEntityException("error.rutinaEjercicio.noRecuperado"));
 
             return rutinaEjercicioMapper.toDTO(recargado);
+        } catch (InvalidDataException e) {
+            throw e; // una pauta mal formada es un 400, no un fallo al guardar
         } catch (Exception e) {
             throw new CreateEntityException(RutinaEjercicio.class.getSimpleName(), createDTO, e);
         }
@@ -358,15 +364,52 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         try {
             if (patchDTO.getSeries() != null) re.setSeries(patchDTO.getSeries());
-            if (patchDTO.getRepeticiones() != null) re.setRepeticiones(patchDTO.getRepeticiones());
+            aplicarPauta(re, patchDTO.getRepeticiones(), patchDTO.getRepeticionesMin(),
+                    patchDTO.getRepeticionesMax(), patchDTO.getMedida());
             if (patchDTO.getPesoRecomendado() != null) re.setPesoRecomendado(patchDTO.getPesoRecomendado());
             if (patchDTO.getTiempoDescanso() != null) re.setTiempoDescanso(patchDTO.getTiempoDescanso());
             if (patchDTO.getOrden() != null) re.setOrden(patchDTO.getOrden());
             if (patchDTO.getNotas() != null) re.setNotas(patchDTO.getNotas());
 
             return rutinaEjercicioMapper.toDTO(rutinaEjercicioRepository.save(re));
+        } catch (InvalidDataException e) {
+            throw e; // una pauta mal formada es un 400, no un fallo al guardar
         } catch (Exception e) {
             throw new UpdateEntityException(RutinaEjercicio.class.getSimpleName(), id, e);
+        }
+    }
+
+    /**
+     * La pauta de una fila al crearla o editarla (GP-244). Con el rango, repeticiones vale
+     * el máximo, como en las copias de ProgramaService: es lo único que leen las builds
+     * viejas. Con solo repeticiones (una build vieja), el rango pasa a ser ese número y la
+     * medida no cambia, para que no quede un rango viejo que contradiga lo editado. Sin
+     * nada de eso, la fila no se toca.
+     *
+     * @throws InvalidDataException (400) si el rango va a medias, no cumple 1 ≤ mín ≤ máx,
+     *                              repeticiones es menor que 1 o la medida no existe.
+     */
+    private static void aplicarPauta(RutinaEjercicio re, Integer repeticiones, Integer min, Integer max,
+                                     String medida) {
+        if (medida != null) {
+            try {
+                re.setMedida(MedidaSerie.valueOf(medida.trim().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new InvalidDataException("error.rutinaEjercicio.medida", medida);
+            }
+        }
+        if (min != null || max != null) {
+            if (min == null || max == null || min < 1 || min > max) {
+                throw new InvalidDataException("error.rutinaEjercicio.rango", min, max);
+            }
+            re.setRepeticionesMin(min);
+            re.setRepeticionesMax(max);
+            re.setRepeticiones(max);
+        } else if (repeticiones != null) {
+            if (repeticiones < 1) throw new InvalidDataException("error.rutinaEjercicio.rango", repeticiones, repeticiones);
+            re.setRepeticionesMin(repeticiones);
+            re.setRepeticionesMax(repeticiones);
+            re.setRepeticiones(repeticiones);
         }
     }
 

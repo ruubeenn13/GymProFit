@@ -216,6 +216,36 @@ class ReglasProgramaTest {
     }
 
     @Test
+    @DisplayName("la tabla compartida con la app (GP-244): las mismas centésimas y los mismos minutos")
+    void tabla_compartida_con_la_app() throws Exception {
+        // La app calcula la duración en vivo con su copia (DuracionRutina) y su test lee este
+        // mismo fichero: si una de las dos fórmulas cambia, falla la que se ha separado.
+        int casos = 0;
+        try (InputStream in = new ClassPathResource("programas/duracion_rutina_casos.csv").getInputStream()) {
+            for (String linea : new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).split("\n")) {
+                if (linea.isBlank() || linea.startsWith("#")) continue;
+                String[] c = linea.trim().split(";");
+                List<ReglasPrograma.Ejercicio> r = new ArrayList<>();
+                if (!"-".equals(c[1])) {
+                    int i = 0;
+                    for (String e : c[1].split("\\|")) {
+                        String[] v = e.split("/");
+                        r.add(new ReglasPrograma.Ejercicio(i++, TipoEjercicioRutina.BASICO, Integer.parseInt(v[0]),
+                                Integer.parseInt(v[1]), Integer.parseInt(v[2]),
+                                "S".equals(v[3]) ? MedidaSerie.SEGUNDOS : MedidaSerie.REPETICIONES,
+                                "-".equals(v[4]) ? null : PorLado.valueOf(v[4]), Integer.parseInt(v[5]), false));
+                    }
+                }
+                long cs = ReglasPrograma.centesimas(r);
+                assertThat(cs).as(c[0]).isEqualTo(Long.parseLong(c[2]));
+                assertThat(ReglasPrograma.redondear(cs)).as(c[0]).isEqualTo(Integer.parseInt(c[3]));
+                casos++;
+            }
+        }
+        assertThat(casos).isGreaterThanOrEqualTo(8);
+    }
+
+    @Test
     @DisplayName("solo se aceptan 30, 45, 60 y 75 minutos")
     void minutos_no_validos() {
         assertThatThrownBy(() -> ReglasPrograma.aplicar(ejercicios(rutina("GIM-PE-A")), Nivel.PRINCIPIANTE,

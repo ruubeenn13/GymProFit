@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -83,16 +84,17 @@ public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> 
     List<Ejercicio> getEjerciciosActivosPorGrupo(@Param("grupo") GrupoMuscular grupo);
 
     // Búsqueda paginada del catálogo de ejercicios activos. Filtra opcionalmente
-    // por texto en el nombre (ES o EN, sin mayúsculas), grupo muscular y dificultad.
+    // por texto en el nombre (ES o EN, sin mayúsculas), grupos musculares y dificultad.
+    // grupos nunca va vacío: sin filtro, el servicio pasa el enum entero (GP-244).
     @Query("SELECT e FROM Ejercicio e " +
             "WHERE e.activo = true " +
             "AND (:q IS NULL OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :q, '%')) " +
             "     OR LOWER(e.nombreEn) LIKE LOWER(CONCAT('%', :q, '%'))) " +
-            "AND (:grupo IS NULL OR e.grupoMuscular = :grupo) " +
+            "AND e.grupoMuscular IN :grupos " +
             "AND (:dificultad IS NULL OR e.dificultad = :dificultad) " +
             "ORDER BY e.nombre")
     Page<Ejercicio> buscarCatalogo(@Param("q") String q,
-                                   @Param("grupo") GrupoMuscular grupo,
+                                   @Param("grupos") Collection<GrupoMuscular> grupos,
                                    @Param("dificultad") Dificultad dificultad,
                                    Pageable pageable);
 }
