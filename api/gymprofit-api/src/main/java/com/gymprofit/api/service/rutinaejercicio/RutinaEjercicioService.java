@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gymprofit.api.service.rutina.TextosRutina;
+
 import java.util.List;
 
 // ============================================================
@@ -208,7 +210,7 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByRutinaId(rutinaId);
 
-        return rutinaEjercicioMapper.toDTOList(lista);
+        return conNotas(rutina, lista);
     }
 
     // Lista las relaciones rutina-ejercicio que contienen un ejercicio dado.
@@ -243,7 +245,19 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
 
         List<RutinaEjercicio> lista = rutinaEjercicioRepository.findByRutinaIdOrderByOrdenAsc(rutinaId);
 
-        return rutinaEjercicioMapper.toDTOList(lista);
+        return conNotas(rutina, lista);
+    }
+
+    // Los ejercicios de una rutina con las notas en el idioma de la petición: las del catálogo
+    // eligen columna y las de una copia sin cambiar dan las de su plantilla (GP-245). Una
+    // consulta más, solo para una copia.
+    private List<RutinaEjercicioDTO> conNotas(Rutina rutina, List<RutinaEjercicio> filas) {
+        boolean en = TextosRutina.enIngles();
+        List<RutinaEjercicio> dePlantilla = rutina.getPlantilla() == null ? List.of()
+                : rutinaEjercicioRepository.findByRutinaIdOrderByOrdenAsc(rutina.getPlantilla().getId());
+        List<RutinaEjercicioDTO> dtos = rutinaEjercicioMapper.toDTOList(filas);
+        for (int i = 0; i < filas.size(); i++) dtos.get(i).setNotas(TextosRutina.nota(en, filas.get(i), dePlantilla));
+        return dtos;
     }
 
     // Busca la relación rutina-ejercicio concreta dado el par rutina/ejercicio.

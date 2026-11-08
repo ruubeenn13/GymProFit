@@ -149,6 +149,40 @@ class NombreRutinaCopiaIdiomaTest extends AbstractOwnershipTest {
         assertThat(nombresDelHistorial(owner, "es")).containsExactly("Pierna A");
     }
 
+    // --- Las notas de los ejercicios de una copia (revisor del lote 10) ----------
+
+    @Test
+    @DisplayName("las notas de los ejercicios de una copia siguen el idioma de la petición; la cambiada se queda")
+    void notas_de_la_copia() throws Exception {
+        MockHttpServletResponse r = pedir(owner, "en", "POST /programas/PC-PE/seguir", "{\"minutos\":60}");
+        assertThat(r.getStatus()).as(r.getContentAsString()).isEqualTo(201);
+        Integer copia = copia(owner, "PC-PE-A");
+        java.util.Map<String, Object> nota = jdbc.queryForMap("""
+                SELECT p.notas, p.notas_en FROM rutina_ejercicio p JOIN rutinas pr ON pr.id = p.rutina_id
+                WHERE pr.codigo = 'PC-PE-A' AND p.notas IS NOT NULL AND p.notas_en IS NOT NULL
+                ORDER BY p.orden LIMIT 1""");
+        String es = (String) nota.get("notas");
+        String en = (String) nota.get("notas_en");
+
+        assertThat(notas(owner, "es", copia)).contains(es).doesNotContain(en);
+        assertThat(notas(owner, "en", copia)).contains(en).doesNotContain(es);
+        JsonNode seguido = json(pedir(owner, "es", "GET /programas/seguido", null));
+        assertThat(seguido.get("rutinas").toString()).contains(es).doesNotContain(en);
+
+        // La que el usuario cambió se queda como la dejó.
+        jdbc.update("UPDATE rutina_ejercicio SET notas = 'Mi nota' WHERE rutina_id = ? AND notas = ?", copia, en);
+        em.clear();
+        assertThat(notas(owner, "es", copia)).contains("Mi nota").doesNotContain(es);
+        assertThat(notas(owner, "en", copia)).contains("Mi nota");
+    }
+
+    private List<String> notas(Usuario quien, String idioma, Integer rutina) throws Exception {
+        List<String> n = new ArrayList<>();
+        json(pedir(quien, idioma, "GET /rutinas-ejercicios/rutina/" + rutina + "/ordenados", null))
+                .forEach(e -> n.add(e.get("notas").isNull() ? null : e.get("notas").asText()));
+        return n;
+    }
+
     // --- Ayudas --------------------------------------------------------------
 
     private void seguir(Usuario quien, String idioma) throws Exception {

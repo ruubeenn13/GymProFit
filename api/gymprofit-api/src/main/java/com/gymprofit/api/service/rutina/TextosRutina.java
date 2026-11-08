@@ -1,10 +1,13 @@
 package com.gymprofit.api.service.rutina;
 
 import com.gymprofit.api.entity.Rutina;
+import com.gymprofit.api.entity.RutinaEjercicio;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.List;
+
 // ============================================================
-// TextosRutina — el nombre, la descripción y la categoría de una rutina en el idioma de la
+// TextosRutina — el nombre, la descripción, la categoría y las notas de una rutina en el idioma de la
 // petición (GP-245)
 //
 // Hay tres clases de rutina:
@@ -63,6 +66,26 @@ public final class TextosRutina {
         Rutina p = r.getPlantilla();
         return localizado(en, r.getCategoria(), r.getCategoriaEn(),
                 p == null ? null : p.getCategoria(), p == null ? null : p.getCategoriaEn());
+    }
+
+    /**
+     * La nota de un ejercicio de una rutina en el idioma pedido. Las del catálogo tienen las dos
+     * columnas; la de una copia, el texto del idioma en que se copió: si es el de alguna nota de su
+     * plantilla, en cualquiera de los dos idiomas, sale la de la plantilla en el idioma pedido; si
+     * el usuario la cambió, la suya.
+     *
+     * @param plantilla las filas de su plantilla (vacío si no es copia).
+     */
+    public static String nota(boolean en, RutinaEjercicio re, List<RutinaEjercicio> plantilla) {
+        String propia = re.getNotas();
+        if (propia == null) return null;
+        if (!vacio(re.getNotasEn())) return en ? re.getNotasEn() : propia;
+        for (RutinaEjercicio p : plantilla) {
+            if (propia.equals(p.getNotas()) || propia.equals(p.getNotasEn())) {
+                return localizado(en, propia, null, p.getNotas(), p.getNotasEn());
+            }
+        }
+        return propia;
     }
 
     /**
