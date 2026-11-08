@@ -73,6 +73,8 @@ public class CrearRutinaActivity extends AppCompatActivity {
         AvisoDescartar.instalar(this, toolbar, () -> !zonas.isEmpty() || tiempoTocado);
 
         tvPie = findViewById(R.id.tvPieCrear);
+        // El temblor de la rejilla sin zonas cabe en el margen de la pantalla: sin recortarlo.
+        ((android.view.ViewGroup) findViewById(R.id.rejillaZonas).getParent()).setClipToPadding(false);
         montarZonas();
         montarTiempo();
 

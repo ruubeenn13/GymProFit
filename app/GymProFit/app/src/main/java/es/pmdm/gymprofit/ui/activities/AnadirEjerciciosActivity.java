@@ -223,7 +223,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         for (String g : BorradorRutina.ZONAS) {
             if (!borrador.zonas.contains(g)) continue;
             String nombre = getString(TextosCrearRutina.zona(g));
-            Chip c = new Chip(this);
+            Chip c = pildora();
             c.setText(nombre);
             c.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_primary_container)));
             c.setTextColor(ContextCompat.getColor(this, R.color.gp_on_primary_container));
@@ -247,7 +247,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
             grupoZonas.addView(c);
         }
         if (borrador.zonas.size() < BorradorRutina.ZONAS.size()) {
-            Chip mas = new Chip(this);
+            Chip mas = pildora();
             mas.setText(R.string.elegir_ej_mas_zona);
             mas.setChipIconResource(R.drawable.ic_ms_add);
             mas.setChipIconVisible(true);
@@ -265,6 +265,18 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
             grupoZonas.addView(mas);
         }
         grupoZonas.setVisibility(View.VISIBLE);
+    }
+
+    // Una píldora de acción, no de filtro: el Chip de serie es una casilla (se marcaba con un check
+    // y TalkBack decía «no seleccionado»). En Barlow 600 a 14 sp, como el tablero.
+    private Chip pildora() {
+        Chip c = new Chip(this);
+        c.setCheckable(false);
+        c.setCheckedIconVisible(false);
+        android.graphics.Typeface barlow = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.barlow_semibold);
+        if (barlow != null) c.setTypeface(barlow);
+        c.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_caption));
+        return c;
     }
 
     private void elegirZona() {

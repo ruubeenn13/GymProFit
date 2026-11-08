@@ -2786,7 +2786,7 @@
     <string name="crear_zona_a11y">%1$s: %2$s</string>
     <string name="crear_cuanto_tiempo">How much time do you have?</string>
     <string name="crear_cuanto_apoyo">While you pick, we tell you how much time is left.</string>
-    <string name="crear_buscar_todos">I would rather search them all</string>
+    <string name="crear_buscar_todos">Search all exercises instead</string>
     <string name="crear_pie_paso1">%1$s, %2$s.</string>
     <string name="crear_pie_sin_zona">Pick at least one area.</string>
     <string name="crear_elegir_ejercicios">Choose exercises</string>
@@ -2826,8 +2826,8 @@
     </plurals>
     <string name="crear_cifra_minutos">min, roughly</string>
     <string name="crear_resumen_a11y">%1$d %2$s, %3$d %4$s, and about %5$d minutes.</string>
-    <string name="crear_nivel">For %1$s level, yours.</string>
-    <string name="crear_nivel_otro">For %1$s level.</string>
+    <string name="crear_nivel">For %1$s, your level.</string>
+    <string name="crear_nivel_otro">For %1$s.</string>
     <string name="crear_nivel_titulo">Routine level</string>
     <string name="crear_cambiar_nivel_a11y">Change the level</string>
     <string name="crear_ejercicios">Exercises</string>

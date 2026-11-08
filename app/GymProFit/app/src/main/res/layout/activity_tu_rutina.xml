@@ -263,7 +263,11 @@
                     android:layout_marginTop="@dimen/espacio_8"
                     android:hint="@string/crear_descripcion"
                     android:visibility="gone"
-                    app:boxBackgroundMode="outline">
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="@dimen/radio_chip"
+                    app:boxCornerRadiusBottomStart="@dimen/radio_chip"
+                    app:boxCornerRadiusTopEnd="@dimen/radio_chip"
+                    app:boxCornerRadiusTopStart="@dimen/radio_chip">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescripcionRutina"

@@ -3,8 +3,10 @@
   item_zona_crear — una zona del paso 1 de crear una rutina (GP-244, tablero Mezcla-1): el
   nombre en la condensada, el check si está elegida y dos ejemplos debajo. Elegida, en
   naranja con el texto sobre la marca (6,61:1 y 5,63:1); sin elegir, la tarjeta de siempre.
-  Para TalkBack es una casilla: «Pecho: Press de banca y aperturas», marcada o no. Crece con
-  la letra: 88 dp como mínimo.
+  Para TalkBack es una casilla: «Pecho: Press de banca y aperturas», marcada o no. Sin capa
+  de primer plano: la de Material, marcada, pinta encima colorSecondary, que aquí es el dorado
+  (el fondo pasaba a #B64906 y el texto bajaba de 4,5:1 en claro). Crece con la letra: 88 dp
+  como mínimo.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,10 +14,11 @@
     android:layout_width="0dp"
     android:layout_height="match_parent"
     android:layout_weight="1"
-    android:checkable="true"
     android:clickable="true"
     android:focusable="true"
+    android:checkable="true"
     android:minHeight="88dp"
+    app:cardForegroundColor="@android:color/transparent"
     app:checkedIcon="@null">
 
     <LinearLayout

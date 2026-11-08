@@ -407,6 +407,9 @@ public class UIHelper {
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadius(dpToPx(context, 12));
         bg.setColor(tv.data);
+        // Con el borde de un control (gp_stroke), como el menú del desplegable: en oscuro el menú y
+        // las filas de debajo tienen la misma superficie y se fundían (revisor, GP-244).
+        bg.setStroke(dpToPx(context, 1), androidx.core.content.ContextCompat.getColor(context, R.color.gp_stroke));
         root.setBackground(bg);
 
         root.measure(

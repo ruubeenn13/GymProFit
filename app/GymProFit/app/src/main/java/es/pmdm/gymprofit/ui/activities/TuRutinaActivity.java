@@ -352,7 +352,7 @@ public class TuRutinaActivity extends AppCompatActivity {
         TextView frase = findViewById(R.id.tvFraseTiempo);
         String fraseTiempo = borrador.fraseTiempo(t);
         boolean conTiempo = borrador.minutos != null;
-        barra.setVisibility(conTiempo ? View.VISIBLE : View.GONE);
+        barra.setVisibility(conTiempo && n > 0 ? View.VISIBLE : View.GONE);
         barra.setProgressCompat(n > 0 ? Math.round(borrador.partesDelTiempo() * 100) : 0, !Movimiento.quieto(this));
         frase.setVisibility(fraseTiempo != null ? View.VISIBLE : View.GONE);
         frase.setText(fraseTiempo);
