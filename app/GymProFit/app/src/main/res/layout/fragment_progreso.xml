@@ -93,7 +93,9 @@
 
                 <LinearLayout style="@style/Widget.GymProFit.CabeceraSeccion">
 
+                    <!-- «Kilos movidos» o, sin kilos en el período, «Series por semana» (GP-249). -->
                     <TextView
+                        android:id="@+id/tvKilosTitulo"
                         style="@style/Widget.GymProFit.CabeceraSeccion.Titulo"
                         android:text="@string/progreso_kilos_titulo" />
                 </LinearLayout>
@@ -149,6 +151,7 @@
                                     android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
 
                                 <TextView
+                                    android:id="@+id/tvKilosUnidad"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/espacio_8"

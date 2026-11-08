@@ -2367,6 +2367,24 @@
     <string name="progreso_kilos_resumen_a11y">Kilos moved per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
     <string name="progreso_kilos_vacio">Once you finish your first workout, you\'ll see the kilos you move each week here.</string>
     <string name="progreso_kilos_error">Couldn\'t load your kilos.</string>
+    <!-- GP-249: with no kilos in the period, the bars count sets (bodyweight training) -->
+    <string name="series_por_semana">Sets per week</string>
+    <plurals name="progreso_series_semana">
+        <item quantity="one">set this week</item>
+        <item quantity="other">sets this week</item>
+    </plurals>
+    <plurals name="progreso_series_cifra_a11y">
+        <item quantity="one">%1$s set this week</item>
+        <item quantity="other">%1$s sets this week</item>
+    </plurals>
+    <plurals name="series_n">
+        <item quantity="one">%1$s set</item>
+        <item quantity="other">%1$s sets</item>
+    </plurals>
+    <string name="progreso_series_de_la_pasada_a11y">%1$d%% of last week\'s sets</string>
+    <string name="progreso_series_resumen_a11y">Sets done per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
+    <string name="progreso_series_vacio_periodo">No sets done in these weeks.</string>
+    <string name="inicio_series_a11y">Sets done per week, from the oldest to the current one: %1$s.</string>
     <string name="progreso_records_titulo">Recent records</string>
     <plurals name="progreso_ver_records">
         <item quantity="one">See the record</item>

@@ -37,6 +37,7 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ProgresoSemanal;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.MedidaSemanal;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
@@ -45,7 +46,9 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 //
 // Los kilos salen de GET /sesiones/usuario/{id}/volumen-semanal (el servidor los suma; la lista
 // de sesiones no trae kilos). La semana en curso se dibuja pero no cuenta para el porcentaje
-// (ProgresoSemanal). La tarjeta del récord, pulsable, crece hasta la progresión de ese ejercicio.
+// (ProgresoSemanal). Sin kilos en esas semanas (quien entrena con su peso), «Series por semana» con
+// las series y la misma regla del porcentaje (GP-249, MedidaSemanal); sin kilos ni series, el
+// bloque se esconde. La tarjeta del récord, pulsable, crece hasta la progresión de ese ejercicio.
 // Los dos trozos cargan por su cuenta: un fallo de los kilos no esconde el récord, y la sección
 // entera se oculta solo cuando no hay ni lo uno ni lo otro.
 // ============================================================
@@ -144,20 +147,24 @@ public final class InicioProgreso {
     private void pintarKilos(List<VolumenSemanal> semanas) {
         kilosListos = true;
         fallo = null;
-        double[] kilos = new double[semanas.size()];
+        MedidaSemanal.Medida medida = MedidaSemanal.de(semanas);
+        double[] kilos = MedidaSemanal.valores(medida, semanas);
         String[] etiquetas = new String[semanas.size()];
         for (int i = 0; i < kilos.length; i++) {
-            kilos[i] = semanas.get(i).getVolumenKg();
             etiquetas[i] = fragment.getString(R.string.inicio_semana_corta, i + 1);
         }
-        hayKilos = ProgresoSemanal.hayDatos(kilos);
+        hayKilos = medida != MedidaSemanal.Medida.NINGUNA && ProgresoSemanal.hayDatos(kilos);
         View bloque = raiz.findViewById(R.id.bloqueKilos);
         bloque.setVisibility(hayKilos ? View.VISIBLE : View.GONE);
         if (hayKilos) {
+            boolean series = medida == MedidaSemanal.Medida.SERIES;
+            ((TextView) raiz.findViewById(R.id.tvKilosEtiqueta)).setText(
+                    series ? R.string.series_por_semana : R.string.inicio_kilos_semana);
             BarrasKilosView barras = raiz.findViewById(R.id.barrasKilos);
             barras.setSemanas(kilos, etiquetas);
             NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(fragment.requireContext()));
-            barras.setContentDescription(fragment.getString(R.string.inicio_kilos_a11y, valores(kilos, nf)));
+            barras.setContentDescription(fragment.getString(
+                    series ? R.string.inicio_series_a11y : R.string.inicio_kilos_a11y, valores(kilos, nf)));
             pintarVariacion(ProgresoSemanal.variacion(kilos, true));
         }
         actualizar();
