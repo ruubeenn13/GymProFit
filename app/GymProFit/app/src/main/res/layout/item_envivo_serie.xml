@@ -118,7 +118,7 @@
             android:id="@+id/btnMarcar"
             style="@style/Widget.GymProFit.BotonIcono"
             android:layout_marginStart="2dp"
-            android:background="@drawable/bg_check"
+            android:background="@drawable/bg_check_pendiente"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_ms_check"
             app:tint="?attr/colorOnSurfaceVariant" />

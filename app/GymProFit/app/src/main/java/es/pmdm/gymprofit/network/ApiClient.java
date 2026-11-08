@@ -48,6 +48,28 @@ public class ApiClient {
     private static Retrofit retrofit;
     private static final Map<Class<?>, Object> SERVICIOS = new ConcurrentHashMap<>();
 
+    // El contexto de la aplicación, para saber en qué idioma se pinta (lo pone GymProFitApp).
+    @androidx.annotation.Nullable private static android.content.Context app;
+
+    /** Lo llama GymProFitApp al arrancar el proceso. */
+    public static void usarContexto(@androidx.annotation.NonNull android.content.Context contexto) {
+        app = contexto.getApplicationContext();
+    }
+
+    /**
+     * El idioma con el que salen ahora las peticiones (la cabecera Accept-Language): el de la app
+     * (IdiomaApp.deLaApp), no el Locale por defecto del proceso. Ese lo vuelve a poner Android en
+     * el del sistema cuando algo del proceso aplica la configuración del sistema (un servicio de
+     * accesibilidad del propio proceso, por ejemplo), y entonces la API contestaba en español con
+     * la app en inglés: «Press de banca» en «Frente a la última vez» junto a «Bench press» en el
+     * récord (GP-251). Lo que se guarda en memoria con textos de la API se guarda con él
+     * (CachePorIdioma). Sin contexto (antes de arrancar), el Locale por defecto.
+     */
+    public static String idiomaDePeticiones() {
+        android.content.Context c = app;
+        return c != null ? es.pmdm.gymprofit.utils.IdiomaApp.deLaApp(c) : java.util.Locale.getDefault().getLanguage();
+    }
+
     // Devuelve (y cachea) una interfaz de servicio Retrofit tipada por dominio (p. ej. MedicionApi).
     @SuppressWarnings("unchecked")
     public static <T> T service(Class<T> clazz) {
@@ -82,15 +104,11 @@ public class ApiClient {
                 .callTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthInterceptor())
                 // Accept-Language: el backend localiza con él los textos del catálogo
-                // (ejercicios, logros, programas...). Locale.getDefault() es el idioma elegido
-                // en la app, y si no hay, el que sale de la lista del sistema entre español e
-                // inglés (IdiomaApp.fijarPorDefecto, GP-240). Con idioma elegido, GymProFitApp lo fija con
-                // AppCompatDelegate.setApplicationLocales y, con él, Android 13 o más (el
-                // sistema) y AppCompat en las anteriores cambian también el Locale por
-                // defecto del proceso. Comprobado en API 36 y API 30 con la app en inglés y el
-                // sistema en español (GP-156): «Tu plan» sale en inglés.
+                // (ejercicios, logros, programas...). Es el idioma en que se pinta la app
+                // (idiomaDePeticiones, GP-251): el elegido, el de la app en Android o, sin
+                // ninguno, el de la lista del sistema entre español e inglés (GP-240).
                 .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
-                        .header("Accept-Language", java.util.Locale.getDefault().getLanguage())
+                        .header("Accept-Language", idiomaDePeticiones())
                         .build()))
                 .addInterceptor(logging)
                 .authenticator(new TokenAuthenticator(TURNO))

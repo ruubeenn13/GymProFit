@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.HistorialSesiones;
 import es.pmdm.gymprofit.utils.KilosMovidos;
+import es.pmdm.gymprofit.utils.MedidaSemanal;
 import es.pmdm.gymprofit.utils.ProgresoSemanal;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.VistaEstado;
@@ -43,6 +44,9 @@ import es.pmdm.gymprofit.utils.VistaKilos;
 // vez), hasta el tope de 104 semanas. Cambiar de período pide solo los kilos. Una cuenta sin
 // ninguna sesión terminada ve el vacío y no el selector con barras a cero; qué se enseña según lo
 // que ha llegado lo decide VistaKilos, probada en la JVM.
+// Sin kilos en el período (quien entrena con su peso), el bloque pasa a «Series por semana»: la
+// misma cifra, el mismo avance y las mismas barras, con las series (GP-249). Sin kilos ni series
+// en esas semanas, lo dice en vez de enseñar «0 kg». Lo decide MedidaSemanal.
 // ============================================================
 final class KilosProgreso {
 
@@ -145,7 +149,14 @@ final class KilosProgreso {
                 estado.vacio(R.string.progreso_kilos_vacio);
                 break;
             case BARRAS:
-                pintarBarras(ctx, kilos.dato());
+                MedidaSemanal.Medida medida = MedidaSemanal.de(kilos.dato());
+                pintarTitulo(medida);
+                if (medida == MedidaSemanal.Medida.NINGUNA) {
+                    mostrarEstado();
+                    estado.vacio(R.string.progreso_series_vacio_periodo);
+                } else {
+                    pintarBarras(ctx, kilos.dato(), medida);
+                }
                 break;
         }
     }
@@ -159,35 +170,47 @@ final class KilosProgreso {
         raiz.findViewById(R.id.bloqueKilosProgreso).setVisibility(View.GONE);
     }
 
-    private void pintarBarras(Context ctx, List<VolumenSemanal> semanas) {
+    // «Kilos movidos» con kilos; si no, «Series por semana» (también el vacío del período).
+    private void pintarTitulo(MedidaSemanal.Medida medida) {
+        ((TextView) raiz.findViewById(R.id.tvKilosTitulo)).setText(medida == MedidaSemanal.Medida.KILOS
+                ? R.string.progreso_kilos_titulo : R.string.series_por_semana);
+    }
+
+    private void pintarBarras(Context ctx, List<VolumenSemanal> semanas, MedidaSemanal.Medida medida) {
+        boolean series = medida == MedidaSemanal.Medida.SERIES;
         estado.oculto();
         raiz.findViewById(R.id.bloqueKilosProgreso).setVisibility(View.VISIBLE);
 
         Locale idioma = FechaUtils.localeDeLaApp(ctx);
         NumberFormat nf = NumberFormat.getIntegerInstance(idioma);
-        double[] k = new double[semanas.size()];
+        double[] k = MedidaSemanal.valores(medida, semanas);
         String[] etiquetas = new String[semanas.size()];
         SimpleDateFormat corta = new SimpleDateFormat(ctx.getString(R.string.inicio_fecha_corta_patron), idioma);
         for (int i = 0; i < k.length; i++) {
-            k[i] = semanas.get(i).getVolumenKg();
             etiquetas[i] = etiqueta(semanas.get(i).getInicio(), corta);
         }
         BarrasKilosView barras = raiz.findViewById(R.id.barrasKilosProgreso);
         barras.setSemanas(k, etiquetas);
-        barras.setContentDescription(descripcion(ctx, k, nf));
+        barras.setContentDescription(descripcion(ctx, k, nf, series));
 
         double esta = k[k.length - 1];
-        String cifra = nf.format(Math.round(esta));
+        int redondeada = (int) Math.round(esta);
+        String cifra = nf.format(redondeada);
         ((TextView) raiz.findViewById(R.id.tvKilosSemana)).setText(cifra);
-        String avance = pintarAvance(k.length > 1 ? KilosMovidos.avance(esta, k[k.length - 2]) : null);
-        String nombre = ctx.getString(R.string.progreso_kilos_cifra_a11y, cifra);
+        TextView unidad = raiz.findViewById(R.id.tvKilosUnidad);
+        unidad.setText(series ? ctx.getResources().getQuantityString(R.plurals.progreso_series_semana, redondeada)
+                : ctx.getString(R.string.progreso_kilos_semana));
+        String avance = pintarAvance(k.length > 1 ? KilosMovidos.avance(esta, k[k.length - 2]) : null, series);
+        String nombre = series
+                ? ctx.getResources().getQuantityString(R.plurals.progreso_series_cifra_a11y, redondeada, cifra)
+                : ctx.getString(R.string.progreso_kilos_cifra_a11y, cifra);
         raiz.findViewById(R.id.filaKilosSemana).setContentDescription(avance == null ? nombre
                 : ctx.getString(R.string.hoy_toca_separador, nombre, avance));
     }
 
     // «el 62 % de la pasada» en apoyo o «+12 %» en verde; devuelve lo que se dice a TalkBack.
     @Nullable
-    private String pintarAvance(@Nullable KilosMovidos.Avance a) {
+    private String pintarAvance(@Nullable KilosMovidos.Avance a, boolean series) {
         TextView tv = raiz.findViewById(R.id.tvKilosAvance);
         Context ctx = tv.getContext();
         if (a == null) {
@@ -202,7 +225,8 @@ final class KilosProgreso {
         }
         tv.setText(ctx.getString(R.string.progreso_kilos_de_la_pasada, a.porcentaje));
         tv.setTextColor(MaterialColors.getColor(tv, com.google.android.material.R.attr.colorOnSurfaceVariant));
-        return ctx.getString(R.string.progreso_kilos_de_la_pasada_a11y, a.porcentaje);
+        return ctx.getString(series ? R.string.progreso_series_de_la_pasada_a11y
+                : R.string.progreso_kilos_de_la_pasada_a11y, a.porcentaje);
     }
 
     // «14 sep»: el lunes de esa semana, como lo manda la API («2026-09-14T00:00:00»).
@@ -221,16 +245,23 @@ final class KilosProgreso {
     }
 
     // Con pocas semanas, la cifra de cada una; con muchas, cuántas son, la mayor y la de esta.
-    private static String descripcion(Context ctx, double[] k, NumberFormat nf) {
+    private static String descripcion(Context ctx, double[] k, NumberFormat nf, boolean series) {
         if (k.length <= SEMANAS_LEIDAS) {
             List<String> partes = new ArrayList<>();
             for (double v : k) partes.add(nf.format(Math.round(v)));
-            return ctx.getString(R.string.inicio_kilos_a11y, android.text.TextUtils.join(", ", partes));
+            return ctx.getString(series ? R.string.inicio_series_a11y : R.string.inicio_kilos_a11y,
+                    android.text.TextUtils.join(", ", partes));
         }
         double max = 0;
         for (double v : k) max = Math.max(max, v);
-        return ctx.getString(R.string.progreso_kilos_resumen_a11y, k.length,
-                ctx.getString(R.string.inicio_kilos_n, nf.format(Math.round(max))),
-                ctx.getString(R.string.inicio_kilos_n, nf.format(Math.round(k[k.length - 1]))));
+        return ctx.getString(series ? R.string.progreso_series_resumen_a11y : R.string.progreso_kilos_resumen_a11y,
+                k.length, cantidad(ctx, max, nf, series), cantidad(ctx, k[k.length - 1], nf, series));
+    }
+
+    // «5.400 kg» o «12 series».
+    private static String cantidad(Context ctx, double v, NumberFormat nf, boolean series) {
+        long n = Math.round(v);
+        return series ? ctx.getResources().getQuantityString(R.plurals.series_n, (int) n, nf.format(n))
+                : ctx.getString(R.string.inicio_kilos_n, nf.format(n));
     }
 }

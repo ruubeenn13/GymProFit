@@ -394,4 +394,56 @@ public class LogicaSesionTest {
         s.ejercicios = Collections.singletonList(ejercicio(1, 2));
         assertEquals(0, LogicaSesion.volumen(s), 0.001);
     }
+
+    // GP-252: a peso corporal (series hechas y 0 kg) la cabecera no enseña «Volumen 0»; al empezar,
+    // y con kilos, sí.
+    @Test
+    public void elVolumenNoSaleAPesoCorporalPeroSiAlEmpezarYConKilos() {
+        org.junit.Assert.assertFalse(LogicaSesion.volumenVisible(0, 3));
+        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(0, 0));
+        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(480, 2));
+    }
+
+    // GP-251: con la sesión abierta la app pasa a inglés; los textos vuelven a pedirse y cambian.
+    @Test
+    public void alCambiarDeIdiomaLaSesionCambiaSusNombresYNotas() {
+        SesionEnCurso s = new SesionEnCurso();
+        s.idioma = "es";
+        s.rutinaNombre = "Para empezar A";
+        SesionEnCurso.Ejercicio deRutina = new SesionEnCurso.Ejercicio();
+        deRutina.ejercicioId = 7;
+        deRutina.deRutina = true;
+        deRutina.nombre = "Flexiones";
+        deRutina.notasPauta = "Con una mochila.";
+        SesionEnCurso.Ejercicio anadido = new SesionEnCurso.Ejercicio();
+        anadido.ejercicioId = 9;
+        anadido.nombre = "Plancha";
+        s.ejercicios.add(deRutina);
+        s.ejercicios.add(anadido);
+        org.junit.Assert.assertTrue(LogicaSesion.hayQueTraducir(s, "en"));
+        org.junit.Assert.assertFalse(LogicaSesion.hayQueTraducir(s, "es"));
+
+        es.pmdm.gymprofit.model.rutina.RutinaEjercicio re = new es.pmdm.gymprofit.model.rutina.RutinaEjercicio();
+        re.setEjercicioId(7);
+        re.setNombreEjercicio("Push-ups");
+        re.setNotas("With a backpack.");
+        java.util.Map<Integer, String> nombres = new java.util.HashMap<>();
+        nombres.put(9, "Plank");
+        LogicaSesion.traducir(s, java.util.Collections.singletonList(re), nombres, "Getting started A", null, "en", true);
+
+        assertEquals("Push-ups", deRutina.nombre);
+        assertEquals("With a backpack.", deRutina.notasPauta);
+        assertEquals("Plank", anadido.nombre);
+        assertEquals("Getting started A", s.rutinaNombre);
+        assertEquals("en", s.idioma);
+    }
+
+    @Test
+    public void siNoLlegaTodoLaSesionNoSeDaPorTraducida() {
+        SesionEnCurso s = new SesionEnCurso();
+        s.idioma = "es";
+        LogicaSesion.traducir(s, null, null, null, null, "en", false);
+        assertEquals("es", s.idioma);
+        org.junit.Assert.assertTrue(LogicaSesion.hayQueTraducir(s, "en"));
+    }
 }

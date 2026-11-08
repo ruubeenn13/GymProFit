@@ -35,6 +35,26 @@ public class RedSesionEnVivo implements SesionEnCursoRepositorio.Red {
     }
 
     @Override
+    public void rutina(int rutinaId, Respuesta<es.pmdm.gymprofit.model.rutina.Rutina> r) {
+        rutinaApi.getPorId(rutinaId).enqueue(reenviar(r));
+    }
+
+    @Override
+    public void nombresDeEjercicios(Respuesta<Map<Integer, String>> r) {
+        es.pmdm.gymprofit.network.CatalogoEjercicios.cargar(porId -> {
+            if (porId == null) {
+                r.fallo(0, null);
+                return;
+            }
+            Map<Integer, String> nombres = new java.util.HashMap<>();
+            for (Map.Entry<Integer, es.pmdm.gymprofit.model.ejercicio.Ejercicio> e : porId.entrySet()) {
+                nombres.put(e.getKey(), e.getValue().getNombre());
+            }
+            r.ok(nombres);
+        });
+    }
+
+    @Override
     public void ultimaVez(List<Integer> ejercicioIds, Respuesta<List<UltimaVez>> r) {
         StringBuilder ids = new StringBuilder();
         for (Integer id : ejercicioIds) {

@@ -144,6 +144,8 @@ public class EntrenarFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        // La sesión en curso, en el idioma de la app si cambió con ella abierta (GP-251).
+        SesionEnCursoRepositorio.get(requireContext()).traducir();
         AvatarUtils.cabecera(requireContext(), findViewById(R.id.avatarCabecera), prefsManager);
         cargarMisRutinas();
     }

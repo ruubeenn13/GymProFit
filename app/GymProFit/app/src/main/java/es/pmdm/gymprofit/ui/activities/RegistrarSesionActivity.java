@@ -75,6 +75,7 @@ import es.pmdm.gymprofit.utils.CifraTarjeta;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.MarcaSerie;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -635,18 +636,20 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             btnMarcar.setImageResource(record ? R.drawable.ic_ms_trophy_fill : R.drawable.ic_ms_check);
             // Sin marcar, un aro sin relleno (bg_check_pendiente, gp_stroke); marcada, el círculo lleno:
             // la diferencia es de forma, no solo de color (DEC-019).
-            if (s.hecha || record) {
+            // El récord es el círculo teñido de dorado con su trofeo; hecha y sin hacer, las formas de
+            // MarcaSerie (círculo con borde y aro), sin tinte (GP-252).
+            if (record) {
                 btnMarcar.setBackgroundResource(R.drawable.bg_check);
-                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo(s.hecha, record)));
+                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo(s.hecha, true)));
             } else {
                 btnMarcar.setBackgroundTintList(null);
-                btnMarcar.setBackgroundResource(R.drawable.bg_check_pendiente);
+                btnMarcar.setBackgroundResource(MarcaSerie.fondo(s.hecha, false));
             }
             btnMarcar.setImageTintList(ColorStateList.valueOf(record
                     ? MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnPrimary)
                     : s.hecha ? ContextCompat.getColor(RegistrarSesionActivity.this, R.color.gp_success)
                     : MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnSurfaceVariant)));
-            String estado = getString(s.hecha ? R.string.envivo_hecha : R.string.envivo_sin_hacer);
+            String estado = getString(MarcaSerie.estado(s.hecha));
             ViewCompat.setStateDescription(btnMarcar, record ? estado + ", " + getString(R.string.apuntar_serie_record) : estado);
             btnMarcar.setContentDescription(getString(s.hecha ? R.string.apuntar_serie_apuntada_a11y
                     : R.string.apuntar_apuntar_serie_a11y, numero));
@@ -713,8 +716,14 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                     boolean record = seriesRecord.contains(f.serieId);
                     FilaSerie ahora = filas.get(f.serieId);
                     ImageButton boton = ahora != null ? ahora.btnMarcar : f.btnMarcar;
-                    boton.setBackgroundResource(R.drawable.bg_check);
-                    Movimiento.marcarSerie(boton, fondo(false, false), fondo(true, record), !record);
+                    if (record) {
+                        boton.setBackgroundResource(R.drawable.bg_check);
+                        Movimiento.marcarSerie(boton, fondo(false, false), fondo(true, true), false);
+                    } else {
+                        boton.setBackgroundTintList(null);
+                        boton.setBackgroundResource(MarcaSerie.fondo(true, false));
+                        Movimiento.crecerMarca(boton, true);
+                    }
                 }
                 break;
             default:

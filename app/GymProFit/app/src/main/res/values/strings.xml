@@ -1068,6 +1068,7 @@
     <string name="envivo_series">Series</string>
     <string name="envivo_de">%1$d de %2$d</string>
     <string name="envivo_resumen_a11y">Tiempo %1$s. Volumen: %2$s kilos. Series hechas: %3$d de %4$d.</string>
+    <string name="envivo_resumen_sin_kilos_a11y">Tiempo %1$s. Series hechas: %2$d de %3$d.</string>
     <string name="envivo_col_serie">Serie</string>
     <string name="envivo_col_anterior">Anterior</string>
     <string name="envivo_col_kg">kg</string>
@@ -2405,6 +2406,24 @@
     <string name="progreso_kilos_resumen_a11y">Kilos movidos por semana en las últimas %1$d semanas. La que más, %2$s; esta, %3$s.</string>
     <string name="progreso_kilos_vacio">Cuando termines tu primer entreno, aquí verás los kilos que mueves cada semana.</string>
     <string name="progreso_kilos_error">No se han podido cargar tus kilos.</string>
+    <!-- GP-249: sin kilos en el período, las barras cuentan series (quien entrena con su peso) -->
+    <string name="series_por_semana">Series por semana</string>
+    <plurals name="progreso_series_semana">
+        <item quantity="one">serie esta semana</item>
+        <item quantity="other">series esta semana</item>
+    </plurals>
+    <plurals name="progreso_series_cifra_a11y">
+        <item quantity="one">%1$s serie esta semana</item>
+        <item quantity="other">%1$s series esta semana</item>
+    </plurals>
+    <plurals name="series_n">
+        <item quantity="one">%1$s serie</item>
+        <item quantity="other">%1$s series</item>
+    </plurals>
+    <string name="progreso_series_de_la_pasada_a11y">el %1$d %% de las series de la semana pasada</string>
+    <string name="progreso_series_resumen_a11y">Series hechas por semana en las últimas %1$d semanas. La que más, %2$s; esta, %3$s.</string>
+    <string name="progreso_series_vacio_periodo">No hay series hechas en estas semanas.</string>
+    <string name="inicio_series_a11y">Series hechas por semana, de la más antigua a la actual: %1$s.</string>
     <string name="progreso_records_titulo">Récords recientes</string>
     <plurals name="progreso_ver_records">
         <item quantity="one">Ver el récord</item>

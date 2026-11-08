@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
+import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.model.envivo.UltimaVez;
 import es.pmdm.gymprofit.utils.Numeros;
 
@@ -119,6 +120,58 @@ public final class LogicaSesion {
             if (deEste > 0) ejHechos++;
         }
         return new Totales(hechas, total, ejHechos, s.ejercicios.size());
+    }
+
+    /** Si los textos de la sesión están en otro idioma que el de la app y hay que volver a pedirlos (GP-251). */
+    public static boolean hayQueTraducir(@NonNull SesionEnCurso s, @NonNull String idioma) {
+        return !idioma.equals(s.idioma);
+    }
+
+    /**
+     * Pone en la sesión los textos pedidos en {@code idioma} (GP-251): el nombre y la nota de cada
+     * ejercicio de la rutina (por ejercicio, en el orden de la rutina), el nombre de los añadidos
+     * (del catálogo) y los nombres de la rutina y su programa. Lo que no llega se queda como
+     * estaba; solo si llega todo lo pedido queda la sesión en ese idioma, y si no se reintenta.
+     *
+     * @param deRutina   los ejercicios de la rutina, o null si no hay rutina o no llegaron.
+     * @param nombres    nombre por id de ejercicio del catálogo, o null si no llegó.
+     * @param rutinaNombre   el nombre de la rutina, o null.
+     * @param programaNombre el de su programa, o null.
+     * @param completo   llegó todo lo que había que pedir.
+     */
+    public static void traducir(@NonNull SesionEnCurso s, @Nullable List<RutinaEjercicio> deRutina,
+                                @Nullable Map<Integer, String> nombres, @Nullable String rutinaNombre,
+                                @Nullable String programaNombre, @NonNull String idioma, boolean completo) {
+        Map<Integer, List<RutinaEjercicio>> porEjercicio = new HashMap<>();
+        if (deRutina != null) {
+            for (RutinaEjercicio re : deRutina) {
+                List<RutinaEjercicio> l = porEjercicio.get(re.getEjercicioId());
+                if (l == null) porEjercicio.put(re.getEjercicioId(), l = new ArrayList<>());
+                l.add(re);
+            }
+        }
+        for (SesionEnCurso.Ejercicio e : s.ejercicios) {
+            List<RutinaEjercicio> l = e.deRutina ? porEjercicio.get(e.ejercicioId) : null;
+            if (l != null && !l.isEmpty()) {
+                RutinaEjercicio re = l.remove(0);
+                if (re.getNombreEjercicio() != null && !re.getNombreEjercicio().isEmpty()) e.nombre = re.getNombreEjercicio();
+                e.notasPauta = re.getNotas();
+            } else if (nombres != null && nombres.get(e.ejercicioId) != null) {
+                e.nombre = nombres.get(e.ejercicioId);
+            }
+        }
+        if (rutinaNombre != null && !rutinaNombre.isEmpty()) s.rutinaNombre = rutinaNombre;
+        if (programaNombre != null && !programaNombre.isEmpty()) s.programaNombre = programaNombre;
+        if (completo) s.idioma = idioma;
+    }
+
+    /**
+     * Si la cabecera enseña el volumen (GP-252): con kilos, o mientras no haya ninguna serie
+     * hecha (al empezar cuenta desde cero). Con series hechas y 0 kg, a peso corporal, no: nada
+     * de «Volumen 0» (DEC-060).
+     */
+    public static boolean volumenVisible(double volumen, int seriesHechas) {
+        return volumen > 0 || seriesHechas == 0;
     }
 
     /**

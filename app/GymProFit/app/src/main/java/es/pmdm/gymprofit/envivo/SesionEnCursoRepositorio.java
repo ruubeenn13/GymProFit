@@ -56,6 +56,16 @@ public class SesionEnCursoRepositorio {
 
         void ejerciciosDeRutina(int rutinaId, Respuesta<List<RutinaEjercicio>> r);
 
+        /** La rutina (su nombre y el de su programa), en el idioma de la app (GP-251). */
+        default void rutina(int rutinaId, Respuesta<es.pmdm.gymprofit.model.rutina.Rutina> r) {
+            r.fallo(0, null);
+        }
+
+        /** Nombre por id de los ejercicios activos del catálogo, en el idioma de la app (GP-251). */
+        default void nombresDeEjercicios(Respuesta<Map<Integer, String>> r) {
+            r.fallo(0, null);
+        }
+
         void ultimaVez(List<Integer> ejercicioIds, Respuesta<List<UltimaVez>> r);
 
         /**
@@ -311,11 +321,65 @@ public class SesionEnCursoRepositorio {
         s.rutinaId = rutinaId;
         s.rutinaNombre = rutinaNombre;
         s.programaNombre = programaNombre;
+        s.idioma = idiomaApp.get();
         s.inicioMs = reloj.ahora();
         s.carga = rutinaId != null ? SesionEnCurso.Carga.CARGANDO : SesionEnCurso.Carga.LISTA;
         publicar(s);
         if (rutinaId != null) cargarEjercicios();
         return Empezar.EMPEZADA;
+    }
+
+    // El idioma de la app ahora mismo, con el que se arman los textos de una sesión nueva (GP-251).
+    // Lo pone GymProFitApp; en los tests de la JVM, español.
+    @NonNull private java.util.function.Supplier<String> idiomaApp = () -> "es";
+    // Hay una petición de traducción en el aire.
+    private boolean traduciendo;
+
+    /** De dónde sale el idioma de la app (GP-251): ApiClient.idiomaDePeticiones. */
+    public void usarIdioma(@NonNull java.util.function.Supplier<String> idioma) {
+        this.idiomaApp = idioma;
+    }
+
+    /**
+     * Si la sesión en curso tiene sus nombres y notas en otro idioma que el de la app (la app
+     * cambió de idioma con la sesión abierta), los vuelve a pedir en ese y la sesión los cambia
+     * (GP-251). Lo llaman la sesión en vivo y Entrenar al ponerse delante.
+     */
+    public void traducir() {
+        String idioma = idiomaApp.get();
+        SesionEnCurso s = actual();
+        if (s == null || traduciendo || !LogicaSesion.hayQueTraducir(s, idioma)) return;
+        traduciendo = true;
+        final SesionEnCurso pedida = s;
+        final List<RutinaEjercicio>[] deRutina = new List[1];
+        final Map<Integer, String>[] nombres = new Map[1];
+        final es.pmdm.gymprofit.model.rutina.Rutina[] rutina = new es.pmdm.gymprofit.model.rutina.Rutina[1];
+        boolean conRutina = s.rutinaId != null;
+        final int[] pendientes = {conRutina ? 3 : 1};
+        final boolean[] fallo = {false};
+        Runnable una = () -> {
+            if (--pendientes[0] > 0) return;
+            traduciendo = false;
+            if (actual() != pedida) return;
+            LogicaSesion.traducir(pedida, deRutina[0], nombres[0],
+                    rutina[0] != null ? rutina[0].getNombre() : null,
+                    rutina[0] != null ? rutina[0].getProgramaNombre() : null, idioma, !fallo[0]);
+            publicar(pedida);
+        };
+        red.nombresDeEjercicios(new Red.Respuesta<Map<Integer, String>>() {
+            @Override public void ok(Map<Integer, String> v) { nombres[0] = v; una.run(); }
+            // Sin red se queda como estaba y se reintenta la próxima vez que se ponga delante.
+            @Override public void fallo(int c, String m) { fallo[0] = true; una.run(); }
+        });
+        if (!conRutina) return;
+        red.ejerciciosDeRutina(s.rutinaId, new Red.Respuesta<List<RutinaEjercicio>>() {
+            @Override public void ok(List<RutinaEjercicio> v) { deRutina[0] = v; una.run(); }
+            @Override public void fallo(int c, String m) { fallo[0] = true; una.run(); }
+        });
+        red.rutina(s.rutinaId, new Red.Respuesta<es.pmdm.gymprofit.model.rutina.Rutina>() {
+            @Override public void ok(es.pmdm.gymprofit.model.rutina.Rutina v) { rutina[0] = v; una.run(); }
+            @Override public void fallo(int c, String m) { fallo[0] = true; una.run(); }
+        });
     }
 
     /** Tira la sesión en curso: se borra del móvil y deja de verse en todas partes. */

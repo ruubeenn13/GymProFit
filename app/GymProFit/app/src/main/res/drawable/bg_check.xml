@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  bg_check — el círculo del botón de marcar una serie en la sesión en vivo (GP-210). Va
-  en blanco y se tiñe por código, porque el momento 24 anima el color: sin marcar (gris),
-  la que toca (el color principal) y hecha (verde, gp_success_container).
+  bg_check — el círculo del botón de marcar la serie del récord en Apuntar entreno. Va en blanco
+  y se tiñe de dorado por código, porque el momento 24 anima el color. Sin hacer, la que toca y
+  hecha tienen su propio dibujo y no se tiñen (bg_check_pendiente, bg_check_toca, bg_check_hecha;
+  GP-252).
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">

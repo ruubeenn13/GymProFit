@@ -31,6 +31,10 @@ public interface RutinaApi {
     // sustituyen los programas (ProgramaApi).
 
     // Rutinas activas creadas o asignadas a un usuario concreto.
+    // Una rutina, en el idioma de la petición (GP-251: la sesión en curso, al cambiar de idioma).
+    @GET("rutinas/{id}")
+    Call<Rutina> getPorId(@Path("id") int id);
+
     @GET("rutinas/usuario/{usuarioId}/activas")
     Call<List<Rutina>> getDeUsuarioActivas(@Path("usuarioId") int usuarioId);
 
