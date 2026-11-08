@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Crear rutina, mezcla, elegir ejercicios</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700;800&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+input{font:inherit}
+input::placeholder{color:#A1A9B6;opacity:1}
+</style>
+</helmet>
+<div style="width: 390px; height: 900px; overflow: hidden; box-sizing: border-box; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column">
+<header style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="Volver" style="width: 48px; height: 48px; border: 0; padding: 0; border-radius: 24px; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">arrow_back</span></button>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 22px; line-height: 28px">Elige ejercicios</h1>
+</header>
+<main style="box-sizing: border-box; padding: 4px 20px 16px; display: flex; flex-direction: column; gap: 14px">
+
+<div style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 26px; background: #1B1E24; display: flex; align-items: center; gap: 10px">
+<span class="ms" aria-hidden="true" style="color: #A1A9B6">search</span>
+<label class="sr" for="m2-buscar">Buscar ejercicio</label>
+<input id="m2-buscar" type="search" placeholder="Buscar ejercicio" style="flex: 1; min-width: 0; height: 48px; padding: 0; border: 0; background: transparent; color: #F2F2F3; font-family: 'Barlow', sans-serif; font-size: 16px; outline: none">
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<button type="button" aria-label="Quitar el filtro de pecho" style="height: 44px; padding: 0 10px 0 16px; border: 0; border-radius: 22px; background: #3A2110; color: #FFB27A; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer">Pecho<span class="ms" aria-hidden="true" style="font-size: 18px">close</span></button>
+<button type="button" aria-label="Quitar el filtro de hombros" style="height: 44px; padding: 0 10px 0 16px; border: 0; border-radius: 22px; background: #3A2110; color: #FFB27A; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer">Hombros<span class="ms" aria-hidden="true" style="font-size: 18px">close</span></button>
+<button type="button" style="height: 44px; padding: 0 16px 0 10px; border: 1px solid #4A505B; border-radius: 22px; background: transparent; color: #F2F2F3; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 4px; cursor: pointer"><span class="ms" aria-hidden="true" style="font-size: 18px">add</span>Zona</button>
+</div>
+
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{ ejercicios }}" as="e" hint-placeholder-count="7">
+<li style="min-height: 68px; box-sizing: border-box; padding: 8px 6px 8px 14px; border-radius: 18px; background: {{ e.fondo }}; display: flex; align-items: center; gap: 12px">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; line-height: 21px; font-weight: 600">{{ e.nombre }}</span><span style="font-size: 13px; line-height: 17px; color: #A1A9B6">{{ e.sub }}</span></span>
+<button type="button" aria-pressed="{{ e.elegido }}" aria-label="{{ e.a11y }}" style="width: 44px; height: 44px; flex-shrink: 0; box-sizing: border-box; padding: 0; border: {{ e.borde }}; border-radius: 22px; background: {{ e.fondoBoton }}; color: {{ e.colorBoton }}; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">{{ e.icono }}</span></button>
+</li>
+</sc-for>
+</ul>
+</main>
+<footer style="margin-top: auto; flex-shrink: 0; box-sizing: border-box; padding: 12px 20px 20px; border-top: 1px solid #252A31; background: #0B0C0E; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px"><span style="font-size: 16px; line-height: 21px; font-weight: 600">4 elegidos</span><span style="font-size: 14px; line-height: 18px; color: #A1A9B6">Unos 35 de tus 45 min</span></div>
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden"><div style="width: 78%; height: 8px; border-radius: 4px; background: #FF6A00"></div></div>
+<button type="button" style="height: 56px; border: 0; border-radius: 28px; background: #FF6A00; color: #1A0E00; font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Listo</button>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ej = (nombre, sub, elegido) => ({
+      nombre, sub, elegido,
+      a11y: (elegido ? 'Quitar ' : 'Añadir ') + nombre,
+      icono: elegido ? 'check' : 'add',
+      fondo: elegido ? '#1B1E24' : 'transparent',
+      borde: elegido ? '0' : '1px solid #4A505B',
+      fondoBoton: elegido ? '#FF6A00' : 'transparent',
+      colorBoton: elegido ? '#1A0E00' : '#F2F2F3'
+    });
+    return {
+      ejercicios: [
+        ej('Press de banca con barra', 'Pecho, con barra', true),
+        ej('Press militar de pie, con barra', 'Hombros, con barra', true),
+        ej('Press inclinado con mancuernas', 'Pecho, con mancuernas', true),
+        ej('Elevaciones laterales', 'Hombros, con mancuernas', true),
+        ej('Aperturas con mancuernas', 'Pecho, con mancuernas', false),
+        ej('Press de hombros con mancuernas, sentado', 'Hombros, con mancuernas', false),
+        ej('Cruce de poleas', 'Pecho, en polea', false)
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

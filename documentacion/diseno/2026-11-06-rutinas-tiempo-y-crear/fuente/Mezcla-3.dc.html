@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Crear rutina, mezcla, tu rutina</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@500;600;700;800&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=block" rel="stylesheet">
+<style>
+body{margin:0}
+.ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.ms.f{font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 1080px; overflow: hidden; box-sizing: border-box; background: #0B0C0E; color: #F2F2F3; font-family: 'Barlow', sans-serif; display: flex; flex-direction: column">
+<header style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px 0 4px; display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="Cerrar" style="width: 48px; height: 48px; border: 0; padding: 0; border-radius: 24px; background: transparent; color: #F2F2F3; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">close</span></button>
+<h1 style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 22px; line-height: 28px">Nueva rutina</h1>
+</header>
+<main style="box-sizing: border-box; padding: 4px 20px 24px; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="m3-nombre" style="font-size: 13px; line-height: 16px; font-weight: 600; color: #A1A9B6">Nombre</label>
+<input id="m3-nombre" type="text" value="Pecho y hombros" style="height: 52px; box-sizing: border-box; padding: 0 0 6px; border: 0; border-bottom: 2px solid #FF6A00; border-radius: 0; background: transparent; color: #F2F2F3; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 32px; line-height: 40px; outline: none">
+<p style="margin: 0; font-size: 13px; line-height: 17px; color: #A1A9B6">Sale de las zonas que elegiste; cámbialo si quieres.</p>
+</div>
+
+<section aria-label="Cómo queda la rutina" style="box-sizing: border-box; padding: 16px 8px 8px 16px; border-radius: 24px; background: #1B1E24; display: flex; flex-direction: column; gap: 12px">
+<dl style="margin: 0 8px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ cifras }}" as="c" hint-placeholder-count="3">
+<div style="min-width: 0; display: flex; flex-direction: column-reverse; gap: 2px"><dt style="font-size: 13px; line-height: 16px; color: #A1A9B6">{{ c.texto }}</dt><dd style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 34px; line-height: 36px">{{ c.cifra }}</dd></div>
+</sc-for>
+</dl>
+<div style="margin-right: 8px; display: flex; flex-direction: column; gap: 6px">
+<div aria-hidden="true" style="height: 8px; border-radius: 4px; background: #353A43; overflow: hidden"><div style="width: 78%; height: 8px; border-radius: 4px; background: #FF6A00"></div></div>
+<p style="margin: 0; font-size: 14px; line-height: 19px; color: #A1A9B6">35 de tus 45 minutos: te cabe un ejercicio más.</p>
+</div>
+<p style="margin: 0; font-size: 14px; line-height: 19px; color: #A1A9B6">Pecho y hombros.</p>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<p style="margin: 0; font-size: 15px; line-height: 20px">Para nivel <strong style="font-weight: 600">intermedio</strong>, el tuyo.</p>
+<button type="button" style="min-height: 44px; padding: 0 12px; border: 0; border-radius: 22px; background: transparent; color: #FF6A00; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Cambiar</button>
+</div>
+</section>
+
+<section aria-labelledby="m3-ejercicios" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="m3-ejercicios" style="margin: 0; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 22px; line-height: 28px">Ejercicios</h2>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ ejercicios }}" as="e" hint-placeholder-count="4">
+<li style="min-height: 64px; box-sizing: border-box; padding: 8px 4px; border-radius: 18px; background: #1B1E24; display: flex; align-items: center; gap: 4px">
+<button type="button" aria-label="{{ e.mover }}" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 22px; background: transparent; color: #676F7E; display: flex; align-items: center; justify-content: center; cursor: grab"><span class="ms" aria-hidden="true">drag_indicator</span></button>
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; line-height: 21px; font-weight: 600">{{ e.nombre }}</span><span style="font-size: 13px; line-height: 17px; color: #A1A9B6">{{ e.pauta }}</span></span>
+<button type="button" aria-label="{{ e.opciones }}" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 22px; background: transparent; color: #A1A9B6; display: flex; align-items: center; justify-content: center; cursor: pointer"><span class="ms" aria-hidden="true">more_vert</span></button>
+</li>
+</sc-for>
+</ol>
+<button type="button" style="height: 52px; border: 0; border-radius: 26px; background: #3A2110; color: #FFB27A; font-family: 'Barlow', sans-serif; font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer"><span class="ms" aria-hidden="true">add</span>Añadir ejercicios</button>
+</section>
+
+<button type="button" style="align-self: flex-start; min-height: 44px; margin-top: -12px; padding: 0 8px; border: 0; background: transparent; color: #FF6A00; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer"><span class="ms" aria-hidden="true">edit_note</span>Añadir una descripción</button>
+</main>
+<footer style="margin-top: auto; flex-shrink: 0; box-sizing: border-box; padding: 12px 20px 20px; border-top: 1px solid #252A31; background: #0B0C0E; display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-size: 14px; line-height: 18px; color: #A1A9B6">4 ejercicios y unos 35 minutos.</p>
+<button type="button" style="height: 56px; border: 0; border-radius: 28px; background: #FF6A00; color: #1A0E00; font-family: 'Barlow', sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Guardar rutina</button>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1080}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const ej = (nombre, pauta) => ({ nombre, pauta, mover: 'Mover ' + nombre, opciones: 'Opciones de ' + nombre });
+    return {
+      cifras: [
+        { cifra: '4', texto: 'ejercicios' },
+        { cifra: '12', texto: 'series' },
+        { cifra: '35', texto: 'min, más o menos' }
+      ],
+      ejercicios: [
+        ej('Press de banca con barra', '3 series de 6 a 10'),
+        ej('Press militar de pie, con barra', '3 series de 6 a 10'),
+        ej('Press inclinado con mancuernas', '3 series de 10 a 12'),
+        ej('Elevaciones laterales', '3 series de 12 a 15')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
