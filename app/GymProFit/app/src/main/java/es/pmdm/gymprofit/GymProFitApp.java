@@ -79,6 +79,7 @@ public class GymProFitApp extends Application {
         es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio repo =
                 es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio.get(this);
         repo.usarCuenta(new PreferencesManager(this).getUsuarioId());
+        repo.usarIdioma(es.pmdm.gymprofit.network.ApiClient::idiomaDePeticiones);
         repo.getSesion().observeForever(s -> es.pmdm.gymprofit.envivo.NotificacionSesion.pintar(this, s));
     }
 

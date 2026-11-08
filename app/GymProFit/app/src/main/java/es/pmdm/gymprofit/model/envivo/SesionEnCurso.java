@@ -57,6 +57,11 @@ public class SesionEnCurso implements java.io.Serializable {
     @Nullable public Integer rutinaId;
     @Nullable public String rutinaNombre;
     @Nullable public String programaNombre;
+    /**
+     * Idioma en que llegaron los nombres y las notas («es», «en»); null en una sesión de antes de
+     * GP-251. Si la app pasa a otro con la sesión abierta, se vuelven a pedir (LogicaSesion.traducir).
+     */
+    @Nullable public String idioma;
 
     /** Cuándo se tocó «Empezar», en milisegundos de época. El reloj cuenta desde aquí. */
     public long inicioMs;

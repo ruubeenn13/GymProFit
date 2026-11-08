@@ -316,6 +316,13 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     // El color de fondo del botón de marcar según su estado.
+    // Un texto sin el punto (y los espacios) del final.
+    private static String sinPuntoFinal(String t) {
+        String r = t.trim();
+        while (r.endsWith(".")) r = r.substring(0, r.length() - 1).trim();
+        return r;
+    }
+
     /** Posición de la cabecera del ejercicio de una serie sin marcar, para «Revisar». */
     public int primeraSinMarcar() {
         for (int i = 0; i < filas.size(); i++) {
@@ -441,6 +448,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (f.notas != null && !f.notas.isEmpty()) a11y.add(f.notas);
             if (f.record != null) a11y.add(f.record);
             if (f.ultimaVez != null) a11y.add(f.ultimaVez);
+            // Cada parte sin su punto final: el separador ya lo pone («peso.. Primera vez» sonaba doble).
+            for (int i = 0; i < a11y.size(); i++) a11y.set(i, sinPuntoFinal(a11y.get(i)));
             grupo.setContentDescription(String.join(". ", a11y));
             ViewCompat.setAccessibilityHeading(grupo, true);
 
@@ -455,7 +464,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             texto(tvRecord, f.record);
             tvRecord.setTextColor(f.recordDorado
                     ? ContextCompat.getColor(ctx, R.color.gp_gold_text)
-                    : MaterialColors.getColor(tvRecord, androidx.appcompat.R.attr.colorPrimary));
+                    // «Primera vez», en neutro (DESIGN.md): el naranja es de lo que se pulsa.
+                    : MaterialColors.getColor(tvRecord, com.google.android.material.R.attr.colorOnSurfaceVariant));
             tvRecord.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     f.recordDorado ? R.drawable.ic_ms_trophy : 0, 0, 0, 0);
 

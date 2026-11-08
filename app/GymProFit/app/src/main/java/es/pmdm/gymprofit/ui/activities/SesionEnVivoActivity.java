@@ -231,6 +231,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     protected void onStart() {
         super.onStart();
         reloj.post(tic);
+        // Los nombres y las notas, en el idioma de la app si cambió con la sesión abierta (GP-251).
+        repo.traducir();
         vigilarRed();
     }
 
