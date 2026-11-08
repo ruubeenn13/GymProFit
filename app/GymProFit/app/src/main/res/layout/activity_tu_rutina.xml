@@ -199,6 +199,8 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:paddingTop="@dimen/espacio_8"
+                                android:paddingBottom="@dimen/espacio_8"
                                 android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
 
                             <TextView

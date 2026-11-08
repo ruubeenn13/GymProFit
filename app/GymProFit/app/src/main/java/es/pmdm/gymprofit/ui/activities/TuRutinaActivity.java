@@ -337,10 +337,11 @@ public class TuRutinaActivity extends AppCompatActivity {
         // Sin ejercicios no hay nada que contar: ni «0 ejercicios» ni «unos 0 minutos» (lo dice el pie).
         View cifras = findViewById(R.id.filaCifras);
         cifras.setVisibility(n == 0 ? View.GONE : View.VISIBLE);
-        // Sin cifras, la tarjeta solo lleva el nivel: el mismo aire arriba que abajo.
+        // Sin cifras, la tarjeta solo lleva el nivel: el mismo aire arriba que abajo (4 de relleno
+        // más los 4 de margen de su fila hacen los 8 de abajo).
         View dentro = (View) cifras.getParent();
         dentro.setPaddingRelative(dentro.getPaddingStart(), getResources().getDimensionPixelSize(
-                n == 0 ? R.dimen.espacio_8 : R.dimen.espacio_16), dentro.getPaddingEnd(), dentro.getPaddingBottom());
+                n == 0 ? R.dimen.espacio_4 : R.dimen.espacio_16), dentro.getPaddingEnd(), dentro.getPaddingBottom());
         ((TextView) findViewById(R.id.tvCifraEjercicios)).setText(String.valueOf(n));
         ((TextView) findViewById(R.id.tvRotuloEjercicios)).setText(
                 getResources().getQuantityString(R.plurals.crear_cifra_ejercicios, n));
