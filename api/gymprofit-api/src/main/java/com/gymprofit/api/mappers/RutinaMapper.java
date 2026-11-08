@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-import org.springframework.context.i18n.LocaleContextHolder;
+import com.gymprofit.api.service.rutina.TextosRutina;
 
 import java.util.List;
 
@@ -64,26 +64,21 @@ public interface RutinaMapper {
     @Mapping(target = "programaUsuario", ignore = true)
     Rutina toEntity(RutinaCreateDTO rutinaCreateDTO);
 
-    // Tras el mapeo base, localiza los textos del DTO: si el idioma del request
-    // (Accept-Language → LocaleContextHolder) es inglés y la rutina tiene
-    // traducción EN (solo las predefinidas del catálogo la tienen), la
-    // sobreescribe; si no, se mantiene el ES (fallback).
-    // MapStruct invoca este método automáticamente al final de toDTO/toDTOList.
+    // Tras el mapeo base, localiza los textos del DTO en el idioma del request
+    // (Accept-Language → LocaleContextHolder): los del catálogo eligen columna, una copia de
+    // plantilla sin tocar da el de su plantilla y lo escrito por el usuario se queda (GP-245,
+    // TextosRutina). MapStruct invoca este método al final de toDTO/toDTOList/toConEjercicios.
     @AfterMapping
     default void localizarTextos(Rutina rutina, @MappingTarget RutinaDTO dto) {
-        // Solo se traduce si el request llegó en inglés.
-        if (!"en".equals(LocaleContextHolder.getLocale().getLanguage())) return;
-
-        if (rutina.getNombreEn() != null && !rutina.getNombreEn().isBlank())
-            dto.setNombre(rutina.getNombreEn());
-        if (rutina.getDescripcionEn() != null && !rutina.getDescripcionEn().isBlank())
-            dto.setDescripcion(rutina.getDescripcionEn());
-        if (rutina.getCategoriaEn() != null && !rutina.getCategoriaEn().isBlank())
-            dto.setCategoria(rutina.getCategoriaEn());
+        boolean en = TextosRutina.enIngles();
+        dto.setNombre(TextosRutina.nombre(rutina, en));
+        dto.setDescripcion(TextosRutina.descripcion(rutina, en));
+        dto.setCategoria(TextosRutina.categoria(rutina, en));
+        if (!en) return;
         // El programa del que sale una copia es del catálogo: ese sí tiene traducción.
         if (rutina.getProgramaUsuario() != null) {
-            String en = rutina.getProgramaUsuario().getPrograma().getNombreEn();
-            if (en != null && !en.isBlank()) dto.setProgramaNombre(en);
+            String programaEn = rutina.getProgramaUsuario().getPrograma().getNombreEn();
+            if (programaEn != null && !programaEn.isBlank()) dto.setProgramaNombre(programaEn);
         }
     }
 }

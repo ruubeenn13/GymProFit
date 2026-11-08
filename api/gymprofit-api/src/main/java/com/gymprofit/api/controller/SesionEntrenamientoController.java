@@ -432,12 +432,13 @@ public class SesionEntrenamientoController {
         return ResponseEntity.ok(sesionEntrenamientoService.getVolumenMuscular(usuarioId, dias));
     }
 
-    @Operation(summary = "Kilos movidos por semana (GP-216)",
+    @Operation(summary = "Kilos movidos y series hechas por semana (GP-216, GP-249)",
             description = "Para «Tu progreso» de Inicio y «Kilos movidos» de Progreso: una entrada por semana, de «semanas» seguidas " +
                     "desde «desde», también las de cero. La semana de una sesión es la de su inicio y " +
-                    "los kilos usan la definición de GP-011. El lunes lo manda la app en su hora local.")
+                    "los kilos usan la definición de GP-011. «series» cuenta las series hechas como el resumen " +
+                    "del entreno: sin kilos en el período, la app enseña las series. El lunes lo manda la app en su hora local.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Kilos de cada semana, en orden",
+            @ApiResponse(responseCode = "200", description = "Kilos y series de cada semana, en orden",
                     content = @Content(schema = @Schema(implementation = VolumenSemanalDTO.class))),
             @ApiResponse(responseCode = "400", description = "Semanas fuera de 1 a 104",
                     content = @Content(schema = @Schema(implementation = Response.class))),

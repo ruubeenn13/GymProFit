@@ -134,6 +134,65 @@ class VolumenSemanalTest extends AbstractOwnershipTest {
         assertThat(r.get(52).get("volumenKg").asDouble()).isZero();
     }
 
+    // --- Series por semana (GP-249) ------------------------------------------
+    // Quien entrena con su peso mueve 0 kg: Progreso e Inicio cuentan entonces sus series.
+    // Se cuentan como en el resumen y en el Historial (SERIES_DEL_EJERCICIO): las marcadas
+    // con algo dentro, por repeticiones o por tiempo, y sin series, las del resumen.
+
+    @Test
+    @DisplayName("series: a peso corporal (0 kg) cuentan las series hechas de cada semana")
+    void series_a_peso_corporal() throws Exception {
+        guardarSeries(owner, "2026-09-15T18:00:00", press, "[[10,0,true],[8,0,true],[6,0,true]]");
+        guardarSeries(owner, "2026-09-17T18:00:00", press, "[[12,0,true],[0,0,true],[9,0,false]]");
+
+        JsonNode r = semanas(owner, "desde=" + LUNES + "&semanas=2");
+
+        assertThat(r.get(0).get("volumenKg").asDouble()).isZero();
+        // 3 de la primera; de la segunda, la de 0 repeticiones y la sin marcar no cuentan.
+        assertThat(r.get(0).get("series").asInt()).isEqualTo(4);
+        assertThat(r.get(1).get("series").asInt()).isZero();
+    }
+
+    @Test
+    @DisplayName("series: también con kilos, y una semana mezcla las dos sin perder ninguna")
+    void series_con_kilos_y_mezcla() throws Exception {
+        guardarSeries(owner, "2026-09-15T18:00:00", press, "[[10,60,true],[8,60,true]]");  // 1080 kg, 2 series
+        guardarSeries(owner, "2026-09-16T18:00:00", press, "[[15,0,true]]");               // 0 kg, 1 serie
+        guardarSeries(owner, "2026-09-22T18:00:00", press, "[[5,100,true]]");              // semana 2
+
+        JsonNode r = semanas(owner, "desde=" + LUNES + "&semanas=2");
+
+        assertThat(r.get(0).get("volumenKg").asDouble()).isEqualTo(1080);
+        assertThat(r.get(0).get("series").asInt()).isEqualTo(3);
+        assertThat(r.get(1).get("series").asInt()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("series: lo sin terminar, lo de fuera del rango y lo de otro usuario no cuentan")
+    void series_limites_y_aislamiento() throws Exception {
+        int sin = guardarSeries(owner, "2026-09-15T10:00:00", press, "[[10,0,true]]");
+        jdbc.update("UPDATE sesiones_entrenamiento SET completada = FALSE WHERE id = ?", sin);
+        guardarSeries(owner, "2026-09-13T23:59:00", press, "[[10,0,true]]");     // domingo anterior
+        guardarSeries(attacker, "2026-09-15T18:00:00", press, "[[10,0,true],[10,0,true]]");
+        guardarSeries(owner, "2026-09-16T18:00:00", press, "[[10,0,true]]");
+
+        JsonNode r = semanas(owner, "desde=" + LUNES + "&semanas=1");
+
+        assertThat(r.get(0).get("series").asInt()).isEqualTo(1);
+        assertThat(semanas(attacker, "desde=" + LUNES + "&semanas=1").get(0).get("series").asInt()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("series: una sesión sin detalle por serie cuenta las del resumen del ejercicio")
+    void series_de_sesion_antigua() throws Exception {
+        int s = guardarSeries(owner, "2026-09-16T18:00:00", press, "[[1,0,true]]");
+        jdbc.update("DELETE FROM series_realizadas WHERE ejercicio_realizado_id IN "
+                + "(SELECT id FROM ejercicios_realizados WHERE sesion_id = ?)", s);
+        jdbc.update("UPDATE ejercicios_realizados SET series_completadas = 4 WHERE sesion_id = ?", s);
+
+        assertThat(semanas(owner, "desde=" + LUNES + "&semanas=1").get(0).get("series").asInt()).isEqualTo(4);
+    }
+
     @Test
     @DisplayName("el usuario ajeno → 403; semanas fuera de 1 a 104 → 400")
     void ajeno_y_limites() throws Exception {
@@ -152,6 +211,25 @@ class VolumenSemanalTest extends AbstractOwnershipTest {
                 {"claveIdempotencia":"%s","fechaInicio":"%s","duracionMinutos":50,"completada":true,
                  "ejercicios":[{"ejercicioId":%d,"series":[{"numero":1,"repeticiones":%d,"peso":%s,"completada":true}]}]}
                 """.formatted(UUID.randomUUID(), inicio, ejercicio, repeticiones, peso);
+        String json = pedir(quien, "POST /sesiones/completa", cuerpo).andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        return objectMapper.readTree(json).get("id").asInt();
+    }
+
+    // Una sesión con varias series del mismo ejercicio: cada una [repeticiones, peso, completada].
+    private int guardarSeries(Usuario quien, String inicio, Integer ejercicio, String series) throws Exception {
+        StringBuilder filas = new StringBuilder();
+        JsonNode lista = objectMapper.readTree(series);
+        for (int i = 0; i < lista.size(); i++) {
+            JsonNode f = lista.get(i);
+            if (i > 0) filas.append(',');
+            filas.append("{\"numero\":%d,\"repeticiones\":%d,\"peso\":%s,\"completada\":%s}"
+                    .formatted(i + 1, f.get(0).asInt(), f.get(1).asText(), f.get(2).asBoolean()));
+        }
+        String cuerpo = """
+                {"claveIdempotencia":"%s","fechaInicio":"%s","duracionMinutos":50,"completada":true,
+                 "ejercicios":[{"ejercicioId":%d,"series":[%s]}]}
+                """.formatted(UUID.randomUUID(), inicio, ejercicio, filas);
         String json = pedir(quien, "POST /sesiones/completa", cuerpo).andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         return objectMapper.readTree(json).get("id").asInt();

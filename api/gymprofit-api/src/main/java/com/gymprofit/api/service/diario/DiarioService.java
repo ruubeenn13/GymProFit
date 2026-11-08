@@ -9,6 +9,7 @@ import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.repository.jpa.IAguaDiariaRepository;
 import com.gymprofit.api.repository.jpa.IComidaHoyNoRepository;
 import com.gymprofit.api.service.comida.AnadirAlimentoService;
+import com.gymprofit.api.service.rutina.TextosRutina;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -122,18 +123,19 @@ public class DiarioService {
         // último entreno con rutina. Solo las sesiones terminadas: una a medias no es entreno.
         boolean ingles = "en".equals(LocaleContextHolder.getLocale().getLanguage());
         jdbc.query("""
-                SELECT DATE(s.fecha_inicio) AS dia, r.nombre, r.nombre_en
+                SELECT DATE(s.fecha_inicio) AS dia, r.nombre,""" + TextosRutina.COLUMNAS_PLANTILLA + """
                 FROM sesiones_entrenamiento s
-                LEFT JOIN rutinas r ON r.id = s.rutina_id
+                LEFT JOIN rutinas r ON r.id = s.rutina_id""" + TextosRutina.JOIN_PLANTILLA + """
                 WHERE s.usuario_id = ? AND s.completada = 1 AND s.fecha_inicio >= ? AND s.fecha_inicio < ?
                 ORDER BY s.fecha_inicio DESC, s.id DESC""",
                 rs -> {
                     DiaDiarioDTO dia = dias.get(rs.getDate("dia").toLocalDate());
                     if (dia == null) return;
                     dia.setEntrenos(dia.getEntrenos() + 1);
-                    String nombre = rs.getString("nombre");
-                    String en = rs.getString("nombre_en");
-                    if (ingles && en != null && !en.isBlank()) nombre = en;
+                    // Como el Historial: el del catálogo o el de su plantilla (GP-245).
+                    String nombre = TextosRutina.localizado(ingles, rs.getString("nombre"),
+                            rs.getString("rutina_nombre_en"), rs.getString("plantilla_nombre"),
+                            rs.getString("plantilla_nombre_en"));
                     if (dia.getRutinaEntreno() == null && nombre != null && !nombre.isBlank()) {
                         dia.setRutinaEntreno(nombre);
                     }

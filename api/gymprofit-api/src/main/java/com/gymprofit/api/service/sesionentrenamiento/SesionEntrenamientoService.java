@@ -72,6 +72,8 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
 
     // Récords batidos al guardar (GP-088).
     private final IRecordService recordService;
+    // Series por semana (GP-249): una consulta agrupada con la regla del resumen.
+    private final org.springframework.jdbc.core.JdbcTemplate jdbc;
     // Logger para trazar las operaciones del servicio.
     private final Logger logger = LoggerFactory.getLogger(SesionEntrenamientoService.class);
 
@@ -734,9 +736,11 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
     /**
      * Kilos movidos por semana, para las barras de «Tu progreso» (GP-216).
      * <p>
-     * Tres consultas fijas, sin una por sesión: las sesiones del rango, sus kilos serie a
-     * serie y sus kilos por el resumen del ejercicio. Manda el detalle por serie cuando la
-     * sesión lo tiene y, si no, el resumen, igual que {@link #getVolumenLevantado}. La
+     * Cuatro consultas fijas, sin una por sesión: las sesiones del rango, sus kilos serie a
+     * serie, sus kilos por el resumen del ejercicio y sus series hechas. Manda el detalle por
+     * serie cuando la sesión lo tiene y, si no, el resumen, igual que {@link #getVolumenLevantado}.
+     * Las series se cuentan como en el resumen y el Historial ({@code SERIES_DEL_EJERCICIO}), para
+     * que quien entrena con su peso vea sus series donde los demás ven kilos (GP-249). La
      * semana de una sesión es la de su inicio, y el lunes lo manda la app en su hora.
      */
     @Override
@@ -752,8 +756,11 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
         Map<Integer, BigDecimal> porResumen = kilosPorSesion(
                 ejercicioRealizadoRepository.volumenDeResumenPorSesion(usuarioId, desde, hasta));
 
+        Map<Integer, Integer> seriesPorSesion = seriesHechasPorSesion(usuarioId, desde, hasta);
+
         BigDecimal[] kilos = new BigDecimal[semanas];
         int[] sesiones = new int[semanas];
+        int[] series = new int[semanas];
         java.util.Arrays.fill(kilos, BigDecimal.ZERO);
         for (Object[] fila : sesionEntrenamientoRepository.idsYComienzoTerminadas(usuarioId, desde, hasta)) {
             Integer id = (Integer) fila[0];
@@ -764,13 +771,30 @@ public class SesionEntrenamientoService implements ISesionEntrenamientoService{
                     ? deSeries : porResumen.getOrDefault(id, BigDecimal.ZERO);
             kilos[semana] = kilos[semana].add(volumen);
             sesiones[semana]++;
+            series[semana] += seriesPorSesion.getOrDefault(id, 0);
         }
 
         List<VolumenSemanalDTO> resultado = new java.util.ArrayList<>(semanas);
         for (int i = 0; i < semanas; i++) {
-            resultado.add(new VolumenSemanalDTO(desde.plusWeeks(i), kilos[i], sesiones[i]));
+            resultado.add(new VolumenSemanalDTO(desde.plusWeeks(i), kilos[i], sesiones[i], series[i]));
         }
         return resultado;
+    }
+
+    // Series hechas de cada sesión terminada del rango, en una consulta: ejercicio a ejercicio
+    // con SERIES_DEL_EJERCICIO y sumadas por sesión, como el Historial (GP-232).
+    private Map<Integer, Integer> seriesHechasPorSesion(Integer usuarioId, LocalDateTime desde, LocalDateTime hasta) {
+        Map<Integer, Integer> series = new java.util.HashMap<>();
+        jdbc.query("SELECT x.sesion_id, SUM(x.hechas) AS hechas FROM ("
+                        + "SELECT er.sesion_id, " + ResumenSesionService.SERIES_DEL_EJERCICIO + " AS hechas "
+                        + "FROM ejercicios_realizados er JOIN sesiones_entrenamiento s ON s.id = er.sesion_id "
+                        + "LEFT JOIN series_realizadas sr ON sr.ejercicio_realizado_id = er.id "
+                        + "WHERE s.usuario_id = ? AND s.completada = 1 "
+                        + "AND s.fecha_inicio >= ? AND s.fecha_inicio < ? GROUP BY er.id) x GROUP BY x.sesion_id",
+                rs -> {
+                    series.put(rs.getInt("sesion_id"), rs.getInt("hechas"));
+                }, usuarioId, desde, hasta);
+        return series;
     }
 
     // Filas [sesionId, kilos] a mapa; un NULL (sin pesos) cuenta como cero.
