@@ -5,6 +5,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.LocaleList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,6 +53,30 @@ public final class IdiomaApp {
             }
         }
         return "es";
+    }
+
+    /**
+     * El idioma en que se pinta la app, «es» o «en», para la cabecera Accept-Language (GP-251).
+     *
+     * @param elegido        el guardado en la app («es», «en») o vacío.
+     * @param idiomasApp     los idiomas de la app en Android (AppCompatDelegate), en orden; vacío si no hay.
+     * @param idiomasSistema la lista del sistema.
+     * @return el elegido; si no, el primero español o inglés de la app; si no, el del sistema.
+     */
+    public static String peticiones(@Nullable String elegido, @NonNull List<String> idiomasApp,
+                                    @Nullable List<String> idiomasSistema) {
+        if ("en".equals(elegido) || "es".equals(elegido)) return elegido;
+        List<String> todos = new ArrayList<>(idiomasApp);
+        if (idiomasSistema != null) todos.addAll(idiomasSistema);
+        return resolver(null, todos);
+    }
+
+    /** {@link #peticiones} con lo que hay ahora en el móvil. */
+    public static String deLaApp(@NonNull Context ctx) {
+        LocaleListCompat app = AppCompatDelegate.getApplicationLocales();
+        List<String> deLaApp = new ArrayList<>(app.size());
+        for (int i = 0; i < app.size(); i++) deLaApp.add(app.get(i).toLanguageTag());
+        return peticiones(PreferencesManager.idiomaGuardado(ctx), deLaApp, idiomasDelSistema());
     }
 
     /** Locale de formato para unos recursos en inglés o en español: en-US o es-ES. */

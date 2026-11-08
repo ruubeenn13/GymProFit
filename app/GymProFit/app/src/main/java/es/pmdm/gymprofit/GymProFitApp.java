@@ -45,6 +45,7 @@ public class GymProFitApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        es.pmdm.gymprofit.network.ApiClient.usarContexto(this);
         verificarEntornoAislado();
         registrarAlmacenTokens();
         aplicarTemaGuardado();

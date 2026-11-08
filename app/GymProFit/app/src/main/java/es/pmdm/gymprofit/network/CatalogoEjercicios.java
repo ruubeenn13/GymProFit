@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
+import es.pmdm.gymprofit.utils.CachePorIdioma;
 
 // ============================================================
 // CatalogoEjercicios — el catálogo de ejercicios activos, pedido una vez y guardado en memoria
@@ -16,6 +17,8 @@ import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
 // detalle de rutina para las fotos). Son unos 870 ejercicios en una sola respuesta; pedirla en
 // cada pantalla era el gasto más grande de abrir una rutina.
 // Si dos pantallas lo piden a la vez, la segunda espera a la primera y no repite la llamada.
+// Se guarda con el idioma en que se pidió (GP-251): cambiar de idioma no reinicia el proceso, y el
+// detalle de una rutina sacaba los nombres del catálogo pedido en español con la app en inglés.
 // ============================================================
 public final class CatalogoEjercicios {
 
@@ -24,47 +27,51 @@ public final class CatalogoEjercicios {
         void listo(@Nullable Map<Integer, Ejercicio> porId);
     }
 
-    private static Map<Integer, Ejercicio> cache;
+    private static final CachePorIdioma<Map<Integer, Ejercicio>> cache = new CachePorIdioma<>();
     private static final List<AlTenerlo> esperando = new ArrayList<>();
-    private static boolean pidiendo;
+    // El idioma de la petición en vuelo, o null si no hay ninguna.
+    @Nullable private static String pidiendo;
 
     private CatalogoEjercicios() { }
 
-    /** Lo que haya ya en memoria, o null. */
+    /** Lo que haya ya en memoria en el idioma de ahora, o null. */
     @Nullable
     public static synchronized Map<Integer, Ejercicio> enMemoria() {
-        return cache;
+        return cache.get(ApiClient.idiomaDePeticiones());
     }
 
     /** Lo entrega ya si está en memoria; si no, lo pide a la API y avisa a todos los que esperan. */
     public static void cargar(@NonNull AlTenerlo alTenerlo) {
+        String idioma = ApiClient.idiomaDePeticiones();
         synchronized (CatalogoEjercicios.class) {
-            if (cache != null) {
-                alTenerlo.listo(cache);
+            Map<Integer, Ejercicio> guardado = cache.get(idioma);
+            if (guardado != null) {
+                alTenerlo.listo(guardado);
                 return;
             }
             esperando.add(alTenerlo);
-            if (pidiendo) return;
-            pidiendo = true;
+            // Una en vuelo en otro idioma entrega lo suyo a quien ya esperaba; esta pide la suya.
+            if (idioma.equals(pidiendo)) return;
+            pidiendo = idioma;
         }
         ApiClient.service(EjercicioApi.class).getActivos().enqueue(new ApiCallback<List<Ejercicio>>() {
             @Override public void onOk(List<Ejercicio> lista) {
                 Map<Integer, Ejercicio> m = new HashMap<>();
                 if (lista != null) for (Ejercicio e : lista) m.put(e.getId(), e);
-                terminar(m);
+                terminar(idioma, m);
             }
             @Override public void onFail(int code, String message) {
                 // No se guarda: la próxima pantalla lo vuelve a intentar. Quien espera se entera con null.
-                terminar(null);
+                terminar(idioma, null);
             }
         });
     }
 
-    private static void terminar(@Nullable Map<Integer, Ejercicio> m) {
+    private static void terminar(@NonNull String idioma, @Nullable Map<Integer, Ejercicio> m) {
         List<AlTenerlo> avisar;
         synchronized (CatalogoEjercicios.class) {
-            if (m != null) cache = m;
-            pidiendo = false;
+            if (m != null) cache.put(idioma, m);
+            if (idioma.equals(pidiendo)) pidiendo = null;
             avisar = new ArrayList<>(esperando);
             esperando.clear();
         }
