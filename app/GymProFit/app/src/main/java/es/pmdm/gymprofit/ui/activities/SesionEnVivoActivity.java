@@ -96,6 +96,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     private SesionEnVivoAdapter adapter;
     private MaterialToolbar toolbar;
     private TextView tvTiempo, tvSeries, tvSeriesDe, tvVolumen;
+    private View filaVolumen;
     private View filaResumen, cardGuardado, btnTerminar;
     private LinearProgressIndicator barraProgreso;
     private RecyclerView rv;
@@ -161,6 +162,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         tvSeries = findViewById(R.id.tvSeries);
         tvSeriesDe = findViewById(R.id.tvSeriesDe);
         tvVolumen = findViewById(R.id.tvVolumen);
+        filaVolumen = findViewById(R.id.filaVolumen);
         filaResumen = findViewById(R.id.filaResumen);
         barraProgreso = findViewById(R.id.barraProgreso);
         es.pmdm.gymprofit.utils.Rotulos.limitar(findViewById(R.id.tvRotuloTiempo));
@@ -342,6 +344,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         boolean primera = seriesPintadas == -1;
         if (contandoVolumen != null) contandoVolumen.cancel();
         if (contandoSeries != null) contandoSeries.cancel();
+        // A peso corporal (series hechas y 0 kg), sin «Volumen 0»: solo las series (DEC-060, GP-252).
+        filaVolumen.setVisibility(LogicaSesion.volumenVisible(volumen, t.seriesHechas) ? View.VISIBLE : View.GONE);
         if (primera || volumen == volumenPintado) {
             tvVolumen.setText(formatoVolumen(volumen));
         } else {
@@ -374,8 +378,10 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         // es un aviso de cambio por segundo que nadie quiere oír.
         LogicaSesion.Totales t = LogicaSesion.totales(s);
         String minutos = getString(R.string.duracion_min, LogicaSesion.minutosReloj(s.inicioMs, repo.ahora()));
-        String descripcion = getString(R.string.envivo_resumen_a11y, minutos,
-                formatoVolumen(LogicaSesion.volumen(s)), t.seriesHechas, t.seriesTotales);
+        double volumen = LogicaSesion.volumen(s);
+        String descripcion = LogicaSesion.volumenVisible(volumen, t.seriesHechas)
+                ? getString(R.string.envivo_resumen_a11y, minutos, formatoVolumen(volumen), t.seriesHechas, t.seriesTotales)
+                : getString(R.string.envivo_resumen_sin_kilos_a11y, minutos, t.seriesHechas, t.seriesTotales);
         if (!descripcion.contentEquals(filaResumen.getContentDescription() != null
                 ? filaResumen.getContentDescription() : "")) {
             filaResumen.setContentDescription(descripcion);

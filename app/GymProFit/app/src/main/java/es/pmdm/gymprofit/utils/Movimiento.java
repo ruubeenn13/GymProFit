@@ -726,9 +726,27 @@ public final class Movimiento {
     // ── Sesión en vivo y descanso (GP-210 paso 3, momentos 24 a 26) ─────────
 
     /**
-     * 24 · Serie marcada: el botón se rellena del color nuevo (RELLENO) y su check salta
-     * (CHECK). Vibración ligera, salvo que la serie sea un récord y vibre con éxito. Con
-     * las animaciones quitadas, el botón ya queda del color final.
+     * 24 · Serie marcada con su forma (GP-252: del aro al círculo hecho, cada uno su dibujo): el
+     * botón crece y su check salta (CHECK). Vibración ligera, salvo que vibre ya otra cosa. Con
+     * las animaciones quitadas, se queda quieto.
+     *
+     * @param boton        el botón redondo de marcar, ya con su fondo de hecha.
+     * @param conVibracion si vibra.
+     */
+    public static void crecerMarca(@NonNull View boton, boolean conVibracion) {
+        if (conVibracion) vibrar(boton, Vibracion.LIGERA);
+        if (quieto(boton.getContext())) return;
+        boton.setScaleX(0.4f);
+        boton.setScaleY(0.4f);
+        boton.animate().scaleX(1f).scaleY(1f).setStartDelay(0).setDuration(CHECK)
+                .setInterpolator(REBOTE).start();
+    }
+
+    /**
+     * 24 · Serie marcada con el círculo teñido (el del récord de Apuntar entreno, dorado): el botón
+     * se rellena del color nuevo (RELLENO) y su check salta (CHECK). Vibración ligera, salvo que
+     * la serie sea un récord y vibre con éxito. Con las animaciones quitadas, el botón ya queda
+     * del color final.
      *
      * @param boton        el botón redondo de marcar, teñido con su fondo.
      * @param antes        el color de fondo de antes.

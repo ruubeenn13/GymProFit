@@ -636,8 +636,15 @@ public class RegistrarSesionActivity extends AppCompatActivity {
             btnMarcar.setImageResource(record ? R.drawable.ic_ms_trophy_fill : R.drawable.ic_ms_check);
             // Sin marcar, un aro sin relleno (bg_check_pendiente, gp_stroke); marcada, el círculo lleno:
             // la diferencia es de forma, no solo de color (DEC-019).
-            btnMarcar.setBackgroundResource(MarcaSerie.fondo(s.hecha || record));
-            btnMarcar.setBackgroundTintList(s.hecha || record ? ColorStateList.valueOf(fondo(s.hecha, record)) : null);
+            // El récord es el círculo teñido de dorado con su trofeo; hecha y sin hacer, las formas de
+            // MarcaSerie (círculo con borde y aro), sin tinte (GP-252).
+            if (record) {
+                btnMarcar.setBackgroundResource(R.drawable.bg_check);
+                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo(s.hecha, true)));
+            } else {
+                btnMarcar.setBackgroundTintList(null);
+                btnMarcar.setBackgroundResource(MarcaSerie.fondo(s.hecha, false));
+            }
             btnMarcar.setImageTintList(ColorStateList.valueOf(record
                     ? MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnPrimary)
                     : s.hecha ? ContextCompat.getColor(RegistrarSesionActivity.this, R.color.gp_success)
@@ -709,8 +716,14 @@ public class RegistrarSesionActivity extends AppCompatActivity {
                     boolean record = seriesRecord.contains(f.serieId);
                     FilaSerie ahora = filas.get(f.serieId);
                     ImageButton boton = ahora != null ? ahora.btnMarcar : f.btnMarcar;
-                    boton.setBackgroundResource(R.drawable.bg_check);
-                    Movimiento.marcarSerie(boton, fondo(false, false), fondo(true, record), !record);
+                    if (record) {
+                        boton.setBackgroundResource(R.drawable.bg_check);
+                        Movimiento.marcarSerie(boton, fondo(false, false), fondo(true, true), false);
+                    } else {
+                        boton.setBackgroundTintList(null);
+                        boton.setBackgroundResource(MarcaSerie.fondo(true, false));
+                        Movimiento.crecerMarca(boton, true);
+                    }
                 }
                 break;
             default:

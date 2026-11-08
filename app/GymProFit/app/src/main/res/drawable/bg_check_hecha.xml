@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_check_hecha — el botón de marcar de una serie hecha (GP-252), en la sesión en vivo y en Apuntar
+  entreno: el círculo relleno en gp_success_container con un borde de 2 dp en gp_success. El relleno
+  solo da 1,14:1 contra la tarjeta en claro; el borde llega a 3:1, así que el círculo se ve entero
+  (WCAG 1.4.11) y no solo el check. Sin tinte por código.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/gp_success_container" />
+    <stroke android:width="2dp" android:color="@color/gp_success" />
+</shape>

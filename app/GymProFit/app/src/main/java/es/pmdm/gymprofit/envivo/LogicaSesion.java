@@ -122,6 +122,15 @@ public final class LogicaSesion {
     }
 
     /**
+     * Si la cabecera enseña el volumen (GP-252): con kilos, o mientras no haya ninguna serie
+     * hecha (al empezar cuenta desde cero). Con series hechas y 0 kg, a peso corporal, no: nada
+     * de «Volumen 0» (DEC-060).
+     */
+    public static boolean volumenVisible(double volumen, int seriesHechas) {
+        return volumen > 0 || seriesHechas == 0;
+    }
+
+    /**
      * Kilos movidos: peso × repeticiones de cada serie marcada (GP-210 paso 3, la cifra de
      * la cabecera que suma al marcar). El peso corporal, las series por tiempo y lo que no
      * se lee como número no suman: la definición de volumen de GP-011.

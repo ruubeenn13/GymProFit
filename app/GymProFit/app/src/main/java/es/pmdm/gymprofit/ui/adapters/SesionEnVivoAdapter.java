@@ -575,27 +575,18 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 fila.setBackgroundColor(android.graphics.Color.TRANSPARENT);
             }
 
-            // El botón (GP-252): hecha, el círculo relleno en verde con su check; sin hacer, el aro
-            // de Apuntar entreno, en gp_stroke o, si es la que toca, en el color principal. La
+            // El botón (GP-252): hecha, el círculo relleno con borde y su check en verde; sin hacer,
+            // el aro de Apuntar entreno, en gp_stroke o, si es la que toca, en el color principal.
+            // Cada forma es su dibujo, sin tinte de fondo (teñido, el aro salía relleno). La
             // diferencia es de forma y TalkBack dice el estado, no solo el color (DEC-019).
             btnMarcar.setImageResource(R.drawable.ic_ms_check);
-            btnMarcar.setBackgroundResource(MarcaSerie.fondo(f.hecha));
-            if (f.hecha) {
-                btnMarcar.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_success)));
-                int fondo = ContextCompat.getColor(ctx, R.color.gp_success_container);
-                if (marcadaAhora) {
-                    // El círculo crece al marcar (momento 24) desde el aro de la que tocaba.
-                    Movimiento.marcarSerie(btnMarcar, MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0),
-                            fondo, !marcadaEsRecord);
-                } else {
-                    btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo));
-                }
-            } else {
-                int aro = f.toca ? MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0) : 0;
-                btnMarcar.setBackgroundTintList(f.toca ? ColorStateList.valueOf(aro) : null);
-                btnMarcar.setImageTintList(ColorStateList.valueOf(f.toca ? aro
-                        : MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnSurfaceVariant)));
-            }
+            btnMarcar.setBackgroundTintList(null);
+            btnMarcar.setBackgroundResource(MarcaSerie.fondo(f.hecha, f.toca));
+            btnMarcar.setImageTintList(ColorStateList.valueOf(f.hecha ? ContextCompat.getColor(ctx, R.color.gp_success)
+                    : MaterialColors.getColor(btnMarcar, f.toca ? androidx.appcompat.R.attr.colorPrimary
+                    : com.google.android.material.R.attr.colorOnSurfaceVariant)));
+            // El círculo crece al marcar (momento 24).
+            if (marcadaAhora) Movimiento.crecerMarca(btnMarcar, !marcadaEsRecord);
             if (f.id == marcadaSerieId) {
                 // Agotado: la cabecera (más arriba) ya se pintó en esta pasada.
                 marcadaSerieId = -1;
@@ -604,7 +595,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recordEjercicioId = -1;
             }
             ViewCompat.setStateDescription(btnMarcar, ctx.getString(MarcaSerie.estado(f.hecha)));
-            btnMarcar.setContentDescription(ctx.getString(R.string.envivo_marcar, f.numero));
+            btnMarcar.setContentDescription(ctx.getString(MarcaSerie.nombre(f.hecha), f.numero));
             btnMarcar.setEnabled(f.editable);
             btnMarcar.setOnClickListener(v -> acciones.marcar(f.id, f.numero));
 

@@ -394,4 +394,13 @@ public class LogicaSesionTest {
         s.ejercicios = Collections.singletonList(ejercicio(1, 2));
         assertEquals(0, LogicaSesion.volumen(s), 0.001);
     }
+
+    // GP-252: a peso corporal (series hechas y 0 kg) la cabecera no enseña «Volumen 0»; al empezar,
+    // y con kilos, sí.
+    @Test
+    public void elVolumenNoSaleAPesoCorporalPeroSiAlEmpezarYConKilos() {
+        org.junit.Assert.assertFalse(LogicaSesion.volumenVisible(0, 3));
+        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(0, 0));
+        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(480, 2));
+    }
 }

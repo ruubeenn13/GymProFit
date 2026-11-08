@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  bg_check_toca — el botón de marcar de la primera serie sin hacer de la sesión en vivo (GP-252): el
+  mismo aro de 2 dp sin relleno que bg_check_pendiente, en el color principal. Va en su propio
+  dibujo y no teñido: el tinte de fondo pinta el óvalo entero y lo volvía un círculo relleno.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="?attr/colorPrimary" />
+</shape>

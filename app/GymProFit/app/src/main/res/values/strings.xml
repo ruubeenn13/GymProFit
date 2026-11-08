@@ -1068,6 +1068,7 @@
     <string name="envivo_series">Series</string>
     <string name="envivo_de">%1$d de %2$d</string>
     <string name="envivo_resumen_a11y">Tiempo %1$s. Volumen: %2$s kilos. Series hechas: %3$d de %4$d.</string>
+    <string name="envivo_resumen_sin_kilos_a11y">Tiempo %1$s. Series hechas: %2$d de %3$d.</string>
     <string name="envivo_col_serie">Serie</string>
     <string name="envivo_col_anterior">Anterior</string>
     <string name="envivo_col_kg">kg</string>
