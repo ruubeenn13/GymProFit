@@ -2728,16 +2728,16 @@
     <string name="tiempo_frase_igual">With %1$s, your routines stay whole.</string>
     <plurals name="tiempo_frase_basicos">
         <item quantity="one">With %1$s, each routine keeps its main lift.</item>
-        <item quantity="other">With %1$s, each routine keeps its %2$d main lifts.</item>
+        <item quantity="other">With %1$s, each routine keeps its %2$d\u00A0main lifts.</item>
     </plurals>
     <string name="tiempo_frase_sus_basicos">With %1$s, each routine keeps its main lifts.</string>
     <plurals name="tiempo_frase_series">
-        <item quantity="one">With %1$s, main lifts go to %2$d set.</item>
-        <item quantity="other">With %1$s, main lifts go to %2$d sets.</item>
+        <item quantity="one">With %1$s, main lifts go to %2$d\u00A0set.</item>
+        <item quantity="other">With %1$s, main lifts go to %2$d\u00A0sets.</item>
     </plurals>
     <plurals name="tiempo_frase_salen">
-        <item quantity="one">With %1$s, your routines drop %2$d exercise.</item>
-        <item quantity="other">With %1$s, your routines drop %2$d exercises.</item>
+        <item quantity="one">With %1$s, your routines drop %2$d\u00A0exercise.</item>
+        <item quantity="other">With %1$s, your routines drop %2$d\u00A0exercises.</item>
     </plurals>
     <string name="seguir_tu_programa">%1$s, your program</string>
     <string name="seguir_tiempo_min">min</string>

@@ -130,8 +130,8 @@ public class TiempoRutinasTest {
     public void la_frase_cuando_cada_rutina_se_queda_en_sus_basicos() {
         // El tablero: con 30 minutos, las tres rutinas se quedan en sus 3 básicos.
         List<VistaPrevia.Rutina> r = Arrays.asList(extrasYSeries(), soloExtras(), extrasYSeries());
-        assertEquals("Con 30 minutos, cada rutina se queda en sus 3 básicos.", TiempoRutinas.frase(textos(ES), 30, r));
-        assertEquals("With 30 minutes, each routine keeps its 3 main lifts.", TiempoRutinas.frase(textos(EN), 30, r));
+        assertEquals("Con 30 minutos, cada rutina se queda en sus 3 básicos.", TiempoRutinas.frase(textos(ES), 30, r));
+        assertEquals("With 30 minutes, each routine keeps its 3 main lifts.", TiempoRutinas.frase(textos(EN), 30, r));
         // Si no tienen los mismos básicos, sin número.
         List<VistaPrevia.Rutina> distintas = Arrays.asList(soloExtras(),
                 new VistaPrevia.Rutina("Y", 30, Arrays.asList(ej("BASICO", 3), ej("BASICO", 3)), fuera(3), null));
@@ -143,15 +143,15 @@ public class TiempoRutinasTest {
         List<VistaPrevia.Rutina> r = Arrays.asList(sinRecorte(),
                 new VistaPrevia.Rutina("Z", 45, Arrays.asList(ej("BASICO", 3), ej("BASICO", 3), ej("BASICO", 3),
                         ej("EXTRA", 3), ej("EXTRA", 3)), fuera(2), null));
-        assertEquals("Con 45 minutos, salen 2 ejercicios de tus rutinas.", TiempoRutinas.frase(textos(ES), 45, r));
-        assertEquals("With 45 minutes, your routines drop 2 exercises.", TiempoRutinas.frase(textos(EN), 45, r));
+        assertEquals("Con 45 minutos, salen 2 ejercicios de tus rutinas.", TiempoRutinas.frase(textos(ES), 45, r));
+        assertEquals("With 45 minutes, your routines drop 2 exercises.", TiempoRutinas.frase(textos(EN), 45, r));
     }
 
     @Test
     public void la_frase_con_75_o_mas() {
         List<VistaPrevia.Rutina> r = Arrays.asList(conMas(), conMas());
-        assertEquals("Con 75 minutos o más, los básicos pasan a 4 series.", TiempoRutinas.frase(textos(ES), 75, r));
-        assertEquals("With 75 minutes or more, main lifts go to 4 sets.", TiempoRutinas.frase(textos(EN), 75, r));
+        assertEquals("Con 75 minutos o más, los básicos pasan a 4 series.", TiempoRutinas.frase(textos(ES), 75, r));
+        assertEquals("With 75 minutes or more, main lifts go to 4 sets.", TiempoRutinas.frase(textos(EN), 75, r));
     }
 
     @Test

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -90,21 +91,18 @@ public final class SeguirProgramaHoja {
                 ? act.getString(R.string.seguir_tu_programa, nombre) : nombre);
 
         SelectorPildora chips = raiz.findViewById(R.id.chipsMinutos);
-        CharSequence[] textos = new CharSequence[MINUTOS.length];
         CharSequence[] nombres = new CharSequence[MINUTOS.length];
         TiempoRutinas.Textos t = TiempoRutinas.Textos.de(act);
         for (int i = 0; i < MINUTOS.length; i++) {
-            boolean ahora = MINUTOS[i] == actuales;
-            textos[i] = opcion(MINUTOS[i] == 75 ? "75+" : String.valueOf(MINUTOS[i]),
-                    act.getString(ahora ? R.string.seguir_tiempo_ahora : R.string.seguir_tiempo_min));
             String minutos = t.minutos(MINUTOS[i]);
-            nombres[i] = ahora ? act.getString(R.string.seguir_tiempo_ahora_a11y, minutos) : minutos;
+            nombres[i] = MINUTOS[i] == actuales ? act.getString(R.string.seguir_tiempo_ahora_a11y, minutos) : minutos;
         }
-        chips.setOpciones(textos, nombres);
+        chips.setOpciones(opciones(act, -1, actuales), nombres);
         int inicial = mismo ? actuales : 60;
         for (int i = 0; i < MINUTOS.length; i++) {
             if (MINUTOS[i] == inicial) chips.setElegida(i, false);
         }
+        pintarOpciones(act, chips, actuales);
 
         View boton = raiz.findViewById(R.id.btnConfirmarSeguir);
         VistaEstado estado = new VistaEstado(raiz.findViewById(R.id.estadoVistaPrevia));
@@ -136,7 +134,10 @@ public final class SeguirProgramaHoja {
                 }
             });
         };
-        chips.setAlElegir(i -> cargar[0].run());
+        chips.setAlElegir(i -> {
+            pintarOpciones(act, chips, actuales);
+            cargar[0].run();
+        });
 
         boton.setOnClickListener(v -> {
             int minutos = MINUTOS[Math.max(0, chips.getElegida())];
@@ -163,11 +164,38 @@ public final class SeguirProgramaHoja {
     }
 
     // «30» grande y «min» (o «ahora») debajo, en una opción del selector.
-    private static CharSequence opcion(String cifra, String sub) {
+    // Barlow 600 a 13 sp; «ahora», sin elegir, en el texto del contenedor naranja, como el tablero:
+    // así se distingue de «min» (8,47:1 en oscuro y 10,23:1 en claro sobre la pista).
+    private static CharSequence opcion(FragmentActivity act, String cifra, String sub, boolean destacar) {
         SpannableString s = new SpannableString(cifra + "\n" + sub);
+        int desde = cifra.length() + 1;
         s.setSpan(new RelativeSizeSpan(CIFRA_OPCION), 0, cifra.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        s.setSpan(new RelativeSizeSpan(SUB_OPCION), cifra.length() + 1, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new RelativeSizeSpan(SUB_OPCION), desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        android.graphics.Typeface barlow = ResourcesCompat.getFont(act, R.font.barlow_semibold);
+        if (barlow != null) s.setSpan(new FuenteSpan(barlow), desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (destacar) {
+            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(act, R.color.gp_on_primary_container)),
+                    desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         return s;
+    }
+
+    // Los textos de las cuatro opciones; la elegida, sin color propio (lo pone el selector).
+    private static CharSequence[] opciones(FragmentActivity act, int elegida, int actuales) {
+        CharSequence[] textos = new CharSequence[MINUTOS.length];
+        for (int i = 0; i < MINUTOS.length; i++) {
+            boolean ahora = MINUTOS[i] == actuales;
+            textos[i] = opcion(act, MINUTOS[i] == 75 ? "75+" : String.valueOf(MINUTOS[i]),
+                    act.getString(ahora ? R.string.seguir_tiempo_ahora : R.string.seguir_tiempo_min),
+                    ahora && i != elegida);
+        }
+        return textos;
+    }
+
+    // Al cambiar de opción, «ahora» pierde o recupera su color: sobre el naranja va en el del texto.
+    private static void pintarOpciones(FragmentActivity act, SelectorPildora chips, int actuales) {
+        CharSequence[] textos = opciones(act, chips.getElegida(), actuales);
+        for (int i = 0; i < textos.length; i++) chips.getOpcion(i).setText(textos[i]);
     }
 
     // El aviso de lo que pasa al pulsar: se rehacen tus rutinas, o dejas de seguir el otro.
@@ -258,6 +286,11 @@ public final class SeguirProgramaHoja {
         min.setSpan(new RelativeSizeSpan(MIN_RUTINA), cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         min.setSpan(new ForegroundColorSpan(ContextCompat.getColor(act, R.color.gp_text_secondary)),
                 cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // « min» en Barlow 500, no en la condensada de la cifra (Two Widths Rule, como el «kg»).
+        android.graphics.Typeface barlow = ResourcesCompat.getFont(act, R.font.barlow_medium);
+        if (barlow != null) {
+            min.setSpan(new FuenteSpan(barlow), cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         ((TextView) tarjeta.findViewById(R.id.tvVistaMinutos)).setText(min);
         ((BloquesRutinaView) tarjeta.findViewById(R.id.bloquesVista)).setBloques(TiempoRutinas.bloques(r));
         ((TextView) tarjeta.findViewById(R.id.tvVistaDetalle)).setText(linea);

@@ -2773,16 +2773,16 @@
     <string name="tiempo_frase_igual">Con %1$s, tus rutinas se quedan enteras.</string>
     <plurals name="tiempo_frase_basicos">
         <item quantity="one">Con %1$s, cada rutina se queda en su básico.</item>
-        <item quantity="other">Con %1$s, cada rutina se queda en sus %2$d básicos.</item>
+        <item quantity="other">Con %1$s, cada rutina se queda en sus %2$d\u00A0básicos.</item>
     </plurals>
     <string name="tiempo_frase_sus_basicos">Con %1$s, cada rutina se queda en sus básicos.</string>
     <plurals name="tiempo_frase_series">
-        <item quantity="one">Con %1$s, los básicos pasan a %2$d serie.</item>
-        <item quantity="other">Con %1$s, los básicos pasan a %2$d series.</item>
+        <item quantity="one">Con %1$s, los básicos pasan a %2$d\u00A0serie.</item>
+        <item quantity="other">Con %1$s, los básicos pasan a %2$d\u00A0series.</item>
     </plurals>
     <plurals name="tiempo_frase_salen">
-        <item quantity="one">Con %1$s, sale %2$d ejercicio de tus rutinas.</item>
-        <item quantity="other">Con %1$s, salen %2$d ejercicios de tus rutinas.</item>
+        <item quantity="one">Con %1$s, sale %2$d\u00A0ejercicio de tus rutinas.</item>
+        <item quantity="other">Con %1$s, salen %2$d\u00A0ejercicios de tus rutinas.</item>
     </plurals>
     <string name="seguir_tu_programa">%1$s, tu programa</string>
     <string name="seguir_tiempo_min">min</string>
