@@ -279,7 +279,7 @@ class ProgramasTest extends AbstractOwnershipTest {
     }
 
     @Test
-    @DisplayName("las copias van en el idioma de la petición y ya son del usuario")
+    @DisplayName("las copias van en el idioma de la petición y, sin renombrar, se leen en el de cada lectura")
     void idioma_de_las_copias() throws Exception {
         JsonNode en = json(pedir(owner, "en", "POST /programas/PC-PE/seguir", "{\"minutos\":60}"));
         JsonNode a = en.get("rutinas").get(0);
@@ -287,9 +287,10 @@ class ProgramasTest extends AbstractOwnershipTest {
         assertThat(a.get("categoria").asText()).isEqualTo("Bodyweight");
         assertThat(a.get("ejercicios").get(1).get("notas").asText())
                 .isEqualTo(rutinaJson("PC-PE-A").get("ejercicios").get(1).get("notaEn").asText());
-        // Leída después en español sigue en inglés: el texto es suyo, no del catálogo.
+        // Leída después en español sale en español: su texto sigue siendo el de la plantilla
+        // (GP-245). Renombrada, sería suya (NombreRutinaCopiaIdiomaTest).
         JsonNode leida = json(pedir(owner, "es", "GET /rutinas/" + a.get("id").asInt(), null));
-        assertThat(leida.get("nombre").asText()).isEqualTo("Getting started A");
+        assertThat(leida.get("nombre").asText()).isEqualTo("Para empezar A");
 
         JsonNode es = json(pedir(owner, "es", "POST /programas/PC-PE/seguir", "{\"minutos\":60}"));
         assertThat(es.get("rutinas").get(0).get("nombre").asText()).isEqualTo("Para empezar A");

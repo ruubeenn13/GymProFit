@@ -8,6 +8,7 @@ import com.gymprofit.api.dto.entity.sesionentrenamiento.VezRutinaDTO;
 import com.gymprofit.api.repository.jpa.IEjercicioRealizadoRepository;
 import com.gymprofit.api.service.ejercicio.Musculos;
 import com.gymprofit.api.service.record.IRecordService;
+import com.gymprofit.api.service.rutina.TextosRutina;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -210,11 +211,18 @@ public class HistorialSesionesService {
     // Las sesiones terminadas del usuario, de la más vieja a la más nueva (por inicio y, en
     // empate, por id, como los récords). La rutina sale también si está desactivada.
     private List<Fila> sesionesTerminadas(Integer usuarioId) {
-        return jdbc.query("SELECT s.id, s.rutina_id, r.nombre, s.fecha_inicio, s.duracion_minutos "
-                        + "FROM sesiones_entrenamiento s LEFT JOIN rutinas r ON r.id = s.rutina_id "
+        // El nombre, en el idioma de la petición: el del catálogo o el de su plantilla si es una
+        // copia sin renombrar (GP-245); antes salía siempre la columna en español.
+        boolean en = TextosRutina.enIngles();
+        return jdbc.query("SELECT s.id, s.rutina_id, r.nombre, " + TextosRutina.COLUMNAS_PLANTILLA
+                        + ", s.fecha_inicio, s.duracion_minutos "
+                        + "FROM sesiones_entrenamiento s LEFT JOIN rutinas r ON r.id = s.rutina_id"
+                        + TextosRutina.JOIN_PLANTILLA
                         + "WHERE s.usuario_id = ? AND s.completada = 1 AND s.fecha_inicio IS NOT NULL "
                         + "ORDER BY s.fecha_inicio, s.id",
-                (rs, i) -> new Fila(rs.getInt("id"), (Integer) rs.getObject("rutina_id"), rs.getString("nombre"),
+                (rs, i) -> new Fila(rs.getInt("id"), (Integer) rs.getObject("rutina_id"),
+                        TextosRutina.localizado(en, rs.getString("nombre"), rs.getString("rutina_nombre_en"),
+                                rs.getString("plantilla_nombre"), rs.getString("plantilla_nombre_en")),
                         rs.getTimestamp("fecha_inicio").toLocalDateTime(), (Integer) rs.getObject("duracion_minutos")),
                 usuarioId);
     }

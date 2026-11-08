@@ -7,7 +7,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.context.i18n.LocaleContextHolder;
+import com.gymprofit.api.service.rutina.TextosRutina;
 
 import java.util.List;
 
@@ -28,15 +28,12 @@ public interface SesionEntrenamientoMapper {
     @Mapping(target = "nuevosLogros", ignore = true)
     SesionEntrenamientoDTO toDTO(SesionEntrenamiento sesionEntrenamiento);
 
-    // rutinaNombre sale de la rutina aunque esté desactivada (lote 1.2.1). Con la petición en
-    // inglés y traducción en la rutina (solo las del catálogo la tienen), la traducción.
+    // rutinaNombre sale de la rutina aunque esté desactivada (lote 1.2.1), en el idioma de la
+    // petición: el del catálogo o el de su plantilla si es una copia sin renombrar (GP-245).
     @AfterMapping
     default void localizarRutina(SesionEntrenamiento sesion, @MappingTarget SesionEntrenamientoDTO dto) {
         if (sesion.getRutina() == null) return;
-        String en = sesion.getRutina().getNombreEn();
-        if ("en".equals(LocaleContextHolder.getLocale().getLanguage()) && en != null && !en.isBlank()) {
-            dto.setRutinaNombre(en);
-        }
+        dto.setRutinaNombre(TextosRutina.nombre(sesion.getRutina(), TextosRutina.enIngles()));
     }
 
     // Convierte una lista de entidades SesionEntrenamiento en su lista de DTOs.

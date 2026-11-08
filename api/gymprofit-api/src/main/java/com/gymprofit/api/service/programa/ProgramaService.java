@@ -12,6 +12,7 @@ import com.gymprofit.api.dto.entity.programa.ProgramaDetalleDTO;
 import com.gymprofit.api.dto.entity.programa.ProgramaSeguidoDTO;
 import com.gymprofit.api.dto.entity.programa.RutinaConEjerciciosDTO;
 import com.gymprofit.api.dto.entity.rutinaejercicio.RutinaEjercicioDTO;
+import com.gymprofit.api.service.rutina.TextosRutina;
 import com.gymprofit.api.entity.Programa;
 import com.gymprofit.api.entity.ProgramaRutina;
 import com.gymprofit.api.entity.ProgramaUsuario;
@@ -65,8 +66,10 @@ import java.util.Set;
 // deja el anterior. La rutina que toca la calcula CicloPrograma a partir de las sesiones.
 //
 // Textos en el idioma de la petición. En el catálogo se elige entre las dos columnas; en
-// las copias se escribe el del idioma de la petición y ya no cambia, porque son del
-// usuario, que las puede editar.
+// las copias se escribe el del idioma de la petición. Al leerlas, una copia cuyo nombre,
+// descripción o categoría sigue siendo el de su plantilla (en cualquiera de los dos idiomas)
+// sale en el idioma de esa lectura; la que el usuario cambió, como la dejó (GP-245,
+// TextosRutina). Las notas de sus ejercicios se quedan en el idioma en que se copiaron.
 // ============================================================
 @Service
 @AllArgsConstructor
@@ -241,7 +244,7 @@ public class ProgramaService implements IProgramaService {
             boolean activa = copia != null && Boolean.TRUE.equals(copia.getActiva());
             ciclo.add(new DiaCicloDTO(dia.getPosicion(), plantilla.getCodigo(),
                     copia == null ? null : copia.getId(),
-                    copia != null ? copia.getNombre() : texto(en, plantilla.getNombre(), plantilla.getNombreEn()),
+                    copia != null ? TextosRutina.nombre(copia, en) : texto(en, plantilla.getNombre(), plantilla.getNombreEn()),
                     copia != null ? copia.getDuracionMinutos() : null, activa,
                     estado.hechas().contains(dia.getPosicion())));
         }
