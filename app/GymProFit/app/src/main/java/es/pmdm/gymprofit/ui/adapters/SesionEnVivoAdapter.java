@@ -36,6 +36,7 @@ import es.pmdm.gymprofit.envivo.SesionEnCursoRepositorio;
 import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import es.pmdm.gymprofit.model.record.Record;
 import es.pmdm.gymprofit.utils.Marcas;
+import es.pmdm.gymprofit.utils.MarcaSerie;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
@@ -315,12 +316,6 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     // El color de fondo del botón de marcar según su estado.
-    private int fondoBoton(boolean hecha, boolean toca) {
-        if (hecha) return ContextCompat.getColor(ctx, R.color.gp_success_container);
-        if (toca) return MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0);
-        return MaterialColors.getColor(ctx, com.google.android.material.R.attr.colorSurfaceVariant, 0);
-    }
-
     /** Posición de la cabecera del ejercicio de una serie sin marcar, para «Revisar». */
     public int primeraSinMarcar() {
         for (int i = 0; i < filas.size(); i++) {
@@ -580,19 +575,26 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 fila.setBackgroundColor(android.graphics.Color.TRANSPARENT);
             }
 
-            // El botón: verde si está hecha, del color principal si es la que toca y gris si no
-            // (el check lo dice también con su estado, no solo con el color).
-            int fondo = fondoBoton(f.hecha, f.toca);
-            int tinte = MaterialColors.getColor(btnMarcar, f.hecha
-                    ? androidx.appcompat.R.attr.colorPrimary : f.toca ? com.google.android.material.R.attr.colorOnPrimary
-                    : com.google.android.material.R.attr.colorOnSurfaceVariant);
+            // El botón (GP-252): hecha, el círculo relleno en verde con su check; sin hacer, el aro
+            // de Apuntar entreno, en gp_stroke o, si es la que toca, en el color principal. La
+            // diferencia es de forma y TalkBack dice el estado, no solo el color (DEC-019).
             btnMarcar.setImageResource(R.drawable.ic_ms_check);
-            btnMarcar.setImageTintList(ColorStateList.valueOf(f.hecha ? ContextCompat.getColor(ctx, R.color.gp_success) : tinte));
-            if (marcadaAhora) {
-                int antes = fondoBoton(false, true);
-                Movimiento.marcarSerie(btnMarcar, antes, fondo, !marcadaEsRecord);
+            btnMarcar.setBackgroundResource(MarcaSerie.fondo(f.hecha));
+            if (f.hecha) {
+                btnMarcar.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_success)));
+                int fondo = ContextCompat.getColor(ctx, R.color.gp_success_container);
+                if (marcadaAhora) {
+                    // El círculo crece al marcar (momento 24) desde el aro de la que tocaba.
+                    Movimiento.marcarSerie(btnMarcar, MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0),
+                            fondo, !marcadaEsRecord);
+                } else {
+                    btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo));
+                }
             } else {
-                btnMarcar.setBackgroundTintList(ColorStateList.valueOf(fondo));
+                int aro = f.toca ? MaterialColors.getColor(ctx, androidx.appcompat.R.attr.colorPrimary, 0) : 0;
+                btnMarcar.setBackgroundTintList(f.toca ? ColorStateList.valueOf(aro) : null);
+                btnMarcar.setImageTintList(ColorStateList.valueOf(f.toca ? aro
+                        : MaterialColors.getColor(btnMarcar, com.google.android.material.R.attr.colorOnSurfaceVariant)));
             }
             if (f.id == marcadaSerieId) {
                 // Agotado: la cabecera (más arriba) ya se pintó en esta pasada.
@@ -601,8 +603,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 recordSerieId = -1;
                 recordEjercicioId = -1;
             }
-            ViewCompat.setStateDescription(btnMarcar,
-                    ctx.getString(f.hecha ? R.string.envivo_hecha : R.string.envivo_sin_hacer));
+            ViewCompat.setStateDescription(btnMarcar, ctx.getString(MarcaSerie.estado(f.hecha)));
             btnMarcar.setContentDescription(ctx.getString(R.string.envivo_marcar, f.numero));
             btnMarcar.setEnabled(f.editable);
             btnMarcar.setOnClickListener(v -> acciones.marcar(f.id, f.numero));
