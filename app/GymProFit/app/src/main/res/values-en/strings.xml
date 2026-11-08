@@ -2827,7 +2827,7 @@
     <string name="crear_cifra_minutos">min, roughly</string>
     <string name="crear_resumen_a11y">%1$d %2$s, %3$d %4$s, and about %5$d minutes.</string>
     <string name="crear_nivel">For %1$s, your level.</string>
-    <string name="crear_nivel_otro">For %1$s.</string>
+    <string name="crear_nivel_otro">For the %1$s level.</string>
     <string name="crear_nivel_titulo">Routine level</string>
     <string name="crear_cambiar_nivel_a11y">Change the level</string>
     <string name="crear_ejercicios">Exercises</string>

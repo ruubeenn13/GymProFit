@@ -140,6 +140,8 @@ public class CrearRutinaActivity extends AppCompatActivity {
     // Elegida, en naranja con el texto sobre la marca y el check; sin elegir, la tarjeta de siempre.
     private void pintarZona(MaterialCardView t, boolean elegida) {
         t.setChecked(elegida);
+        // Elegida, sin el borde gris de la tarjeta en claro: toda naranja, como el tablero.
+        t.setStrokeWidth(elegida ? 0 : getResources().getDimensionPixelSize(R.dimen.tarjeta_borde));
         int fondo = elegida ? R.color.gp_primary : R.color.gp_surface;
         int texto = elegida ? R.color.gp_on_primary : R.color.gp_on_surface;
         int apoyo = elegida ? R.color.gp_on_primary : R.color.gp_text_secondary;

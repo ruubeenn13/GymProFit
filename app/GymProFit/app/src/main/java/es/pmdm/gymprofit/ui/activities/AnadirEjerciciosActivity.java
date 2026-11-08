@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
@@ -220,46 +219,23 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
             grupoZonas.setVisibility(View.GONE);
             return;
         }
+        java.util.Locale idioma = es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this);
         for (String g : BorradorRutina.ZONAS) {
             if (!borrador.zonas.contains(g)) continue;
             String nombre = getString(TextosCrearRutina.zona(g));
-            Chip c = pildora();
-            c.setText(nombre);
-            c.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_primary_container)));
-            c.setTextColor(ContextCompat.getColor(this, R.color.gp_on_primary_container));
-            c.setChipStrokeWidth(0f);
-            c.setCloseIconVisible(true);
-            c.setCloseIconResource(R.drawable.ic_ms_close);
-            c.setCloseIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_on_primary_container)));
-            c.setCloseIconContentDescription(getString(R.string.elegir_ej_quitar_zona_a11y, nombre.toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this))));
-            c.setChipMinHeight(getResources().getDimension(R.dimen.chip_zona_alto));
-            c.setEnsureMinTouchTargetSize(true);
-            c.setShapeAppearanceModel(c.getShapeAppearanceModel().withCornerSize(
-                    getResources().getDimension(R.dimen.chip_zona_alto) / 2f));
-            View.OnClickListener quitar = v -> {
+            MaterialButton b = pildora(nombre, R.drawable.ic_ms_close, MaterialButton.ICON_GRAVITY_END,
+                    R.color.gp_primary_container, R.color.gp_on_primary_container, false);
+            b.setContentDescription(getString(R.string.elegir_ej_quitar_zona_a11y, nombre.toLowerCase(idioma)));
+            b.setOnClickListener(v -> {
                 borrador.zonas.remove(g);
                 pintarZonas();
                 buscar();
-            };
-            c.setOnCloseIconClickListener(quitar);
-            c.setOnClickListener(quitar);
-            c.setContentDescription(getString(R.string.elegir_ej_quitar_zona_a11y, nombre.toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this))));
-            grupoZonas.addView(c);
+            });
+            grupoZonas.addView(b);
         }
         if (borrador.zonas.size() < BorradorRutina.ZONAS.size()) {
-            Chip mas = pildora();
-            mas.setText(R.string.elegir_ej_mas_zona);
-            mas.setChipIconResource(R.drawable.ic_ms_add);
-            mas.setChipIconVisible(true);
-            mas.setChipIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_on_surface)));
-            mas.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.transparent)));
-            mas.setChipStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_stroke)));
-            mas.setChipStrokeWidth(getResources().getDimension(R.dimen.separador_alto));
-            mas.setTextColor(ContextCompat.getColor(this, R.color.gp_on_surface));
-            mas.setChipMinHeight(getResources().getDimension(R.dimen.chip_zona_alto));
-            mas.setEnsureMinTouchTargetSize(true);
-            mas.setShapeAppearanceModel(mas.getShapeAppearanceModel().withCornerSize(
-                    getResources().getDimension(R.dimen.chip_zona_alto) / 2f));
+            MaterialButton mas = pildora(getString(R.string.elegir_ej_mas_zona), R.drawable.ic_ms_add,
+                    MaterialButton.ICON_GRAVITY_TEXT_START, android.R.color.transparent, R.color.gp_on_surface, true);
             mas.setContentDescription(getString(R.string.elegir_ej_mas_zona_a11y));
             mas.setOnClickListener(v -> elegirZona());
             grupoZonas.addView(mas);
@@ -267,16 +243,46 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         grupoZonas.setVisibility(View.VISIBLE);
     }
 
-    // Una píldora de acción, no de filtro: el Chip de serie es una casilla (se marcaba con un check
-    // y TalkBack decía «no seleccionado»). En Barlow 600 a 14 sp, como el tablero.
-    private Chip pildora() {
-        Chip c = new Chip(this);
-        c.setCheckable(false);
-        c.setCheckedIconVisible(false);
+    /**
+     * Una píldora de acción (quitar una zona, añadir otra), no de filtro: un botón de Material y no
+     * un Chip, que es un CompoundButton y le decía a TalkBack «no seleccionado» aunque no se pudiera
+     * marcar, y que pinta su texto desde su drawable, sin dejar cambiar la fuente. 44 dp a la vista
+     * y 48 de zona táctil (2 dp de margen por dentro arriba y abajo), Barlow 600 a 14 sp.
+     */
+    private MaterialButton pildora(String texto, int icono, int lado, int fondo, int color, boolean borde) {
+        MaterialButton b = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonStyle);
+        b.setText(texto);
+        b.setAllCaps(false);
         android.graphics.Typeface barlow = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.barlow_semibold);
-        if (barlow != null) c.setTypeface(barlow);
-        c.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_caption));
-        return c;
+        if (barlow != null) b.setTypeface(barlow);
+        b.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.text_caption));
+        b.setTextColor(ContextCompat.getColor(this, color));
+        b.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, fondo)));
+        b.setIconResource(icono);
+        b.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, color)));
+        b.setIconGravity(lado);
+        int d4 = getResources().getDimensionPixelSize(R.dimen.espacio_4);
+        b.setIconPadding(d4);
+        b.setIconSize(Math.round(18 * getResources().getDisplayMetrics().density));
+        int alto = getResources().getDimensionPixelSize(R.dimen.chip_zona_alto);
+        int tactil = getResources().getDimensionPixelSize(R.dimen.zona_tactil);
+        int margen = (tactil - alto) / 2;
+        b.setInsetTop(margen);
+        b.setInsetBottom(margen);
+        b.setMinHeight(tactil);
+        b.setMinimumHeight(tactil);
+        b.setMinWidth(0);
+        b.setMinimumWidth(0);
+        int lados = getResources().getDimensionPixelSize(R.dimen.espacio_16);
+        int corto = getResources().getDimensionPixelSize(R.dimen.espacio_12);
+        if (lado == MaterialButton.ICON_GRAVITY_END) b.setPaddingRelative(lados, 0, corto, 0);
+        else b.setPaddingRelative(corto, 0, lados, 0);
+        b.setCornerRadius(alto / 2);
+        b.setStrokeWidth(borde ? getResources().getDimensionPixelSize(R.dimen.separador_alto) : 0);
+        b.setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_stroke)));
+        b.setElevation(0f);
+        b.setStateListAnimator(android.animation.AnimatorInflater.loadStateListAnimator(this, R.animator.toque));
+        return b;
     }
 
     private void elegirZona() {
@@ -368,7 +374,8 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                     : getString(R.string.elegir_ej_pie_tiempo, m, borrador.minutos));
             frase += ". " + tvTiempo.getText();
         }
-        barra.setProgressCompat(Math.round(borrador.partesDelTiempo() * 100), !Movimiento.quieto(this));
+        // Sin ejercicios la barra va vacía: los 8 minutos de calentamiento no son nada elegido.
+        barra.setProgressCompat(n > 0 ? Math.round(borrador.partesDelTiempo() * 100) : 0, !Movimiento.quieto(this));
         findViewById(R.id.filaPieElegir).setContentDescription(frase);
         // Al crear, sin ejercicios no hay nada que llevar al paso 3.
         btnListo.setEnabled(devolver || modoSesion || n > 0);
