@@ -69,7 +69,7 @@ import java.util.Set;
 // las copias se escribe el del idioma de la petición. Al leerlas, una copia cuyo nombre,
 // descripción o categoría sigue siendo el de su plantilla (en cualquiera de los dos idiomas)
 // sale en el idioma de esa lectura; la que el usuario cambió, como la dejó (GP-245,
-// TextosRutina). Las notas de sus ejercicios se quedan en el idioma en que se copiaron.
+// TextosRutina). Lo mismo con las notas de sus ejercicios.
 // ============================================================
 @Service
 @AllArgsConstructor
@@ -495,10 +495,16 @@ public class ProgramaService implements IProgramaService {
     private List<RutinaEjercicioDTO> ejerciciosDTO(List<RutinaEjercicio> filas) {
         boolean en = enIngles();
         List<RutinaEjercicioDTO> lista = new ArrayList<>();
+        // Las de una copia, como su nombre: las de su plantilla si no las cambió (GP-245).
+        // (En la vista previa las filas aún no son de ninguna rutina: ahí ya van en el idioma pedido.)
+        Rutina rutina = filas.isEmpty() ? null : filas.get(0).getRutina();
+        Rutina plantilla = rutina == null ? null : rutina.getPlantilla();
+        List<RutinaEjercicio> dePlantilla = plantilla == null ? List.of()
+                : rutinaEjercicioRepository.findByRutinaIdOrderByOrdenAsc(plantilla.getId());
         for (RutinaEjercicio re : filas) {
             RutinaEjercicioDTO dto = rutinaEjercicioMapper.toDTO(re);
             dto.setNombreEjercicio(nombreEjercicio(en, re));
-            dto.setNotas(texto(en, re.getNotas(), re.getNotasEn()));
+            dto.setNotas(TextosRutina.nota(en, re, dePlantilla));
             lista.add(dto);
         }
         return lista;
