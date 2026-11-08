@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_tu_rutina_ejercicio — un ejercicio de «Tu rutina» (GP-244, tablero Mezcla-3): el asa
+  para arrastrar (48 dp, en gp_stroke), el nombre y su pauta («3 series de 8 a 12»), y ⋮ con
+  cambiar la pauta, subir, bajar y quitar. Para TalkBack, la fila lleva esas mismas acciones:
+  se ordena sin arrastrar.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_8"
+    android:background="@drawable/bg_fila_tu_rutina"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/espacio_4"
+    android:paddingTop="@dimen/espacio_8"
+    android:paddingEnd="@dimen/espacio_4"
+    android:paddingBottom="@dimen/espacio_8">
+
+    <ImageView
+        android:id="@+id/ivAsa"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:importantForAccessibility="no"
+        android:padding="12dp"
+        android:src="@drawable/ic_ms_drag_indicator"
+        app:tint="@color/gp_stroke" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTuNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTuPauta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnTuOpciones"
+        style="@style/Widget.GymProFit.BotonIcono"
+        android:src="@drawable/ic_ms_more_vert"
+        app:tint="?attr/colorOnSurfaceVariant" />
+</LinearLayout>

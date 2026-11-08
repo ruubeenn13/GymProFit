@@ -1,127 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_anadir_ejercicios — buscador de ejercicios para añadir a una rutina.
-  Permite buscar por texto, filtrar por dificultad y confirmar la selección
-  con el botón continuar.
+  activity_anadir_ejercicios — «Elige ejercicios», el paso 2 de crear una rutina (GP-244,
+  tablero Mezcla-2), y la biblioteca al añadir a una sesión. Arriba, el buscador del catálogo
+  en píldora y, al crear, una píldora por zona que se quita con su aspa y «+ Zona». Cada fila
+  (item_elegir_ejercicio) con el nombre, la zona y el equipo, y el botón de añadir que pasa a
+  check. El pie fijo dice cuántos llevas y, al crear, «Unos 35 de tus 45 min» con su barra.
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/android:colorBackground"
+    android:orientation="vertical">
 
-    <!-- Toolbar con navegación hacia atrás -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         style="@style/Widget.GymProFit.Cabecera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/anadir_ejercicios_titulo" />
+        app:title="@string/elegir_ej_titulo" />
 
-    <!-- Área de búsqueda — ocupa todo el espacio disponible -->
     <LinearLayout
+        android:id="@+id/campoBuscarElegir"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/buscador_alto"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginTop="@dimen/espacio_4"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:background="@drawable/bg_buscador_pildora"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/espacio_16"
+        android:paddingEnd="@dimen/espacio_16">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_search"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <EditText
+            android:id="@+id/etBuscarEjercicio"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/espacio_12"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/ejercicios_buscar"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="?attr/colorOnSurfaceVariant"
+            android:textSize="@dimen/text_body" />
+    </LinearLayout>
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/grupoZonas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginTop="@dimen/espacio_12"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        app:chipSpacingHorizontal="@dimen/espacio_8"
+        app:chipSpacingVertical="@dimen/espacio_4" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="12dp">
+        android:layout_marginTop="@dimen/espacio_8"
+        android:layout_weight="1">
 
-        <com.google.android.material.textfield.TextInputLayout
-        app:errorIconDrawable="@drawable/ic_ms_error"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/crear_rutina_buscar_ejercicio"
-            app:boxBackgroundMode="outline"
-            app:boxCornerRadiusTopStart="12dp"
-            app:boxCornerRadiusTopEnd="12dp"
-            app:boxCornerRadiusBottomStart="12dp"
-            app:boxCornerRadiusBottomEnd="12dp"
-            app:startIconDrawable="@drawable/ic_ms_search">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etBuscarEjercicio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Filtro de dificultad del ejercicio -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:scrollbars="none"
-            android:fadingEdgeLength="16dp"
-            android:requiresFadingEdge="horizontal">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupDificultad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:singleSelection="true"
-                app:selectionRequired="true"
-                app:singleLine="true">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDifTodos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/crear_rutina_dificultad_todos"
-                    android:checked="true"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDifPrincipiante"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_principiante"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDifIntermedio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_intermedio"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipDifAvanzado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rutinas_avanzado"
-                    style="@style/Widget.Material3.Chip.Filter" />
-
-            </com.google.android.material.chip.ChipGroup>
-
-        </HorizontalScrollView>
-
-        <!-- Resultados de la búsqueda de ejercicios -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvEjerciciosBusqueda"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="8dp" />
+            android:paddingStart="@dimen/margen_pantalla"
+            android:paddingEnd="@dimen/margen_pantalla"
+            android:paddingBottom="@dimen/espacio_16" />
 
-    </LinearLayout>
+        <include
+            android:id="@+id/estadoElegir"
+            layout="@layout/view_estado" />
+    </FrameLayout>
 
-    <!-- Botón continuar fijo en la parte inferior -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnContinuar"
+    <LinearLayout
+        android:id="@+id/pieElegir"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="@dimen/text_body" />
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_barra_inferior"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_16">
 
+        <es.pmdm.gymprofit.ui.widget.FilaQueBaja
+            android:id="@+id/filaPieElegir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:focusable="true">
+
+            <TextView
+                android:id="@+id/tvLlevas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTiempoElegir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+        </es.pmdm.gymprofit.ui.widget.FilaQueBaja>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/barraTiempoElegir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:importantForAccessibility="no"
+            android:max="100"
+            app:indicatorColor="?attr/colorPrimary"
+            app:trackColor="@color/gp_meter_track"
+            app:trackCornerRadius="4dp"
+            app:indicatorTrackGapSize="0dp"
+            app:trackStopIndicatorSize="0dp"
+            app:trackThickness="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContinuar"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_12"
+            android:minHeight="56dp"
+            android:text="@string/elegir_ej_listo" />
+    </LinearLayout>
 </LinearLayout>

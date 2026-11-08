@@ -1,25 +1,37 @@
 package es.pmdm.gymprofit.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,296 +41,427 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.Transiciones;
-import es.pmdm.gymprofit.utils.AvisoDescartar;
 import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
-import es.pmdm.gymprofit.model.rutina.EjercicioSeleccionado;
+import es.pmdm.gymprofit.model.rutina.BorradorRutina;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EjercicioApi;
-import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
-import es.pmdm.gymprofit.utils.LoadingDialog;
+import es.pmdm.gymprofit.ui.rutina.TextosCrearRutina;
+import es.pmdm.gymprofit.ui.widget.HojaElegir;
+import es.pmdm.gymprofit.utils.AvisoDescartar;
+import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
-import es.pmdm.gymprofit.utils.PreferencesManager;
-import es.pmdm.gymprofit.utils.UIHelper;
-import es.pmdm.gymprofit.utils.UiFeedback;
-import es.pmdm.gymprofit.utils.Numeros;
+import es.pmdm.gymprofit.utils.Transiciones;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// AnadirEjerciciosActivity — buscador y selector de ejercicios para una rutina
-// Permite buscar/filtrar ejercicios por dificultad (búsqueda en SERVIDOR,
-// paginada con scroll infinito), elegir series/repeticiones y continuar
-// hacia el resumen de creación (o devolver resultado en editMode).
+// AnadirEjerciciosActivity — «Elige ejercicios» (GP-244, paso 2 de crear una rutina, tablero
+// Mezcla-2), y la biblioteca para añadir ejercicios a una sesión (GP-012).
+//
+// El buscador del catálogo (GET /ejercicios/buscar, en el servidor y por páginas) filtrado por
+// las zonas del paso 1, una píldora por zona que se quita y «+ Zona» para añadir otra; sin
+// zonas, busca entre todos. Cada fila dice el nombre, la zona y el equipo y lleva el botón de
+// añadir, que pasa a check: entra con 3 series de 8 a 12 y 90 s de descanso, y se cambia en el
+// paso 3. El pie dice cuántos llevas y, al crear, cuánto dura contra el tiempo elegido.
+//
+// Tres modos:
+//   · crear: «Listo» abre el paso 3 (TuRutinaActivity) con lo elegido; si vuelve sin guardar,
+//     trae su lista, y si guarda o se cierra, esta también se cierra;
+//   · devolver: desde el paso 3 («Añadir ejercicios» al editar), «Listo» devuelve la lista;
+//   · sesión (EXTRA_MODO_SESION): devuelve «ejerciciosJson» como siempre a Apuntar entreno y a
+//     la sesión en vivo, sin zonas ni tiempo.
 // ============================================================
 public class AnadirEjerciciosActivity extends AppCompatActivity {
 
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
-    protected void attachBaseContext(android.content.Context newBase) {
+    protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    // Tamaño de página del catálogo y retardo del debounce del buscador
+    /** El borrador de la rutina, en JSON (BorradorRutina.aJson). */
+    public static final String EXTRA_BORRADOR = "borrador";
+    /** true: «Listo» devuelve el borrador en vez de abrir el paso 3. */
+    public static final String EXTRA_DEVOLVER = "devolver";
+    /**
+     * Se añade a la sesión en vivo o a Apuntar entreno (GP-012): va con editMode y devuelve
+     * «ejerciciosJson» (ejercicioId, nombre, series y repeticiones).
+     */
+    public static final String EXTRA_MODO_SESION = "modoSesion";
+
     private static final int TAM_PAGINA = 30;
     private static final long DEBOUNCE_MS = 400;
 
-    private TextInputEditText etBuscar;
-    private ChipGroup chipGroupDificultad;
-    private RecyclerView rvBusqueda;
-    private MaterialButton btnContinuar;
-    private PreferencesManager prefsManager;
+    /** Para el paso 2 del asistente, con lo elegido en el paso 1. */
+    @NonNull
+    public static Intent paraCrear(@NonNull Context ctx, @NonNull BorradorRutina b) {
+        return new Intent(ctx, AnadirEjerciciosActivity.class).putExtra(EXTRA_BORRADOR, b.aJson());
+    }
 
-    // Ejercicios elegidos por el usuario junto con sus series/repeticiones
-    private final List<EjercicioSeleccionado> ejerciciosSeleccionados = new ArrayList<>();
-    private EjercicioAdapter ejercicioAdapter;
+    /** Desde el paso 3: devuelve el borrador con lo que se añada o quite. */
+    @NonNull
+    public static Intent paraDevolver(@NonNull Context ctx, @NonNull BorradorRutina b) {
+        return paraCrear(ctx, b).putExtra(EXTRA_DEVOLVER, true);
+    }
 
-    // Estado de la búsqueda paginada en servidor
-    private String dificultadActual = null;  // nombre del enum (PRINCIPIANTE...) o null = todas
-    private String textoActual = "";
-    private int paginaActual = 0;
-    private boolean cargando = false;
-    private boolean ultimaPagina = false;
-
-    // Debounce del buscador: pospone la petición hasta que el usuario deja de teclear
-    private final Handler debounceHandler = new Handler(Looper.getMainLooper());
-    private Runnable debounceRunnable;
-
-    // Indica si se llegó desde la edición de una rutina existente (afecta al resultado devuelto)
-    private boolean editMode = false;
-
-    /**
-     * Se añade a la sesión en vivo (GP-012): tocar un ejercicio lo elige sin preguntar
-     * series ni repeticiones, porque en la sesión entra con 3 series vacías y lo que
-     * cuenta es lo que se haga. Va con editMode, que es lo que devuelve la lista.
-     */
-    public static final String EXTRA_MODO_SESION = "modoSesion";
-    private boolean modoSesion = false;
-
-    // Launcher hacia ResumenCrearRutinaActivity; propaga el resultado o sincroniza la lista al volver
-    private ActivityResultLauncher<Intent> resumenLauncher;
-
-    // Interfaz Retrofit tipada del dominio ejercicios (cacheada por ApiClient).
     private final EjercicioApi api = ApiClient.service(EjercicioApi.class);
+    private BorradorRutina borrador;
+    private List<Integer> idsAlEntrar;
+    private boolean modoSesion, devolver;
 
-    // Aplica tema/idioma, infla el layout y configura toolbar, búsqueda y launcher de resultado
+    private EditText etBuscar;
+    private ChipGroup grupoZonas;
+    private VistaEstado estado;
+    private final List<Ejercicio> resultados = new ArrayList<>();
+    private Adaptador adaptador;
+    private TextView tvLlevas, tvTiempo;
+    private LinearProgressIndicator barra;
+    private MaterialButton btnListo;
+
+    // La búsqueda por páginas.
+    private String texto = "";
+    private int pagina = 0;
+    private boolean cargando, ultima;
+    // Solo cuenta la respuesta de la última búsqueda: escribir rápido no mezcla páginas.
+    private int pedida = 0;
+    private final Handler debounce = new Handler(Looper.getMainLooper());
+    private Runnable buscarLuego;
+
+    private ActivityResultLauncher<Intent> paso3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefsManager = new PreferencesManager(this);
         setContentView(R.layout.activity_anadir_ejercicios);
+        modoSesion = getIntent().getBooleanExtra(EXTRA_MODO_SESION, false);
+        devolver = getIntent().getBooleanExtra(EXTRA_DEVOLVER, false);
+        String json = savedInstanceState != null ? savedInstanceState.getString(EXTRA_BORRADOR)
+                : getIntent().getStringExtra(EXTRA_BORRADOR);
+        borrador = BorradorRutina.deJson(json);
+        idsAlEntrar = BorradorRutina.deJson(getIntent().getStringExtra(EXTRA_BORRADOR)).ids();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Salir con ejercicios elegidos pregunta antes de tirarlos (GP-098), tanto en el
-        // asistente como al añadir desde el editor.
-        AvisoDescartar.instalar(this, toolbar, () -> !ejerciciosSeleccionados.isEmpty());
+        // Salir con algo elegido pregunta antes de tirarlo (GP-098). Desde el paso 3, solo si ha
+        // cambiado algo en esta visita: lo de antes sigue allí.
+        AvisoDescartar.instalar(this, toolbar, () -> devolver
+                ? !borrador.ids().equals(idsAlEntrar) : !borrador.ejercicios.isEmpty());
 
-        editMode = getIntent().getBooleanExtra("editMode", false);
-        modoSesion = getIntent().getBooleanExtra(EXTRA_MODO_SESION, false);
+        etBuscar = findViewById(R.id.etBuscarEjercicio);
+        grupoZonas = findViewById(R.id.grupoZonas);
+        estado = new VistaEstado(findViewById(R.id.estadoElegir));
+        tvLlevas = findViewById(R.id.tvLlevas);
+        tvTiempo = findViewById(R.id.tvTiempoElegir);
+        barra = findViewById(R.id.barraTiempoElegir);
+        btnListo = findViewById(R.id.btnContinuar);
 
-        etBuscar            = findViewById(R.id.etBuscarEjercicio);
-        chipGroupDificultad = findViewById(R.id.chipGroupDificultad);
-        rvBusqueda          = findViewById(R.id.rvEjerciciosBusqueda);
-        btnContinuar        = findViewById(R.id.btnContinuar);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvBusqueda.setLayoutManager(layoutManager);
-        // Adapter único (la lista se rellena por páginas desde el servidor)
-        ejercicioAdapter = new EjercicioAdapter(new ArrayList<>(), e -> mostrarDialogSeriesReps(e));
-        rvBusqueda.setAdapter(ejercicioAdapter);
-        // Scroll infinito: pide la siguiente página al acercarse al final
-        rvBusqueda.addOnScrollListener(new PaginacionScrollListener(layoutManager) {
-            @Override protected void cargarMas() { cargarPagina(paginaActual + 1); }
+        RecyclerView rv = findViewById(R.id.rvEjerciciosBusqueda);
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        rv.setLayoutManager(lm);
+        adaptador = new Adaptador();
+        rv.setAdapter(adaptador);
+        rv.addOnScrollListener(new PaginacionScrollListener(lm) {
+            @Override protected void cargarMas() { cargarPagina(pagina + 1); }
             @Override protected boolean isCargando() { return cargando; }
-            @Override protected boolean esUltimaPagina() { return ultimaPagina; }
+            @Override protected boolean esUltimaPagina() { return ultima; }
         });
 
-        resumenLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        setResult(RESULT_OK);
-                        finish();
-                    } else if (result.getResultCode() == Activity.RESULT_FIRST_USER) {
-                        setResult(Activity.RESULT_FIRST_USER);
-                        finish();
-                    } else if (result.getData() != null) {
-                        // back desde resumen — sincronizar lista
-                        String json = result.getData().getStringExtra("ejerciciosJson");
-                        if (json != null) sincronizarDesdeJson(json);
-                    }
-                });
-
-        configurarBusqueda();
-        cargarEjercicios();
-        actualizarBoton();
-
-        btnContinuar.setOnClickListener(v -> abrirResumen());
-    }
-
-    // Configura el buscador por texto (con debounce hacia el servidor) y los
-    // chips de dificultad (filtro también en servidor).
-    private void configurarBusqueda() {
-        etBuscar.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) {
-                textoActual = s.toString().trim();
-                if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
-                debounceRunnable = () -> cargarEjercicios();
-                debounceHandler.postDelayed(debounceRunnable, DEBOUNCE_MS);
+        paso3 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            if (r.getResultCode() == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            } else if (r.getResultCode() == Activity.RESULT_FIRST_USER) {
+                setResult(Activity.RESULT_FIRST_USER);
+                finish();
+            } else if (r.getData() != null && r.getData().getStringExtra(EXTRA_BORRADOR) != null) {
+                // Vuelve del paso 3 sin guardar: con su lista, que puede haber cambiado allí.
+                borrador = BorradorRutina.deJson(r.getData().getStringExtra(EXTRA_BORRADOR));
+                adaptador.notifyDataSetChanged();
+                pintarPie();
             }
         });
 
-        chipGroupDificultad.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds.isEmpty()) return;
-            int id = checkedIds.get(0);
-            if (id == R.id.chipDifPrincipiante)    dificultadActual = "PRINCIPIANTE";
-            else if (id == R.id.chipDifIntermedio) dificultadActual = "INTERMEDIO";
-            else if (id == R.id.chipDifAvanzado)   dificultadActual = "AVANZADO";
-            else                                   dificultadActual = null; // Todas
-            cargarEjercicios();
+        etBuscar.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void afterTextChanged(Editable s) {
+                texto = s.toString().trim();
+                if (buscarLuego != null) debounce.removeCallbacks(buscarLuego);
+                buscarLuego = AnadirEjerciciosActivity.this::buscar;
+                debounce.postDelayed(buscarLuego, DEBOUNCE_MS);
+            }
         });
+        btnListo.setOnClickListener(v -> listo());
+
+        pintarZonas();
+        pintarPie();
+        buscar();
     }
 
-    // Reinicia la búsqueda desde la página 0 con los filtros actuales.
-    private void cargarEjercicios() {
-        paginaActual = 0;
-        ultimaPagina = false;
-        cargarPagina(0);
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString(EXTRA_BORRADOR, borrador.aJson());
     }
 
-    // Pide una página al servidor; la 0 reemplaza la lista (con spinner),
-    // las siguientes se añaden al final en silencio (scroll infinito).
-    private void cargarPagina(int pagina) {
-        cargando = true;
-        if (pagina == 0) LoadingDialog.show(this);
-        api.buscar(textoActual.isEmpty() ? null : textoActual, null, dificultadActual, pagina, TAM_PAGINA)
-                .enqueue(new ApiCallback<PageDTO<Ejercicio>>() {
-                    @Override public void onOk(PageDTO<Ejercicio> resultado) {
-                        cargando = false;
-                        if (pagina == 0) LoadingDialog.hide(AnadirEjerciciosActivity.this);
-                        if (resultado == null) return;
-                        paginaActual = resultado.getPage();
-                        ultimaPagina = resultado.isLast();
-                        List<Ejercicio> lista = resultado.getContent() != null
-                                ? resultado.getContent() : new ArrayList<>();
-                        if (pagina == 0) ejercicioAdapter.setEjercicios(lista);
-                        else ejercicioAdapter.addEjercicios(lista);
-                    }
-                    @Override public void onFail(int code, String message) {
-                        cargando = false;
-                        if (pagina == 0) LoadingDialog.hide(AnadirEjerciciosActivity.this);
-                        UiFeedback.toastError(AnadirEjerciciosActivity.this, code, message);
-                    }
-                });
-    }
-
-    // Cancela el debounce pendiente al destruir la Activity.
     @Override
     protected void onDestroy() {
-        if (debounceRunnable != null) debounceHandler.removeCallbacks(debounceRunnable);
+        if (buscarLuego != null) debounce.removeCallbacks(buscarLuego);
         super.onDestroy();
     }
 
-    // Muestra un diálogo para introducir series/repeticiones al seleccionar un ejercicio (evita duplicados)
-    private void mostrarDialogSeriesReps(Ejercicio ejercicio) {
-        for (EjercicioSeleccionado sel : ejerciciosSeleccionados) {
-            if (sel.getEjercicio().getId() == ejercicio.getId()) {
-                UIHelper.mostrarToastError(this, getString(R.string.crear_rutina_ejercicio_duplicado));
-                return;
-            }
-        }
+    // ── Las zonas ───────────────────────────────────────────────────────
 
+    // Una píldora por zona, que se quita con su aspa, y «+ Zona» con las que faltan.
+    private void pintarZonas() {
+        grupoZonas.removeAllViews();
         if (modoSesion) {
-            ejerciciosSeleccionados.add(new EjercicioSeleccionado(ejercicio, 3, 10));
-            actualizarBoton();
-            UIHelper.mostrarToastExito(this, getString(R.string.envivo_anadido, ejercicio.getNombre()));
+            grupoZonas.setVisibility(View.GONE);
             return;
         }
-
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_series_reps, null);
-        TextInputEditText etSeries       = dialogView.findViewById(R.id.etSeries);
-        TextInputEditText etRepeticiones = dialogView.findViewById(R.id.etRepeticiones);
-
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(ejercicio.getNombre())
-                .setView(dialogView)
-                .setPositiveButton(getString(R.string.dialog_confirmar), (dialog, which) -> {
-                    String serStr = etSeries.getText() != null ? etSeries.getText().toString().trim() : "";
-                    String repStr = etRepeticiones.getText() != null ? etRepeticiones.getText().toString().trim() : "";
-
-                    // Campos numéricos sin límite de longitud: un número largo
-                    // desbordaba int y cerraba la app. Fuera de rango o vacío se
-                    // cae al valor por defecto del diálogo (3 series de 10).
-                    Integer series = Numeros.entero(serStr, 1, 10);
-                    Integer reps   = Numeros.entero(repStr, 1, 50);
-                    if (series == null) series = 3;
-                    if (reps == null)   reps = 10;
-
-                    ejerciciosSeleccionados.add(new EjercicioSeleccionado(ejercicio, series, reps));
-                    actualizarBoton();
-                })
-                .setNegativeButton(getString(R.string.dialog_cancelar), null)
-                .show();
+        for (String g : BorradorRutina.ZONAS) {
+            if (!borrador.zonas.contains(g)) continue;
+            String nombre = getString(TextosCrearRutina.zona(g));
+            Chip c = new Chip(this);
+            c.setText(nombre);
+            c.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_primary_container)));
+            c.setTextColor(ContextCompat.getColor(this, R.color.gp_on_primary_container));
+            c.setChipStrokeWidth(0f);
+            c.setCloseIconVisible(true);
+            c.setCloseIconResource(R.drawable.ic_ms_close);
+            c.setCloseIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_on_primary_container)));
+            c.setCloseIconContentDescription(getString(R.string.elegir_ej_quitar_zona_a11y, nombre.toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this))));
+            c.setChipMinHeight(getResources().getDimension(R.dimen.chip_zona_alto));
+            c.setEnsureMinTouchTargetSize(true);
+            c.setShapeAppearanceModel(c.getShapeAppearanceModel().withCornerSize(
+                    getResources().getDimension(R.dimen.chip_zona_alto) / 2f));
+            View.OnClickListener quitar = v -> {
+                borrador.zonas.remove(g);
+                pintarZonas();
+                buscar();
+            };
+            c.setOnCloseIconClickListener(quitar);
+            c.setOnClickListener(quitar);
+            c.setContentDescription(getString(R.string.elegir_ej_quitar_zona_a11y, nombre.toLowerCase(es.pmdm.gymprofit.utils.FechaUtils.localeDeLaApp(this))));
+            grupoZonas.addView(c);
+        }
+        if (borrador.zonas.size() < BorradorRutina.ZONAS.size()) {
+            Chip mas = new Chip(this);
+            mas.setText(R.string.elegir_ej_mas_zona);
+            mas.setChipIconResource(R.drawable.ic_ms_add);
+            mas.setChipIconVisible(true);
+            mas.setChipIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_on_surface)));
+            mas.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.transparent)));
+            mas.setChipStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gp_stroke)));
+            mas.setChipStrokeWidth(getResources().getDimension(R.dimen.separador_alto));
+            mas.setTextColor(ContextCompat.getColor(this, R.color.gp_on_surface));
+            mas.setChipMinHeight(getResources().getDimension(R.dimen.chip_zona_alto));
+            mas.setEnsureMinTouchTargetSize(true);
+            mas.setShapeAppearanceModel(mas.getShapeAppearanceModel().withCornerSize(
+                    getResources().getDimension(R.dimen.chip_zona_alto) / 2f));
+            mas.setContentDescription(getString(R.string.elegir_ej_mas_zona_a11y));
+            mas.setOnClickListener(v -> elegirZona());
+            grupoZonas.addView(mas);
+        }
+        grupoZonas.setVisibility(View.VISIBLE);
     }
 
-    // Devuelve el resultado directamente si está en editMode, o navega al resumen de creación de rutina
-    private void abrirResumen() {
-        if (editMode) {
-            Intent result = new Intent();
-            result.putExtra("ejerciciosJson", serializarEjercicios());
-            setResult(RESULT_OK, result);
+    private void elegirZona() {
+        List<String> faltan = new ArrayList<>();
+        List<HojaElegir.Opcion> opciones = new ArrayList<>();
+        for (String g : BorradorRutina.ZONAS) {
+            if (borrador.zonas.contains(g)) continue;
+            faltan.add(g);
+            opciones.add(HojaElegir.Opcion.de(getString(TextosCrearRutina.zona(g))));
+        }
+        HojaElegir.mostrar(this, R.string.elegir_ej_mas_zona_a11y, opciones, -1, 0, i -> {
+            borrador.zonas.add(faltan.get(i));
+            pintarZonas();
+            buscar();
+        });
+    }
+
+    // ── La búsqueda ─────────────────────────────────────────────────────
+
+    private void buscar() {
+        pagina = 0;
+        ultima = false;
+        cargarPagina(0);
+    }
+
+    private void cargarPagina(int p) {
+        cargando = true;
+        int esta = ++pedida;
+        if (p == 0) {
+            resultados.clear();
+            adaptador.notifyDataSetChanged();
+            estado.cargando();
+        }
+        List<String> zonas = modoSesion || borrador.zonas.isEmpty() ? null : new ArrayList<>(borrador.zonas);
+        api.buscarEnZonas(texto.isEmpty() ? null : texto, zonas, p, TAM_PAGINA)
+                .enqueue(new ApiCallback<PageDTO<Ejercicio>>() {
+                    @Override public void onOk(PageDTO<Ejercicio> r) {
+                        if (esta != pedida || isFinishing()) return;
+                        cargando = false;
+                        List<Ejercicio> l = r != null && r.getContent() != null ? r.getContent() : new ArrayList<>();
+                        pagina = r != null ? r.getPage() : p;
+                        ultima = r == null || r.isLast();
+                        int desde = resultados.size();
+                        resultados.addAll(l);
+                        if (p == 0) adaptador.notifyDataSetChanged();
+                        else adaptador.notifyItemRangeInserted(desde, l.size());
+                        if (resultados.isEmpty()) estado.vacio(R.string.elegir_ej_vacio);
+                        else estado.oculto();
+                    }
+                    @Override public void onFail(int code, String message) {
+                        if (esta != pedida || isFinishing()) return;
+                        cargando = false;
+                        // Una página siguiente que falla se vuelve a pedir al desplazar; la primera se
+                        // dice en la pantalla, con «Reintentar».
+                        if (p == 0) estado.error(VistaEstado.mensaje(AnadirEjerciciosActivity.this,
+                                R.string.error_conexion, code, message), AnadirEjerciciosActivity.this::buscar);
+                    }
+                });
+    }
+
+    // ── Elegir ──────────────────────────────────────────────────────────
+
+    private void alternar(Ejercicio e, int posicion, View fila) {
+        boolean anadido;
+        if (borrador.contiene(e.getId())) {
+            borrador.quitarId(e.getId());
+            anadido = false;
+        } else {
+            borrador.anadir(e.getId(), e.getNombre(), e.getGrupoMuscular(), e.getEquipoNecesario());
+            anadido = true;
+        }
+        Movimiento.vibrar(fila, Movimiento.Vibracion.LIGERA);
+        adaptador.notifyItemChanged(posicion, anadido ? "anadido" : "quitado");
+        pintarPie();
+    }
+
+    // «4 elegidos» y, al crear, «Unos 35 de tus 45 min» con su barra.
+    private void pintarPie() {
+        int n = borrador.ejercicios.size();
+        tvLlevas.setText(getResources().getQuantityString(R.plurals.elegir_ej_llevas, n, n));
+        boolean conTiempo = !modoSesion && borrador.minutos != null && n > 0;
+        tvTiempo.setVisibility(conTiempo ? View.VISIBLE : View.GONE);
+        barra.setVisibility(!modoSesion && borrador.minutos != null ? View.VISIBLE : View.GONE);
+        String frase = tvLlevas.getText().toString();
+        if (conTiempo) {
+            int m = borrador.minutosEstimados();
+            tvTiempo.setText(borrador.minutos >= BorradorRutina.MINUTOS_SIN_TECHO
+                    ? getString(R.string.elegir_ej_pie_tiempo_75, m)
+                    : getString(R.string.elegir_ej_pie_tiempo, m, borrador.minutos));
+            frase += ". " + tvTiempo.getText();
+        }
+        barra.setProgressCompat(Math.round(borrador.partesDelTiempo() * 100), !Movimiento.quieto(this));
+        findViewById(R.id.filaPieElegir).setContentDescription(frase);
+        // Al crear, sin ejercicios no hay nada que llevar al paso 3.
+        btnListo.setEnabled(devolver || modoSesion || n > 0);
+    }
+
+    private void listo() {
+        if (modoSesion) {
+            Intent r = new Intent();
+            r.putExtra("ejerciciosJson", paraLaSesion());
+            setResult(RESULT_OK, r);
             finish();
             return;
         }
-        Intent intent = new Intent(this, ResumenCrearRutinaActivity.class);
-        intent.putExtra("nombre",      getIntent().getStringExtra("nombre"));
-        intent.putExtra("descripcion", getIntent().getStringExtra("descripcion"));
-        intent.putExtra("nivel",       getIntent().getStringExtra("nivel"));
-        intent.putExtra("duracion",    getIntent().getIntExtra("duracion", 0));
-        intent.putExtra("ejerciciosJson", serializarEjercicios());
-        Transiciones.avanzar(this, intent, resumenLauncher);
+        if (devolver) {
+            setResult(RESULT_OK, new Intent().putExtra(EXTRA_BORRADOR, borrador.aJson()));
+            finish();
+            return;
+        }
+        Transiciones.avanzar(this, TuRutinaActivity.paraCrear(this, borrador), paso3);
     }
 
-    // Serializa la lista de ejercicios seleccionados a JSON para pasarla entre activities
-    private String serializarEjercicios() {
+    // Lo que esperan Apuntar entreno y la sesión en vivo: entran con 3 series de 10.
+    private String paraLaSesion() {
         JSONArray arr = new JSONArray();
         try {
-            for (EjercicioSeleccionado sel : ejerciciosSeleccionados) {
-                JSONObject obj = new JSONObject();
-                obj.put("ejercicioId",      sel.getEjercicio().getId());
-                obj.put("nombre",           sel.getEjercicio().getNombre());
-                obj.put("series",           sel.getSeries());
-                obj.put("repeticiones",     sel.getRepeticiones());
-                arr.put(obj);
+            for (BorradorRutina.Ejercicio e : borrador.ejercicios) {
+                JSONObject o = new JSONObject();
+                o.put("ejercicioId", e.ejercicioId);
+                o.put("nombre", e.nombre);
+                o.put("series", 3);
+                o.put("repeticiones", 10);
+                arr.put(o);
             }
-        } catch (JSONException ignored) {}
+        } catch (JSONException e) {
+            // JSONObject.put solo falla con un número no finito o una clave nula: aquí no hay ninguno.
+            throw new IllegalStateException(e);
+        }
         return arr.toString();
     }
 
-    // Reconstruye la lista de ejercicios seleccionados a partir del JSON recibido al volver del resumen
-    private void sincronizarDesdeJson(String json) {
-        try {
-            ejerciciosSeleccionados.clear();
-            JSONArray arr = new JSONArray(json);
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                Ejercicio e = new Ejercicio();
-                e.setId(obj.getInt("ejercicioId"));
-                e.setNombre(obj.getString("nombre"));
-                ejerciciosSeleccionados.add(
-                        new EjercicioSeleccionado(e, obj.getInt("series"), obj.getInt("repeticiones")));
-            }
-            actualizarBoton();
-        } catch (JSONException ignored) {}
-    }
+    // ── La lista ────────────────────────────────────────────────────────
 
-    // Actualiza el texto del botón "Continuar" mostrando el número de ejercicios seleccionados
-    private void actualizarBoton() {
-        btnContinuar.setText(String.format(
-                getString(R.string.anadir_ejercicios_continuar_fmt),
-                ejerciciosSeleccionados.size()));
+    private final class Adaptador extends RecyclerView.Adapter<Adaptador.Fila> {
+
+        final class Fila extends RecyclerView.ViewHolder {
+            final TextView nombre, detalle;
+            final ImageView boton;
+
+            Fila(View v) {
+                super(v);
+                nombre = v.findViewById(R.id.tvElegirNombre);
+                detalle = v.findViewById(R.id.tvElegirDetalle);
+                boton = v.findViewById(R.id.ivElegirBoton);
+            }
+        }
+
+        @NonNull
+        @Override
+        public Fila onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new Fila(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_elegir_ejercicio, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull Fila h, int position, @NonNull List<Object> payloads) {
+            onBindViewHolder(h, position);
+            // Momento 15: el «+» pasa a check con un salto; quieto con «Quitar animaciones».
+            if (payloads.contains("anadido") && !Movimiento.quieto(AnadirEjerciciosActivity.this)) {
+                Movimiento.saltar(h.boton, Movimiento.CHECK);
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull Fila h, int position) {
+            Ejercicio e = resultados.get(position);
+            boolean elegido = borrador.contiene(e.getId());
+            h.nombre.setText(e.getNombre());
+            h.detalle.setText(TextosCrearRutina.detalle(AnadirEjerciciosActivity.this, e.getGrupoMuscular(),
+                    e.getEquipoNecesario()));
+            h.itemView.setSelected(elegido);
+            h.boton.setImageResource(elegido ? R.drawable.ic_ms_check : R.drawable.ic_ms_add);
+            h.boton.setBackgroundResource(elegido ? R.drawable.bg_boton_elegir_si : R.drawable.bg_boton_elegir_no);
+            h.boton.setImageTintList(ContextCompat.getColorStateList(AnadirEjerciciosActivity.this,
+                    elegido ? R.color.gp_on_primary : R.color.gp_on_surface));
+            h.itemView.setContentDescription(e.getNombre() + ", " + h.detalle.getText());
+            ViewCompat.setAccessibilityDelegate(h.itemView, new AccessibilityDelegateCompat() {
+                @Override
+                public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                    super.onInitializeAccessibilityNodeInfo(host, info);
+                    info.setClassName(android.widget.Switch.class.getName());
+                    info.setCheckable(true);
+                    info.setChecked(borrador.contiene(e.getId()));
+                    info.addAction(new AccessibilityNodeInfoCompat.AccessibilityActionCompat(
+                            AccessibilityNodeInfoCompat.ACTION_CLICK, getString(borrador.contiene(e.getId())
+                            ? R.string.elegir_ej_quitar_a11y : R.string.elegir_ej_anadir_a11y, e.getNombre())));
+                }
+            });
+            h.itemView.setOnClickListener(v -> {
+                int p = h.getBindingAdapterPosition();
+                if (p != RecyclerView.NO_POSITION) alternar(resultados.get(p), p, v);
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return resultados.size();
+        }
     }
 }

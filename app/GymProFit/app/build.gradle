@@ -221,6 +221,7 @@ tasks.withType(Test).configureEach {
             .withPropertyName('disenoNutricion'))
     relativa(inputs.files(
             rootProject.file('../../api/gymprofit-api/src/main/java/com/gymprofit/api/controller/AlimentoController.java'),
-            rootProject.file('../../api/gymprofit-api/src/test/resources/platos/cuenta_plato_casos.csv'))
+            rootProject.file('../../api/gymprofit-api/src/test/resources/platos/cuenta_plato_casos.csv'),
+            rootProject.file('../../api/gymprofit-api/src/test/resources/programas/duracion_rutina_casos.csv'))
             .withPropertyName('api'))
 }

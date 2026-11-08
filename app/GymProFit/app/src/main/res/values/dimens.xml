@@ -222,4 +222,7 @@
     <dimen name="bloque_rutina_alto">30dp</dimen>
     <dimen name="bloque_rutina_radio">8dp</dimen>
     <dimen name="bloque_rutina_borde">1.5dp</dimen>
+    <!-- Las píldoras de zona de «Elige ejercicios» (GP-244, tablero Mezcla-2): 44 dp, y 48 de zona
+         táctil con setEnsureMinTouchTargetSize. -->
+    <dimen name="chip_zona_alto">44dp</dimen>
 </resources>

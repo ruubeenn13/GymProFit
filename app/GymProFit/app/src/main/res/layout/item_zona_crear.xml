@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_zona_crear — una zona del paso 1 de crear una rutina (GP-244, tablero Mezcla-1): el
+  nombre en la condensada, el check si está elegida y dos ejemplos debajo. Elegida, en
+  naranja con el texto sobre la marca (6,61:1 y 5,63:1); sin elegir, la tarjeta de siempre.
+  Para TalkBack es una casilla: «Pecho: Press de banca y aperturas», marcada o no. Crece con
+  la letra: 88 dp como mínimo.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.GymProFit.Card.Pequena"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="88dp"
+    app:checkedIcon="@null">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="88dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/espacio_16"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/espacio_12"
+        android:paddingBottom="@dimen/espacio_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvZonaNombre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+            <ImageView
+                android:id="@+id/ivZonaCheck"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ms_check_circle_fill"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="@dimen/espacio_4" />
+
+        <TextView
+            android:id="@+id/tvZonaEjemplos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

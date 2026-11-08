@@ -67,6 +67,16 @@ public interface RutinaApi {
     @POST("rutinas-ejercicios")
     Call<Void> addEjercicio(@Body Map<String, Object> body);
 
+    // Añade un ejercicio y devuelve su fila, con su id (GP-244): crear y editar una rutina la
+    // necesitan para no volver a añadirla si un guardado se corta a medias y se reintenta.
+    @POST("rutinas-ejercicios")
+    Call<RutinaEjercicio> anadirFila(@Body Map<String, Object> body);
+
+    // Cambia una fila de la rutina (GP-244): series, rango, medida, descanso u orden. La API
+    // guarda repeticiones como el máximo del rango, que es lo que leen las builds viejas.
+    @PATCH("rutinas-ejercicios/{id}")
+    Call<Void> patchEjercicio(@Path("id") int filaId, @Body Map<String, Object> body);
+
     // Elimina un ejercicio concreto de una rutina.
     @DELETE("rutinas-ejercicios/rutina/{rutinaId}/ejercicio/{ejercicioId}")
     Call<Void> eliminarEjercicio(@Path("rutinaId") int rutinaId, @Path("ejercicioId") int ejercicioId);

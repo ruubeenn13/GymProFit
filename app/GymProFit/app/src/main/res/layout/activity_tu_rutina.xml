@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_tu_rutina — crear una rutina, paso 3, y editarla (GP-244, tablero Mezcla-3).
+  El nombre en grande, propuesto por las zonas, con su nota; la tarjeta con ejercicios,
+  series y minutos (calculados, DuracionRutina), la barra del tiempo con su frase (al crear),
+  las zonas en una frase y el nivel con «Cambiar»; la lista de ejercicios
+  (item_tu_rutina_ejercicio: el asa para arrastrar y ⋮ con la pauta, subir, bajar y quitar);
+  «Añadir ejercicios» y «Añadir una descripción», plegada. El pie fijo dice lo que se guarda.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.GymProFit.Cabecera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:navigationContentDescription="@string/crear_cerrar"
+        app:navigationIcon="@drawable/ic_ms_close"
+        app:title="@string/crear_titulo" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollTuRutina"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/contenidoTuRutina"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/margen_pantalla"
+                android:paddingTop="@dimen/espacio_4"
+                android:paddingEnd="@dimen/margen_pantalla"
+                android:paddingBottom="@dimen/espacio_24">
+
+                <TextView
+                    android:id="@+id/tvNombreLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/etNombreRutina"
+                    android:text="@string/crear_nombre_label"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etNombreRutina"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:background="@drawable/bg_campo_nombre_rutina"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences"
+                    android:maxLength="100"
+                    android:minHeight="52dp"
+                    android:paddingBottom="@dimen/espacio_8"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+
+                <TextView
+                    android:id="@+id/tvNombreNota"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:text="@string/crear_nombre_nota"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+
+                <!-- Cómo queda la rutina -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardComoQueda"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_24">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/espacio_16"
+                        android:paddingTop="@dimen/espacio_16"
+                        android:paddingEnd="@dimen/espacio_16"
+                        android:paddingBottom="@dimen/espacio_8">
+
+                        <LinearLayout
+                            android:id="@+id/filaCifras"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="true"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:importantForAccessibility="noHideDescendants"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvCifraEjercicios"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+
+                                <TextView
+                                    android:id="@+id/tvRotuloEjercicios"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:importantForAccessibility="noHideDescendants"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvCifraSeries"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+
+                                <TextView
+                                    android:id="@+id/tvRotuloSeries"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:importantForAccessibility="noHideDescendants"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/tvCifraMinutos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Display" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/crear_cifra_minutos"
+                                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <com.google.android.material.progressindicator.LinearProgressIndicator
+                            android:id="@+id/barraTiempo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_12"
+                            android:importantForAccessibility="no"
+                            android:max="100"
+                            app:indicatorColor="?attr/colorPrimary"
+                            app:trackColor="@color/gp_meter_track"
+                            app:trackCornerRadius="4dp"
+                            app:indicatorTrackGapSize="0dp"
+            app:trackStopIndicatorSize="0dp"
+            app:trackThickness="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvFraseTiempo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_8"
+                            android:accessibilityLiveRegion="polite"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+                        <TextView
+                            android:id="@+id/tvZonasRutina"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_12"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/espacio_4"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvNivelRutina"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+                            <TextView
+                                android:id="@+id/btnCambiarNivel"
+                                style="@style/Widget.GymProFit.CabeceraSeccion.Enlace"
+                                android:layout_height="@dimen/zona_tactil"
+                                android:text="@string/btn_cambiar" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_24"
+                    android:accessibilityHeading="true"
+                    android:text="@string/crear_ejercicios"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+                <include
+                    android:id="@+id/estadoTuRutina"
+                    layout="@layout/view_estado" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTuRutina"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:nestedScrollingEnabled="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAnadirEjercicios"
+                    style="@style/Widget.GymProFit.BotonPildora"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_12"
+                    android:minHeight="52dp"
+                    android:text="@string/crear_anadir_ejercicios"
+                    android:textColor="?attr/colorOnPrimaryContainer"
+                    app:backgroundTint="?attr/colorPrimaryContainer"
+                    app:icon="@drawable/ic_ms_add"
+                    app:iconGravity="textStart"
+                    app:iconTint="?attr/colorOnPrimaryContainer" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAnadirDescripcion"
+                    style="@style/Widget.Material3.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:minHeight="@dimen/zona_tactil"
+                    android:text="@string/crear_anadir_descripcion"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                    android:textColor="?attr/colorPrimary"
+                    app:icon="@drawable/ic_ms_edit_note"
+                    app:iconTint="?attr/colorPrimary" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:hint="@string/crear_descripcion"
+                    android:visibility="gone"
+                    app:boxBackgroundMode="outline">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDescripcionRutina"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:maxLength="500"
+                        android:minLines="2" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_barra_inferior"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_16">
+
+        <TextView
+            android:id="@+id/tvPieTuRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarRutina"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:minHeight="56dp"
+            android:text="@string/crear_guardar" />
+    </LinearLayout>
+</LinearLayout>

@@ -267,9 +267,18 @@ public class EntrenarFragment extends BaseFragment {
             d.colorCuando = primario;
             d.empezarA11y = enCurso ? getString(R.string.envivo_volver_rutina_a11y, r.getNombre())
                     : getString(R.string.empezar_rutina_a11y, r.getNombre());
+            // Sin ejercicios no hay nada que empezar: sin ▶, y tocarla abre la rutina para añadirlos
+            // (GP-244, punto 10).
+            boolean sinEjercicios = r.getNumEjercicios() == 0;
             View tarjeta = es.pmdm.gymprofit.ui.tarjetas.TarjetaRutina.pintar(lista, d, textos, entradaRutinas,
-                    () -> empezar(r));
-            tarjeta.setOnClickListener(v -> MenuRutina.abrirDetalle(requireActivity(), recargar, r, v));
+                    sinEjercicios ? null : () -> empezar(r));
+            tarjeta.setOnClickListener(v -> {
+                if (sinEjercicios) {
+                    recargar.launch(es.pmdm.gymprofit.ui.activities.TuRutinaActivity.paraEditar(requireContext(), r.getId()));
+                } else {
+                    MenuRutina.abrirDetalle(requireActivity(), recargar, r, v);
+                }
+            });
             tarjeta.setOnLongClickListener(v -> {
                 MenuRutina.mostrar(requireActivity(), v, r, recargar, this::cargarMisRutinas);
                 return true;

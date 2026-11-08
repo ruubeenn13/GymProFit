@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  dialog_pauta — cambiar la pauta de un ejercicio de la rutina (GP-244, punto 8): series, si se
+  mide en repeticiones o en segundos, desde y hasta, y el descanso. Cada valor con − y +
+  redondos de 48 dp (view_paso_valor), sin teclado, que se apagan en sus límites. Va en una
+  hoja inferior con su asa.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_24">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvPautaTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
+
+        <include
+            android:id="@+id/pasoSeries"
+            layout="@layout/view_paso_valor" />
+
+        <TextView
+            android:id="@+id/tvPautaMedida"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_16"
+            android:text="@string/crear_pauta_medida"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+        <es.pmdm.gymprofit.ui.widget.SelectorPildora
+            android:id="@+id/selectorMedida"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            app:selectorNombreGrupo="@string/crear_pauta_medida" />
+
+        <include
+            android:id="@+id/pasoDesde"
+            layout="@layout/view_paso_valor" />
+
+        <include
+            android:id="@+id/pasoHasta"
+            layout="@layout/view_paso_valor" />
+
+        <include
+            android:id="@+id/pasoDescanso"
+            layout="@layout/view_paso_valor" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAplicarPauta"
+            style="@style/Widget.GymProFit.BotonPildora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_24"
+            android:text="@string/crear_pauta_aplicar" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

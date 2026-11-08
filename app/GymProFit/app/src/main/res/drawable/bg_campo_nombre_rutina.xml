@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_campo_nombre_rutina — el nombre de la rutina en grande (GP-244, tablero Mezcla-3): solo una
+     raya debajo, de 2 dp, naranja con el foco y en gp_stroke sin él (3:1 contra el fondo). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <layer-list>
+            <item android:gravity="bottom" android:height="2dp">
+                <shape android:shape="rectangle"><solid android:color="?attr/colorPrimary" /></shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:gravity="bottom" android:height="2dp">
+                <shape android:shape="rectangle"><solid android:color="@color/gp_stroke" /></shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

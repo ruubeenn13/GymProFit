@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_elegir_ejercicio — un ejercicio en «Elige ejercicios» (GP-244, tablero Mezcla-2): el
+  nombre, «Pecho, con barra» y el botón redondo de 48 dp. Sin elegir, el «+» con el borde de
+  un control (gp_stroke, 3:1); elegido, la fila en superficie y el botón naranja con el check
+  (bg_boton_elegir_*). Toda la fila responde al toque y TalkBack la lee como un interruptor.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_4"
+    android:background="@drawable/bg_fila_elegir"
+    android:gravity="center_vertical"
+    android:minHeight="68dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/espacio_16"
+    android:paddingTop="@dimen/espacio_8"
+    android:paddingEnd="@dimen/espacio_8"
+    android:paddingBottom="@dimen/espacio_8">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvElegirNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvElegirDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:importantForAccessibility="no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/ivElegirBoton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="@dimen/espacio_12"
+        android:background="@drawable/bg_boton_elegir_no"
+        android:importantForAccessibility="no"
+        android:padding="12dp"
+        android:src="@drawable/ic_ms_add"
+        app:tint="?attr/colorOnSurface" />
+</LinearLayout>
