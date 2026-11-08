@@ -41,6 +41,13 @@ public class VistaPrevia {
             this.seriesBasicos = seriesBasicos;
         }
 
+        /** Con los ejercicios que se quedan (los tests de la hoja del tiempo, GP-243). */
+        public Rutina(String nombre, int duracionMinutos, List<RutinaEjercicio> ejercicios, List<String> quitados,
+                      Integer seriesBasicos) {
+            this(nombre, duracionMinutos, quitados, seriesBasicos);
+            this.ejercicios = ejercicios;
+        }
+
         public String getCodigo() { return codigo; }
         public String getNombre() { return nombre; }
         public int getDuracionMinutos() { return duracionMinutos; }

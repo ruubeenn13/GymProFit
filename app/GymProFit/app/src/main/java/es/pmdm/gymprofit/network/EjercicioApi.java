@@ -44,6 +44,14 @@ public interface EjercicioApi {
                                     @Query("page") int page,
                                     @Query("size") int size);
 
+    // El mismo buscador en una o varias zonas a la vez (GP-244): grupoMuscular repetido en la
+    // consulta. Vacía o null, todas. Sin dificultad: crear una rutina ya no filtra por ella.
+    @GET("ejercicios/buscar")
+    Call<PageDTO<Ejercicio>> buscarEnZonas(@Query("q") String q,
+                                           @Query("grupoMuscular") java.util.List<String> grupos,
+                                           @Query("page") int page,
+                                           @Query("size") int size);
+
     // Edita parcialmente un ejercicio (panel admin). body: nombre, descripcion,
     // grupoMuscular, dificultad, equipoNecesario, instrucciones...
     @PATCH("ejercicios/{id}")

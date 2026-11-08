@@ -95,7 +95,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private boolean predefinida;
     private int rutinaUsuarioId;
 
-    // Lanzador para recibir el resultado de EditarRutinaActivity.
+    // Lanzador para recibir el resultado de «Editar rutina» (TuRutinaActivity).
     private ActivityResultLauncher<Intent> editarLauncher;
 
     private final List<RutinaEjercicio> relaciones = new ArrayList<>();
@@ -180,15 +180,9 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         es.pmdm.gymprofit.envivo.EmpezarSesion.empezar(this, rutinaId, nombre, programaNombre);
     }
 
-    // Abre EditarRutinaActivity pasando los datos actuales de la rutina.
+    // Abre «Editar rutina» (GP-244: la pantalla de crear, con la rutina cargada).
     private void abrirEditar() {
-        Intent intent = new Intent(this, EditarRutinaActivity.class);
-        intent.putExtra("rutinaId",    rutinaId);
-        intent.putExtra("nombre",      nombre);
-        intent.putExtra("descripcion", descripcion);
-        intent.putExtra("nivel",       nivel);
-        intent.putExtra("duracion",    duracion);
-        editarLauncher.launch(intent);
+        editarLauncher.launch(TuRutinaActivity.paraEditar(this, rutinaId));
     }
 
     // ── Ejercicios ──────────────────────────────────────────────────────────

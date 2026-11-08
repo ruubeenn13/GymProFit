@@ -1,123 +1,217 @@
 package es.pmdm.gymprofit.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.card.MaterialCardView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
+import es.pmdm.gymprofit.model.rutina.BorradorRutina;
+import es.pmdm.gymprofit.network.ApiCallback;
+import es.pmdm.gymprofit.network.ApiClient;
+import es.pmdm.gymprofit.network.ProgramaApi;
+import es.pmdm.gymprofit.ui.rutina.TextosCrearRutina;
 import es.pmdm.gymprofit.ui.widget.SelectorPildora;
-import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AvisoDescartar;
-import es.pmdm.gymprofit.utils.Numeros;
-import es.pmdm.gymprofit.utils.PreferencesManager;
-import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.TiempoRutinas;
+import es.pmdm.gymprofit.utils.Transiciones;
 
 // ============================================================
-// CrearRutinaActivity — pantalla del paso 1 para crear una rutina.
-// Recoge nombre, descripción, duración y nivel de la nueva rutina
-// y lanza AnadirEjerciciosActivity para completar el proceso, propagando
-// el resultado (OK/cancelado) hacia la Activity que la invocó.
+// CrearRutinaActivity — crear una rutina, paso 1: qué y cuánto (GP-244, tablero Mezcla-1).
+//
+// Las seis zonas (los GrupoMuscular de la API, sin cardio ni cuerpo completo: esos se
+// encuentran buscando entre todos), una o varias, y el tiempo: 30, 45, 60 o 75+, de entrada el
+// del programa que sigue y, si no sigue ninguno, 45. «Elegir ejercicios» pide al menos una
+// zona; «Prefiero buscar entre todos» va al paso 2 sin zonas. Lo elegido viaja en un
+// BorradorRutina. Si el paso 3 guarda o se cierra, esta también se cierra.
 // ============================================================
 public class CrearRutinaActivity extends AppCompatActivity {
 
     // Aplica la escala de fuente global de la app (agranda todo el texto uniformemente).
     @Override
-    protected void attachBaseContext(android.content.Context newBase) {
+    protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(es.pmdm.gymprofit.utils.ScaleUtils.wrap(newBase));
     }
 
-    // Campos de texto del formulario de creación.
-    private TextInputEditText etNombre, etDescripcion, etDuracion;
-    // Selector de nivel (principiante/intermedio/avanzado).
-    private SelectorPildora chipGroupNivel;
-    private PreferencesManager prefsManager;
+    /** Los tiempos del selector. */
+    static final int[] MINUTOS = {30, 45, 60, 75};
+    private static final int MINUTOS_SIN_PROGRAMA = 45;
 
-    // Nivel marcado al abrir: cambiarlo también es algo apuntado (GP-098).
-    private int nivelInicial;
+    private final List<String> zonas = new ArrayList<>();
+    private final List<MaterialCardView> tarjetas = new ArrayList<>();
+    private SelectorPildora selector;
+    private TextView tvPie;
+    // Si la persona ha tocado el tiempo: entonces no se cambia por el del programa al llegar.
+    private boolean tiempoTocado;
 
-    // Lanzador para recibir el resultado de AnadirEjerciciosActivity.
-    private ActivityResultLauncher<Intent> anadirLauncher;
+    private ActivityResultLauncher<Intent> paso2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefsManager = new PreferencesManager(this);
         setContentView(R.layout.activity_crear_rutina);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // Salir con algo elegido pregunta antes de tirarlo (GP-098).
+        AvisoDescartar.instalar(this, toolbar, () -> !zonas.isEmpty() || tiempoTocado);
 
-        etNombre       = findViewById(R.id.etNombre);
-        etDescripcion  = findViewById(R.id.etDescripcion);
-        etDuracion     = findViewById(R.id.etDuracion);
-        chipGroupNivel = findViewById(R.id.chipGroupNivel);
-        nivelInicial   = chipGroupNivel.getElegida();
+        tvPie = findViewById(R.id.tvPieCrear);
+        // El temblor de la rejilla sin zonas cabe en el margen de la pantalla: sin recortarlo.
+        ((android.view.ViewGroup) findViewById(R.id.rejillaZonas).getParent()).setClipToPadding(false);
+        montarZonas();
+        montarTiempo();
 
-        // Salir con algo apuntado pregunta antes de tirarlo (GP-098).
-        AvisoDescartar.instalar(this, toolbar, () ->
-                AvisoDescartar.hayTexto(etNombre.getText(), etDescripcion.getText(), etDuracion.getText())
-                        || chipGroupNivel.getElegida() != nivelInicial);
-
-        anadirLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-                        // Rutina creada con éxito: propaga el OK hacia arriba.
-                        setResult(RESULT_OK);
-                        finish();
-                    } else if (result.getResultCode() == android.app.Activity.RESULT_FIRST_USER) {
-                        // Cancelación especial: cierra sin propagar OK.
-                        finish();
-                    }
-                });
-
-        findViewById(R.id.btnSiguiente).setOnClickListener(v -> siguiente());
+        paso2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), r -> {
+            // Guardada (OK) o cerrada desde el paso 3 (RESULT_FIRST_USER): se acaba el asistente.
+            if (r.getResultCode() == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            } else if (r.getResultCode() == RESULT_FIRST_USER) {
+                finish();
+            }
+        });
+        findViewById(R.id.btnElegirEjercicios).setOnClickListener(v -> {
+            if (zonas.isEmpty()) {
+                Movimiento.temblar(findViewById(R.id.rejillaZonas));
+                Movimiento.vibrar(v, Movimiento.Vibracion.ERROR);
+                tvPie.announceForAccessibility(getString(R.string.crear_pie_sin_zona));
+                return;
+            }
+            abrirPaso2(false);
+        });
+        findViewById(R.id.btnBuscarTodos).setOnClickListener(v -> abrirPaso2(true));
+        pintarPie();
     }
 
-    // Valida los campos del formulario y, si son correctos, navega al paso
-    // de añadir ejercicios pasando los datos básicos de la rutina.
-    private void siguiente() {
-        String nombre = etNombre.getText().toString().trim();
-        String desc   = etDescripcion.getText().toString().trim();
-        String dur    = etDuracion.getText().toString().trim();
+    // Las seis tarjetas, de dos en dos.
+    private void montarZonas() {
+        LinearLayout rejilla = findViewById(R.id.rejillaZonas);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout fila = null;
+        for (int i = 0; i < BorradorRutina.ZONAS.size(); i++) {
+            String grupo = BorradorRutina.ZONAS.get(i);
+            if (i % 2 == 0) {
+                fila = new LinearLayout(this);
+                fila.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                if (i > 0) lp.topMargin = getResources().getDimensionPixelSize(R.dimen.espacio_12);
+                rejilla.addView(fila, lp);
+            }
+            MaterialCardView t = (MaterialCardView) inflater.inflate(R.layout.item_zona_crear, fila, false);
+            if (i % 2 == 1) {
+                ((LinearLayout.LayoutParams) t.getLayoutParams()).setMarginStart(
+                        getResources().getDimensionPixelSize(R.dimen.espacio_12));
+            }
+            ((TextView) t.findViewById(R.id.tvZonaNombre)).setText(TextosCrearRutina.zona(grupo));
+            ((TextView) t.findViewById(R.id.tvZonaEjemplos)).setText(TextosCrearRutina.ejemplos(grupo));
+            t.setContentDescription(getString(R.string.crear_zona_a11y, getString(TextosCrearRutina.zona(grupo)),
+                    getString(TextosCrearRutina.ejemplos(grupo))));
+            t.setOnClickListener(v -> {
+                if (zonas.contains(grupo)) zonas.remove(grupo);
+                else zonas.add(grupo);
+                Movimiento.vibrar(v, Movimiento.Vibracion.LIGERA);
+                pintarZona(t, zonas.contains(grupo));
+                pintarPie();
+            });
+            pintarZona(t, false);
+            fila.addView(t);
+            tarjetas.add(t);
+        }
+    }
 
-        if (nombre.isEmpty()) { error(etNombre, getString(R.string.error_campo_requerido)); return; }
-        if (desc.isEmpty())   { error(etDescripcion, getString(R.string.error_campo_requerido)); return; }
+    // Elegida, en naranja con el texto sobre la marca y el check; sin elegir, la tarjeta de siempre.
+    private void pintarZona(MaterialCardView t, boolean elegida) {
+        t.setChecked(elegida);
+        // Elegida, sin el borde gris de la tarjeta en claro: toda naranja, como el tablero.
+        t.setStrokeWidth(elegida ? 0 : getResources().getDimensionPixelSize(R.dimen.tarjeta_borde));
+        int fondo = elegida ? R.color.gp_primary : R.color.gp_surface;
+        int texto = elegida ? R.color.gp_on_primary : R.color.gp_on_surface;
+        int apoyo = elegida ? R.color.gp_on_primary : R.color.gp_text_secondary;
+        t.setCardBackgroundColor(ContextCompat.getColor(this, fondo));
+        ((TextView) t.findViewById(R.id.tvZonaNombre)).setTextColor(ContextCompat.getColor(this, texto));
+        ((TextView) t.findViewById(R.id.tvZonaEjemplos)).setTextColor(ContextCompat.getColor(this, apoyo));
+        ImageView check = t.findViewById(R.id.ivZonaCheck);
+        check.setImageTintList(ContextCompat.getColorStateList(this, R.color.gp_on_primary));
+        boolean antes = check.getVisibility() == View.VISIBLE;
+        check.setVisibility(elegida ? View.VISIBLE : View.INVISIBLE);
+        // Momento 1: el check salta al elegir; quieto con «Quitar animaciones».
+        if (elegida && !antes && !Movimiento.quieto(this)) Movimiento.saltar(check, Movimiento.CHECK);
+    }
 
-        // La duración se lee con rango: el campo es numérico y sin límite de
-        // longitud, así que un número largo desbordaba int y cerraba la app.
-        Integer duracion = Numeros.entero(dur, 5, 300);
-        if (duracion == null) {
-            error(etDuracion, getString(R.string.error_duracion_invalida));
+    // El selector de tiempo: 45 de entrada y, si sigue un programa, el suyo en cuanto llega.
+    private void montarTiempo() {
+        selector = findViewById(R.id.selectorMinutos);
+        TiempoRutinas.Textos t = TiempoRutinas.Textos.de(this);
+        CharSequence[] textos = new CharSequence[MINUTOS.length];
+        CharSequence[] nombres = new CharSequence[MINUTOS.length];
+        for (int i = 0; i < MINUTOS.length; i++) {
+            textos[i] = MINUTOS[i] == 75 ? getString(R.string.seguir_chip_75)
+                    : getString(R.string.seguir_chip_min, MINUTOS[i]);
+            nombres[i] = t.minutos(MINUTOS[i]);
+        }
+        selector.setOpciones(textos, nombres);
+        elegirMinutos(MINUTOS_SIN_PROGRAMA);
+        selector.setAlElegir(i -> {
+            tiempoTocado = true;
+            pintarPie();
+        });
+        ApiClient.service(ProgramaApi.class).seguido().enqueue(new ApiCallback<ProgramaQueSigue>() {
+            @Override public void onOk(ProgramaQueSigue s) {
+                if (isFinishing() || tiempoTocado || s == null) return;
+                elegirMinutos(s.getMinutos());
+                pintarPie();
+            }
+            @Override public void onFail(int code, String message) {
+                // Seguro: sin el programa se queda en 45, que es lo que dice el diseño sin programa,
+                // y el selector deja elegir otro. No hay nada que reintentar ni que enseñar.
+            }
+        });
+    }
+
+    private void elegirMinutos(int minutos) {
+        for (int i = 0; i < MINUTOS.length; i++) {
+            if (MINUTOS[i] == minutos) selector.setElegida(i, false);
+        }
+    }
+
+    private int minutos() {
+        return MINUTOS[Math.max(0, selector.getElegida())];
+    }
+
+    // «Pecho y hombros, 45 minutos.» o, sin zonas, «Elige al menos una zona.»
+    private void pintarPie() {
+        if (zonas.isEmpty()) {
+            tvPie.setText(R.string.crear_pie_sin_zona);
             return;
         }
-
-        Intent intent = new Intent(this, AnadirEjerciciosActivity.class);
-        intent.putExtra("nombre", nombre);
-        intent.putExtra("descripcion", desc);
-        intent.putExtra("nivel", obtenerNivel());
-        intent.putExtra("duracion", duracion);
-        Transiciones.avanzar(this, intent, anadirLauncher);
+        BorradorRutina b = new BorradorRutina();
+        b.zonas = new ArrayList<>(zonas);
+        String nombre = b.nombrePropuesto(BorradorRutina.Textos.de(this));
+        tvPie.setText(getString(R.string.crear_pie_paso1, nombre, TiempoRutinas.Textos.de(this).minutos(minutos())));
     }
 
-    // Marca el error en el propio campo (no en un toast suelto) y le da el foco,
-    // para que se vea cuál de los tres falla.
-    private void error(TextInputEditText campo, String mensaje) {
-        UIHelper.marcarError(campo, mensaje);
-        campo.requestFocus();
-    }
-
-    // Traduce el chip de nivel seleccionado a su valor de texto para la API.
-    private String obtenerNivel() {
-        int i = chipGroupNivel.getElegida();
-        if (i == 1) return "INTERMEDIO";
-        if (i == 2) return "AVANZADO";
-        return "PRINCIPIANTE";
+    private void abrirPaso2(boolean todos) {
+        BorradorRutina b = new BorradorRutina();
+        if (!todos) b.zonas = new ArrayList<>(zonas);
+        b.minutos = minutos();
+        Transiciones.avanzar(this, AnadirEjerciciosActivity.paraCrear(this, b), paso2);
     }
 }

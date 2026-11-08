@@ -131,8 +131,9 @@
         <activity android:name=".ui.activities.BienvenidaActivity" android:exported="false" />
         <activity android:name=".ui.activities.AltaActivity" android:exported="false" />
         <!-- Rutinas: edición, detalle, creación y gestión de ejercicios asociados -->
+        <!-- Crear (paso 3) y editar una rutina son la misma pantalla (GP-244). -->
         <activity
-            android:name=".ui.activities.EditarRutinaActivity"
+            android:name=".ui.activities.TuRutinaActivity"
             android:exported="false" />
         <activity android:name=".ui.activities.ProgramasActivity" android:exported="false" />
         <activity android:name=".ui.activities.ProgramaDetalleActivity" android:exported="false" />
@@ -141,9 +142,6 @@
             android:exported="false" />
         <activity
             android:name=".ui.activities.DetalleEjercicioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.activities.ResumenCrearRutinaActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activities.AnadirEjerciciosActivity"

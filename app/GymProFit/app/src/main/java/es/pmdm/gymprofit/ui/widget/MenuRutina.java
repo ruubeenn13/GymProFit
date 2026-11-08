@@ -15,7 +15,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.ui.activities.DetalleRutinaActivity;
-import es.pmdm.gymprofit.ui.activities.EditarRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.TuRutinaActivity;
 import es.pmdm.gymprofit.ui.activities.EditarRutinaAdminActivity;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.UIHelper;
@@ -69,12 +69,8 @@ public final class MenuRutina {
                 intent.putExtra("categoria",       rutina.getCategoria());
                 intent.putExtra("diasSemana",      rutina.getDiasSemana());
             } else {
-                intent = new Intent(act, EditarRutinaActivity.class);
-                intent.putExtra("rutinaId",    rutina.getId());
-                intent.putExtra("nombre",      rutina.getNombre());
-                intent.putExtra("descripcion", rutina.getDescripcion());
-                intent.putExtra("nivel",       rutina.getNivel());
-                intent.putExtra("duracion",    rutina.getDuracionMinutos());
+                // «Editar rutina» (GP-244): la pantalla de crear, que la carga ella misma.
+                intent = TuRutinaActivity.paraEditar(act, rutina.getId());
             }
             editar.launch(intent);
         }));

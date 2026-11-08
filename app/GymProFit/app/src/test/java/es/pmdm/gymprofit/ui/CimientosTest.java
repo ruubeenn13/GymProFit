@@ -215,8 +215,8 @@ public class CimientosTest {
     public void las_opciones_que_se_excluyen_van_en_el_selector_de_la_app() throws IOException {
         String[][] grupos = {
                 {"layout/activity_estadisticas_nutricion.xml", "chipsPeriodo"},
-                {"layout/activity_crear_rutina.xml", "chipGroupNivel"},
-                {"layout/activity_editar_rutina.xml", "chipGroupNivelEditar"},
+                {"layout/activity_crear_rutina.xml", "selectorMinutos"},
+                {"layout/dialog_pauta.xml", "selectorMedida"},
                 {"layout/fragment_medidas.xml", "chipsMetrica"},
                 {"layout/fragment_medidas.xml", "chipsRango"},
                 {"layout/dialog_seguir_programa.xml", "chipsMinutos"},

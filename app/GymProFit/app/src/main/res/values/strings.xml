@@ -1018,7 +1018,7 @@
     <string name="seguir_titulo">¿Cuánto tiempo tienes por sesión?</string>
     <string name="seguir_chip_min">%1$d\u00A0min</string>
     <string name="seguir_chip_75">75+\u00A0min</string>
-    <string name="seguir_regla">Con menos tiempo se quitan primero los extras del final.</string>
+    <string name="seguir_regla">Con menos tiempo salen primero los extras, desde el final, y luego series de los básicos.</string>
     <string name="seguir_ajuste_avanzado">Por tu nivel, más series en cada ejercicio.</string>
     <string name="seguir_ajuste_fuerza">Por «Ganar fuerza», los básicos con carga van a 4–6\u00A0repeticiones y 3\u00A0min de descanso.</string>
     <string name="seguir_sin">Sin %1$s</string>
@@ -2743,4 +2743,163 @@
     <string name="perfil_dato_actividad">Actividad</string>
     <string name="perfil_datos_editar_a11y">Editar tus datos</string>
     <string name="perfil_dato_a11y">%1$s, %2$s</string>
+    <!-- La hoja «¿Cuánto tiempo tienes por sesión?» (GP-243): TiempoRutinas y SeguirProgramaHoja. -->
+    <plurals name="tiempo_linea_quedan">
+        <item quantity="one">%1$d de %2$d ejercicio.</item>
+        <item quantity="other">%1$d de %2$d ejercicios.</item>
+    </plurals>
+    <plurals name="tiempo_linea_enteros">
+        <item quantity="one">%d ejercicio, entero.</item>
+        <item quantity="other">Los %d ejercicios, enteros.</item>
+    </plurals>
+    <plurals name="tiempo_linea_todos">
+        <item quantity="one">%d ejercicio.</item>
+        <item quantity="other">Los %d ejercicios.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_a">
+        <item quantity="one">Los básicos, a %d serie.</item>
+        <item quantity="other">Los básicos, a %d series.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_con">
+        <item quantity="one">Los básicos, con su %d serie.</item>
+        <item quantity="other">Los básicos, con sus %d series.</item>
+    </plurals>
+    <string name="tiempo_linea_basicos_todas">Los básicos, con todas sus series.</string>
+    <plurals name="tiempo_minutos">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <string name="tiempo_minutos_75">75 minutos o más</string>
+    <string name="tiempo_frase_igual">Con %1$s, tus rutinas se quedan enteras.</string>
+    <plurals name="tiempo_frase_basicos">
+        <item quantity="one">Con %1$s, cada rutina se queda en su básico.</item>
+        <item quantity="other">Con %1$s, cada rutina se queda en sus %2$d\u00A0básicos.</item>
+    </plurals>
+    <string name="tiempo_frase_sus_basicos">Con %1$s, cada rutina se queda en sus básicos.</string>
+    <plurals name="tiempo_frase_series">
+        <item quantity="one">Con %1$s, los básicos pasan a %2$d\u00A0serie.</item>
+        <item quantity="other">Con %1$s, los básicos pasan a %2$d\u00A0series.</item>
+    </plurals>
+    <plurals name="tiempo_frase_salen">
+        <item quantity="one">Con %1$s, sale %2$d\u00A0ejercicio de tus rutinas.</item>
+        <item quantity="other">Con %1$s, salen %2$d\u00A0ejercicios de tus rutinas.</item>
+    </plurals>
+    <string name="seguir_tu_programa">%1$s, tu programa</string>
+    <string name="seguir_tiempo_min">min</string>
+    <string name="seguir_tiempo_ahora">ahora</string>
+    <string name="seguir_tiempo_ahora_a11y">%1$s, el que tienes ahora</string>
+    <plurals name="seguir_rehacen_titulo">
+        <item quantity="one">Se rehace tu rutina</item>
+        <item quantity="other">Se rehacen tus %d rutinas</item>
+    </plurals>
+    <string name="seguir_rehacen_texto">Pierdes los cambios que les hiciste. Tus sesiones y récords se quedan.</string>
+    <string name="seguir_otro_titulo">Dejas de seguir %1$s</string>
+    <string name="seguir_otro_texto">Sus rutinas salen de Entrenar. Tus sesiones y récords se quedan.</string>
+    <string name="seguir_rutina_a11y">%1$s, %2$s. %3$s</string>
+    <string name="seguir_ver_ejercicios_a11y">Ver los ejercicios de %1$s</string>
+    <string name="seguir_ocultar_ejercicios_a11y">Ocultar los ejercicios de %1$s</string>
+    <string name="seguir_fuera">fuera</string>
+    <string name="seguir_ejercicio_a11y">%1$s, %2$s</string>
+    <!-- Crear y editar una rutina (GP-244): BorradorRutina, CrearRutinaActivity, AnadirEjerciciosActivity y TuRutinaActivity. -->
+    <string name="crear_nombre_por_defecto">Mi rutina</string>
+    <string name="crear_tiempo_cabe">%1$d de tus %2$d minutos: te cabe un ejercicio más.</string>
+    <string name="crear_tiempo_justo">Justo en tus %1$d minutos.</string>
+    <string name="crear_tiempo_te_pasas">Te pasas unos %1$d minutos de tus %2$d.</string>
+    <string name="crear_tiempo_75">Unos %1$d minutos, en tus 75 o más.</string>
+    <plurals name="crear_pie">
+        <item quantity="one">%1$d ejercicio y unos %2$d minutos.</item>
+        <item quantity="other">%1$d ejercicios y unos %2$d minutos.</item>
+    </plurals>
+    <string name="crear_pie_vacio">Añade al menos un ejercicio.</string>
+    <string name="crear_titulo">Nueva rutina</string>
+    <string name="editar_titulo">Editar rutina</string>
+    <string name="crear_cerrar">Cerrar</string>
+    <string name="crear_que_entrenar">¿Qué quieres entrenar?</string>
+    <string name="crear_que_entrenar_apoyo">Elige una o varias zonas.</string>
+    <string name="crear_zona_pecho">Pecho</string>
+    <string name="crear_zona_espalda">Espalda</string>
+    <string name="crear_zona_pierna">Pierna</string>
+    <string name="crear_zona_hombros">Hombros</string>
+    <string name="crear_zona_brazos">Brazos</string>
+    <string name="crear_zona_abdomen">Abdomen</string>
+    <string name="crear_zona_pecho_ej">Press de banca y aperturas</string>
+    <string name="crear_zona_espalda_ej">Remo, jalón y dominadas</string>
+    <string name="crear_zona_pierna_ej">Sentadilla, prensa y zancadas</string>
+    <string name="crear_zona_hombros_ej">Press militar y elevaciones</string>
+    <string name="crear_zona_brazos_ej">Curl y extensión de tríceps</string>
+    <string name="crear_zona_abdomen_ej">Plancha y crunch en polea</string>
+    <string name="crear_zona_a11y">%1$s: %2$s</string>
+    <string name="crear_cuanto_tiempo">¿Cuánto tiempo tienes?</string>
+    <string name="crear_cuanto_apoyo">Mientras eliges, te decimos cuánto te queda.</string>
+    <string name="crear_buscar_todos">Prefiero buscar entre todos</string>
+    <string name="crear_pie_paso1">%1$s, %2$s.</string>
+    <string name="crear_pie_sin_zona">Elige al menos una zona.</string>
+    <string name="crear_elegir_ejercicios">Elegir ejercicios</string>
+    <string name="elegir_ej_titulo">Elige ejercicios</string>
+    <string name="elegir_ej_quitar_zona_a11y">Quitar el filtro de %1$s</string>
+    <string name="elegir_ej_mas_zona">Zona</string>
+    <string name="elegir_ej_mas_zona_a11y">Añadir una zona</string>
+    <string name="elegir_ej_fila_detalle">%1$s, %2$s</string>
+    <string name="equipo_barra">con barra</string>
+    <string name="equipo_barra_z">con barra Z</string>
+    <string name="equipo_mancuernas">con mancuernas</string>
+    <string name="equipo_polea">en polea</string>
+    <string name="equipo_maquina">en máquina</string>
+    <string name="equipo_kettlebell">con kettlebell</string>
+    <string name="equipo_banda">con banda elástica</string>
+    <string name="equipo_sin">sin equipo</string>
+    <string name="elegir_ej_anadir_a11y">Añadir %1$s</string>
+    <string name="elegir_ej_quitar_a11y">Quitar %1$s</string>
+    <plurals name="elegir_ej_llevas">
+        <item quantity="one">%d elegido</item>
+        <item quantity="other">%d elegidos</item>
+    </plurals>
+    <string name="elegir_ej_pie_tiempo">Unos %1$d de tus %2$d\u00A0min</string>
+    <string name="elegir_ej_pie_tiempo_75">Unos %1$d de tus 75+\u00A0min</string>
+    <string name="elegir_ej_listo">Listo</string>
+    <string name="elegir_ej_vacio">No hay ejercicios con eso en estas zonas.</string>
+    <string name="crear_nombre_label">Nombre</string>
+    <string name="crear_nombre_nota">Sale de las zonas que elegiste; cámbialo si quieres.</string>
+    <string name="crear_nombre_nota_todos">Sale de las zonas de tus ejercicios; cámbialo si quieres.</string>
+    <plurals name="crear_cifra_ejercicios">
+        <item quantity="one">ejercicio</item>
+        <item quantity="other">ejercicios</item>
+    </plurals>
+    <plurals name="crear_cifra_series">
+        <item quantity="one">serie</item>
+        <item quantity="other">series</item>
+    </plurals>
+    <string name="crear_cifra_minutos">min, más o menos</string>
+    <string name="crear_resumen_a11y">%1$d %2$s, %3$d %4$s y unos %5$d minutos.</string>
+    <string name="crear_nivel">Para nivel %1$s, el tuyo.</string>
+    <string name="crear_nivel_otro">Para nivel %1$s.</string>
+    <string name="crear_nivel_titulo">Nivel de la rutina</string>
+    <string name="crear_cambiar_nivel_a11y">Cambiar el nivel</string>
+    <string name="crear_ejercicios">Ejercicios</string>
+    <string name="crear_opciones_a11y">Opciones de %1$s</string>
+    <string name="crear_cambiar_pauta">Cambiar la pauta</string>
+    <string name="crear_subir">Subir</string>
+    <string name="crear_bajar">Bajar</string>
+    <string name="crear_quitar">Quitar</string>
+    <string name="crear_fila_a11y">%1$d de %2$d: %3$s, %4$s</string>
+    <string name="crear_anadir_ejercicios">Añadir ejercicios</string>
+    <string name="crear_anadir_descripcion">Añadir una descripción</string>
+    <string name="crear_descripcion">Descripción</string>
+    <string name="crear_guardar">Guardar rutina</string>
+    <string name="editar_guardar">Guardar cambios</string>
+    <string name="crear_error_guardar">No se ha podido guardar la rutina. Inténtalo otra vez.</string>
+    <string name="crear_error_cargar">No se ha podido cargar la rutina.</string>
+    <string name="crear_pauta_titulo">La pauta de %1$s</string>
+    <string name="crear_pauta_series">Series</string>
+    <string name="crear_pauta_medida">Se mide en</string>
+    <string name="crear_pauta_repeticiones">Repeticiones</string>
+    <string name="crear_pauta_segundos">Segundos</string>
+    <string name="crear_pauta_desde">Desde</string>
+    <string name="crear_pauta_hasta">Hasta</string>
+    <string name="crear_pauta_descanso">Descanso, en segundos</string>
+    <string name="crear_pauta_menos_a11y">Menos: %1$s</string>
+    <string name="crear_pauta_mas_a11y">Más: %1$s</string>
+    <string name="crear_pauta_aplicar">Aplicar</string>
+    <string name="crear_pauta_con_descanso">%1$s, %2$d\u00A0s de descanso</string>
+    <string name="rutina_sin_ejercicios">Sin ejercicios todavía</string>
 </resources>

@@ -1,11 +1,21 @@
 package es.pmdm.gymprofit.ui.widget;
 
+import android.graphics.Paint;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -19,29 +29,41 @@ import java.util.Map;
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.programa.VistaPrevia;
+import es.pmdm.gymprofit.model.rutina.RutinaEjercicio;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ProgramaApi;
 import es.pmdm.gymprofit.utils.LoadingDialog;
-import es.pmdm.gymprofit.utils.TuPrograma;
+import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.Pauta;
+import es.pmdm.gymprofit.utils.TiempoRutinas;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// SeguirProgramaHoja — seguir un programa, o cambiar el tiempo del que sigue (lote 1.2.1).
+// SeguirProgramaHoja — «¿Cuánto tiempo tienes por sesión?» (GP-243, tablero Tiempo-1; antes
+// lote 1.2.1).
 //
-// «¿Cuánto tiempo tienes por sesión?» con 30, 45, 60 y 75+: la primera vez 60, y al
-// cambiar el tiempo el que tenía. Cada elección pide a la API la vista previa (la app no
-// aplica ninguna regla) y enseña cada rutina con sus minutos y lo que se queda fuera. Si
-// ya sigue otro programa, o este mismo, lo dice antes de pulsar: sus rutinas salen de
-// Entrenar, o se rehacen y se pierden sus cambios; las sesiones y los récords se quedan.
+// Seguir un programa, o cambiar el tiempo del que sigue: 30, 45, 60 y 75+ en el selector,
+// con «ahora» bajo el que tiene. Cada elección pide a la API la vista previa (la app no
+// aplica ninguna regla: VistaPrevia) y la hoja se rehace con ella: la frase de lo que cambia
+// (TiempoRutinas.frase), una tarjeta por rutina con sus bloques y su línea, desplegable con
+// sus ejercicios, la regla del recorte y el aviso de lo que pasa al pulsar. Los casos de
+// siempre: seguir por primera vez, «Cambiar a», «Rehacer las rutinas», «Ya sigues otro»,
+// cargando y error con reintento.
 // ============================================================
 public final class SeguirProgramaHoja {
 
     private SeguirProgramaHoja() { }
 
     private static final int[] MINUTOS = {30, 45, 60, 75};
+
+    // Lo que mide la cifra y su «min» o «ahora» dentro de la opción (texto de 16 sp): 24 y 13 sp.
+    private static final float CIFRA_OPCION = 1.5f;
+    private static final float SUB_OPCION = 13f / 16f;
+    // « min» junto a los minutos de una rutina: 14 sp sobre la cifra de 26.
+    private static final float MIN_RUTINA = 14f / 26f;
 
     /**
      * @param codigo   programa que se va a seguir.
@@ -64,39 +86,46 @@ public final class SeguirProgramaHoja {
 
         boolean mismo = seguido != null && seguido.getPrograma() != null
                 && codigo.equals(seguido.getPrograma().getCodigo());
-        // Los minutos por sesión en el selector de la app (GP-224); «75+» es el último.
+        int actuales = mismo ? seguido.getMinutos() : 0;
+        ((TextView) raiz.findViewById(R.id.tvSeguirPrograma)).setText(mismo
+                ? act.getString(R.string.seguir_tu_programa, nombre) : nombre);
+
         SelectorPildora chips = raiz.findViewById(R.id.chipsMinutos);
-        CharSequence[] textos = new CharSequence[MINUTOS.length];
+        CharSequence[] nombres = new CharSequence[MINUTOS.length];
+        TiempoRutinas.Textos t = TiempoRutinas.Textos.de(act);
         for (int i = 0; i < MINUTOS.length; i++) {
-            textos[i] = MINUTOS[i] == 75 ? act.getString(R.string.seguir_chip_75)
-                    : act.getString(R.string.seguir_chip_min, MINUTOS[i]);
+            String minutos = t.minutos(MINUTOS[i]);
+            nombres[i] = MINUTOS[i] == actuales ? act.getString(R.string.seguir_tiempo_ahora_a11y, minutos) : minutos;
         }
-        chips.setOpciones(textos);
-        int inicial = mismo ? seguido.getMinutos() : 60;
+        chips.setOpciones(opciones(act, -1, actuales), nombres);
+        int inicial = mismo ? actuales : 60;
         for (int i = 0; i < MINUTOS.length; i++) {
             if (MINUTOS[i] == inicial) chips.setElegida(i, false);
         }
+        pintarOpciones(act, chips, actuales);
 
-        TextView aviso = raiz.findViewById(R.id.tvAvisoSeguir);
         View boton = raiz.findViewById(R.id.btnConfirmarSeguir);
         VistaEstado estado = new VistaEstado(raiz.findViewById(R.id.estadoVistaPrevia));
-        // Solo cuenta la respuesta de la última elección: cambiar rápido de chip no mezcla.
+        // Solo cuenta la respuesta de la última elección: cambiar rápido de opción no mezcla.
         int[] pedida = {0};
 
         Runnable[] cargar = new Runnable[1];
         cargar[0] = () -> {
             int minutos = MINUTOS[Math.max(0, chips.getElegida())];
-            pintarAviso(act, aviso, boton, mismo, seguido, nombre, minutos);
+            ((TextView) boton).setText(act.getString(textoBoton(mismo, actuales, minutos),
+                    act.getString(R.string.duracion_min, minutos)));
             int esta = ++pedida[0];
             estado.cargando();
             ((LinearLayout) raiz.findViewById(R.id.listaVistaPrevia)).removeAllViews();
+            raiz.findViewById(R.id.tvFraseTiempo).setVisibility(View.GONE);
             raiz.findViewById(R.id.tvAjustes).setVisibility(View.GONE);
             boton.setEnabled(false);
             api.vistaPrevia(codigo, minutos).enqueue(new ApiCallback<VistaPrevia>() {
                 @Override public void onOk(VistaPrevia vista) {
                     if (esta != pedida[0] || !hoja.isShowing()) return;
                     estado.oculto();
-                    pintarVista(act, raiz, vista);
+                    pintarVista(act, raiz, vista, minutos);
+                    pintarAviso(act, raiz, mismo, seguido, vista);
                     boton.setEnabled(true);
                 }
                 @Override public void onFail(int code, String message) {
@@ -105,7 +134,10 @@ public final class SeguirProgramaHoja {
                 }
             });
         };
-        chips.setAlElegir(i -> cargar[0].run());
+        chips.setAlElegir(i -> {
+            pintarOpciones(act, chips, actuales);
+            cargar[0].run();
+        });
 
         boton.setOnClickListener(v -> {
             int minutos = MINUTOS[Math.max(0, chips.getElegida())];
@@ -131,20 +163,66 @@ public final class SeguirProgramaHoja {
         cargar[0].run();
     }
 
-    // El aviso si ya sigue uno, y el texto del botón.
-    private static void pintarAviso(FragmentActivity act, TextView aviso, View boton, boolean mismo,
-                                    @Nullable ProgramaQueSigue seguido, String nombre, int minutos) {
-        String texto = null;
-        String minutosTxt = act.getString(R.string.duracion_min, minutos);
-        if (mismo) {
-            texto = act.getString(R.string.seguir_mismo, nombre, minutosTxt);
-        } else if (seguido != null && seguido.getPrograma() != null) {
-            texto = act.getString(R.string.seguir_ya_sigues_otro, seguido.getPrograma().getNombre());
+    // «30» grande y «min» (o «ahora») debajo, en una opción del selector.
+    // Barlow 600 a 13 sp; «ahora», sin elegir, en el texto del contenedor naranja, como el tablero:
+    // así se distingue de «min» (8,47:1 en oscuro y 10,23:1 en claro sobre la pista).
+    private static CharSequence opcion(FragmentActivity act, String cifra, String sub, boolean destacar) {
+        SpannableString s = new SpannableString(cifra + "\n" + sub);
+        int desde = cifra.length() + 1;
+        s.setSpan(new RelativeSizeSpan(CIFRA_OPCION), 0, cifra.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        s.setSpan(new RelativeSizeSpan(SUB_OPCION), desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        android.graphics.Typeface barlow = ResourcesCompat.getFont(act, R.font.barlow_semibold);
+        if (barlow != null) s.setSpan(new FuenteSpan(barlow), desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (destacar) {
+            s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(act, R.color.gp_on_primary_container)),
+                    desde, s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        aviso.setText(texto);
-        aviso.setVisibility(texto == null ? View.GONE : View.VISIBLE);
-        ((TextView) boton).setText(act.getString(textoBoton(mismo, mismo ? seguido.getMinutos() : 0, minutos),
-                minutosTxt));
+        return s;
+    }
+
+    // Los textos de las cuatro opciones; la elegida, sin color propio (lo pone el selector).
+    private static CharSequence[] opciones(FragmentActivity act, int elegida, int actuales) {
+        CharSequence[] textos = new CharSequence[MINUTOS.length];
+        for (int i = 0; i < MINUTOS.length; i++) {
+            boolean ahora = MINUTOS[i] == actuales;
+            textos[i] = opcion(act, MINUTOS[i] == 75 ? "75+" : String.valueOf(MINUTOS[i]),
+                    act.getString(ahora ? R.string.seguir_tiempo_ahora : R.string.seguir_tiempo_min),
+                    ahora && i != elegida);
+        }
+        return textos;
+    }
+
+    // Al cambiar de opción, «ahora» pierde o recupera su color: sobre el naranja va en el del texto.
+    private static void pintarOpciones(FragmentActivity act, SelectorPildora chips, int actuales) {
+        CharSequence[] textos = opciones(act, chips.getElegida(), actuales);
+        for (int i = 0; i < textos.length; i++) chips.getOpcion(i).setText(textos[i]);
+    }
+
+    // El aviso de lo que pasa al pulsar: se rehacen tus rutinas, o dejas de seguir el otro.
+    private static void pintarAviso(FragmentActivity act, View raiz, boolean mismo,
+                                    @Nullable ProgramaQueSigue seguido, VistaPrevia vista) {
+        View aviso = raiz.findViewById(R.id.avisoSeguir);
+        String titulo = null;
+        String texto = null;
+        int icono = R.drawable.ic_ms_restart_alt;
+        if (mismo) {
+            int n = vista.getRutinas() != null ? vista.getRutinas().size() : 0;
+            titulo = act.getResources().getQuantityString(R.plurals.seguir_rehacen_titulo, n, n);
+            texto = act.getString(R.string.seguir_rehacen_texto);
+        } else if (seguido != null && seguido.getPrograma() != null) {
+            titulo = act.getString(R.string.seguir_otro_titulo, seguido.getPrograma().getNombre());
+            texto = act.getString(R.string.seguir_otro_texto);
+            icono = R.drawable.ic_ms_autorenew;
+        }
+        if (titulo == null) {
+            aviso.setVisibility(View.GONE);
+            return;
+        }
+        ((ImageView) raiz.findViewById(R.id.ivAvisoSeguir)).setImageResource(icono);
+        ((TextView) raiz.findViewById(R.id.tvAvisoTitulo)).setText(titulo);
+        ((TextView) raiz.findViewById(R.id.tvAvisoSeguir)).setText(texto);
+        aviso.setContentDescription(titulo + ". " + texto);
+        aviso.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -161,23 +239,27 @@ public final class SeguirProgramaHoja {
         return actuales == elegidos ? R.string.seguir_boton_rehacer : R.string.seguir_boton_mismo;
     }
 
-    // Cada rutina con sus minutos y lo que cambia, y el ajuste del perfil.
-    private static void pintarVista(FragmentActivity act, View raiz, VistaPrevia vista) {
+    // La frase, una tarjeta por rutina y el ajuste del perfil.
+    private static void pintarVista(FragmentActivity act, View raiz, VistaPrevia vista, int minutos) {
+        TiempoRutinas.Textos t = TiempoRutinas.Textos.de(act);
+        TextView frase = raiz.findViewById(R.id.tvFraseTiempo);
+        frase.setText(TiempoRutinas.frase(t, minutos, vista.getRutinas()));
+        frase.setVisibility(View.VISIBLE);
+
         LinearLayout lista = raiz.findViewById(R.id.listaVistaPrevia);
         lista.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(act);
+        List<View> tarjetas = new ArrayList<>();
         if (vista.getRutinas() != null) {
             for (VistaPrevia.Rutina r : vista.getRutinas()) {
-                View fila = inflater.inflate(R.layout.item_vista_previa_rutina, lista, false);
-                String titulo = act.getString(R.string.seguir_rutina_linea, r.getNombre(),
-                        act.getString(R.string.duracion_min, r.getDuracionMinutos()));
-                String detalle = detalle(act, r);
-                ((TextView) fila.findViewById(R.id.tvVistaNombre)).setText(titulo);
-                ((TextView) fila.findViewById(R.id.tvVistaDetalle)).setText(detalle);
-                fila.setContentDescription(titulo + ". " + detalle);
-                lista.addView(fila);
+                View tarjeta = inflater.inflate(R.layout.item_vista_previa_rutina, lista, false);
+                pintarRutina(act, t, tarjeta, r);
+                lista.addView(tarjeta);
+                tarjetas.add(tarjeta);
             }
         }
+        // Momento 3: las tarjetas entran una tras otra; con «Quitar animaciones», quietas.
+        Movimiento.entrar(0, tarjetas.toArray(new View[0]));
 
         List<String> ajustes = new ArrayList<>();
         if (vista.getAjustes() != null) {
@@ -193,18 +275,76 @@ public final class SeguirProgramaHoja {
         tvAjustes.setVisibility(ajustes.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
-    /** «Sin A ni B · Básicos a 2 series», o «Completa» si no cambia nada. */
-    static String detalle(FragmentActivity act, VistaPrevia.Rutina r) {
-        List<String> partes = new ArrayList<>();
-        if (r.getQuitados() != null && !r.getQuitados().isEmpty()) {
-            partes.add(act.getString(R.string.seguir_sin, TuPrograma.enumerar(r.getQuitados(),
-                    act.getString(R.string.seguir_separador), act.getString(R.string.seguir_conector))));
+    // Una rutina: nombre, minutos, bloques, línea y, desplegada, sus ejercicios.
+    private static void pintarRutina(FragmentActivity act, TiempoRutinas.Textos t, View tarjeta,
+                                     VistaPrevia.Rutina r) {
+        String nombre = r.getNombre() != null ? r.getNombre() : "";
+        String linea = TiempoRutinas.linea(t, r);
+        ((TextView) tarjeta.findViewById(R.id.tvVistaNombre)).setText(nombre);
+        String cifra = String.valueOf(r.getDuracionMinutos());
+        SpannableString min = new SpannableString(act.getString(R.string.duracion_min, r.getDuracionMinutos()));
+        min.setSpan(new RelativeSizeSpan(MIN_RUTINA), cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        min.setSpan(new ForegroundColorSpan(ContextCompat.getColor(act, R.color.gp_text_secondary)),
+                cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // « min» en Barlow 500, no en la condensada de la cifra (Two Widths Rule, como el «kg»).
+        android.graphics.Typeface barlow = ResourcesCompat.getFont(act, R.font.barlow_medium);
+        if (barlow != null) {
+            min.setSpan(new FuenteSpan(barlow), cifra.length(), min.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        if (r.getSeriesBasicos() != null) {
-            partes.add(act.getResources().getQuantityString(R.plurals.seguir_basicos, r.getSeriesBasicos(),
-                    r.getSeriesBasicos()));
+        ((TextView) tarjeta.findViewById(R.id.tvVistaMinutos)).setText(min);
+        ((BloquesRutinaView) tarjeta.findViewById(R.id.bloquesVista)).setBloques(TiempoRutinas.bloques(r));
+        ((TextView) tarjeta.findViewById(R.id.tvVistaDetalle)).setText(linea);
+        // Para TalkBack, una frase por rutina; los bloques son decorativos.
+        tarjeta.findViewById(R.id.cabeceraVista).setContentDescription(act.getString(R.string.seguir_rutina_a11y,
+                nombre, t.minutos(r.getDuracionMinutos()), linea));
+
+        LinearLayout ejercicios = tarjeta.findViewById(R.id.listaVistaEjercicios);
+        LayoutInflater inflater = LayoutInflater.from(act);
+        if (r.getEjercicios() != null) {
+            for (RutinaEjercicio e : r.getEjercicios()) {
+                ejercicios.addView(filaEjercicio(act, inflater, ejercicios, e.getNombreEjercicio(),
+                        Pauta.texto(act, e), true));
+            }
         }
-        return partes.isEmpty() ? act.getString(R.string.seguir_completa)
-                : String.join(act.getString(R.string.separador_punto), partes);
+        if (r.getQuitados() != null) {
+            for (String q : r.getQuitados()) {
+                ejercicios.addView(filaEjercicio(act, inflater, ejercicios, q,
+                        act.getString(R.string.seguir_fuera), false));
+            }
+        }
+
+        ImageButton desplegar = tarjeta.findViewById(R.id.btnDesplegarVista);
+        pintarDesplegar(act, desplegar, nombre, false);
+        desplegar.setOnClickListener(v -> {
+            boolean abrir = ejercicios.getVisibility() != View.VISIBLE;
+            ejercicios.setVisibility(abrir ? View.VISIBLE : View.GONE);
+            if (abrir) Movimiento.entrarUna(ejercicios, 0, Movimiento.PLIEGA, 8);
+            pintarDesplegar(act, desplegar, nombre, abrir);
+        });
+    }
+
+    private static void pintarDesplegar(FragmentActivity act, ImageButton b, String nombre, boolean abierta) {
+        b.setImageResource(abierta ? R.drawable.ic_ms_keyboard_arrow_up : R.drawable.ic_ms_keyboard_arrow_down);
+        b.setContentDescription(act.getString(abierta ? R.string.seguir_ocultar_ejercicios_a11y
+                : R.string.seguir_ver_ejercicios_a11y, nombre));
+    }
+
+    // Un ejercicio desplegado: check, nombre y pauta si se queda; aspa, tachado y «fuera» si sale.
+    private static View filaEjercicio(FragmentActivity act, LayoutInflater inflater, LinearLayout padre,
+                                      @Nullable String nombre, @NonNull String pauta, boolean queda) {
+        View fila = inflater.inflate(R.layout.item_vista_previa_ejercicio, padre, false);
+        String n = nombre != null ? nombre : "";
+        TextView tvNombre = fila.findViewById(R.id.tvVistaEjercicio);
+        tvNombre.setText(n);
+        ((TextView) fila.findViewById(R.id.tvVistaPauta)).setText(pauta);
+        if (!queda) {
+            ImageView icono = fila.findViewById(R.id.ivVistaEjercicio);
+            icono.setImageResource(R.drawable.ic_ms_close);
+            icono.setImageTintList(ContextCompat.getColorStateList(act, R.color.gp_text_secondary));
+            tvNombre.setTextColor(ContextCompat.getColor(act, R.color.gp_text_secondary));
+            tvNombre.setPaintFlags(tvNombre.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        fila.setContentDescription(act.getString(R.string.seguir_ejercicio_a11y, n, pauta));
+        return fila;
     }
 }

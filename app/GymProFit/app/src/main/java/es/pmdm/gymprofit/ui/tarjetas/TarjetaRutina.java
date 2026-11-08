@@ -77,18 +77,21 @@ public final class TarjetaRutina {
         }
 
         texto(t.findViewById(R.id.tvMusculos), d.zonas);
-        String pauta = textos.pauta(d.ejercicios, d.minutos);
+        // Una rutina vieja sin ejercicios (GP-244, punto 10): ni pauta ni minutos, que no los tiene.
+        boolean vacia = d.ejercicios == 0;
+        String pauta = vacia ? "" : textos.pauta(d.ejercicios, d.minutos);
         texto(t.findViewById(R.id.tvResumen), pauta);
 
         TextView kilos = t.findViewById(R.id.tvKilosRutina);
         BarrasVecesView barras = t.findViewById(R.id.barrasRutina);
         TextView ultima = t.findViewById(R.id.tvUltimaRutina);
-        if (d.ultimas.isEmpty()) {
-            // Sin hacer todavía: en el sitio de los kilos, sin barras.
-            barras.setVeces(d.ultimas);
+        if (d.ultimas.isEmpty() || vacia) {
+            // Sin hacer todavía, o sin ejercicios: en el sitio de los kilos, sin barras. Tocarla
+            // abre la rutina para añadirlos (quien la pinta pone el toque).
+            barras.setVeces(java.util.Collections.emptyList());
             kilos.setTextAppearance(R.style.TextAppearance_GymProFit_Cuerpo);
             kilos.setTextColor(lista.getContext().getColor(R.color.gp_text_secondary));
-            kilos.setText(R.string.tarjeta_sin_hacer);
+            kilos.setText(vacia ? R.string.rutina_sin_ejercicios : R.string.tarjeta_sin_hacer);
             ultima.setVisibility(View.GONE);
         } else {
             // La de la última vez: sus kilos con las barras, «3 series» sin barras, o el aviso.
@@ -104,6 +107,11 @@ public final class TarjetaRutina {
         a11y.append(". ");
         if (!d.zonas.isEmpty()) a11y.append(d.zonas).append(". ");
         if (!pauta.isEmpty()) a11y.append(pauta).append(". ");
+        if (vacia) {
+            a11y.append(lista.getContext().getString(R.string.rutina_sin_ejercicios)).append('.');
+            t.setContentDescription(a11y);
+            return t;
+        }
         a11y.append(textos.ultimaVezA11y(d.ultimas)).append('.');
         String b = d.ultimas.isEmpty() || !es.pmdm.gymprofit.utils.CifraTarjeta
                 .deVez(d.ultimas.get(d.ultimas.size() - 1)).conKilos() ? null : textos.barrasA11y(d.ultimas);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_fila_elegir — una fila de «Elige ejercicios» (GP-244, tablero Mezcla-2): sin fondo y, al
+     pulsar, la capa de siempre; elegida (state_selected), la superficie de la tarjeta con el radio
+     de miniatura. Lo elegido lo dice también el botón con el check y, a TalkBack, su estado. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="@dimen/radio_miniatura" />
+        </shape>
+    </item>
+    <item>
+        <selector>
+            <item android:state_selected="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="?attr/colorSurface" />
+                    <corners android:radius="@dimen/radio_miniatura" />
+                    <stroke android:width="@dimen/tarjeta_borde" android:color="@color/gp_tarjeta_borde" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/transparent" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

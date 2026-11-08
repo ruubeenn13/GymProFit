@@ -998,7 +998,7 @@
     <string name="seguir_titulo">How much time do you have per session?</string>
     <string name="seguir_chip_min">%1$d\u00A0min</string>
     <string name="seguir_chip_75">75+\u00A0min</string>
-    <string name="seguir_regla">With less time, the extras at the end go first.</string>
+    <string name="seguir_regla">With less time, the extras go first, from the end, and then sets of the main lifts.</string>
     <string name="seguir_ajuste_avanzado">More sets per exercise for your level.</string>
     <string name="seguir_ajuste_fuerza">For “Gain strength”, loaded main lifts go to 4–6\u00A0reps with 3\u00A0min of rest.</string>
     <string name="seguir_sin">Without %1$s</string>
@@ -2698,4 +2698,163 @@
     <string name="perfil_dato_actividad">Activity</string>
     <string name="perfil_datos_editar_a11y">Edit your details</string>
     <string name="perfil_dato_a11y">%1$s, %2$s</string>
+    <!-- The «How much time do you have per session?» sheet (GP-243). -->
+    <plurals name="tiempo_linea_quedan">
+        <item quantity="one">%1$d of %2$d exercise.</item>
+        <item quantity="other">%1$d of %2$d exercises.</item>
+    </plurals>
+    <plurals name="tiempo_linea_enteros">
+        <item quantity="one">%d exercise, in full.</item>
+        <item quantity="other">All %d exercises, in full.</item>
+    </plurals>
+    <plurals name="tiempo_linea_todos">
+        <item quantity="one">%d exercise.</item>
+        <item quantity="other">All %d exercises.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_a">
+        <item quantity="one">Main lifts at %d set.</item>
+        <item quantity="other">Main lifts at %d sets.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_con">
+        <item quantity="one">Main lifts keep their %d set.</item>
+        <item quantity="other">Main lifts keep their %d sets.</item>
+    </plurals>
+    <string name="tiempo_linea_basicos_todas">Main lifts keep all their sets.</string>
+    <plurals name="tiempo_minutos">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="tiempo_minutos_75">75 minutes or more</string>
+    <string name="tiempo_frase_igual">With %1$s, your routines stay whole.</string>
+    <plurals name="tiempo_frase_basicos">
+        <item quantity="one">With %1$s, each routine keeps its main lift.</item>
+        <item quantity="other">With %1$s, each routine keeps its %2$d\u00A0main lifts.</item>
+    </plurals>
+    <string name="tiempo_frase_sus_basicos">With %1$s, each routine keeps its main lifts.</string>
+    <plurals name="tiempo_frase_series">
+        <item quantity="one">With %1$s, main lifts go to %2$d\u00A0set.</item>
+        <item quantity="other">With %1$s, main lifts go to %2$d\u00A0sets.</item>
+    </plurals>
+    <plurals name="tiempo_frase_salen">
+        <item quantity="one">With %1$s, your routines drop %2$d\u00A0exercise.</item>
+        <item quantity="other">With %1$s, your routines drop %2$d\u00A0exercises.</item>
+    </plurals>
+    <string name="seguir_tu_programa">%1$s, your program</string>
+    <string name="seguir_tiempo_min">min</string>
+    <string name="seguir_tiempo_ahora">now</string>
+    <string name="seguir_tiempo_ahora_a11y">%1$s, the one you have now</string>
+    <plurals name="seguir_rehacen_titulo">
+        <item quantity="one">Your routine is rebuilt</item>
+        <item quantity="other">Your %d routines are rebuilt</item>
+    </plurals>
+    <string name="seguir_rehacen_texto">You lose the changes you made to them. Your sessions and records stay.</string>
+    <string name="seguir_otro_titulo">You stop following %1$s</string>
+    <string name="seguir_otro_texto">Its routines leave Train. Your sessions and records stay.</string>
+    <string name="seguir_rutina_a11y">%1$s, %2$s. %3$s</string>
+    <string name="seguir_ver_ejercicios_a11y">Show the exercises in %1$s</string>
+    <string name="seguir_ocultar_ejercicios_a11y">Hide the exercises in %1$s</string>
+    <string name="seguir_fuera">out</string>
+    <string name="seguir_ejercicio_a11y">%1$s, %2$s</string>
+    <!-- Create and edit a routine (GP-244). -->
+    <string name="crear_nombre_por_defecto">My routine</string>
+    <string name="crear_tiempo_cabe">%1$d of your %2$d minutes: you have room for one more exercise.</string>
+    <string name="crear_tiempo_justo">Right on your %1$d minutes.</string>
+    <string name="crear_tiempo_te_pasas">About %1$d minutes over your %2$d.</string>
+    <string name="crear_tiempo_75">About %1$d minutes, within your 75 or more.</string>
+    <plurals name="crear_pie">
+        <item quantity="one">%1$d exercise and about %2$d minutes.</item>
+        <item quantity="other">%1$d exercises and about %2$d minutes.</item>
+    </plurals>
+    <string name="crear_pie_vacio">Add at least one exercise.</string>
+    <string name="crear_titulo">New routine</string>
+    <string name="editar_titulo">Edit routine</string>
+    <string name="crear_cerrar">Close</string>
+    <string name="crear_que_entrenar">What do you want to train?</string>
+    <string name="crear_que_entrenar_apoyo">Pick one or more areas.</string>
+    <string name="crear_zona_pecho">Chest</string>
+    <string name="crear_zona_espalda">Back</string>
+    <string name="crear_zona_pierna">Legs</string>
+    <string name="crear_zona_hombros">Shoulders</string>
+    <string name="crear_zona_brazos">Arms</string>
+    <string name="crear_zona_abdomen">Core</string>
+    <string name="crear_zona_pecho_ej">Bench press and flyes</string>
+    <string name="crear_zona_espalda_ej">Rows, pulldowns, and pull-ups</string>
+    <string name="crear_zona_pierna_ej">Squats, leg press, and lunges</string>
+    <string name="crear_zona_hombros_ej">Overhead press and raises</string>
+    <string name="crear_zona_brazos_ej">Curls and triceps extensions</string>
+    <string name="crear_zona_abdomen_ej">Planks and cable crunches</string>
+    <string name="crear_zona_a11y">%1$s: %2$s</string>
+    <string name="crear_cuanto_tiempo">How much time do you have?</string>
+    <string name="crear_cuanto_apoyo">While you pick, we tell you how much time is left.</string>
+    <string name="crear_buscar_todos">Search all exercises instead</string>
+    <string name="crear_pie_paso1">%1$s, %2$s.</string>
+    <string name="crear_pie_sin_zona">Pick at least one area.</string>
+    <string name="crear_elegir_ejercicios">Choose exercises</string>
+    <string name="elegir_ej_titulo">Choose exercises</string>
+    <string name="elegir_ej_quitar_zona_a11y">Remove the %1$s filter</string>
+    <string name="elegir_ej_mas_zona">Area</string>
+    <string name="elegir_ej_mas_zona_a11y">Add an area</string>
+    <string name="elegir_ej_fila_detalle">%1$s, %2$s</string>
+    <string name="equipo_barra">with a barbell</string>
+    <string name="equipo_barra_z">with an EZ bar</string>
+    <string name="equipo_mancuernas">with dumbbells</string>
+    <string name="equipo_polea">on a cable</string>
+    <string name="equipo_maquina">on a machine</string>
+    <string name="equipo_kettlebell">with a kettlebell</string>
+    <string name="equipo_banda">with a band</string>
+    <string name="equipo_sin">no equipment</string>
+    <string name="elegir_ej_anadir_a11y">Add %1$s</string>
+    <string name="elegir_ej_quitar_a11y">Remove %1$s</string>
+    <plurals name="elegir_ej_llevas">
+        <item quantity="one">%d chosen</item>
+        <item quantity="other">%d chosen</item>
+    </plurals>
+    <string name="elegir_ej_pie_tiempo">About %1$d of your %2$d\u00A0min</string>
+    <string name="elegir_ej_pie_tiempo_75">About %1$d of your 75+\u00A0min</string>
+    <string name="elegir_ej_listo">Done</string>
+    <string name="elegir_ej_vacio">No exercises match that in these areas.</string>
+    <string name="crear_nombre_label">Name</string>
+    <string name="crear_nombre_nota">It comes from the areas you chose; change it if you like.</string>
+    <string name="crear_nombre_nota_todos">It comes from the areas of your exercises; change it if you like.</string>
+    <plurals name="crear_cifra_ejercicios">
+        <item quantity="one">exercise</item>
+        <item quantity="other">exercises</item>
+    </plurals>
+    <plurals name="crear_cifra_series">
+        <item quantity="one">set</item>
+        <item quantity="other">sets</item>
+    </plurals>
+    <string name="crear_cifra_minutos">min, roughly</string>
+    <string name="crear_resumen_a11y">%1$d %2$s, %3$d %4$s, and about %5$d minutes.</string>
+    <string name="crear_nivel">For %1$s, your level.</string>
+    <string name="crear_nivel_otro">For the %1$s level.</string>
+    <string name="crear_nivel_titulo">Routine level</string>
+    <string name="crear_cambiar_nivel_a11y">Change the level</string>
+    <string name="crear_ejercicios">Exercises</string>
+    <string name="crear_opciones_a11y">Options for %1$s</string>
+    <string name="crear_cambiar_pauta">Change sets and reps</string>
+    <string name="crear_subir">Move up</string>
+    <string name="crear_bajar">Move down</string>
+    <string name="crear_quitar">Remove</string>
+    <string name="crear_fila_a11y">%1$d of %2$d: %3$s, %4$s</string>
+    <string name="crear_anadir_ejercicios">Add exercises</string>
+    <string name="crear_anadir_descripcion">Add a description</string>
+    <string name="crear_descripcion">Description</string>
+    <string name="crear_guardar">Save routine</string>
+    <string name="editar_guardar">Save changes</string>
+    <string name="crear_error_guardar">We could not save the routine. Try again.</string>
+    <string name="crear_error_cargar">We could not load the routine.</string>
+    <string name="crear_pauta_titulo">Sets for %1$s</string>
+    <string name="crear_pauta_series">Sets</string>
+    <string name="crear_pauta_medida">Measured in</string>
+    <string name="crear_pauta_repeticiones">Reps</string>
+    <string name="crear_pauta_segundos">Seconds</string>
+    <string name="crear_pauta_desde">From</string>
+    <string name="crear_pauta_hasta">To</string>
+    <string name="crear_pauta_descanso">Rest, in seconds</string>
+    <string name="crear_pauta_menos_a11y">Less: %1$s</string>
+    <string name="crear_pauta_mas_a11y">More: %1$s</string>
+    <string name="crear_pauta_aplicar">Apply</string>
+    <string name="crear_pauta_con_descanso">%1$s, %2$d\u00A0s rest</string>
+    <string name="rutina_sin_ejercicios">No exercises yet</string>
 </resources>

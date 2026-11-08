@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_paso_valor — una cifra que se cambia con − y + (GP-244, la pauta de un ejercicio): el
+  rótulo a la izquierda y, a la derecha, − la cifra + en botones redondos de 48 dp. La cifra es
+  región viva; los botones se llaman «Menos: Series» y «Más: Series».
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_16"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvPasoRotulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/espacio_12"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+    <ImageButton
+        android:id="@+id/btnPasoMenos"
+        style="@style/Widget.GymProFit.BotonRedondo"
+        android:src="@drawable/ic_ms_remove" />
+
+    <TextView
+        android:id="@+id/tvPasoValor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:accessibilityLiveRegion="polite"
+        android:gravity="center"
+        android:minWidth="64dp"
+        android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+
+    <ImageButton
+        android:id="@+id/btnPasoMas"
+        style="@style/Widget.GymProFit.BotonRedondo"
+        android:src="@drawable/ic_ms_add" />
+</LinearLayout>

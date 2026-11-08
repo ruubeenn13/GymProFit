@@ -407,6 +407,9 @@ public class UIHelper {
         bg.setShape(GradientDrawable.RECTANGLE);
         bg.setCornerRadius(dpToPx(context, 12));
         bg.setColor(tv.data);
+        // Con el borde de un control (gp_stroke), como el menú del desplegable: en oscuro el menú y
+        // las filas de debajo tienen la misma superficie y se fundían (revisor, GP-244).
+        bg.setStroke(dpToPx(context, 1), androidx.core.content.ContextCompat.getColor(context, R.color.gp_stroke));
         root.setBackground(bg);
 
         root.measure(
@@ -430,7 +433,15 @@ public class UIHelper {
         int xOffset = anchor.getWidth() - popupWidth;
         // Clamp so popup never goes off-screen left
         if (anchorLoc[0] + xOffset < 0) xOffset = -anchorLoc[0];
-        popup.showAsDropDown(anchor, xOffset, 0);
+        // Si no cabe debajo, sobre el ancla (GP-244): con un ancla abajo, en la última fila de una
+        // lista, la ventana se cortaba y dejaba fuera la última opción («Quitar»).
+        root.measure(View.MeasureSpec.makeMeasureSpec(popupWidth, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        android.graphics.Rect visible = new android.graphics.Rect();
+        anchor.getWindowVisibleDisplayFrame(visible);
+        int debajo = visible.bottom - (anchorLoc[1] + anchor.getHeight());
+        int yOffset = debajo < root.getMeasuredHeight() ? -(anchor.getHeight() + root.getMeasuredHeight()) : 0;
+        popup.showAsDropDown(anchor, xOffset, yOffset);
     }
 
     // Convierte dp a píxeles según la densidad de pantalla del contexto.
