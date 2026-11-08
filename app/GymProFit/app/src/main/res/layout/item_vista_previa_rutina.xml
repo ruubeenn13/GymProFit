@@ -1,32 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  item_vista_previa_rutina — una rutina en la vista previa de seguir un programa (lote
-  1.2.1): «Torso A · 45 min» y debajo lo que cambia («Sin … ni …», «Básicos a 2 series»)
-  o «Completa».
+  item_vista_previa_rutina — una rutina en la hoja del tiempo por sesión (GP-243, tablero
+  Tiempo-1): el nombre, los minutos y el botón de desplegar; sus bloques (BloquesRutinaView,
+  decorativos); la línea de lo que cambia; y, desplegada, la lista de sus ejercicios
+  (item_vista_previa_ejercicio). Para TalkBack la tarjeta es una frase; el botón va aparte.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_12"
+    android:background="@drawable/bg_aviso_hoja"
     android:orientation="vertical"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:focusable="true">
+    android:paddingStart="@dimen/espacio_16"
+    android:paddingEnd="@dimen/espacio_8"
+    android:paddingBottom="@dimen/espacio_16">
 
-    <TextView
-        android:id="@+id/tvVistaNombre"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_fila"
-        android:textStyle="bold"
-        android:textColor="?attr/colorOnSurface"
-        android:importantForAccessibility="no" />
+        android:layout_marginTop="@dimen/espacio_4"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/cabeceraVista"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvVistaNombre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo" />
+
+            <TextView
+                android:id="@+id/tvVistaMinutos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:importantForAccessibility="no"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDesplegarVista"
+            style="@style/Widget.GymProFit.BotonIcono"
+            android:layout_marginStart="@dimen/espacio_4"
+            android:src="@drawable/ic_ms_keyboard_arrow_down"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <es.pmdm.gymprofit.ui.widget.BloquesRutinaView
+        android:id="@+id/bloquesVista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_4"
+        android:layout_marginEnd="@dimen/espacio_8" />
 
     <TextView
         android:id="@+id/tvVistaDetalle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:textSize="@dimen/text_caption"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:importantForAccessibility="no" />
+        android:layout_marginTop="@dimen/espacio_12"
+        android:layout_marginEnd="@dimen/espacio_8"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
+
+    <LinearLayout
+        android:id="@+id/listaVistaEjercicios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/espacio_12"
+        android:layout_marginEnd="@dimen/espacio_8"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/separador_alto"
+            android:layout_marginBottom="@dimen/espacio_4"
+            android:background="@color/gp_meter_track"
+            android:importantForAccessibility="no" />
+    </LinearLayout>
 </LinearLayout>

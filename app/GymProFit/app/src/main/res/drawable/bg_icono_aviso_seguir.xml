@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_icono_aviso_seguir — la casilla del icono del aviso de la hoja del tiempo por sesión (GP-243,
+     tablero Tiempo-1): el contenedor naranja con el radio de chip; el icono va en
+     colorOnPrimaryContainer (8,47:1 en oscuro y 10,23:1 en claro). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="?attr/colorPrimaryContainer" />
+    <corners android:radius="@dimen/radio_chip" />
+</shape>

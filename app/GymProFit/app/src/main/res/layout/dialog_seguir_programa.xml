@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  dialog_seguir_programa — la hoja de seguir un programa o cambiar su tiempo (lote 1.2.1).
-  «¿Cuánto tiempo tienes por sesión?» con 30, 45, 60 y 75+, y la vista previa de lo
-  elegido que calcula la API: cada rutina con sus minutos y lo que se queda fuera, la
-  regla del recorte y el ajuste del perfil. Si ya sigue uno, el aviso de lo que pasa.
+  dialog_seguir_programa — «¿Cuánto tiempo tienes por sesión?» (GP-243, tablero Tiempo-1).
+  Arriba, el programa y el título, con el asa de la hoja encima (el aire que le faltaba al
+  título, revisor del lote 7). El selector de 30, 45, 60 y 75+ dice «ahora» bajo el que
+  tiene. Debajo, la frase de lo que cambia, una tarjeta por rutina (item_vista_previa_rutina,
+  con sus bloques), la regla del recorte, el ajuste del perfil, el aviso de lo que pasa al
+  seguirlo (con su icono) y el botón. La vista previa la calcula la API (VistaPrevia).
 -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,73 +16,133 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="24dp">
+        android:paddingStart="@dimen/margen_pantalla"
+        android:paddingEnd="@dimen/margen_pantalla"
+        android:paddingBottom="@dimen/espacio_24">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/asaSeguir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvSeguirPrograma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
 
         <TextView
             android:id="@+id/tvSeguirTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_4"
             android:accessibilityHeading="true"
             android:text="@string/seguir_titulo"
-            android:textAppearance="@style/TextAppearance.GymProFit.Display"
-            android:textSize="@dimen/text_headline" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Display" />
 
         <es.pmdm.gymprofit.ui.widget.SelectorPildora
             android:id="@+id/chipsMinutos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/espacio_20"
             app:selectorNombreGrupo="@string/selector_grupo_minutos" />
 
         <include
             android:id="@+id/estadoVistaPrevia"
             layout="@layout/view_estado" />
 
+        <TextView
+            android:id="@+id/tvFraseTiempo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_20"
+            android:accessibilityLiveRegion="polite"
+            android:fontFamily="@font/barlow_medium"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/listaVistaPrevia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/espacio_8"
             android:orientation="vertical" />
 
         <TextView
             android:id="@+id/tvRegla"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/espacio_8"
             android:text="@string/seguir_regla"
-            android:textSize="@dimen/text_caption"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo" />
 
         <TextView
             android:id="@+id/tvAjustes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="@dimen/text_caption"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
             android:textColor="?attr/colorOnSurface"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tvAvisoSeguir"
+        <!-- El aviso: se rehacen tus rutinas o dejas de seguir otro programa. -->
+        <LinearLayout
+            android:id="@+id/avisoSeguir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:padding="12dp"
+            android:layout_marginTop="@dimen/espacio_20"
             android:background="@drawable/bg_aviso_hoja"
-            android:textSize="@dimen/text_body"
-            android:textColor="?attr/colorOnSurface"
-            android:visibility="gone" />
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/espacio_16"
+            android:paddingTop="@dimen/espacio_12"
+            android:paddingEnd="@dimen/espacio_16"
+            android:paddingBottom="@dimen/espacio_12"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivAvisoSeguir"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icono_aviso_seguir"
+                android:importantForAccessibility="no"
+                android:padding="@dimen/espacio_8"
+                android:src="@drawable/ic_ms_restart_alt"
+                app:tint="?attr/colorOnPrimaryContainer" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_12"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvAvisoTitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Cuerpo"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    android:id="@+id/tvAvisoSeguir"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirmarSeguir"
-            style="@style/Widget.GymProFit.BotonPildora"
+            style="@style/Widget.GymProFit.BotonPildora.Expresivo"
             android:layout_width="match_parent"
-            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_16"
             android:maxLines="2"
+            android:minHeight="56dp"
             android:text="@string/seguir_boton" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

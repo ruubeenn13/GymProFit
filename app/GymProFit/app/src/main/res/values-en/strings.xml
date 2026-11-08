@@ -998,7 +998,7 @@
     <string name="seguir_titulo">How much time do you have per session?</string>
     <string name="seguir_chip_min">%1$d\u00A0min</string>
     <string name="seguir_chip_75">75+\u00A0min</string>
-    <string name="seguir_regla">With less time, the extras at the end go first.</string>
+    <string name="seguir_regla">With less time, the extras go first, from the end, and then sets of the main lifts.</string>
     <string name="seguir_ajuste_avanzado">More sets per exercise for your level.</string>
     <string name="seguir_ajuste_fuerza">For “Gain strength”, loaded main lifts go to 4–6\u00A0reps with 3\u00A0min of rest.</string>
     <string name="seguir_sin">Without %1$s</string>
@@ -2698,4 +2698,61 @@
     <string name="perfil_dato_actividad">Activity</string>
     <string name="perfil_datos_editar_a11y">Edit your details</string>
     <string name="perfil_dato_a11y">%1$s, %2$s</string>
+    <!-- The «How much time do you have per session?» sheet (GP-243). -->
+    <plurals name="tiempo_linea_quedan">
+        <item quantity="one">%1$d of %2$d exercise.</item>
+        <item quantity="other">%1$d of %2$d exercises.</item>
+    </plurals>
+    <plurals name="tiempo_linea_enteros">
+        <item quantity="one">%d exercise, in full.</item>
+        <item quantity="other">All %d exercises, in full.</item>
+    </plurals>
+    <plurals name="tiempo_linea_todos">
+        <item quantity="one">%d exercise.</item>
+        <item quantity="other">All %d exercises.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_a">
+        <item quantity="one">Main lifts at %d set.</item>
+        <item quantity="other">Main lifts at %d sets.</item>
+    </plurals>
+    <plurals name="tiempo_linea_basicos_con">
+        <item quantity="one">Main lifts keep their %d set.</item>
+        <item quantity="other">Main lifts keep their %d sets.</item>
+    </plurals>
+    <string name="tiempo_linea_basicos_todas">Main lifts keep all their sets.</string>
+    <plurals name="tiempo_minutos">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <string name="tiempo_minutos_75">75 minutes or more</string>
+    <string name="tiempo_frase_igual">With %1$s, your routines stay whole.</string>
+    <plurals name="tiempo_frase_basicos">
+        <item quantity="one">With %1$s, each routine keeps its main lift.</item>
+        <item quantity="other">With %1$s, each routine keeps its %2$d main lifts.</item>
+    </plurals>
+    <string name="tiempo_frase_sus_basicos">With %1$s, each routine keeps its main lifts.</string>
+    <plurals name="tiempo_frase_series">
+        <item quantity="one">With %1$s, main lifts go to %2$d set.</item>
+        <item quantity="other">With %1$s, main lifts go to %2$d sets.</item>
+    </plurals>
+    <plurals name="tiempo_frase_salen">
+        <item quantity="one">With %1$s, your routines drop %2$d exercise.</item>
+        <item quantity="other">With %1$s, your routines drop %2$d exercises.</item>
+    </plurals>
+    <string name="seguir_tu_programa">%1$s, your program</string>
+    <string name="seguir_tiempo_min">min</string>
+    <string name="seguir_tiempo_ahora">now</string>
+    <string name="seguir_tiempo_ahora_a11y">%1$s, the one you have now</string>
+    <plurals name="seguir_rehacen_titulo">
+        <item quantity="one">Your routine is rebuilt</item>
+        <item quantity="other">Your %d routines are rebuilt</item>
+    </plurals>
+    <string name="seguir_rehacen_texto">You lose the changes you made to them. Your sessions and records stay.</string>
+    <string name="seguir_otro_titulo">You stop following %1$s</string>
+    <string name="seguir_otro_texto">Its routines leave Train. Your sessions and records stay.</string>
+    <string name="seguir_rutina_a11y">%1$s, %2$s. %3$s</string>
+    <string name="seguir_ver_ejercicios_a11y">Show the exercises in %1$s</string>
+    <string name="seguir_ocultar_ejercicios_a11y">Hide the exercises in %1$s</string>
+    <string name="seguir_fuera">out</string>
+    <string name="seguir_ejercicio_a11y">%1$s, %2$s</string>
 </resources>

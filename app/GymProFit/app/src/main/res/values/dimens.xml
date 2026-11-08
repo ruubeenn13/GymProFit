@@ -216,4 +216,10 @@
     <dimen name="text_programa_nombre">22sp</dimen>
     <dimen name="sigla_ciclo">36dp</dimen>
     <dimen name="text_sigla_ciclo">14sp</dimen>
+
+    <!-- La hoja del tiempo por sesión (GP-243, tablero Tiempo-1): un bloque por ejercicio de 30 dp
+         de alto, radio 8 y, si sale, borde discontinuo de 1,5 dp. -->
+    <dimen name="bloque_rutina_alto">30dp</dimen>
+    <dimen name="bloque_rutina_radio">8dp</dimen>
+    <dimen name="bloque_rutina_borde">1.5dp</dimen>
 </resources>
