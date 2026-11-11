@@ -74,6 +74,10 @@
         <item name="popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="android:popupMenuStyle">@style/Widget.GymProFit.PopupMenu</item>
         <item name="snackbarStyle">@style/Widget.GymProFit.Snackbar</item>
+        <!-- El texto y la acción del snackbar, legibles sobre superficie 2 (lote 12): con el texto
+             inverso de Material quedaban a 1,1:1. -->
+        <item name="snackbarTextViewStyle">@style/Widget.GymProFit.Snackbar.Texto</item>
+        <item name="snackbarButtonStyle">@style/Widget.GymProFit.Snackbar.Accion</item>
 
         <!-- Iconos por defecto de los componentes, pasados a Material Symbols (GP-080) -->
         <item name="spinnerStyle">@style/Widget.GymProFit.Spinner</item>
@@ -477,6 +481,16 @@
     <!-- ── Snackbar sobre superficie secundaria ────────────────────────────── -->
     <style name="Widget.GymProFit.Snackbar" parent="Widget.Material3.Snackbar">
         <item name="backgroundTint">@color/gp_surface_2</item>
+    </style>
+
+    <!-- Texto del color del texto sobre superficie 2: 13,6:1 en oscuro y 15,7:1 en claro. -->
+    <style name="Widget.GymProFit.Snackbar.Texto" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <!-- La acción («Deshacer»), en el naranja de lo que se pulsa. -->
+    <style name="Widget.GymProFit.Snackbar.Accion" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
     <!-- ── Fila de comida (Nutrición): tile + textos + botón añadir ────────── -->
