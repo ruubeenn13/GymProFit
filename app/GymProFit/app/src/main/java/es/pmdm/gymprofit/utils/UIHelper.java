@@ -371,7 +371,8 @@ public class UIHelper {
             if (rayaAntes(a.destructive, separadorAnadido, llItems.getChildCount())) {
                 View sep = new View(context);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(context, 1));
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        grosorRaya(context.getResources().getDisplayMetrics().density));
                 lp.setMargins(dpToPx(context, 16), dpToPx(context, 4),
                         dpToPx(context, 16), dpToPx(context, 4));
                 sep.setLayoutParams(lp);
@@ -456,6 +457,17 @@ public class UIHelper {
      */
     public static boolean rayaAntes(boolean destructiva, boolean yaPuesta, int opcionesEncima) {
         return destructiva && !yaPuesta && opcionesEncima > 0;
+    }
+
+    /**
+     * Grosor en píxeles de una raya de 1 dp, redondeado como Android redondea un {@code 1dp} del
+     * XML: así la raya de lo destructivo mide lo mismo que la de la cabecera (lote 13).
+     *
+     * @param densidad densidad de la pantalla.
+     * @return los píxeles, nunca menos de 1.
+     */
+    public static int grosorRaya(float densidad) {
+        return Math.max(1, Math.round(densidad));
     }
 
     // Convierte dp a píxeles según la densidad de pantalla del contexto.

@@ -73,6 +73,8 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
             h.chipEstado.setTextColor(ContextCompat.getColor(ctx, R.color.red_chip_text));
         }
 
+        // Cada ⋮ dice de qué fila es: «Más acciones» en todas no distinguía una de otra (DEC-019).
+        h.btnAcciones.setContentDescription(ctx.getString(R.string.crear_opciones_a11y, r.getNombre()));
         h.btnAcciones.setOnClickListener(v -> {
             int pos = h.getAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return;
@@ -81,11 +83,15 @@ public class AdminRutinaAdapter extends RecyclerView.Adapter<AdminRutinaAdapter.
             actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_edit,
                     ctx.getString(R.string.admin_editar_rutina_titulo),
                     () -> listener.onEditar(current, pos)));
+            // Desactivar es lo destructivo del menú: va la última, en rojo y con su raya
+            // (DESIGN.md, «El menú anclado»). Activar es una opción más.
+            boolean desactiva = current.isActiva();
             actions.add(new UIHelper.MenuAction(
-                    current.isActiva() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
-                    current.isActiva() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
+                    desactiva ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
+                    desactiva ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
+                    desactiva,
                     () -> listener.onToggleActiva(current, pos)));
-            UIHelper.mostrarMenuAnclado(ctx, v, null, actions);
+            UIHelper.mostrarMenuAnclado(ctx, v, current.getNombre(), actions);
         });
     }
 

@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `0752c3f` | fix(android): el ⋮ de las listas de administración, como el resto de menús anclados. |
+| `fd282d3` | fix(api): fuera el borrado físico de rutinas (GP-256). |
 | `4e3b42c` | fix(android): el «·» del apoyo de un récord no se queda solo al final de la línea (GP-246). |
 | `61f0a11` | fix(android): en la sesión en vivo el aviso se queda al pie con el teclado abierto (GP-246). |
 | `5cd3a7c` | fix(android): Inicio y Entrenar dicen el mismo «Día N de 3» del programa (GP-246). |

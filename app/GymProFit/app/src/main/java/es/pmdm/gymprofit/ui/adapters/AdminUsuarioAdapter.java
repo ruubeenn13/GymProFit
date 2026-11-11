@@ -88,19 +88,25 @@ public class AdminUsuarioAdapter extends RecyclerView.Adapter<AdminUsuarioAdapte
             h.chipEstado.setTextColor(ContextCompat.getColor(ctx, R.color.red_chip_text));
         }
 
+        // Cada ⋮ dice de qué fila es: «Más acciones» en todas no distinguía una de otra (DEC-019).
+        h.btnAcciones.setContentDescription(ctx.getString(R.string.crear_opciones_a11y, u.getUsername()));
         h.btnAcciones.setOnClickListener(v -> {
             int pos = h.getAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return;
             Usuario current = items.get(pos);
             List<UIHelper.MenuAction> actions = new ArrayList<>();
-            actions.add(new UIHelper.MenuAction(
-                    current.isActivo() ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
-                    current.isActivo() ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
-                    () -> listener.onToggleActivo(current, pos)));
             actions.add(new UIHelper.MenuAction(R.drawable.ic_ms_person,
                     ctx.getString(R.string.admin_cambiar_rol_titulo),
                     () -> listener.onCambiarRol(current, pos)));
-            UIHelper.mostrarMenuAnclado(ctx, v, null, actions);
+            // Desactivar es lo destructivo del menú: va la última, en rojo y con su raya
+            // (DESIGN.md, «El menú anclado»). Activar es una opción más.
+            boolean desactiva = current.isActivo();
+            actions.add(new UIHelper.MenuAction(
+                    desactiva ? R.drawable.ic_ms_visibility_off : R.drawable.ic_ms_check,
+                    desactiva ? ctx.getString(R.string.admin_desactivar) : ctx.getString(R.string.admin_activar),
+                    desactiva,
+                    () -> listener.onToggleActivo(current, pos)));
+            UIHelper.mostrarMenuAnclado(ctx, v, current.getUsername(), actions);
         });
     }
 
