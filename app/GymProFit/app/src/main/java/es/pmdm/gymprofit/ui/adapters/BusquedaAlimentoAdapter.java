@@ -342,8 +342,9 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-    // «Te quedan 1.161 kcal y 54 g de proteína», con las cifras en negrita y en el color del
-    // texto; sin proteína pendiente, solo las kcal.
+    // «Te faltan 54 g de proteína y 1.161 kcal» (tablero 25: la proteína delante, que es por lo
+    // que se propone), con las cifras en negrita y en el color del texto; sin proteína pendiente,
+    // «Te quedan 1.161 kcal».
     private void pintarCabeceraEncaja(@NonNull View v, @NonNull LoQueTeEncaja.Resultado r) {
         Context ctx = v.getContext();
         // Encabezado también por debajo de Android 9, donde el atributo del layout no llega.
@@ -351,7 +352,7 @@ public class BusquedaAlimentoAdapter extends RecyclerView.Adapter<RecyclerView.V
         NumberFormat nf = NumberFormat.getIntegerInstance(FechaUtils.localeDeLaApp(ctx));
         String kcal = ctx.getString(R.string.encaja_kcal, nf.format(r.kcalQuedan));
         String prot = r.conProteina() ? ctx.getString(R.string.encaja_proteina, nf.format(r.proteinaQuedan)) : null;
-        String texto = prot != null ? ctx.getString(R.string.encaja_quedan, kcal, prot)
+        String texto = prot != null ? ctx.getString(R.string.encaja_quedan, prot, kcal)
                 : ctx.getString(R.string.encaja_quedan_kcal, kcal);
         android.text.SpannableString s = new android.text.SpannableString(texto);
         int fuerte = color(ctx, com.google.android.material.R.attr.colorOnSurface);

@@ -1933,7 +1933,8 @@
     <string name="plato_eliminar_confirmar">¿Eliminar este plato? Deja de salir en tus listas; lo que ya has apuntado no cambia.</string>
     <!-- «Lo que te encaja», arriba de Mis platos (lote 1.6.7, tablero 9) -->
     <string name="encaja_titulo">Lo que te encaja</string>
-    <string name="encaja_quedan">Te quedan %1$s y %2$s</string>
+    <!-- Como el tablero 25: primero la proteína, que es por lo que se propone. -->
+    <string name="encaja_quedan">Te faltan %1$s y %2$s</string>
     <string name="encaja_quedan_kcal">Te quedan %1$s</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g de proteína</string>

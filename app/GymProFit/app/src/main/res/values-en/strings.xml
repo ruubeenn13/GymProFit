@@ -1902,7 +1902,7 @@
     <string name="plato_eliminar_confirmar">Delete this dish? It won\'t show up in your lists any more; what you\'ve already logged doesn\'t change.</string>
     <!-- "What fits", on top of My dishes (release 1.6.7, board 9) -->
     <string name="encaja_titulo">What fits today</string>
-    <string name="encaja_quedan">You have %1$s and %2$s left</string>
+    <string name="encaja_quedan">You still need %1$s and %2$s</string>
     <string name="encaja_quedan_kcal">You have %1$s left</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g of protein</string>
