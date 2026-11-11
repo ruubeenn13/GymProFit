@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_sueles — un alimento de «Lo que sueles merendar» (tablero 2b, lote 1.6.4): el icono
-  de su categoría en un cuadro de 44, su nombre, la cantidad y las kcal de la última vez
+  de su categoría en el círculo de 40 de las filas, su nombre, la cantidad y las kcal de la última vez
   en esta comida, y su «+», que lo añade y deja la pantalla con la comida ya apuntada.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,28 +21,19 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
-        <FrameLayout
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="@drawable/bg_icono_categoria"
-            android:importantForAccessibility="no">
-
-            <ImageView
-                android:id="@+id/ivIconoSueles"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:importantForAccessibility="no"
-                app:tint="?attr/colorOnSurfaceVariant" />
-        </FrameLayout>
+        <!-- El icono en el círculo de 40 de todas las filas (Fila.Icono, como en Añadir): el cuadro
+             de 44 era el único distinto (revisor, lote 7). -->
+        <ImageView
+            android:id="@+id/ivIconoSueles"
+            style="@style/Widget.GymProFit.Fila.Icono"
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <LinearLayout
             android:id="@+id/textosSueles"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/espacio_4"
+            android:layout_marginStart="@dimen/espacio_8"
             android:layout_marginTop="@dimen/aire_anillo_fuera"
-            android:layout_marginEnd="@dimen/aire_anillo_fuera"
             android:layout_marginBottom="@dimen/aire_anillo_fuera"
             android:padding="@dimen/aire_anillo"
             android:layout_weight="1"
@@ -74,7 +65,7 @@
             android:id="@+id/btnMasSueles"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="@dimen/espacio_8"
             android:background="@drawable/bg_mas_fila"
             android:backgroundTint="@color/gp_surface_2"
             android:clickable="true"
