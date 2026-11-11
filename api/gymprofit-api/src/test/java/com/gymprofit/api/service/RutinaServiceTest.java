@@ -198,17 +198,6 @@ class RutinaServiceTest {
         verify(rutinaRepository).save(rutina);
     }
 
-    // Comprueba que permanentDeleteById elimina físicamente la rutina de la BD
-    @Test
-    @DisplayName("permanentDeleteById elimina la rutina permanentemente")
-    void permanentDeleteById_elimina_rutina() {
-        when(rutinaRepository.findById(1)).thenReturn(Optional.of(rutina));
-
-        assertDoesNotThrow(() -> rutinaService.permanentDeleteById(1));
-
-        verify(rutinaRepository).delete(rutina);
-    }
-
     // Comprueba que se listan las rutinas asociadas a un usuario concreto
     @Test
     @DisplayName("findByUsuarioId devuelve rutinas del usuario")

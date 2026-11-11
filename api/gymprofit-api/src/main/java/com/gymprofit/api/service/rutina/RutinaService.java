@@ -158,25 +158,6 @@ public class RutinaService implements IRutinaService {
         }
     }
 
-    // Elimina definitivamente la rutina de la base de datos, comprobando la propiedad.
-    @Transactional
-    @Override
-    public void permanentDeleteById(Integer id) {
-        logger.info("Eliminando permanentemente rutina con id: {}", id);
-
-        Rutina rutina = rutinaRepository.findById(id)
-                .orElseThrow(() -> new NotFoundEntityException("error.rutina.noExiste", id));
-
-        checkOwnership(rutina);
-
-        try {
-            rutinaRepository.delete(rutina);
-            logger.info("Rutina con id {} eliminada permanentemente", id);
-        } catch (Exception e) {
-            throw new DeleteEntityException(Rutina.class.getSimpleName(), id, e);
-        }
-    }
-
     // Actualiza los datos completos de una rutina existente, comprobando la propiedad.
     @Override
     @Transactional

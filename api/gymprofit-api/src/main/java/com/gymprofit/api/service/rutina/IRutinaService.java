@@ -23,8 +23,6 @@ public interface IRutinaService {
     void deleteById(Integer id);
     // Reactiva una rutina previamente desactivada.
     void activateById(Integer id);
-    // Elimina la rutina de forma permanente en base de datos.
-    void permanentDeleteById(Integer id);
 
     RutinaDTO modify(RutinaDTO rutinaDTO);
 
