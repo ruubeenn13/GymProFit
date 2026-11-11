@@ -60,7 +60,6 @@ class RutinaOwnershipTest extends AbstractOwnershipTest {
             "PATCH /rutinas/{rutina}",
             "PUT /rutinas/{rutina}/activar",
             "DELETE /rutinas/{rutina}",
-            "DELETE /rutinas/{rutina}/permanente",
             "GET /rutinas/usuario/{owner}",
             "GET /rutinas/usuario/{owner}/activas"
     })
@@ -75,8 +74,7 @@ class RutinaOwnershipTest extends AbstractOwnershipTest {
     @ValueSource(strings = {
             "PATCH /rutinas/{predefinida}",
             "PUT /rutinas/{predefinida}/activar",
-            "DELETE /rutinas/{predefinida}",
-            "DELETE /rutinas/{predefinida}/permanente"
+            "DELETE /rutinas/{predefinida}"
     })
     @DisplayName("escribir una rutina predefinida → 403 a un USER; ADMIN no")
     void predefinida_soloAdminEscribe(String plantillaRuta) throws Exception {
@@ -138,6 +136,22 @@ class RutinaOwnershipTest extends AbstractOwnershipTest {
         pedir(guest, "POST /rutinas",
                 "{\"usuarioId\":" + guest.getId() + ",\"nombre\":\"del invitado\",\"esPredefinida\":false}")
                 .andExpect(status().isForbidden());
+    }
+
+    /**
+     * El borrado físico de rutinas no existe (GP-256): nadie lo llamaba, ni la app, ni
+     * admin/, ni la web, y fallaba con 500 en cuanto la rutina tenía ejercicios. Si la
+     * ruta vuelve, este test se pone en rojo: ni el dueño ni un ADMIN la encuentran, y
+     * la rutina sigue en la base. La baja de siempre es {@code DELETE /rutinas/{id}}.
+     */
+    @Test
+    @DisplayName("DELETE /rutinas/{id}/permanente ya no existe → 404 y la rutina sigue (GP-256)")
+    void borradoPermanente_noExiste() throws Exception {
+        assertThat(estado(owner, "DELETE /rutinas/" + rutinaOwner + "/permanente")).isEqualTo(404);
+        assertThat(estado(admin, "DELETE /rutinas/" + predefinida + "/permanente")).isEqualTo(404);
+
+        assertThat(rutinaRepository.findById(rutinaOwner)).isPresent();
+        assertThat(rutinaRepository.findById(predefinida)).isPresent();
     }
 
     private Rutina crearRutina(String nombre, Usuario dueno, boolean esPredefinida) {

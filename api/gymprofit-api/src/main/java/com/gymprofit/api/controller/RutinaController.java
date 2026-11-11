@@ -25,8 +25,8 @@ import java.util.Map;
 // ============================================================
 // RutinaController — controlador REST de rutinas de entrenamiento
 // Gestiona el CRUD de rutinas (propias de un usuario o predefinidas por la
-// app), su activación/desactivación (borrado lógico) y eliminación
-// permanente, con búsquedas por usuario, nivel y nombre.
+// app) y su activación/desactivación (borrado lógico), con búsquedas por
+// usuario, nivel y nombre. No hay borrado físico (GP-256).
 // ============================================================
 @RestController
 @RequestMapping("")
@@ -132,24 +132,6 @@ public class RutinaController {
         rutinaService.activateById(id);
 
         respuesta.put("mensaje", "Rutina activada con ÉXITO");
-
-        return new ResponseEntity<>(respuesta, HttpStatus.OK);
-    }
-
-    @Operation(summary = "Elimina permanentemente una rutina de la base de datos")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Rutina eliminada permanentemente"),
-            @ApiResponse(responseCode = "404", description = "Rutina no encontrada",
-                    content = @Content(schema = @Schema(implementation = Response.class)))
-    })
-    // Elimina definitivamente una rutina de la base de datos (borrado físico)
-    @DeleteMapping("/rutinas/{id}/permanente")
-    public ResponseEntity<Map<String, Object>> eliminarPermanente(@PathVariable Integer id) {
-        Map<String, Object> respuesta = new HashMap<>();
-
-        rutinaService.permanentDeleteById(id);
-
-        respuesta.put("mensaje", "Rutina eliminada PERMANENTEMENTE con ÉXITO");
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
