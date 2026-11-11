@@ -340,6 +340,11 @@ public class ResumenSesionActivity extends AppCompatActivity {
             return;
         }
         tarjeta.setVisibility(View.VISIBLE);
+        // El dorado es de los récords (DEC-018): con solo primeras marcas, la tarjeta de siempre.
+        if (records.isEmpty()) {
+            tarjeta.setCardBackgroundColor(color(com.google.android.material.R.attr.colorSurface));
+            tarjeta.setStrokeColor(color(com.google.android.material.R.attr.colorOutlineVariant));
+        }
         findViewById(R.id.cabeceraRecordsResumen).setVisibility(records.isEmpty() ? View.GONE : View.VISIBLE);
         ((TextView) findViewById(R.id.tvRecordsTituloResumen)).setText(
                 getResources().getQuantityString(R.plurals.resumen_records_titulo, records.size(), records.size()));
@@ -359,6 +364,7 @@ public class ResumenSesionActivity extends AppCompatActivity {
             ImageView trofeo = fila.findViewById(R.id.ivTrofeoRecord);
             trofeo.setImageResource(R.drawable.ic_ms_trophy_fill);
             trofeo.setImageTintList(ColorStateList.valueOf(oro));
+            trofeo.setBackgroundResource(R.drawable.bg_fila_icono_oro);
             String nombre = r.nombre(idioma);
             String marca = Marcas.texto(this, r);
             String antes = Marcas.anterior(this, r);
@@ -386,6 +392,8 @@ public class ResumenSesionActivity extends AppCompatActivity {
         TextView tvPrimeras = findViewById(R.id.tvPrimerasMarcasResumen);
         if (primeras > 0) {
             tvPrimeras.setText(getResources().getQuantityString(R.plurals.resumen_primeras_marcas, primeras, primeras));
+            // Sin récords, fuera del dorado también el texto: un punto de partida no es un récord.
+            if (records.isEmpty()) tvPrimeras.setTextColor(color(com.google.android.material.R.attr.colorOnSurface));
             tvPrimeras.setVisibility(View.VISIBLE);
         } else {
             tvPrimeras.setVisibility(View.GONE);
