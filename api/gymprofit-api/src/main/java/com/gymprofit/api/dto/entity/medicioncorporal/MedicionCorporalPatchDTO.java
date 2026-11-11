@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 // ============================================================
 // MedicionCorporalPatchDTO — DTO para actualización parcial de una medición corporal
 // Contiene los campos opcionales que se pueden modificar de una medición
-// corporal ya registrada (PATCH), sin exigir el usuarioId.
+// corporal ya registrada (PATCH), sin exigir el usuarioId. El IMC no está:
+// lo calcula siempre el servicio (GP-204).
 // ============================================================
 @Data
 @AllArgsConstructor
@@ -20,8 +21,6 @@ public class MedicionCorporalPatchDTO implements Serializable {
     private LocalDateTime fecha;
     private BigDecimal peso;
     private BigDecimal altura;
-    // Índice de masa corporal, recalculado si cambia peso/altura
-    private BigDecimal imc;
     private BigDecimal grasaCorporal;
     private BigDecimal masaMuscular;
     private BigDecimal cintura;
