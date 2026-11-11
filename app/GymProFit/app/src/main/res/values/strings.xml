@@ -286,7 +286,7 @@
     <string name="admin_toggle_usuario_desactivar">¿Desactivar la cuenta de «%1$s»? No podrá volver a entrar hasta que la reactives.</string>
     <string name="admin_cambiar_rol_msg">Rol de «%1$s»</string>
     <string name="admin_usuario_eres_tu">Tú</string>
-    <string name="admin_usuario_es_tu_cuenta">Es tu cuenta: no puedes desactivarla ni cambiarte el rol desde aqu\'í.</string>
+    <string name="admin_usuario_es_tu_cuenta">Es tu cuenta: no puedes desactivarla ni cambiarte el rol desde aquí.</string>
     <string name="admin_cambiar_rol_titulo">Cambiar rol</string>
     <string name="admin_toggle_rutina_titulo">Cambiar estado</string>
     <string name="admin_toggle_rutina_activar">¿Activar la rutina «%1$s»?</string>
