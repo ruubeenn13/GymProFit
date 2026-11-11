@@ -92,6 +92,11 @@
         android:background="?attr/colorOutline"
         android:alpha="0.12" />
 
+    <!-- Vacío y error de carga en el sitio de la lista (lote 13). -->
+    <include
+        android:id="@+id/estadoLista"
+        layout="@layout/view_estado" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAlimentos"
         android:layout_width="match_parent"
