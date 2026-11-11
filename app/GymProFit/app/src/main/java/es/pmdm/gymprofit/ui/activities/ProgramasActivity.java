@@ -68,6 +68,7 @@ public class ProgramasActivity extends BaseActivity {
             chip.setTag(dias);
             chip.setText(String.valueOf(dias));
             chip.setContentDescription(getResources().getQuantityString(R.plurals.programa_dias, dias, dias));
+            anchoMinimo(chip);
             chipsDias.addView(chip);
             if (dias == prefsManager.getProgramasDias()) chip.setChecked(true);
         }
@@ -311,5 +312,17 @@ public class ProgramasActivity extends BaseActivity {
     public static String materialYNivel(android.content.Context ctx, Programa p) {
         return ctx.getString(R.string.rutina_resumen, TuProgramaVista.equipamiento(ctx, p.getEquipamiento()),
                 UIHelper.traducirNivel(ctx, p.getNivel()));
+    }
+
+    // Un chip de una cifra mide 40 dp y Material lo centraba en su zona de toque de 48 con un
+    // margen invisible: entre dos sin marcar quedaba más hueco que junto al marcado, que con el
+    // check ya pasa de 48 (revisor, lote 7). Con el relleno del texto, el chip mismo llega a 48.
+    private void anchoMinimo(Chip chip) {
+        com.google.android.material.chip.ChipDrawable d = (com.google.android.material.chip.ChipDrawable) chip.getChipDrawable();
+        if (d == null) return;
+        float falta = 48 * getResources().getDisplayMetrics().density - d.getIntrinsicWidth();
+        if (falta <= 0) return;
+        chip.setTextStartPadding(chip.getTextStartPadding() + falta / 2f);
+        chip.setTextEndPadding(chip.getTextEndPadding() + falta / 2f);
     }
 }
