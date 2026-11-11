@@ -102,7 +102,7 @@
                 android:orientation="vertical"
                 android:paddingBottom="4dp">
 
-                <!-- Sin kilos y con series hechas (peso corporal) se esconde: nada de «Volumen 0». -->
+                <!-- A peso corporal (sin kilos marcados ni la última vez) no sale nunca: nada de «Volumen 0» (GP-253). -->
                 <LinearLayout
                     android:id="@+id/filaVolumen"
                     android:layout_width="wrap_content"

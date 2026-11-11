@@ -243,9 +243,10 @@
     <string name="macro_grasa">Fat</string>
     <string name="stats_adherencia_titulo">ADHERENCE</string>
     <string name="heatmap_sin_datos">No data</string>
-    <string name="heatmap_fuera">Off</string>
+    <string name="heatmap_fuera">Off target</string>
     <string name="heatmap_objetivo">On target</string>
-    <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
+    <string name="medidas_error">We couldn\'t load your measurements.</string>
+    <string name="medicion_sin_datos_subtitulo">Log your first one to see how you change.</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>
     <string name="medicion_label_cintura">Waist</string>
@@ -389,19 +390,6 @@
     <string name="resumen_notas">Notes</string>
 
     <!-- Create routine — exercises -->
-    <string name="crear_rutina_buscar_ejercicio">Search exercise...</string>
-    <string name="crear_rutina_series">Sets</string>
-    <string name="crear_rutina_repeticiones">Reps</string>
-    <string name="crear_rutina_ejercicio_duplicado">Exercise already added</string>
-    <string name="crear_rutina_dificultad_todos">All</string>
-    <string name="crear_rutina_siguiente">Next</string>
-    <string name="anadir_ejercicios_titulo">Add exercises</string>
-    <string name="anadir_ejercicios_continuar_fmt">Continue (%d)</string>
-    <string name="resumen_crear_rutina_titulo">Summary</string>
-    <string name="resumen_crear_rutina_ejercicios_fmt">Exercises (%d)</string>
-    <string name="resumen_crear_rutina_cancelar">Cancel</string>
-    <string name="resumen_crear_rutina_confirmar_titulo">Remove exercise</string>
-    <string name="resumen_crear_rutina_confirmar_msg">Remove this exercise from the routine?</string>
 
     <!-- Routine detail -->
     <string name="detalle_rutina_titulo">Routine detail</string>
@@ -433,12 +421,7 @@
     <string name="detalle_ejercicio_equipamiento">Equipment</string>
 
     <!-- Edit routine -->
-    <string name="editar_rutina_titulo">Edit routine</string>
-    <string name="editar_rutina_guardar">Save changes</string>
     <string name="editar_rutina_guardado">Routine updated</string>
-    <string name="editar_rutina_anadir_ejercicio">Add exercise</string>
-    <string name="editar_rutina_eliminar_ejercicio">Remove this exercise from the routine?</string>
-    <string name="editar_rutina_ejercicios_fmt">Exercises (%d)</string>
 
     <!-- ABOUT -->
     <string name="acerca_btn">About GymProFit</string>
@@ -478,7 +461,6 @@
     <string name="entorno_pruebas_distintivo">TEST · LOCAL</string>
     <!-- Numeric field validation errors (see utils/Numeros). -->
     <string name="error_numero_invalido">Enter a valid number</string>
-    <string name="error_duracion_invalida">Enter a duration between 5 and 300 minutes</string>
     <string name="error_edad_rango">Enter your age in years, between %1$d and %2$d</string>
     <string name="error_edad_minima">GymProFit is for people aged %1$d or over, as the privacy policy says</string>
     <string name="error_peso_invalido">Enter your weight in kilos, between 30 and 300</string>
@@ -627,7 +609,6 @@
     <string name="unidad_pct_decimal">%.1f%%</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
     <string name="series_por_reps">%1$d × %2$d</string>
-    <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
     <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
@@ -673,6 +654,9 @@
 
     <!-- Leaving a form with unsaved input (GP-098) -->
     <string name="descartar_titulo">Discard what you\'ve entered?</string>
+    <string name="descartar_rutina_titulo">Discard this routine?</string>
+    <string name="descartar_cambios_titulo">Discard your changes?</string>
+    <string name="descartar_elegidos_titulo">Discard the exercises you picked?</string>
     <string name="descartar_mensaje">If you leave now, anything you haven\'t saved will be lost.</string>
     <string name="descartar_confirmar">Discard</string>
     <string name="descartar_seguir">Keep editing</string>
@@ -844,9 +828,9 @@
     <string name="progreso_cifra_a11y">%1$s %2$s</string>
     <string name="seccion_records">Records</string>
     <string name="seccion_logros">Badges</string>
-    <string name="seccion_medidas">Measures</string>
+    <string name="seccion_medidas">Measurements</string>
     <string name="seccion_historial">History</string>
-    <string name="record_hace_antes">%1$s · before %2$s</string>
+    <string name="record_hace_antes">%1$s\u00A0· before\u00A0%2$s</string>
     <string name="ajustes_cuenta">Account</string>
     <string name="ajustes_foto">Profile photo</string>
     <string name="ajustes_correo">Email</string>
@@ -1001,18 +985,11 @@
     <string name="seguir_regla">With less time, the extras go first, from the end, and then sets of the main lifts.</string>
     <string name="seguir_ajuste_avanzado">More sets per exercise for your level.</string>
     <string name="seguir_ajuste_fuerza">For “Gain strength”, loaded main lifts go to 4–6\u00A0reps with 3\u00A0min of rest.</string>
-    <string name="seguir_sin">Without %1$s</string>
-    <string name="seguir_separador">", "</string>
-    <string name="seguir_conector">" or "</string>
-    <string name="seguir_completa">Complete</string>
-    <string name="seguir_ya_sigues_otro">You already follow %1$s. If you follow this one, its routines leave Train; your sessions and records stay.</string>
-    <string name="seguir_mismo">Your %1$s routines are rebuilt for %2$s and you lose any changes you made to them; your sessions and records stay.</string>
     <string name="seguir_boton">Follow</string>
     <string name="seguir_boton_mismo">Change to %1$s</string>
     <string name="seguir_boton_rehacer">Rebuild the routines</string>
     <string name="seguir_error_vista">We could not work out how it would look.</string>
     <string name="seguir_hecho">You now follow %1$s</string>
-    <string name="seguir_rutina_linea">%1$s · %2$s</string>
     <string name="detalle_rutina_tuya">Your routine</string>
     <string name="detalle_rutina_programa_dia">%1$s · day %2$d of %3$d</string>
     <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
@@ -1031,10 +1008,6 @@
     <plurals name="tu_programa_hechas">
         <item quantity="one">%d done this round.</item>
         <item quantity="other">%d done this round.</item>
-    </plurals>
-    <plurals name="seguir_basicos">
-        <item quantity="one">Main lifts at %d set</item>
-        <item quantity="other">Main lifts at %d sets</item>
     </plurals>
     <plurals name="programa_dias">
         <item quantity="one">%d\u00A0day</item>
@@ -1082,7 +1055,6 @@
     <string name="envivo_descartar_si">Discard</string>
     <string name="envivo_serie_a11y">Set %1$d</string>
     <string name="envivo_anterior_a11y">Previous: %1$s</string>
-    <string name="envivo_marcar">Mark set %1$d</string>
     <string name="envivo_hecha">Done</string>
     <string name="envivo_sin_hacer">Not done</string>
     <string name="envivo_kg_a11y">Kilos, set %1$d</string>
@@ -1147,7 +1119,6 @@
         <item quantity="one">%d\u00A0rep</item>
         <item quantity="other">%d\u00A0reps</item>
     </plurals>
-    <string name="envivo_anadido">Added: %1$s</string>
     <string name="apuntar_titulo">Log a workout</string>
     <!-- Rest between sets (GP-013) -->
     <string name="envivo_descanso">Rest</string>
@@ -1902,7 +1873,7 @@
     <string name="plato_eliminar_confirmar">Delete this dish? It won\'t show up in your lists any more; what you\'ve already logged doesn\'t change.</string>
     <!-- "What fits", on top of My dishes (release 1.6.7, board 9) -->
     <string name="encaja_titulo">What fits today</string>
-    <string name="encaja_quedan">You have %1$s and %2$s left</string>
+    <string name="encaja_quedan">You still need %1$s and %2$s</string>
     <string name="encaja_quedan_kcal">You have %1$s left</string>
     <string name="encaja_kcal">%1$s kcal</string>
     <string name="encaja_proteina">%1$s g of protein</string>
@@ -2117,7 +2088,7 @@
     <string name="inicio_kilos_semana">Kilos per week</string>
     <string name="inicio_semana_corta">W%1$d</string>
     <string name="inicio_variacion">%1$s%2$d%% in %3$d weeks</string>
-    <string name="inicio_kilos_a11y">Kilos moved per week, from the oldest to the current one: %1$s.</string>
+    <string name="inicio_kilos_a11y">Weight lifted per week, from the oldest to the current one: %1$s.</string>
     <string name="inicio_progreso_error">Couldn\'t load your kilos.</string>
     <string name="inicio_progreso_vacio">No kilos to count yet. Your first workout will show up here.</string>
     <string name="inicio_musculos_a11y">Muscles worked this week. %1$s.</string>
@@ -2137,6 +2108,7 @@
     <string name="inicio_dia_agua_hoy">drunk today</string>
     <string name="inicio_cifra_g">%1$d\u00A0g</string>
     <string name="inicio_cifra_l">%1$s\u00A0L</string>
+    <string name="inicio_dia_calorias_a11y">Calories: %1$s</string>
     <string name="inicio_dia_proteina_a11y">Protein: %1$d of %2$d grams</string>
     <string name="inicio_dia_proteina_sin_objetivo_a11y">Protein: %1$d grams today</string>
     <string name="inicio_dia_agua_a11y">Water: %1$s of %2$s liters, %3$d of %4$d glasses</string>
@@ -2303,7 +2275,7 @@
     <string name="copiar_profi_boton">Copy yesterday\'s</string>
     <string name="copiar_profi_ahora_no">Not now</string>
     <string name="ideas_titulo_proteina">For your %1$d g of protein</string>
-    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g prot.</string>
+    <string name="ideas_detalle">%1$s · %2$s kcal · %3$s g\u00A0prot.</string>
     <string name="comida_buscar_otro">Find another food</string>
     <string name="ficha_cantidad_titulo">Amount</string>
     <string name="ficha_boton_kcal">%1$s · %2$s\u00A0kcal</string>
@@ -2351,7 +2323,6 @@
     <!-- El papel de una opción de SelectorPildora con semántica de pestañas (GP-224). -->
     <string name="selector_pestana">tab</string>
     <!-- El nombre de cada grupo de SelectorPildora para TalkBack (GP-224). -->
-    <string name="selector_grupo_nivel">Level</string>
     <string name="selector_grupo_periodo">Period</string>
     <string name="selector_grupo_metrica">Measurement</string>
     <string name="selector_grupo_rango">Range</string>
@@ -2359,13 +2330,13 @@
     <!-- Progress on a single screen (GP-216, batch 4, board 16) -->
     <string name="progreso_resumen_vacio">Your first workout starts filling this in: sessions, records and achievements.</string>
     <string name="progreso_resumen_error">Couldn\'t load your summary.</string>
-    <string name="progreso_kilos_titulo">Kilos moved</string>
+    <string name="progreso_kilos_titulo">Weight lifted</string>
     <string name="progreso_kilos_semana">kg this week</string>
     <string name="progreso_kilos_de_la_pasada">%1$d%% of last week</string>
     <string name="progreso_kilos_de_la_pasada_a11y">%1$d%% of last week\'s kilos</string>
     <string name="progreso_kilos_sube_a11y">%1$d%% more than last week</string>
     <string name="progreso_kilos_cifra_a11y">%1$s kilos this week</string>
-    <string name="progreso_kilos_resumen_a11y">Kilos moved per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
+    <string name="progreso_kilos_resumen_a11y">Weight lifted per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
     <string name="progreso_kilos_vacio">Once you finish your first workout, you\'ll see the kilos you move each week here.</string>
     <string name="progreso_kilos_error">Couldn\'t load your kilos.</string>
     <!-- GP-249: with no kilos in the period, the bars count sets (bodyweight training) -->

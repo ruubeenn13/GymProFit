@@ -19,9 +19,11 @@ public class FilaRecordTest {
     @Test
     public void elApoyoEmpiezaEnMayuscula() {
         assertEquals("Hace 1 mes", FilaRecord.apoyo("hace 1 mes", null, "%1$s · antes %2$s", ES));
-        assertEquals("Hace 2 semanas · antes 80 kg × 8",
-                FilaRecord.apoyo("hace 2 semanas", "80 kg × 8", "%1$s · antes %2$s", ES));
-        assertEquals("80 kg × 8", FilaRecord.apoyo(null, "80 kg × 8", "%1$s · antes %2$s", ES));
+        // La marca anterior no se parte, ni la separa del «antes» un salto de línea (lote 12): el
+        // espacio de la cadena es duro y los de la marca pasan a duros.
+        assertEquals("Hace 2 semanas · antes\u00A080\u00A0kg\u00A0×\u00A08",
+                FilaRecord.apoyo("hace 2 semanas", "80 kg × 8", "%1$s · antes\u00A0%2$s", ES));
+        assertEquals("80\u00A0kg\u00A0×\u00A08", FilaRecord.apoyo(null, "80 kg × 8", "%1$s · antes\u00A0%2$s", ES));
         assertNull(FilaRecord.apoyo(null, null, "%1$s · antes %2$s", ES));
     }
 

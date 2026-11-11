@@ -427,9 +427,9 @@ public final class ParaRecuperarSeccion {
         int oro = ContextCompat.getColor(activity, R.color.gp_gold);
         int oroTexto = ContextCompat.getColor(activity, R.color.gp_gold_text);
         titulo.setTextColor(conseguida ? oroTexto : attr(com.google.android.material.R.attr.colorOnSurface));
-        card.setStrokeColor(conseguida ? oro : ContextCompat.getColor(activity, R.color.gp_divider));
-        // El borde de la tarjeta sin conseguir es el de todas las demás (el del tema).
-        if (!conseguida) card.setStrokeColor(attr(com.google.android.material.R.attr.colorOutline));
+        // Sin conseguir, el borde de todas las demás tarjetas (Widget.GymProFit.Card: outlineVariant,
+        // y 0 dp en oscuro). Con colorOutline se veía más marcado que las de al lado en claro (lote 9).
+        card.setStrokeColor(conseguida ? oro : attr(com.google.android.material.R.attr.colorOutlineVariant));
 
         ImageView icono = card.findViewById(R.id.ivIconoRecuperar);
         icono.setImageResource(conseguida ? R.drawable.ic_ms_workspace_premium_fill : R.drawable.ic_ms_restaurant_fill);

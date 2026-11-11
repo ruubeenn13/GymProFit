@@ -218,7 +218,8 @@ public class PulidoTest {
         assertTrue("fondos con capa de foco: " + conCapa, conCapa.isEmpty());
         for (String[] l : new String[][]{ { "view_profi_copiar", "tvMensajeProfi" }, { "item_sueles", "textosSueles" },
                 { "item_encaja", "barraEncaja" } }) {
-            assertTrue(l[1], Pattern.compile("android:id=\"@\\+id/" + l[1] + "\"[^>]*android:padding=\"@dimen/aire_anillo\"",
+            // Desde el lote 12 las ideas llevan el aire a los lados y aire_anillo_alto arriba y abajo.
+            assertTrue(l[1], Pattern.compile("android:id=\"@\\+id/" + l[1] + "\"[^>]*android:padding(Horizontal)?=\"@dimen/aire_anillo\"",
                     Pattern.DOTALL).matcher(leer(RES.resolve("layout/" + l[0] + ".xml"))).find());
         }
     }
@@ -227,8 +228,12 @@ public class PulidoTest {
     // mensaje de Profi, de «Ahora no» y de la unidad de la ficha se pegaban a lo de al lado.
     @Test
     public void terceraPasadaDelRevisorEnNutricion() throws IOException {
-        assertTrue(Pattern.compile("android:id=\"@\\+id/textosSueles\"[^>]*android:layout_marginEnd=\"@dimen/aire_anillo_fuera\"",
-                Pattern.DOTALL).matcher(leer(RES.resolve("layout/item_sueles.xml"))).find());
+        // Lote 12: el texto de una idea, a 8 dp del icono y del «+», para que su anillo no toque ninguno.
+        String sueles = leer(RES.resolve("layout/item_sueles.xml"));
+        assertTrue(Pattern.compile("android:id=\"@\\+id/textosSueles\"[^>]*android:layout_marginStart=\"@dimen/espacio_8\"",
+                Pattern.DOTALL).matcher(sueles).find());
+        assertTrue(Pattern.compile("android:id=\"@\\+id/btnMasSueles\"[^>]*android:layout_marginStart=\"@dimen/espacio_8\"",
+                Pattern.DOTALL).matcher(sueles).find());
         String p = leer(RES.resolve("layout/view_profi_copiar.xml"));
         assertTrue(Pattern.compile("android:id=\"@\\+id/btnSiCopiar\"[^>]*android:layout_marginTop=\"@dimen/espacio_8\"",
                 Pattern.DOTALL).matcher(p).find());

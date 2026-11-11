@@ -346,8 +346,9 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         boolean primera = seriesPintadas == -1;
         if (contandoVolumen != null) contandoVolumen.cancel();
         if (contandoSeries != null) contandoSeries.cancel();
-        // A peso corporal (series hechas y 0 kg), sin «Volumen 0»: solo las series (DEC-060, GP-252).
-        filaVolumen.setVisibility(LogicaSesion.volumenVisible(volumen, t.seriesHechas) ? View.VISIBLE : View.GONE);
+        // Una rutina a peso corporal no lleva contador de volumen en ningún momento, con la regla de
+        // Apuntar entreno (DEC-060, GP-253): sin kilos marcados ni en la última vez, solo las series.
+        filaVolumen.setVisibility(LogicaSesion.volumenVisible(s) ? View.VISIBLE : View.GONE);
         if (primera || volumen == volumenPintado) {
             tvVolumen.setText(formatoVolumen(volumen));
         } else {
@@ -381,7 +382,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         LogicaSesion.Totales t = LogicaSesion.totales(s);
         String minutos = getString(R.string.duracion_min, LogicaSesion.minutosReloj(s.inicioMs, repo.ahora()));
         double volumen = LogicaSesion.volumen(s);
-        String descripcion = LogicaSesion.volumenVisible(volumen, t.seriesHechas)
+        String descripcion = LogicaSesion.volumenVisible(s)
                 ? getString(R.string.envivo_resumen_a11y, minutos, formatoVolumen(volumen), t.seriesHechas, t.seriesTotales)
                 : getString(R.string.envivo_resumen_sin_kilos_a11y, minutos, t.seriesHechas, t.seriesTotales);
         if (!descripcion.contentEquals(filaResumen.getContentDescription() != null
@@ -599,7 +600,17 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     }
 
     private void avisar(int texto) {
-        Snackbar.make(rv, texto, Snackbar.LENGTH_LONG).show();
+        aviso(texto, Snackbar.LENGTH_LONG).show();
+    }
+
+    // Un aviso al pie de la lista. La ventana ya se encoge con el teclado (adjustResize), y Material
+    // sumaba además el alto del teclado como margen: con él abierto, el aviso subía hasta debajo de
+    // la cabecera y tapaba el ejercicio y su ⋮ (revisor, lote 12). Sin ese margen se queda al pie.
+    private Snackbar aviso(int texto, int duracion) {
+        Snackbar sb = Snackbar.make(rv, texto, duracion);
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(sb.getView(),
+                (v, insets) -> androidx.core.view.WindowInsetsCompat.CONSUMED);
+        return sb;
     }
 
     @Override
@@ -644,7 +655,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             adapter.pintar(repo.actual());
             return;
         }
-        Snackbar.make(rv, R.string.envivo_serie_quitada, Snackbar.LENGTH_LONG)
+        aviso(R.string.envivo_serie_quitada, Snackbar.LENGTH_LONG)
                 .setAction(R.string.envivo_deshacer, v -> repo.reponer(q))
                 .show();
     }

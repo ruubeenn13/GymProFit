@@ -69,4 +69,18 @@ public final class FraseProfi {
         }
         return new FraseProfi(Tipo.NINGUNA, null, 0, null, null);
     }
+
+    /**
+     * El nombre de una rutina con su sigla final pegada a la palabra de antes («Full body B» →
+     * «Full body», espacio duro, «B»), para que en el bocadillo la letra no se quede sola en otra línea a
+     * letra grande (lote 12). Solo si la última palabra tiene dos caracteres o menos.
+     */
+    @Nullable
+    public static String sinPartirSigla(@Nullable String nombre) {
+        if (nombre == null) return null;
+        String t = nombre.trim();
+        int i = t.lastIndexOf(' ');
+        if (i <= 0 || t.length() - i - 1 > 2) return t;
+        return t.substring(0, i) + '\u00A0' + t.substring(i + 1);
+    }
 }

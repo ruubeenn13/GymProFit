@@ -166,12 +166,32 @@ public final class LogicaSesion {
     }
 
     /**
-     * Si la cabecera enseña el volumen (GP-252): con kilos, o mientras no haya ninguna serie
-     * hecha (al empezar cuenta desde cero). Con series hechas y 0 kg, a peso corporal, no: nada
-     * de «Volumen 0» (DEC-060).
+     * Si la cabecera enseña el volumen (GP-253), con la regla de Apuntar entreno
+     * ({@link CabeceraEntreno}): si lo marcado ya mueve kilos o si algún ejercicio los tuvo la
+     * última vez (sus pistas). Una rutina a peso corporal no lleva contador en ningún momento:
+     * antes decía «Volumen 0» hasta la primera serie y luego desaparecía (DEC-060). Con kilos,
+     * cuenta desde 0.
      */
-    public static boolean volumenVisible(double volumen, int seriesHechas) {
-        return volumen > 0 || seriesHechas == 0;
+    public static boolean volumenVisible(@NonNull SesionEnCurso s) {
+        return volumen(s) > 0 || anteriorConPeso(s.ejercicios);
+    }
+
+    /**
+     * Si algún ejercicio tuvo peso la última vez que se hizo (GP-014): la pista de kilos. Un
+     * peso que no se lee como número no cuenta, como en {@link #volumen}.
+     */
+    public static boolean anteriorConPeso(@NonNull List<SesionEnCurso.Ejercicio> ejercicios) {
+        for (SesionEnCurso.Ejercicio e : ejercicios) {
+            for (SesionEnCurso.SerieAnterior a : e.anterior) {
+                if (a.peso == null) continue;
+                try {
+                    if (new BigDecimal(a.peso).signum() > 0) return true;
+                } catch (NumberFormatException ignorada) {
+                    // Un peso que no se lee no es un peso: no cuenta.
+                }
+            }
+        }
+        return false;
     }
 
     /**

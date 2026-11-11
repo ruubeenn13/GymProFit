@@ -144,7 +144,11 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // Salir con algo elegido pregunta antes de tirarlo (GP-098). Desde el paso 3, solo si ha
         // cambiado algo en esta visita: lo de antes sigue allí.
-        AvisoDescartar.instalar(this, toolbar, () -> devolver
+        // La pregunta dice qué se pierde: la rutina al crearla, los cambios al volver del paso 3, los
+        // ejercicios elegidos en una sesión.
+        int pregunta = modoSesion ? R.string.descartar_elegidos_titulo
+                : devolver ? R.string.descartar_cambios_titulo : R.string.descartar_rutina_titulo;
+        AvisoDescartar.instalar(this, toolbar, pregunta, () -> devolver
                 ? !borrador.ids().equals(idsAlEntrar) : !borrador.ejercicios.isEmpty());
 
         etBuscar = findViewById(R.id.etBuscarEjercicio);

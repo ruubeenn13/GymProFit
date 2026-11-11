@@ -104,23 +104,8 @@ public final class CabeceraEntreno {
         s.ejercicios = ejercicios;
         LogicaSesion.Totales t = LogicaSesion.totales(s);
         double kilos = LogicaSesion.volumen(s);
-        boolean conPeso = kilos > 0 || (ultima != null && ultima.getKilos() > 0) || anteriorConPeso(ejercicios);
+        boolean conPeso = kilos > 0 || (ultima != null && ultima.getKilos() > 0) || LogicaSesion.anteriorConPeso(ejercicios);
         return new CabeceraEntreno(kilos, t.seriesHechas, t.seriesTotales, conRutina, conPeso);
-    }
-
-    // Si algún ejercicio tuvo peso la última vez que se hizo (GP-014).
-    private static boolean anteriorConPeso(List<SesionEnCurso.Ejercicio> ejercicios) {
-        for (SesionEnCurso.Ejercicio e : ejercicios) {
-            for (SesionEnCurso.SerieAnterior a : e.anterior) {
-                if (a.peso == null) continue;
-                try {
-                    if (new java.math.BigDecimal(a.peso).signum() > 0) return true;
-                } catch (NumberFormatException ignorada) {
-                    // Un peso que no se lee no es un peso: no cuenta, como en LogicaSesion.
-                }
-            }
-        }
-        return false;
     }
 
     /** Los kilos redondeados, como se escriben: «2.740». */

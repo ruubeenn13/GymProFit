@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.utils;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -30,13 +31,24 @@ public final class AvisoDescartar {
      * @param hayCambios dice, en el momento de salir, si hay algo sin guardar.
      */
     public static void instalar(AppCompatActivity act, Toolbar cabecera, BooleanSupplier hayCambios) {
+        instalar(act, cabecera, R.string.descartar_titulo, hayCambios);
+    }
+
+    /**
+     * Igual, con otra pregunta: crear una rutina no es «lo que has apuntado» (lote 12), es
+     * «¿Descartar la rutina?» o, al editarla, «¿Descartar los cambios?».
+     *
+     * @param titulo la pregunta del diálogo.
+     */
+    public static void instalar(AppCompatActivity act, Toolbar cabecera, @StringRes int titulo,
+                                BooleanSupplier hayCambios) {
         act.getOnBackPressedDispatcher().addCallback(act, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                salir(act, hayCambios);
+                salir(act, titulo, hayCambios);
             }
         });
-        if (cabecera != null) cabecera.setNavigationOnClickListener(v -> salir(act, hayCambios));
+        if (cabecera != null) cabecera.setNavigationOnClickListener(v -> salir(act, titulo, hayCambios));
     }
 
     /**
@@ -44,11 +56,16 @@ public final class AvisoDescartar {
      * que no es una Toolbar (la X de crear un alimento, lote 1.6.2).
      */
     public static void salir(AppCompatActivity act, BooleanSupplier hayCambios) {
+        salir(act, R.string.descartar_titulo, hayCambios);
+    }
+
+    /** Igual, con la pregunta que se le pase (ver {@link #instalar(AppCompatActivity, Toolbar, int, BooleanSupplier)}). */
+    public static void salir(AppCompatActivity act, @StringRes int titulo, BooleanSupplier hayCambios) {
         if (!hayCambios.getAsBoolean()) {
             act.finish();
             return;
         }
-        preguntar(act, act::finish);
+        preguntar(act, titulo, act::finish);
     }
 
     /**
@@ -75,7 +92,7 @@ public final class AvisoDescartar {
         dialogo.setCanceledOnTouchOutside(!hayCambios.getAsBoolean());
         Runnable alVolver = () -> {
             if (!hayCambios.getAsBoolean()) dialogo.cancel();
-            else preguntar(act, dialogo::dismiss);
+            else preguntar(act, R.string.descartar_titulo, dialogo::dismiss);
         };
         // Hacen falta los dos caminos. En Android 16 con targetSdk 36 el atrás llega por el
         // OnBackInvokedDispatcher de la ventana del diálogo, y el de androidx no le llegaba
@@ -94,10 +111,10 @@ public final class AvisoDescartar {
         });
     }
 
-    // «¿Descartar lo que has apuntado?» (Descartar / Seguir editando).
-    private static void preguntar(android.app.Activity act, Runnable descartar) {
+    // «¿Descartar lo que has apuntado?» u otra pregunta (Descartar / Seguir editando).
+    private static void preguntar(android.app.Activity act, @StringRes int titulo, Runnable descartar) {
         UIHelper.mostrarDialogoConIcono(act,
-                act.getString(R.string.descartar_titulo),
+                act.getString(titulo),
                 act.getString(R.string.descartar_mensaje),
                 R.drawable.ic_ms_delete,
                 act.getString(R.string.descartar_confirmar),

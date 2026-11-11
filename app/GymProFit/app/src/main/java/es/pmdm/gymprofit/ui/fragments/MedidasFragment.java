@@ -46,6 +46,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.MedicionHoy;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
@@ -58,6 +59,8 @@ public class MedidasFragment extends BaseFragment {
 
 
     private View tvVacio;
+    // La carga fallida, con su «Reintentar» (lote 12).
+    private VistaEstado estado;
     private View scrollMediciones;
     private TextView tvFechaUltima;
     private TextView tvPesoVal, tvGrasaVal, tvMusculoVal;
@@ -95,6 +98,7 @@ public class MedidasFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         tvVacio         = findViewById(R.id.tvVacio);
+        estado          = new VistaEstado(findViewById(R.id.estadoMedidas));
         scrollMediciones = findViewById(R.id.scrollMediciones);
         tvFechaUltima   = findViewById(R.id.tvFechaUltima);
         tvPesoVal       = findViewById(R.id.tvPesoVal);
@@ -231,6 +235,7 @@ public class MedidasFragment extends BaseFragment {
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
+                estado.oculto();
                 // Para la proteína sobre masa magra (GP-206): el % más reciente, o ninguno.
                 prefsManager.saveGrasaReciente(GrasaReciente.elegir(lista));
                 if (lista == null || lista.isEmpty()) {
@@ -248,9 +253,18 @@ public class MedidasFragment extends BaseFragment {
             @Override
             public void onFail(int code, String message) {
                 // "Sin mediciones" ya no llega como 404: es 200 con [] y lo atiende
-                // onOk, que siembra desde el perfil. Aquí solo caen fallos de verdad.
-                UiFeedback.toastError(requireActivity(), code, message);
-                intentarCrearDesdePerfil(usuarioId);
+                // onOk, que siembra desde el perfil. Aquí solo caen fallos de verdad, y un
+                // fallo se enseña con «Reintentar»: antes sembraba desde el perfil (una lectura
+                // fallida terminaba en un POST) y sin red decía que no había mediciones (lote 12).
+                if (!isAdded()) return;
+                LoadingDialog.hide(requireActivity());
+                scrollMediciones.setVisibility(View.GONE);
+                tvVacio.setVisibility(View.GONE);
+                estado.error(VistaEstado.mensaje(requireContext(), R.string.medidas_error, code, message),
+                        () -> {
+                            estado.oculto();
+                            cargarMedicion();
+                        });
             }
         });
     }
@@ -398,9 +412,20 @@ public class MedidasFragment extends BaseFragment {
         if (que == PuntosGrafica.Que.UN_PUNTO) {
             PuntosGrafica.unPunto(ds, requireContext(), valorEscrito(metrica, puntos.get(0).y));
         }
-        // Un decimal en el eje como mucho: con 30 días salían «79,20 / 79,11» (revisor, GP-228).
-        chartPeso.getAxisLeft().setGranularity(0.1f);
+        // El eje en pasos redondos y con los límites en múltiplos del paso (EjeY, lote 12): salían
+        // pasos de 0,6 u 0,8 y, con un punto, un eje distinto en cada métrica. Un decimal como
+        // mucho (GP-228).
+        float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+        for (EjeFechas.Punto pt : puntos) {
+            minY = Math.min(minY, pt.y);
+            maxY = Math.max(maxY, pt.y);
+        }
+        es.pmdm.gymprofit.utils.EjeY eje = es.pmdm.gymprofit.utils.EjeY.de(minY, maxY);
+        chartPeso.getAxisLeft().setAxisMinimum(eje.inicio);
+        chartPeso.getAxisLeft().setAxisMaximum(eje.fin);
+        chartPeso.getAxisLeft().setGranularity(eje.paso);
         chartPeso.getAxisLeft().setGranularityEnabled(true);
+        chartPeso.getAxisLeft().setLabelCount(eje.etiquetas(), true);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
         // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019); con

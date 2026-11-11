@@ -94,4 +94,16 @@ public class FraseProfiTest {
         d.hayEntrenos = true;
         assertEquals(FraseProfi.Tipo.NINGUNA, FraseProfi.elegir(d).tipo);
     }
+
+    // Lote 12: en el bocadillo, la sigla del final del nombre no se queda sola en otra línea
+    // («Full body» / «B» a letra 1,3): va pegada a la palabra de antes con un espacio duro.
+    @Test
+    public void la_sigla_final_va_pegada_a_su_palabra() {
+        assertEquals("Full body\u00A0B", FraseProfi.sinPartirSigla("Full body B"));
+        assertEquals("Torso A1".replace(' ', '\u00A0'), FraseProfi.sinPartirSigla("Torso A1"));
+        assertEquals("solo cambia el último espacio", "Cuerpo completo\u00A0C", FraseProfi.sinPartirSigla("Cuerpo completo C"));
+        assertEquals("una palabra larga al final se parte como siempre", "Pecho y hombros", FraseProfi.sinPartirSigla("Pecho y hombros"));
+        assertEquals("Pierna", FraseProfi.sinPartirSigla("Pierna"));
+        assertEquals(null, FraseProfi.sinPartirSigla(null));
+    }
 }

@@ -395,13 +395,51 @@ public class LogicaSesionTest {
         assertEquals(0, LogicaSesion.volumen(s), 0.001);
     }
 
-    // GP-252: a peso corporal (series hechas y 0 kg) la cabecera no enseña «Volumen 0»; al empezar,
-    // y con kilos, sí.
+    // GP-253 (antes GP-252): la regla de Apuntar entreno (CabeceraEntreno). Una rutina sin
+    // ejercicios con peso, ni en la última vez ni en lo marcado, no lleva contador de volumen en
+    // ningún momento: ni al empezar ni tras marcar. Con kilos, cuenta desde 0.
+    private static SesionEnCurso sesion(SesionEnCurso.Ejercicio... ejercicios) {
+        SesionEnCurso s = new SesionEnCurso();
+        s.ejercicios = Arrays.asList(ejercicios);
+        return s;
+    }
+
+    private static SesionEnCurso.Ejercicio conAnterior(int id, String peso) {
+        SesionEnCurso.Ejercicio e = ejercicio(id, 3);
+        e.anteriorCargado = true;
+        e.anterior.add(new SesionEnCurso.SerieAnterior(1, peso, 10, null));
+        return e;
+    }
+
     @Test
-    public void elVolumenNoSaleAPesoCorporalPeroSiAlEmpezarYConKilos() {
-        org.junit.Assert.assertFalse(LogicaSesion.volumenVisible(0, 3));
-        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(0, 0));
-        org.junit.Assert.assertTrue(LogicaSesion.volumenVisible(480, 2));
+    public void a_peso_corporal_no_hay_volumen_ni_al_empezar_ni_al_marcar() {
+        SesionEnCurso s = sesion(conAnterior(1, null), conAnterior(2, "0.00"));
+        assertFalse(LogicaSesion.volumenVisible(s));
+        s.ejercicios.get(0).series.get(0).repeticiones = "12";
+        s.ejercicios.get(0).series.get(0).hecha = true;
+        assertFalse(LogicaSesion.volumenVisible(s));
+    }
+
+    @Test
+    public void sin_ultima_vez_no_hay_volumen_hasta_marcar_kilos() {
+        SesionEnCurso s = sesion(ejercicio(1, 3));
+        assertFalse(LogicaSesion.volumenVisible(s));
+        SesionEnCurso.Serie serie = s.ejercicios.get(0).series.get(0);
+        serie.peso = "40";
+        assertFalse("lo escrito sin marcar no cuenta", LogicaSesion.volumenVisible(s));
+        serie.repeticiones = "8";
+        serie.hecha = true;
+        assertTrue(LogicaSesion.volumenVisible(s));
+    }
+
+    @Test
+    public void con_kilos_la_ultima_vez_el_volumen_cuenta_desde_cero() {
+        SesionEnCurso s = sesion(conAnterior(1, null), conAnterior(2, "57.50"));
+        assertTrue(LogicaSesion.volumenVisible(s));
+        // Marcar una serie a peso corporal no lo esconde: la rutina mueve kilos.
+        s.ejercicios.get(0).series.get(0).repeticiones = "12";
+        s.ejercicios.get(0).series.get(0).hecha = true;
+        assertTrue(LogicaSesion.volumenVisible(s));
     }
 
     // GP-251: con la sesión abierta la app pasa a inglés; los textos vuelven a pedirse y cambian.

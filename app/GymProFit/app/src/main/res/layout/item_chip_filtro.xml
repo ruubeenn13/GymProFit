@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_chip_filtro — un chip de filtro creado desde el código (lote 1.2.1): los días por
-  semana de Programas. A 48 dp de alto, como el resto de lo que se toca.
+  semana de Programas. A 48 dp de alto, como el resto de lo que se toca. Sin minWidth: con él,
+  un «2» de 40 dp se centraba en 48 y el hueco entre dos chips sin marcar era mayor que junto al
+  marcado (lote 12); el ancho mínimo lo pone ProgramasActivity con el relleno del texto.
 -->
 <com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Widget.GymProFit.Chip"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minHeight="48dp"
-    android:minWidth="48dp" />
+    android:minHeight="48dp" />

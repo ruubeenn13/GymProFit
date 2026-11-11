@@ -58,42 +58,42 @@
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_todos"
                 android:checked="true"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipActivas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_activos"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipInactivas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_inactivos"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipPrincipiante"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_principiante"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipIntermedio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_intermedio"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipAvanzado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/admin_filtro_avanzado"
-                style="@style/Widget.Material3.Chip.Filter" />
+                style="@style/Widget.GymProFit.Chip" />
 
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>

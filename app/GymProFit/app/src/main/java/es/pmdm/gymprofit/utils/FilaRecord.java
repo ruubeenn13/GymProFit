@@ -28,8 +28,12 @@ public final class FilaRecord {
                                @NonNull Locale idioma) {
         String c = cuando == null || cuando.isEmpty() ? null
                 : cuando.substring(0, 1).toUpperCase(idioma) + cuando.substring(1);
-        if (c == null) return anterior;
-        return anterior == null ? c : String.format(idioma, haceAntes, c, anterior);
+        // La marca anterior va entera en su línea: a 1,3 «antes» se quedaba al final de una y
+        // «82,5 kg × 10» en la siguiente (revisor, lote 12). La cadena lleva el espacio duro tras
+        // «antes»; aquí, los de la marca.
+        String marca = anterior == null ? null : anterior.replace(' ', '\u00A0');
+        if (c == null) return marca;
+        return marca == null ? c : String.format(idioma, haceAntes, c, marca);
     }
 
     /**

@@ -70,7 +70,7 @@ public class CrearRutinaActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Salir con algo elegido pregunta antes de tirarlo (GP-098).
-        AvisoDescartar.instalar(this, toolbar, () -> !zonas.isEmpty() || tiempoTocado);
+        AvisoDescartar.instalar(this, toolbar, R.string.descartar_rutina_titulo, () -> !zonas.isEmpty() || tiempoTocado);
 
         tvPie = findViewById(R.id.tvPieCrear);
         // El temblor de la rejilla sin zonas cabe en el margen de la pantalla: sin recortarlo.

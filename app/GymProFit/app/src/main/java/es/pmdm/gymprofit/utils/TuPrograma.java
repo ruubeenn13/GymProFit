@@ -74,6 +74,27 @@ public final class TuPrograma {
         return barra;
     }
 
+    /**
+     * Qué día del ciclo toca hoy, contando desde 1: el lugar de la posición de hoy en el ciclo
+     * («Día 3 de 3»). Inicio y Entrenar lo leen de aquí; Inicio contaba las hechas más una y
+     * decía otro día (lote 12).
+     *
+     * @return 0 si no hay programa o no se sabe qué toca.
+     */
+    public static int diaHoy(@Nullable ProgramaQueSigue seguido) {
+        if (seguido == null || seguido.getCiclo() == null || seguido.getPosicionHoy() == null) return 0;
+        List<ProgramaQueSigue.DiaCiclo> ciclo = seguido.getCiclo();
+        for (int i = 0; i < ciclo.size(); i++) {
+            if (ciclo.get(i).getPosicion() == seguido.getPosicionHoy()) return i + 1;
+        }
+        return 0;
+    }
+
+    /** Cuántos días tiene el ciclo, para «Día 3 de 3». */
+    public static int diasCiclo(@Nullable ProgramaQueSigue seguido) {
+        return seguido == null || seguido.getCiclo() == null ? 0 : seguido.getCiclo().size();
+    }
+
     /** Cuántas posiciones van hechas en esta vuelta. */
     public static int hechas(@Nullable ProgramaQueSigue seguido) {
         int n = 0;

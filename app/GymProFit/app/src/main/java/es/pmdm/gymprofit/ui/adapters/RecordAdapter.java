@@ -130,9 +130,10 @@ public class RecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // Dorado solo el último récord: lo conseguido, no todo (DEC-018).
         boolean dorado = r == masReciente;
         h.ivTrofeo.setImageResource(dorado ? R.drawable.ic_ms_trophy_fill : R.drawable.ic_ms_trophy);
-        h.ivTrofeo.setImageTintList(android.content.res.ColorStateList.valueOf(dorado
-                ? androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_gold)
-                : color(ctx, com.google.android.material.R.attr.colorOnSurfaceVariant)));
+        // El círculo y el gris, los de «Récords recientes» de Progreso (ListasProgreso.fila).
+        h.ivTrofeo.setBackgroundResource(dorado ? R.drawable.bg_fila_icono_oro : R.drawable.bg_fila_icono);
+        h.ivTrofeo.setImageTintList(android.content.res.ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(ctx, dorado ? R.color.gp_gold : R.color.gp_text_secondary)));
         h.tvMarca.setTextColor(dorado ? androidx.core.content.ContextCompat.getColor(ctx, R.color.gp_gold_text)
                 : color(ctx, com.google.android.material.R.attr.colorOnSurface));
         // Por tiempo (GP-125), el cronómetro delante de «1:05».

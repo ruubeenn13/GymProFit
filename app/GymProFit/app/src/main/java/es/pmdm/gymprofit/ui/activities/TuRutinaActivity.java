@@ -650,13 +650,13 @@ public class TuRutinaActivity extends AppCompatActivity {
     // El aspa: al crear cierra el asistente entero (con algo elegido, avisa); al editar, sale.
     private void cerrar() {
         if (editar) {
-            AvisoDescartar.salir(this, this::hayCambios);
+            AvisoDescartar.salir(this, R.string.descartar_cambios_titulo, this::hayCambios);
             return;
         }
         // RESULT_FIRST_USER: el paso 2 y el paso 1 también se van. Si al final sigue editando,
         // volver al paso 2 o guardar ponen después su propio resultado.
         setResult(RESULT_FIRST_USER);
-        AvisoDescartar.salir(this, () -> !borrador.ejercicios.isEmpty());
+        AvisoDescartar.salir(this, R.string.descartar_rutina_titulo, () -> !borrador.ejercicios.isEmpty());
     }
 
     // ── Guardar ─────────────────────────────────────────────────────────
