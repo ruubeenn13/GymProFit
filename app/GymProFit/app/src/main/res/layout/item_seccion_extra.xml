@@ -2,7 +2,9 @@
 <!--
   item_seccion_extra — un rótulo de grupo con algo a la derecha (tablero 4 y 8, lote 1.6.3):
   «Recientes» con «Ver todos», que despliega el resto ahí mismo, o «Los que más usas» con
-  cuántos favoritos hay. El rótulo es un encabezado para TalkBack.
+  cuántos favoritos hay. El rótulo es un encabezado para TalkBack. 16 dp a la derecha: con los
+  12 de dentro del botón, el texto de «Ver todos» queda 8 dp por dentro del borde de la tarjeta
+  también a letra 1,3 (lote 12).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,7 +13,7 @@
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:paddingStart="20dp"
-    android:paddingEnd="8dp"
+    android:paddingEnd="16dp"
     android:paddingTop="4dp">
 
     <TextView

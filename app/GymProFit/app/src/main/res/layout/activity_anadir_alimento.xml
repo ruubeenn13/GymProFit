@@ -86,7 +86,6 @@
             app:boxBackgroundColor="?attr/colorSurface"
             app:startIconDrawable="@drawable/ic_ms_search"
             app:startIconTint="?attr/colorOnSurfaceVariant"
-            app:startIconContentDescription="@string/anadir_buscar_hint"
             app:endIconMode="clear_text"
             app:endIconDrawable="@drawable/ic_ms_close"
             app:endIconContentDescription="@string/buscar_borrar"
