@@ -255,12 +255,12 @@ public class InicioFragment extends BaseFragment {
                 return negrita(getString(R.string.profi_sin_entrenos), getString(R.string.profi_sin_entrenos_b));
             case ENTRENADO_HOY:
                 String hecho = f.rutina == null ? getString(R.string.profi_hoy_libre)
-                        : getString(R.string.profi_hoy_rutina, f.rutina);
+                        : getString(R.string.profi_hoy_rutina, FraseProfi.sinPartirSigla(f.rutina));
                 return negrita(hecho, f.n > 0
                         ? getResources().getQuantityString(R.plurals.profi_hoy_records, f.n, f.n)
                         : getString(R.string.profi_hoy_bien));
             case RECORDS_ULTIMA:
-                return negrita(getResources().getQuantityString(R.plurals.profi_records, f.n, f.rutina, f.n),
+                return negrita(getResources().getQuantityString(R.plurals.profi_records, f.n, FraseProfi.sinPartirSigla(f.rutina), f.n),
                         deHoy(f));
             case SEMANA:
                 return negrita(getResources().getQuantityString(R.plurals.profi_semana, f.n, f.n), deHoy(f));
@@ -273,11 +273,12 @@ public class InicioFragment extends BaseFragment {
         }
     }
 
-    // «Hoy empezamos por Press banca.» o «Hoy toca Torso B.»; null si no hay rutina de hoy.
+    // «Hoy empezamos por Press banca.» o «Hoy toca Torso B.»; null si no hay rutina de hoy. La sigla
+    // del final, pegada a su palabra: a 1,3 la «B» se quedaba sola en otra línea (lote 12).
     @Nullable
     private String deHoy(FraseProfi f) {
         if (f.ejercicioHoy != null) return getString(R.string.profi_empezamos_por, f.ejercicioHoy);
-        if (f.rutinaHoy != null) return getString(R.string.profi_hoy_toca, f.rutinaHoy);
+        if (f.rutinaHoy != null) return getString(R.string.profi_hoy_toca, FraseProfi.sinPartirSigla(f.rutinaHoy));
         return null;
     }
 
