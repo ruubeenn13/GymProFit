@@ -139,7 +139,7 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         pintarSwatch(R.id.legOn, colorOn);
         // «En objetivo» lleva además el check, en la leyenda y en cada día: la adherencia no se
         // distingue solo por el color (revisor, lote 7).
-        findViewById(R.id.legOn).setBackground(conCheck(findViewById(R.id.legOn).getBackground(), dp(2)));
+        findViewById(R.id.legOn).setBackground(conCheck(findViewById(R.id.legOn).getBackground(), dp(1)));
         // Sin objetivo no hay «en objetivo» ni «fuera»: la leyenda no aplica.
         if (!conObjetivo) ((View) findViewById(R.id.legOn).getParent()).setVisibility(View.GONE);
 
@@ -273,6 +273,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         meta.enableDashedLine(12f, 8f, 0f);
         meta.setTextColor(getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant));
         meta.setTextSize(ChartStyler.textoSp(this));
+        // La etiqueta, separada de la raya: a 1,3 la línea pasaba por la base del texto (lote 12).
+        meta.setYOffset(6f);
         chartKcal.getAxisLeft().addLimitLine(meta);
         }
 

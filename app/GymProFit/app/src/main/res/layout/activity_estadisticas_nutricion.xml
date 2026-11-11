@@ -286,19 +286,19 @@
                         android:gravity="center_vertical"
                         android:layout_marginTop="12dp">
 
-                        <View android:id="@+id/legNone" android:layout_width="14dp" android:layout_height="14dp" />
+                        <View android:id="@+id/legNone" android:layout_width="18dp" android:layout_height="18dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
                             android:text="@string/heatmap_sin_datos" android:textSize="@dimen/text_label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
-                        <View android:id="@+id/legOff" android:layout_width="14dp" android:layout_height="14dp" />
+                        <View android:id="@+id/legOff" android:layout_width="18dp" android:layout_height="18dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp" android:layout_marginEnd="14dp"
                             android:text="@string/heatmap_fuera" android:textSize="@dimen/text_label"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
-                        <View android:id="@+id/legOn" android:layout_width="14dp" android:layout_height="14dp" />
+                        <View android:id="@+id/legOn" android:layout_width="18dp" android:layout_height="18dp" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="@string/heatmap_objetivo" android:textSize="@dimen/text_label"
