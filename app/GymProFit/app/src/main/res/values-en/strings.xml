@@ -830,7 +830,7 @@
     <string name="seccion_logros">Badges</string>
     <string name="seccion_medidas">Measurements</string>
     <string name="seccion_historial">History</string>
-    <string name="record_hace_antes">%1$s · before %2$s</string>
+    <string name="record_hace_antes">%1$s · before\u00A0%2$s</string>
     <string name="ajustes_cuenta">Account</string>
     <string name="ajustes_foto">Profile photo</string>
     <string name="ajustes_correo">Email</string>
