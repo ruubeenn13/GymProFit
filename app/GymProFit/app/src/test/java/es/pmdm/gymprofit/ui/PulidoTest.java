@@ -218,7 +218,8 @@ public class PulidoTest {
         assertTrue("fondos con capa de foco: " + conCapa, conCapa.isEmpty());
         for (String[] l : new String[][]{ { "view_profi_copiar", "tvMensajeProfi" }, { "item_sueles", "textosSueles" },
                 { "item_encaja", "barraEncaja" } }) {
-            assertTrue(l[1], Pattern.compile("android:id=\"@\\+id/" + l[1] + "\"[^>]*android:padding=\"@dimen/aire_anillo\"",
+            // Desde el lote 12 las ideas llevan el aire a los lados y aire_anillo_alto arriba y abajo.
+            assertTrue(l[1], Pattern.compile("android:id=\"@\\+id/" + l[1] + "\"[^>]*android:padding(Horizontal)?=\"@dimen/aire_anillo\"",
                     Pattern.DOTALL).matcher(leer(RES.resolve("layout/" + l[0] + ".xml"))).find());
         }
     }
