@@ -201,7 +201,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
 
     // Calcula los KPIs y pinta las barras a partir del resumen diario del periodo.
     private void render(List<ResumenDiarioNutricion> lista) {
-        if (lista == null) lista = new ArrayList<>();
+        // Solo los días con algo apuntado: una comida vacía (quitar su último alimento, «Hoy no»)
+        // llega como día y daba «2 días registrados» con media 0 junto al vacío (revisor, lote 12).
+        lista = es.pmdm.gymprofit.utils.DiasConComida.de(lista);
 
         // KPIs sobre los días CON registro.
         int diasReg = lista.size();
@@ -273,8 +275,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         meta.enableDashedLine(12f, 8f, 0f);
         meta.setTextColor(getColorTema(com.google.android.material.R.attr.colorOnSurfaceVariant));
         meta.setTextSize(ChartStyler.textoSp(this));
-        // La etiqueta, separada de la raya: a 1,3 la línea pasaba por la base del texto (lote 12).
-        meta.setYOffset(6f);
+        // La etiqueta, bajo la raya y separada de ella: encima, a 1,3 la línea pasaba por la base del
+        // texto y, subida, se cortaba por arriba del área de la gráfica (revisor, lote 12).
+        meta.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+        meta.setYOffset(4f);
         chartKcal.getAxisLeft().addLimitLine(meta);
         }
 
