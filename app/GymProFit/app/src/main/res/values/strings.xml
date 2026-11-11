@@ -2142,6 +2142,7 @@
     <string name="inicio_dia_agua_hoy">bebidos hoy</string>
     <string name="inicio_cifra_g">%1$d\u00A0g</string>
     <string name="inicio_cifra_l">%1$s\u00A0L</string>
+    <string name="inicio_dia_calorias_a11y">Calorías: %1$s</string>
     <string name="inicio_dia_proteina_a11y">Proteína: %1$d de %2$d gramos</string>
     <string name="inicio_dia_proteina_sin_objetivo_a11y">Proteína: %1$d gramos hoy</string>
     <string name="inicio_dia_agua_a11y">Agua: %1$s de %2$s litros, %3$d de %4$d vasos</string>

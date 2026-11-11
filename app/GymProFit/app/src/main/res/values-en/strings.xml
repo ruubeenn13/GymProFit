@@ -2108,6 +2108,7 @@
     <string name="inicio_dia_agua_hoy">drunk today</string>
     <string name="inicio_cifra_g">%1$d\u00A0g</string>
     <string name="inicio_cifra_l">%1$s\u00A0L</string>
+    <string name="inicio_dia_calorias_a11y">Calories: %1$s</string>
     <string name="inicio_dia_proteina_a11y">Protein: %1$d of %2$d grams</string>
     <string name="inicio_dia_proteina_sin_objetivo_a11y">Protein: %1$d grams today</string>
     <string name="inicio_dia_agua_a11y">Water: %1$s of %2$s liters, %3$d of %4$d glasses</string>

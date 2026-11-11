@@ -168,7 +168,8 @@ public final class InicioTuDia {
             apoyo.setText(quedan >= 0 ? R.string.inicio_dia_quedan : R.string.inicio_dia_pasas);
             a11y = fragment.getString(R.string.nutricion_hoy_a11y, entero.format(d.kcal), entero.format(d.objetivoKcal));
         }
-        card.setContentDescription(fragment.getString(R.string.inicio_dia_calorias) + ". " + a11y);
+        // «Calorías: …», con dos puntos como la proteína y el agua (revisor, lote 12).
+        card.setContentDescription(fragment.getString(R.string.inicio_dia_calorias_a11y, a11y));
     }
 
     private void pintarProteina(DiaNutricion d) {
