@@ -600,7 +600,17 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     }
 
     private void avisar(int texto) {
-        Snackbar.make(rv, texto, Snackbar.LENGTH_LONG).show();
+        aviso(texto, Snackbar.LENGTH_LONG).show();
+    }
+
+    // Un aviso al pie de la lista. La ventana ya se encoge con el teclado (adjustResize), y Material
+    // sumaba además el alto del teclado como margen: con él abierto, el aviso subía hasta debajo de
+    // la cabecera y tapaba el ejercicio y su ⋮ (revisor, lote 12). Sin ese margen se queda al pie.
+    private Snackbar aviso(int texto, int duracion) {
+        Snackbar sb = Snackbar.make(rv, texto, duracion);
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(sb.getView(),
+                (v, insets) -> androidx.core.view.WindowInsetsCompat.CONSUMED);
+        return sb;
     }
 
     @Override
@@ -645,7 +655,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             adapter.pintar(repo.actual());
             return;
         }
-        Snackbar.make(rv, R.string.envivo_serie_quitada, Snackbar.LENGTH_LONG)
+        aviso(R.string.envivo_serie_quitada, Snackbar.LENGTH_LONG)
                 .setAction(R.string.envivo_deshacer, v -> repo.reponer(q))
                 .show();
     }
