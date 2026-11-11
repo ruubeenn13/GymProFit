@@ -137,6 +137,9 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         findViewById(R.id.legNone).setBackground(celda(colorSinDatos, false, dp(4)));
         pintarSwatch(R.id.legOff, colorOff);
         pintarSwatch(R.id.legOn, colorOn);
+        // «En objetivo» lleva además el check, en la leyenda y en cada día: la adherencia no se
+        // distingue solo por el color (revisor, lote 7).
+        findViewById(R.id.legOn).setBackground(conCheck(findViewById(R.id.legOn).getBackground(), dp(2)));
         // Sin objetivo no hay «en objetivo» ni «fuera»: la leyenda no aplica.
         if (!conObjetivo) ((View) findViewById(R.id.legOn).getParent()).setVisibility(View.GONE);
 
@@ -238,7 +241,11 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         // desde el primero del período, y la etiqueta, su fecha corta en el idioma de la app.
         final Long dia0 = EjeFechas.dia(inicioIso);
         final java.util.Locale idioma = FechaUtils.localeDeLaApp(this);
-        final String patron = getString(R.string.inicio_fecha_corta_patron);
+        // En la semana, cada día lleva su etiqueta y es solo el número («6»): con «5 nov», «7 nov»…
+        // el eje se saltaba días y el que tenía el dato podía quedarse sin fecha (revisor, lote 7).
+        // El mes ya está en el rango de arriba. En el mes, 30 etiquetas no caben: fecha corta.
+        final boolean semana = lenDias <= 7;
+        final String patron = semana ? "d" : getString(R.string.inicio_fecha_corta_patron);
         List<BarEntry> entradas = new ArrayList<>();
         for (ResumenDiarioNutricion r : lista) {
             Long d = EjeFechas.dia(r.getFecha());
@@ -254,6 +261,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         });
         chartKcal.getXAxis().setAxisMinimum(-0.5f);
         chartKcal.getXAxis().setAxisMaximum(lenDias - 0.5f);
+        // styleBar deja el eje en 4 etiquetas; en la semana, las 7.
+        if (semana) chartKcal.getXAxis().setLabelCount(lenDias, false);
 
         // Línea de objetivo de kcal.
         chartKcal.getAxisLeft().removeAllLimitLines();
@@ -268,8 +277,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         }
 
         // Tooltip: kcal + fecha.
+        // El bocadillo, con la fecha entera aunque el eje lleve solo el número.
+        final String patronMarcador = getString(R.string.inicio_fecha_corta_patron);
         ChartMarker.poner(chartKcal, (e, h) -> getString(R.string.grafica_kcal_fecha, (int) e.getY(),
-                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patron)));
+                dia0 == null ? "" : EjeFechas.etiqueta(dia0 + e.getX(), idioma, patronMarcador)));
 
         BarDataSet ds = new BarDataSet(entradas, "kcal");
         ChartStyler.styleBarDataSet(ds, this);
@@ -385,8 +396,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
             else { color = colorOff; fuera++; }
 
             View v = new View(this);
-            // «Sin datos» es solo el contorno: no se distingue solo por el color.
-            v.setBackground(celda(color, kcal != null, dp(6)));
+            // «Sin datos» es solo el contorno y «en objetivo» lleva el check: no se distinguen solo
+            // por el color.
+            android.graphics.drawable.Drawable fondo = celda(color, kcal != null, dp(6));
+            v.setBackground(color == colorOn && conObjetivo && kcal != null ? conCheck(fondo, dp(6)) : fondo);
             v.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
 
             GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
@@ -410,6 +423,21 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         if (rellena) bg.setColor(color);
         else bg.setStroke(Math.max(1, Math.round(dp(1))), color);
         return bg;
+    }
+
+    // El fondo con el check encima, centrado y con aire, en el color de la superficie: sobre el
+    // verde de gp_success pasa 3:1 en los dos temas.
+    private android.graphics.drawable.Drawable conCheck(android.graphics.drawable.Drawable fondo, float aire) {
+        android.graphics.drawable.Drawable check = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_ms_check);
+        if (check == null) return fondo;
+        check = androidx.core.graphics.drawable.DrawableCompat.wrap(check.mutate());
+        androidx.core.graphics.drawable.DrawableCompat.setTint(check,
+                getColorTema(com.google.android.material.R.attr.colorSurface));
+        android.graphics.drawable.LayerDrawable capas =
+                new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{fondo, check});
+        int a = Math.round(aire);
+        capas.setLayerInset(1, a, a, a, a);
+        return capas;
     }
 
     // Pinta un cuadradito de la leyenda con el color indicado.
