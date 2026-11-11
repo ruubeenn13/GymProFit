@@ -2120,7 +2120,7 @@
     <string name="inicio_kilos_semana">Kilos per week</string>
     <string name="inicio_semana_corta">W%1$d</string>
     <string name="inicio_variacion">%1$s%2$d%% in %3$d weeks</string>
-    <string name="inicio_kilos_a11y">Kilos moved per week, from the oldest to the current one: %1$s.</string>
+    <string name="inicio_kilos_a11y">Weight lifted per week, from the oldest to the current one: %1$s.</string>
     <string name="inicio_progreso_error">Couldn\'t load your kilos.</string>
     <string name="inicio_progreso_vacio">No kilos to count yet. Your first workout will show up here.</string>
     <string name="inicio_musculos_a11y">Muscles worked this week. %1$s.</string>
@@ -2362,13 +2362,13 @@
     <!-- Progress on a single screen (GP-216, batch 4, board 16) -->
     <string name="progreso_resumen_vacio">Your first workout starts filling this in: sessions, records and achievements.</string>
     <string name="progreso_resumen_error">Couldn\'t load your summary.</string>
-    <string name="progreso_kilos_titulo">Kilos moved</string>
+    <string name="progreso_kilos_titulo">Weight lifted</string>
     <string name="progreso_kilos_semana">kg this week</string>
     <string name="progreso_kilos_de_la_pasada">%1$d%% of last week</string>
     <string name="progreso_kilos_de_la_pasada_a11y">%1$d%% of last week\'s kilos</string>
     <string name="progreso_kilos_sube_a11y">%1$d%% more than last week</string>
     <string name="progreso_kilos_cifra_a11y">%1$s kilos this week</string>
-    <string name="progreso_kilos_resumen_a11y">Kilos moved per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
+    <string name="progreso_kilos_resumen_a11y">Weight lifted per week over the last %1$d weeks. Highest, %2$s; this week, %3$s.</string>
     <string name="progreso_kilos_vacio">Once you finish your first workout, you\'ll see the kilos you move each week here.</string>
     <string name="progreso_kilos_error">Couldn\'t load your kilos.</string>
     <!-- GP-249: with no kilos in the period, the bars count sets (bodyweight training) -->
