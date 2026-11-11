@@ -366,7 +366,9 @@ public class UIHelper {
 
         boolean separadorAnadido = false;
         for (MenuAction a : actions) {
-            if (a.destructive && !separadorAnadido) {
+            // La raya antes de lo destructivo, solo si hay opciones normales encima: sola, se juntaba
+            // con la de la cabecera en una doble raya (el ⋮ de un ejercicio en la sesión; lote 12).
+            if (rayaAntes(a.destructive, separadorAnadido, llItems.getChildCount())) {
                 View sep = new View(context);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(context, 1));
@@ -442,6 +444,18 @@ public class UIHelper {
         int debajo = visible.bottom - (anchorLoc[1] + anchor.getHeight());
         int yOffset = debajo < root.getMeasuredHeight() ? -(anchor.getHeight() + root.getMeasuredHeight()) : 0;
         popup.showAsDropDown(anchor, xOffset, yOffset);
+    }
+
+    /**
+     * Si el menú anclado pone una raya antes de esta opción: la primera destructiva, y solo si
+     * hay opciones encima (si no, se junta con la raya de la cabecera; lote 12).
+     *
+     * @param destructiva    si la opción es destructiva.
+     * @param yaPuesta       si ya hay una raya de destructivas.
+     * @param opcionesEncima cuántas vistas hay ya en la lista de opciones.
+     */
+    public static boolean rayaAntes(boolean destructiva, boolean yaPuesta, int opcionesEncima) {
+        return destructiva && !yaPuesta && opcionesEncima > 0;
     }
 
     // Convierte dp a píxeles según la densidad de pantalla del contexto.
