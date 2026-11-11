@@ -22,6 +22,15 @@
     public static ** valueOf(java.lang.String);
 }
 
+# ---- Lo que pasa por Gson fuera de model (GP-247) ----
+# Anadido viaja en JSON entre Añadir, la ficha, el escáner y Crear plato. Sin regla, R8 renombraba
+# sus campos (a…g) y quitaba su constructor vacío: funcionaba solo porque quien escribe y quien lee
+# están en la misma APK. TiposGsonConservadosTest exige una regla por cada tipo así.
+-keep class es.pmdm.gymprofit.utils.Anadidos$Anadido {
+    <fields>;
+    <init>();
+}
+
 # ---- Interfaces Retrofit tipadas y adaptador Gson custom (registrado por reflexión) ----
 -keep interface es.pmdm.gymprofit.network.** { *; }
 -keep class es.pmdm.gymprofit.network.BooleanNumericAdapter { *; }
