@@ -245,7 +245,8 @@
     <string name="heatmap_sin_datos">No data</string>
     <string name="heatmap_fuera">Off target</string>
     <string name="heatmap_objetivo">On target</string>
-    <string name="medicion_sin_datos_subtitulo">Tap + to add your first measurement</string>
+    <string name="medidas_error">We couldn\'t load your measurements.</string>
+    <string name="medicion_sin_datos_subtitulo">Log your first one to see how you change.</string>
     <string name="medicion_label_grasa">Body fat</string>
     <string name="medicion_label_musculo">Muscle mass</string>
     <string name="medicion_label_cintura">Waist</string>
@@ -827,7 +828,7 @@
     <string name="progreso_cifra_a11y">%1$s %2$s</string>
     <string name="seccion_records">Records</string>
     <string name="seccion_logros">Badges</string>
-    <string name="seccion_medidas">Measures</string>
+    <string name="seccion_medidas">Measurements</string>
     <string name="seccion_historial">History</string>
     <string name="record_hace_antes">%1$s · before %2$s</string>
     <string name="ajustes_cuenta">Account</string>

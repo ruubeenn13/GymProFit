@@ -54,6 +54,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRegistrarPrimera"
+                style="@style/Widget.GymProFit.BotonPildora"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -61,6 +62,17 @@
                 app:icon="@drawable/ic_ms_add" />
 
         </LinearLayout>
+
+        <!-- La carga fallida: su texto y «Reintentar» (lote 12). -->
+        <include
+            android:id="@+id/estadoMedidas"
+            layout="@layout/view_estado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margen_pantalla"
+            android:layout_marginEnd="@dimen/margen_pantalla"
+            android:visibility="gone" />
 
         <!-- Contenido con mediciones -->
         <androidx.core.widget.NestedScrollView
@@ -106,6 +118,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/medicion_grafica_peso"
                             android:textAppearance="@style/TextAppearance.GymProFit.Label"
+                            android:textSize="@dimen/text_eyebrow"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <!-- Toggle de métrica: qué medida se representa -->
@@ -177,14 +190,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- 8 dp por los lados: el anillo de foco de una fila (2 dp de aire y 2 de trazo por
-                         fuera) cabe dentro de la tarjeta y no pisa su borde (revisor, lote 7). -->
+                    <!-- 8 dp por los cuatro lados: el anillo de foco de una fila (2 dp de aire y 2 de
+                         trazo por fuera) cabe dentro de la tarjeta y no pisa su borde ni lo cruzan sus
+                         esquinas, tampoco en la primera y la última fila (revisor, lotes 7 y 12). -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="4dp">
+                        android:padding="8dp">
 
                         <!-- Peso -->
                         <LinearLayout

@@ -46,6 +46,7 @@ import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.MedicionHoy;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.Numeros;
 
 // ============================================================
@@ -58,6 +59,8 @@ public class MedidasFragment extends BaseFragment {
 
 
     private View tvVacio;
+    // La carga fallida, con su «Reintentar» (lote 12).
+    private VistaEstado estado;
     private View scrollMediciones;
     private TextView tvFechaUltima;
     private TextView tvPesoVal, tvGrasaVal, tvMusculoVal;
@@ -95,6 +98,7 @@ public class MedidasFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         tvVacio         = findViewById(R.id.tvVacio);
+        estado          = new VistaEstado(findViewById(R.id.estadoMedidas));
         scrollMediciones = findViewById(R.id.scrollMediciones);
         tvFechaUltima   = findViewById(R.id.tvFechaUltima);
         tvPesoVal       = findViewById(R.id.tvPesoVal);
@@ -231,6 +235,7 @@ public class MedidasFragment extends BaseFragment {
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
+                estado.oculto();
                 // Para la proteína sobre masa magra (GP-206): el % más reciente, o ninguno.
                 prefsManager.saveGrasaReciente(GrasaReciente.elegir(lista));
                 if (lista == null || lista.isEmpty()) {
@@ -248,9 +253,18 @@ public class MedidasFragment extends BaseFragment {
             @Override
             public void onFail(int code, String message) {
                 // "Sin mediciones" ya no llega como 404: es 200 con [] y lo atiende
-                // onOk, que siembra desde el perfil. Aquí solo caen fallos de verdad.
-                UiFeedback.toastError(requireActivity(), code, message);
-                intentarCrearDesdePerfil(usuarioId);
+                // onOk, que siembra desde el perfil. Aquí solo caen fallos de verdad, y un
+                // fallo se enseña con «Reintentar»: antes sembraba desde el perfil (una lectura
+                // fallida terminaba en un POST) y sin red decía que no había mediciones (lote 12).
+                if (!isAdded()) return;
+                LoadingDialog.hide(requireActivity());
+                scrollMediciones.setVisibility(View.GONE);
+                tvVacio.setVisibility(View.GONE);
+                estado.error(VistaEstado.mensaje(requireContext(), R.string.medidas_error, code, message),
+                        () -> {
+                            estado.oculto();
+                            cargarMedicion();
+                        });
             }
         });
     }
