@@ -19,6 +19,7 @@ import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -264,8 +265,13 @@ public class EjercicioService implements IEjercicioService {
         if (grupos.isEmpty()) grupos = EnumSet.allOf(GrupoMuscular.class);
         Dificultad dif = parseDificultad(dificultad);
 
-        Page<Ejercicio> resultado = ejercicioRepository.buscarCatalogo(
-                texto, grupos, dif, PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100)));
+        // Ordenado por el nombre en el idioma de la petición, el mismo que sale en la
+        // respuesta (GP-246): en inglés, el paso 2 de crear una rutina salía en el orden
+        // del nombre en español.
+        PageRequest pagina = PageRequest.of(Math.max(0, page), Math.min(Math.max(1, size), 100));
+        Page<Ejercicio> resultado = "en".equals(LocaleContextHolder.getLocale().getLanguage())
+                ? ejercicioRepository.buscarCatalogoEn(texto, grupos, dif, pagina)
+                : ejercicioRepository.buscarCatalogo(texto, grupos, dif, pagina);
 
         return PageDTO.of(resultado, ejercicioMapper.toDTOList(resultado.getContent()));
     }
