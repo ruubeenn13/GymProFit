@@ -398,9 +398,20 @@ public class MedidasFragment extends BaseFragment {
         if (que == PuntosGrafica.Que.UN_PUNTO) {
             PuntosGrafica.unPunto(ds, requireContext(), valorEscrito(metrica, puntos.get(0).y));
         }
-        // Un decimal en el eje como mucho: con 30 días salían «79,20 / 79,11» (revisor, GP-228).
-        chartPeso.getAxisLeft().setGranularity(0.1f);
+        // El eje en pasos redondos y con los límites en múltiplos del paso (EjeY, lote 12): salían
+        // pasos de 0,6 u 0,8 y, con un punto, un eje distinto en cada métrica. Un decimal como
+        // mucho (GP-228).
+        float minY = Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+        for (EjeFechas.Punto pt : puntos) {
+            minY = Math.min(minY, pt.y);
+            maxY = Math.max(maxY, pt.y);
+        }
+        es.pmdm.gymprofit.utils.EjeY eje = es.pmdm.gymprofit.utils.EjeY.de(minY, maxY);
+        chartPeso.getAxisLeft().setAxisMinimum(eje.inicio);
+        chartPeso.getAxisLeft().setAxisMaximum(eje.fin);
+        chartPeso.getAxisLeft().setGranularity(eje.paso);
         chartPeso.getAxisLeft().setGranularityEnabled(true);
+        chartPeso.getAxisLeft().setLabelCount(eje.etiquetas(), true);
         chartPeso.setData(new LineData(ds));
         chartPeso.invalidate();
         // La línea no es nada para TalkBack: se dice desde dónde y hasta dónde va (DEC-019); con

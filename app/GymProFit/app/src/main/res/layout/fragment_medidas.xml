@@ -177,21 +177,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
+                    <!-- 8 dp por los lados: el anillo de foco de una fila (2 dp de aire y 2 de trazo por
+                         fuera) cabe dentro de la tarjeta y no pisa su borde (revisor, lote 7). -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="4dp">
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp">
 
                         <!-- Peso -->
                         <LinearLayout
                             android:id="@+id/rowPeso"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/fila_alto_min"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -210,7 +214,7 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
+                                android:textColor="?attr/colorOnSurface" />
 
                             <ImageView
                                 android:layout_width="16dp"
@@ -223,17 +227,18 @@
                         </LinearLayout>
 
                         <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                            android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                         <!-- Grasa corporal -->
                         <LinearLayout
                             android:id="@+id/rowGrasa"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/fila_alto_min"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -252,7 +257,7 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
+                                android:textColor="?attr/colorOnSurface" />
 
                             <ImageView
                                 android:layout_width="16dp"
@@ -265,17 +270,18 @@
                         </LinearLayout>
 
                         <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                            android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                         <!-- Cintura -->
                         <LinearLayout
                             android:id="@+id/rowCintura"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/fila_alto_min"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -294,7 +300,7 @@
                                 android:layout_height="wrap_content"
                                 android:textSize="@dimen/text_body"
                                 android:textStyle="bold"
-                                android:textColor="?attr/colorPrimary" />
+                                android:textColor="?attr/colorOnSurface" />
 
                             <ImageView
                                 android:layout_width="16dp"
@@ -307,17 +313,18 @@
                         </LinearLayout>
 
                         <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                            android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                         <!-- Notas -->
                         <LinearLayout
                             android:id="@+id/rowNotas"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/fila_alto_min"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -352,17 +359,18 @@
                         </LinearLayout>
 
                         <View android:layout_width="match_parent" android:layout_height="1dp"
-                            android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                            android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                         <!-- Toggle: despliega/oculta las medidas avanzadas (nicho) -->
                         <LinearLayout
                             android:id="@+id/rowMasDetalles"
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/fila_alto_min"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:paddingStart="16dp"
-                            android:paddingEnd="16dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
                             android:background="?attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true">
@@ -394,11 +402,12 @@
                             <LinearLayout
                                 android:id="@+id/rowMusculo"
                                 android:layout_width="match_parent"
-                                android:layout_height="56dp"
+                                android:layout_height="wrap_content"
+                                android:minHeight="@dimen/fila_alto_min"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:clickable="true"
                                 android:focusable="true">
@@ -417,7 +426,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/text_body"
                                     android:textStyle="bold"
-                                    android:textColor="?attr/colorPrimary" />
+                                    android:textColor="?attr/colorOnSurface" />
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -430,17 +439,18 @@
                             </LinearLayout>
 
                             <View android:layout_width="match_parent" android:layout_height="1dp"
-                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                                android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                             <!-- Pecho -->
                             <LinearLayout
                                 android:id="@+id/rowPecho"
                                 android:layout_width="match_parent"
-                                android:layout_height="56dp"
+                                android:layout_height="wrap_content"
+                                android:minHeight="@dimen/fila_alto_min"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:clickable="true"
                                 android:focusable="true">
@@ -459,7 +469,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/text_body"
                                     android:textStyle="bold"
-                                    android:textColor="?attr/colorPrimary" />
+                                    android:textColor="?attr/colorOnSurface" />
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -472,17 +482,18 @@
                             </LinearLayout>
 
                             <View android:layout_width="match_parent" android:layout_height="1dp"
-                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                                android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                             <!-- Brazos -->
                             <LinearLayout
                                 android:id="@+id/rowBrazos"
                                 android:layout_width="match_parent"
-                                android:layout_height="56dp"
+                                android:layout_height="wrap_content"
+                                android:minHeight="@dimen/fila_alto_min"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:clickable="true"
                                 android:focusable="true">
@@ -501,7 +512,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/text_body"
                                     android:textStyle="bold"
-                                    android:textColor="?attr/colorPrimary" />
+                                    android:textColor="?attr/colorOnSurface" />
 
                                 <ImageView
                                     android:layout_width="16dp"
@@ -514,17 +525,18 @@
                             </LinearLayout>
 
                             <View android:layout_width="match_parent" android:layout_height="1dp"
-                                android:layout_marginStart="16dp" android:background="?attr/colorOutlineVariant" />
+                                android:layout_marginHorizontal="12dp" android:background="?attr/colorOutlineVariant" />
 
                             <!-- Piernas -->
                             <LinearLayout
                                 android:id="@+id/rowPiernas"
                                 android:layout_width="match_parent"
-                                android:layout_height="56dp"
+                                android:layout_height="wrap_content"
+                                android:minHeight="@dimen/fila_alto_min"
                                 android:orientation="horizontal"
                                 android:gravity="center_vertical"
-                                android:paddingStart="16dp"
-                                android:paddingEnd="16dp"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
                                 android:background="?attr/selectableItemBackground"
                                 android:clickable="true"
                                 android:focusable="true">
@@ -543,7 +555,7 @@
                                     android:layout_height="wrap_content"
                                     android:textSize="@dimen/text_body"
                                     android:textStyle="bold"
-                                    android:textColor="?attr/colorPrimary" />
+                                    android:textColor="?attr/colorOnSurface" />
 
                                 <ImageView
                                     android:layout_width="16dp"
