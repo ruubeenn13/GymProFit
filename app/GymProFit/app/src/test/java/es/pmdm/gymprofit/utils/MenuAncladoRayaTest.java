@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -15,5 +16,15 @@ public class MenuAncladoRayaTest {
         assertTrue("tras opciones normales, con raya", UIHelper.rayaAntes(true, false, 3));
         assertFalse("una sola raya aunque haya dos destructivas", UIHelper.rayaAntes(true, true, 4));
         assertFalse("las normales no llevan raya", UIHelper.rayaAntes(false, false, 2));
+    }
+
+    // Las dos rayas del mismo grosor (revisor, lote 13): la de la cabecera es un 1dp del XML,
+    // que Android redondea (3 px a 2,625), y la de antes de lo destructivo se truncaba a 2 px.
+    @Test
+    public void la_raya_de_lo_destructivo_redondea_como_la_del_xml() {
+        assertEquals(3, UIHelper.grosorRaya(2.625f));
+        assertEquals(3, UIHelper.grosorRaya(3f));
+        assertEquals(2, UIHelper.grosorRaya(2f));
+        assertEquals("nunca desaparece", 1, UIHelper.grosorRaya(0.75f));
     }
 }
