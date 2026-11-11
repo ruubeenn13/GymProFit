@@ -8,6 +8,9 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `a3b49d7` | fix(android): los mensajes de error de red y de servidor acaban en punto. |
+| `7654dc2` | fix(android): «desde aquí» en la fila de la propia cuenta de administración. |
+| `213ab98` | fix(api): el IMC de las mediciones se calcula con la altura en metros (GP-204). |
 | `0aa2524` | fix(android): en Usuarios de administración el correo no se parte. |
 | `52213c5` | fix(android): las listas de administración dicen cuándo no hay nada. |
 | `0752c3f` | fix(android): el ⋮ de las listas de administración, como el resto de menús anclados. |

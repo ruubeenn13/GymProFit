@@ -17,19 +17,19 @@
     <!-- FEEDBACK CARGA/ERRORES (helpers LoadingDialog + UiFeedback) -->
     <string name="feedback_cargando">Cargando…</string>
     <string name="feedback_cargando_servidor">Activando el servidor, puede tardar unos segundos…</string>
-    <string name="feedback_error_cold_start">Activando el servidor, reinténtalo en unos segundos</string>
-    <string name="feedback_error_servidor">Error del servidor, inténtalo más tarde</string>
+    <string name="feedback_error_cold_start">Activando el servidor, reinténtalo en unos segundos.</string>
+    <string name="feedback_error_servidor">Error del servidor, inténtalo más tarde.</string>
     <string name="feedback_error_no_encontrado">No hemos encontrado eso. Puede que ya no exista.</string>
-    <string name="feedback_error_generico">Algo salió mal, inténtalo de nuevo</string>
+    <string name="feedback_error_generico">Algo salió mal, inténtalo de nuevo.</string>
     <!-- 429: pide esperar, no reintentar enseguida (GP-096) -->
-    <string name="feedback_error_demasiados">Demasiados intentos: espera un minuto y vuelve a probar</string>
+    <string name="feedback_error_demasiados">Demasiados intentos: espera un minuto y vuelve a probar.</string>
     <plurals name="feedback_error_demasiados_segundos">
-        <item quantity="one">Demasiados intentos: espera %d segundo y vuelve a probar</item>
-        <item quantity="other">Demasiados intentos: espera %d segundos y vuelve a probar</item>
+        <item quantity="one">Demasiados intentos: espera %d segundo y vuelve a probar.</item>
+        <item quantity="other">Demasiados intentos: espera %d segundos y vuelve a probar.</item>
     </plurals>
     <plurals name="feedback_error_demasiados_minutos">
-        <item quantity="one">Demasiados intentos: espera %d minuto y vuelve a probar</item>
-        <item quantity="other">Demasiados intentos: espera %d minutos y vuelve a probar</item>
+        <item quantity="one">Demasiados intentos: espera %d minuto y vuelve a probar.</item>
+        <item quantity="other">Demasiados intentos: espera %d minutos y vuelve a probar.</item>
     </plurals>
     <string name="feedback_lista_vacia">No hay nada aún</string>
 
@@ -286,7 +286,7 @@
     <string name="admin_toggle_usuario_desactivar">¿Desactivar la cuenta de «%1$s»? No podrá volver a entrar hasta que la reactives.</string>
     <string name="admin_cambiar_rol_msg">Rol de «%1$s»</string>
     <string name="admin_usuario_eres_tu">Tú</string>
-    <string name="admin_usuario_es_tu_cuenta">Es tu cuenta: no puedes desactivarla ni cambiarte el rol desde aqu\'í.</string>
+    <string name="admin_usuario_es_tu_cuenta">Es tu cuenta: no puedes desactivarla ni cambiarte el rol desde aquí.</string>
     <string name="admin_cambiar_rol_titulo">Cambiar rol</string>
     <string name="admin_toggle_rutina_titulo">Cambiar estado</string>
     <string name="admin_toggle_rutina_activar">¿Activar la rutina «%1$s»?</string>
@@ -1812,7 +1812,7 @@
     <string name="sueles_merienda">Lo que sueles merendar</string>
     <string name="sueles_cena">Lo que sueles cenar</string>
     <!-- ════ Lote 1.6.6: Mis platos (tableros 2, 8, 9 y 10) y GP-194 ════ -->
-    <string name="feedback_error_sin_conexion">Sin conexión. Revisa tu red y vuelve a intentarlo</string>
+    <string name="feedback_error_sin_conexion">Sin conexión. Revisa tu red y vuelve a intentarlo.</string>
     <string name="cantidad_sin_gramos_unidad">%1$s %2$s</string>
     <string name="cantidad_sin_gramos_raciones">%1$s × %2$s</string>
     <string name="plato_marca">Plato</string>
