@@ -188,7 +188,8 @@ public final class InicioTuDia {
             apoyo.setText(fragment.getString(R.string.inicio_dia_de, String.valueOf(d.objetivoProteinas)));
             a11y = fragment.getString(R.string.inicio_dia_proteina_a11y, g, d.objetivoProteinas);
         }
-        card.setContentDescription(fragment.getString(R.string.inicio_dia_proteina) + ". " + a11y);
+        // La frase ya empieza por «Proteína:»: sin el rótulo delante, que TalkBack lo leía dos veces.
+        card.setContentDescription(a11y);
     }
 
     private void pintarAgua(@Nullable ResultadoNutricional objetivo, NumberFormat decimal) {
@@ -216,7 +217,8 @@ public final class InicioTuDia {
             apoyo.setText(R.string.inicio_dia_agua_hoy);
             a11y = fragment.getString(R.string.inicio_dia_agua_sin_objetivo_a11y, bebidos, llenos);
         }
-        card.setContentDescription(fragment.getString(R.string.inicio_dia_agua) + ". " + a11y);
+        // La frase ya empieza por «Agua:» (como la de la proteína).
+        card.setContentDescription(a11y);
     }
 
     // «Apuntar la merienda · Toca ahora · te faltan 48 g de proteína».
