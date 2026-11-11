@@ -318,6 +318,12 @@
     <string name="admin_exito_toggle_ejercicio">Estado del ejercicio actualizado</string>
     <string name="admin_exito_editar_ejercicio">Ejercicio actualizado</string>
     <string name="admin_error_generico">Error al realizar la operación</string>
+    <string name="admin_vacio_alimentos">No hay alimentos en el catálogo.</string>
+    <string name="admin_vacio_ejercicios">No hay ejercicios en el catálogo.</string>
+    <string name="admin_vacio_rutinas">No hay rutinas predefinidas.</string>
+    <string name="admin_vacio_usuarios">No hay usuarios.</string>
+    <string name="admin_vacio_filtros">Nada coincide con la búsqueda o los filtros.</string>
+    <string name="admin_lista_error">No se ha podido cargar la lista.</string>
     <string name="admin_usuarios_titulo">Gestión de usuarios</string>
     <string name="admin_rutinas_titulo">Rutinas predefinidas</string>
     <string name="admin_ejercicios_titulo">Gestión de ejercicios</string>

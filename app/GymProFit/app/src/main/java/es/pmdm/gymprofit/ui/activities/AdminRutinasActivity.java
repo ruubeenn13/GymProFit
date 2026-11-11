@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.ui.adapters.AdminRutinaAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
@@ -37,6 +38,8 @@ public class AdminRutinasActivity extends BaseActivity {
     private AdminRutinaAdapter adapter;
     // Lista de rutinas actualmente mostrada en el RecyclerView
     private final List<Rutina> lista = new ArrayList<>();
+    // Vacío y error de carga en el sitio de la lista, no en blanco ni en un toast (lote 13).
+    private VistaEstado estado;
 
     // Filtro por estado activa/inactiva (null = sin filtrar)
     private Boolean filtroActiva = null;
@@ -73,6 +76,7 @@ public class AdminRutinasActivity extends BaseActivity {
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvRutinas);
+        estado = new VistaEstado(findViewById(R.id.estadoLista));
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AdminRutinaAdapter(lista, new AdminRutinaAdapter.OnAccionListener() {
             @Override
@@ -165,14 +169,32 @@ public class AdminRutinasActivity extends BaseActivity {
                         lista.clear();
                         if (nuevas != null) lista.addAll(nuevas);
                         adapter.notifyDataSetChanged();
+                        mostrarEstado();
                     }
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el spinner y mapea el error de carga
                         if (conDialogo) LoadingDialog.hide(AdminRutinasActivity.this);
-                        UiFeedback.toastError(AdminRutinasActivity.this, code, message);
+                        lista.clear();
+                        adapter.notifyDataSetChanged();
+                        estado.error(VistaEstado.mensaje(AdminRutinasActivity.this, R.string.admin_lista_error,
+                                code, message), AdminRutinasActivity.this::cargar);
                     }
                 });
+    }
+
+    /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
+    private void mostrarEstado() {
+        if (lista.isEmpty()) {
+            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_rutinas);
+        } else {
+            estado.oculto();
+        }
+    }
+
+    /** Si hay algún filtro o búsqueda puestos. */
+    private boolean hayFiltros() {
+        return filtroNombre != null || filtroNivel != null || filtroActiva != null;
     }
 
     // Activa o desactiva una rutina según su estado actual y actualiza el item en la lista

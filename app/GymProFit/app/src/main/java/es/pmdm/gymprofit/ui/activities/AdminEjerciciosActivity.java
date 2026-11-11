@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.ui.adapters.AdminEjercicioAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
@@ -37,6 +38,8 @@ public class AdminEjerciciosActivity extends BaseActivity {
     private AdminEjercicioAdapter adapter;
     // Lista de ejercicios actualmente mostrada en el RecyclerView
     private final List<Ejercicio> lista = new ArrayList<>();
+    // Vacío y error de carga en el sitio de la lista, no en blanco ni en un toast (lote 13).
+    private VistaEstado estado;
 
     // Filtro por estado activo/inactivo (null = sin filtrar)
     private Boolean filtroActivo = null;
@@ -71,6 +74,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvEjercicios);
+        estado = new VistaEstado(findViewById(R.id.estadoLista));
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AdminEjercicioAdapter(lista, new AdminEjercicioAdapter.OnAccionListener() {
             @Override
@@ -151,14 +155,32 @@ public class AdminEjerciciosActivity extends BaseActivity {
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
+                        mostrarEstado();
                     }
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el spinner y mapea el error de carga
                         if (conDialogo) LoadingDialog.hide(AdminEjerciciosActivity.this);
-                        UiFeedback.toastError(AdminEjerciciosActivity.this, code, message);
+                        lista.clear();
+                        adapter.notifyDataSetChanged();
+                        estado.error(VistaEstado.mensaje(AdminEjerciciosActivity.this, R.string.admin_lista_error,
+                                code, message), AdminEjerciciosActivity.this::cargar);
                     }
                 });
+    }
+
+    /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
+    private void mostrarEstado() {
+        if (lista.isEmpty()) {
+            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_ejercicios);
+        } else {
+            estado.oculto();
+        }
+    }
+
+    /** Si hay algún filtro o búsqueda puestos. */
+    private boolean hayFiltros() {
+        return filtroActivo != null || filtroNombre != null;
     }
 
     // Activa o desactiva un ejercicio según su estado actual y actualiza el item en la lista

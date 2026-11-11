@@ -24,6 +24,7 @@ import es.pmdm.gymprofit.ui.adapters.AdminUsuarioAdapter;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
@@ -37,6 +38,8 @@ public class AdminUsuariosActivity extends BaseActivity {
     private AdminUsuarioAdapter adapter;
     // Lista de usuarios actualmente mostrada en el RecyclerView
     private final List<Usuario> lista = new ArrayList<>();
+    // Vacío y error de carga en el sitio de la lista, no en blanco ni en un toast (lote 13).
+    private VistaEstado estado;
 
     // Interfaz Retrofit tipada del panel de administración (etapa 2)
     private final AdminApi api = ApiClient.service(AdminApi.class);
@@ -75,6 +78,7 @@ public class AdminUsuariosActivity extends BaseActivity {
         ((MaterialToolbar) findViewById(R.id.toolbar)).setNavigationOnClickListener(v -> finish());
 
         rv = findViewById(R.id.rvUsuarios);
+        estado = new VistaEstado(findViewById(R.id.estadoLista));
         rv.setLayoutManager(new LinearLayoutManager(this));
         // El adapter necesita saber quién está mirando para esconder las acciones de su
         // propia fila; la comprobación se repite aquí por si llega un dato viejo, y otra
@@ -163,14 +167,32 @@ public class AdminUsuariosActivity extends BaseActivity {
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
+                        mostrarEstado();
                     }
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el overlay y muestra el error mapeado al fallar la carga
                         if (conDialogo) LoadingDialog.hide(AdminUsuariosActivity.this);
-                        UiFeedback.toastError(AdminUsuariosActivity.this, code, message);
+                        lista.clear();
+                        adapter.notifyDataSetChanged();
+                        estado.error(VistaEstado.mensaje(AdminUsuariosActivity.this, R.string.admin_lista_error,
+                                code, message), AdminUsuariosActivity.this::cargar);
                     }
                 });
+    }
+
+    /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
+    private void mostrarEstado() {
+        if (lista.isEmpty()) {
+            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_usuarios);
+        } else {
+            estado.oculto();
+        }
+    }
+
+    /** Si hay algún filtro o búsqueda puestos. */
+    private boolean hayFiltros() {
+        return filtroUsername != null || filtroRol != null || filtroActivo != null;
     }
 
     /**
