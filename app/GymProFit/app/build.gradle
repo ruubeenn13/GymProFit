@@ -17,6 +17,12 @@ android {
     if (hayFirmaRelease) {
         keystoreProps.load(new FileInputStream(keystorePropsFile))
     }
+    // Release de CI (GP-247): la misma release, con R8 y shrinkResources, pero firmada con la
+    // clave de depuración y apuntando a la API local del runner (10.0.2.2, que el
+    // network_security_config ya deja en claro). Así el job app-release-r8 la instala en un
+    // emulador y la recorre con sesión sin la firma real, sin secretos y sin tocar producción.
+    // Solo con -PreleaseCi: sin él, la release es exactamente la de siempre.
+    def releaseCi = project.hasProperty('releaseCi')
 
     namespace 'es.pmdm.gymprofit'
     compileSdk 36
@@ -88,7 +94,7 @@ android {
         def empaquetaRelease = grafo.allTasks.any {
             it.name in ['packageRelease', 'packageReleaseBundle', 'bundleRelease', 'signReleaseBundle']
         }
-        if (empaquetaRelease && !hayFirmaRelease) {
+        if (empaquetaRelease && !hayFirmaRelease && !releaseCi) {
             throw new GradleException(
                     "No se puede construir el release: falta keystore.properties en ${rootProject.projectDir}.\n" +
                     "La firma de release no se versiona: ver «Compilar y firmar» en app/GymProFit/README.md.\n" +
@@ -127,6 +133,17 @@ android {
             // servicio de Render sigue existiendo —es el destino del CNAME y lo usan
             // las builds ya instaladas—, pero los APK nuevos no deben nombrarlo.
             buildConfigField "String", "BASE_URL", "\"https://api.gymprofit.app/api/\""
+
+            if (releaseCi) {
+                // Ver releaseCi arriba. La firma real (signingConfigs.release) ni se toca ni se
+                // usa: la de depuración la genera el SDK en cada máquina.
+                signingConfig signingConfigs.debug
+                buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:8080/api/\""
+                // El google-services.json del CI es de mentira: subir el mapa a Firebase fallaría.
+                firebaseCrashlytics {
+                    mappingFileUploadEnabled false
+                }
+            }
         }
     }
 
