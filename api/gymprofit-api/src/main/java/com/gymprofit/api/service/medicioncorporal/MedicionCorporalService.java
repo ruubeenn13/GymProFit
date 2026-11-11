@@ -19,15 +19,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
 // ============================================================
 // MedicionCorporalService — implementación del servicio de mediciones corporales
 // Gestiona el CRUD de mediciones corporales del usuario, calculando el IMC
-// automáticamente a partir de peso y altura, y aplicando control de propiedad
+// a partir de peso y altura con CalculoImc, y aplicando control de propiedad
 // (checkDueno) para que cada usuario solo vea/modifique sus propios datos.
 // ============================================================
 @Service
@@ -86,13 +84,8 @@ public class MedicionCorporalService implements IMedicionCorporalService {
             medicion.setUsuario(usuario);
             medicion.setFecha(LocalDateTime.now());
 
-            // Calcular IMC automáticamente si tiene peso y altura
-            if (createDTO.getPeso() != null && createDTO.getAltura() != null
-                    && createDTO.getAltura().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal imc = createDTO.getPeso()
-                        .divide(createDTO.getAltura().multiply(createDTO.getAltura()), 2, RoundingMode.HALF_UP);
-                medicion.setImc(imc);
-            }
+            // El IMC sale siempre del peso y la altura; sin uno de los dos, nulo (GP-204).
+            medicion.setImc(CalculoImc.calcular(createDTO.getPeso(), createDTO.getAltura()));
 
             medicionCorporalRepository.save(medicion);
 
@@ -131,15 +124,9 @@ public class MedicionCorporalService implements IMedicionCorporalService {
             medicion.setPiernas(dto.getPiernas());
             medicion.setNotas(dto.getNotas());
 
-            // Recalcular IMC si tiene peso y altura
-            if (dto.getPeso() != null && dto.getAltura() != null && dto.getAltura().compareTo(BigDecimal.ZERO) > 0) {
-
-                BigDecimal imc = dto.getPeso()
-                        .divide(dto.getAltura()
-                                .multiply(dto.getAltura()), 2, RoundingMode.HALF_UP);
-
-                medicion.setImc(imc);
-            }
+            // Sin peso o sin altura el IMC queda nulo: no se conserva uno de antes que
+            // ya no cuadra con lo guardado (GP-204).
+            medicion.setImc(CalculoImc.calcular(medicion.getPeso(), medicion.getAltura()));
 
             MedicionCorporal actualizada = medicionCorporalRepository.save(medicion);
 
@@ -226,7 +213,7 @@ public class MedicionCorporalService implements IMedicionCorporalService {
         return medicionCorporalMapper.toDTOList(lista);
     }
 
-    // Actualiza parcialmente una medición corporal (solo campos no nulos), recalculando el IMC si aplica.
+    // Actualiza parcialmente una medición corporal (solo campos no nulos) y recalcula el IMC.
     @Transactional
     @Override
     public MedicionCorporalDTO patch(Integer id, MedicionCorporalPatchDTO patchDTO) {
@@ -249,16 +236,9 @@ public class MedicionCorporalService implements IMedicionCorporalService {
             if (patchDTO.getPiernas() != null) medicion.setPiernas(patchDTO.getPiernas());
             if (patchDTO.getNotas() != null) medicion.setNotas(patchDTO.getNotas());
 
-            // Recalcular IMC si se actualizó peso o altura
-            if (patchDTO.getPeso() != null || patchDTO.getAltura() != null) {
-                BigDecimal p = medicion.getPeso();
-                BigDecimal a = medicion.getAltura();
-                if (p != null && a != null && a.compareTo(BigDecimal.ZERO) > 0) {
-                    medicion.setImc(p.divide(a.multiply(a), 2, RoundingMode.HALF_UP));
-                }
-            } else if (patchDTO.getImc() != null) {
-                medicion.setImc(patchDTO.getImc());
-            }
+            // El IMC no se escribe a mano: se recalcula con lo que queda guardado, así
+            // que cualquier patch corrige también un IMC viejo (GP-204).
+            medicion.setImc(CalculoImc.calcular(medicion.getPeso(), medicion.getAltura()));
 
             return medicionCorporalMapper.toDTO(medicionCorporalRepository.save(medicion));
         } catch (Exception e) {

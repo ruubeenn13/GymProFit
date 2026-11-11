@@ -69,19 +69,19 @@ class MedicionCorporalServiceTest {
         medicion.setId(1);
         medicion.setUsuario(usuario);
         medicion.setPeso(new BigDecimal("70.00"));
-        medicion.setAltura(new BigDecimal("1.75"));
+        medicion.setAltura(new BigDecimal("175.00"));
         medicion.setFecha(LocalDateTime.now());
 
         medicionDTO = new MedicionCorporalDTO();
         medicionDTO.setId(1);
         medicionDTO.setUsuarioId(1);
         medicionDTO.setPeso(new BigDecimal("70.00"));
-        medicionDTO.setAltura(new BigDecimal("1.75"));
+        medicionDTO.setAltura(new BigDecimal("175.00"));
 
         medicionCreateDTO = new MedicionCorporalCreateDTO();
         medicionCreateDTO.setUsuarioId(1);
         medicionCreateDTO.setPeso(new BigDecimal("70.00"));
-        medicionCreateDTO.setAltura(new BigDecimal("1.75"));
+        medicionCreateDTO.setAltura(new BigDecimal("175.00"));
     }
 
     // Comprueba que findAll (solo ADMIN) mapea y devuelve todas las mediciones
@@ -134,8 +134,26 @@ class MedicionCorporalServiceTest {
         MedicionCorporalDTO result = medicionCorporalService.save(medicionCreateDTO);
 
         assertNotNull(result);
-        assertNotNull(medicion.getImc());
+        // 70 kg y 175 cm: 22,9, no los 0,00 de antes (GP-204)
+        assertEquals(0, new BigDecimal("22.9").compareTo(medicion.getImc()));
         verify(medicionCorporalRepository).save(medicion);
+    }
+
+    // Sin altura no hay IMC: nulo, nunca 0 (GP-204)
+    @Test
+    @DisplayName("save sin altura deja el IMC nulo")
+    void save_sinAltura_imcNulo() {
+        medicionCreateDTO.setAltura(null);
+        medicion.setAltura(null);
+        when(securityUtils.getCurrentUserId()).thenReturn(1);
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(medicionCorporalMapper.toEntity(medicionCreateDTO)).thenReturn(medicion);
+        when(medicionCorporalRepository.findByUsuarioIdOrderByFechaDesc(1)).thenReturn(List.of(medicion));
+        when(medicionCorporalMapper.toDTO(medicion)).thenReturn(medicionDTO);
+
+        medicionCorporalService.save(medicionCreateDTO);
+
+        assertNull(medicion.getImc());
     }
 
     // Comprueba que save lanza NotFoundEntityException si el usuario no existe
@@ -159,8 +177,23 @@ class MedicionCorporalServiceTest {
         MedicionCorporalDTO result = medicionCorporalService.modify(medicionDTO);
 
         assertNotNull(result);
-        assertNotNull(medicion.getImc());
+        assertEquals(0, new BigDecimal("22.9").compareTo(medicion.getImc()));
         verify(medicionCorporalRepository).save(medicion);
+    }
+
+    // Si la medición se queda sin altura, el IMC de antes no se conserva (GP-204)
+    @Test
+    @DisplayName("modify sin altura deja el IMC nulo aunque antes tuviera uno")
+    void modify_sinAltura_imcNulo() {
+        medicion.setImc(new BigDecimal("22.9"));
+        medicionDTO.setAltura(null);
+        when(medicionCorporalRepository.findById(1)).thenReturn(Optional.of(medicion));
+        when(medicionCorporalRepository.save(any())).thenReturn(medicion);
+        when(medicionCorporalMapper.toDTO(medicion)).thenReturn(medicionDTO);
+
+        medicionCorporalService.modify(medicionDTO);
+
+        assertNull(medicion.getImc());
     }
 
     // Comprueba que deleteById elimina la medición tras verificar su propiedad
@@ -269,6 +302,24 @@ class MedicionCorporalServiceTest {
 
         assertNotNull(result);
         assertEquals(new BigDecimal("72.00"), medicion.getPeso());
-        assertNotNull(medicion.getImc());
+        // 72 kg y 175 cm → 23,5
+        assertEquals(0, new BigDecimal("23.5").compareTo(medicion.getImc()));
+    }
+
+    // Un patch que no toca peso ni altura corrige también un IMC guardado a 0,00 (GP-204)
+    @Test
+    @DisplayName("patch de otro campo recalcula un IMC guardado a 0,00")
+    void patch_otroCampo_corrigeImcViejo() {
+        medicion.setImc(new BigDecimal("0.00"));
+        MedicionCorporalPatchDTO patchDTO = new MedicionCorporalPatchDTO();
+        patchDTO.setCintura(new BigDecimal("82.00"));
+
+        when(medicionCorporalRepository.findById(1)).thenReturn(Optional.of(medicion));
+        when(medicionCorporalRepository.save(any())).thenReturn(medicion);
+        when(medicionCorporalMapper.toDTO(medicion)).thenReturn(medicionDTO);
+
+        medicionCorporalService.patch(1, patchDTO);
+
+        assertEquals(0, new BigDecimal("22.9").compareTo(medicion.getImc()));
     }
 }
