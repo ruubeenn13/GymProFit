@@ -8,6 +8,37 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `4e3b42c` | fix(android): el «·» del apoyo de un récord no se queda solo al final de la línea (GP-246). |
+| `61f0a11` | fix(android): en la sesión en vivo el aviso se queda al pie con el teclado abierto (GP-246). |
+| `5cd3a7c` | fix(android): Inicio y Entrenar dicen el mismo «Día N de 3» del programa (GP-246). |
+| `2accdb2` | fix(android): Estadísticas de nutrición no cuenta como registrado un día vacío (GP-246). |
+| `c6f033d` | fix(android): el menú anclado con solo una opción destructiva no hace doble raya (GP-246). |
+| `bb68c69` | fix(android): el texto de los avisos se lee sobre su fondo (GP-246). |
+| `1068506` | fix(android): las dos rayas del menú anclado con la misma sangría (GP-246). |
+| `2dd0f31` | fix(android): Estadísticas de nutrición, el check de la leyenda se ve y «Meta» no toca su raya (GP-246). |
+| `f1b0ceb` | fix(android): Añadir, la lupa no se anuncia y «Ver todos» con su aire a 1,3 (GP-246). |
+| `4220351` | fix(android): Comida, el anillo de las ideas dentro de la tarjeta y las líneas con el icono de las filas (GP-246). |
+| `5263147` | fix(android): «Tu día» lee las calorías con el formato de la proteína y el agua (GP-246). |
+| `24b4e68` | fix(android): Récords, la marca anterior entera y el nombre como en Progreso (GP-246). |
+| `67874fe` | fix(android): Medidas sin red enseña el error y no crea ninguna medición (GP-246). |
+| `0517d6c` | fix(android): los chips de las pantallas de administración, los de la app (GP-246). |
+| `c15a6f6` | fix(android): el bocadillo de Inicio no deja sola la sigla de la rutina (GP-246). |
+| `d4e184f` | fix(android): Programas, los chips de días a la misma distancia (GP-246). |
+| `72e9794` | refactor(android): fuera los recursos y cadenas que dejaron sin uso los lotes 10 y 11 (GP-246). |
+| `974912a` | fix(android): «Kilos moved» pasa a «Weight lifted» en inglés (GP-246). |
+| `20266e5` | fix(android): el aviso de salir dice qué se pierde al crear o editar una rutina (GP-246). |
+| `1e3635b` | fix(android): la cabecera del menú anclado, tal como se escribe y en dos líneas (GP-246). |
+| `e588bb4` | fix(android): las opciones de la hoja de elegir, con el borde de un control (GP-246). |
+| `36441bb` | fix(android): «Tu día» de Inicio no repite «Proteína» ni «Agua» a TalkBack (GP-246). |
+| `036c1e4` | fix(android): la casilla del icono de la ficha, en el tono de las filas (GP-246). |
+| `35fef75` | fix(android): «Lo que te encaja» dice primero la proteína que falta (GP-246). |
+| `c97d732` | fix(android): ideas de Comida con el icono de las filas y el anillo con aire (GP-246). |
+| `42dfd18` | fix(android): Estadísticas de nutrición, cada día con su fecha y adherencia sin depender del color (GP-246). |
+| `385915d` | fix(android): resumen del entreno, dorado solo con récords (GP-246). |
+| `43de6f3` | fix(android): Récords, trofeo en su círculo y «Reintentar» de la app (GP-246). |
+| `ffb01cb` | fix(android): Medidas, eje en pasos redondos y filas de lista (GP-246). |
+| `8435bd6` | fix(android): la sesión en vivo no enseña «Volumen 0» a peso corporal (GP-253). |
+| `7895c85` | fix(api): `/ejercicios/buscar` ordena por el nombre en el idioma de la petición; en inglés, el paso 2 de crear una rutina salía en el orden del español. Contrato igual (GP-246). |
 | `c3f1f97` | fix(android): tercera pasada del revisor en crear y editar una rutina: el mismo aire arriba y abajo en la tarjeta sin ejercicios y entre las frases a letra 1,3 (GP-244). |
 | `80fb180` | fix(android): segunda pasada del revisor: **las píldoras de zona son botones** (ni «no seleccionado» para TalkBack ni la condensada), la barra del paso 2 vacía sin ejercicios, la zona elegida sin borde gris en claro y «For the beginner level.» (GP-244). |
 | `0e4375b` | fix(android): primera pasada del revisor en crear y editar: **la zona elegida ya no sale teñida de dorado** (la tarjeta marcada de Material pintaba `colorSecondary` y en claro el texto bajaba de 4,5:1), las píldoras no se marcan, **el menú anclado lleva el borde de un control** (en oscuro se fundía con las filas) y sin ejercicios no queda la barra suelta (GP-244). |
