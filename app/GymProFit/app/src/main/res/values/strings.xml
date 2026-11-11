@@ -692,6 +692,9 @@
 
     <!-- Aviso al salir de un formulario con algo sin guardar (GP-098) -->
     <string name="descartar_titulo">¿Descartar lo que has apuntado?</string>
+    <string name="descartar_rutina_titulo">¿Descartar la rutina?</string>
+    <string name="descartar_cambios_titulo">¿Descartar los cambios?</string>
+    <string name="descartar_elegidos_titulo">¿Descartar los ejercicios elegidos?</string>
     <string name="descartar_mensaje">Si sales ahora, se pierde lo que no has guardado.</string>
     <string name="descartar_confirmar">Descartar</string>
     <string name="descartar_seguir">Seguir editando</string>

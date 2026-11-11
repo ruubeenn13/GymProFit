@@ -673,6 +673,9 @@
 
     <!-- Leaving a form with unsaved input (GP-098) -->
     <string name="descartar_titulo">Discard what you\'ve entered?</string>
+    <string name="descartar_rutina_titulo">Discard this routine?</string>
+    <string name="descartar_cambios_titulo">Discard your changes?</string>
+    <string name="descartar_elegidos_titulo">Discard the exercises you picked?</string>
     <string name="descartar_mensaje">If you leave now, anything you haven\'t saved will be lost.</string>
     <string name="descartar_confirmar">Discard</string>
     <string name="descartar_seguir">Keep editing</string>
