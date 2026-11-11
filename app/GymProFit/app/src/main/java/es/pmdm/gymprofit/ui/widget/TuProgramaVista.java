@@ -278,11 +278,7 @@ public class TuProgramaVista {
         int total = dias.size();
 
         // Qué día del ciclo toca: el lugar de la posición de hoy en la lista, contando desde 1.
-        int diaHoy = 0;
-        Integer posHoy = seguido.getPosicionHoy();
-        for (int i = 0; i < ciclo.size(); i++) {
-            if (posHoy != null && ciclo.get(i).getPosicion() == posHoy) { diaHoy = i + 1; break; }
-        }
+        int diaHoy = TuPrograma.diaHoy(seguido);
         TextView tvDia = raiz.findViewById(R.id.tvProgramaDia);
         tvDia.setText(diaHoy > 0 ? ctx.getString(R.string.tu_programa_dia_de, diaHoy, total) : "");
         tvDia.setVisibility(diaHoy > 0 ? View.VISIBLE : View.GONE);

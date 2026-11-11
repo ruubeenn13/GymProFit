@@ -127,4 +127,22 @@ public class TuProgramaTest {
         assertEquals("A ni B", TuPrograma.enumerar(Arrays.asList("A", "B"), ", ", " ni "));
         assertEquals("A, B ni C", TuPrograma.enumerar(Arrays.asList("A", "B", "C"), ", ", " ni "));
     }
+
+    // Lote 12: Inicio decía «Día 2 de 3» (las hechas más una) y Entrenar «Día 3 de 3» (el lugar de
+    // la rutina de hoy en el ciclo) con el mismo rótulo. Manda el lugar en el ciclo: nombra la
+    // rutina que toca. Las dos pantallas leen esta función.
+    @Test
+    public void el_dia_de_hoy_es_el_lugar_de_la_rutina_de_hoy_en_el_ciclo() {
+        ProgramaQueSigue s = siguiendo();
+        assertEquals(2, TuPrograma.diaHoy(s));
+        assertEquals(4, TuPrograma.diasCiclo(s));
+        ProgramaQueSigue salto = new ProgramaQueSigue();
+        salto.setPosicionHoy(3);
+        salto.setCiclo(Arrays.asList(
+                new ProgramaQueSigue.DiaCiclo(1, "FA", 21, "Full body A", true, true),
+                new ProgramaQueSigue.DiaCiclo(2, "FB", 22, "Full body B", true, false),
+                new ProgramaQueSigue.DiaCiclo(3, "FC", 23, "Full body C", true, false)));
+        assertEquals("toca la C aunque solo haya una hecha", 3, TuPrograma.diaHoy(salto));
+        assertEquals(0, TuPrograma.diaHoy(null));
+    }
 }

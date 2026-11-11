@@ -514,13 +514,11 @@ public class InicioFragment extends BaseFragment {
     // «Hoy toca · día 2 de 4» siguiendo un programa; «Hoy toca» a secas si no.
     private String eyebrowDelPrograma(HoyToca.Eleccion eleccion) {
         if (!eleccion.delPrograma || seguido == null) return getString(R.string.hoy_toca);
-        int dias = 0;
-        if (seguido.getCiclo() != null) {
-            for (ProgramaQueSigue.DiaCiclo d : seguido.getCiclo()) if (d.isActiva()) dias++;
-        }
-        if (dias <= 0) return getString(R.string.hoy_toca);
-        int hecha = Math.min(dias, TuPrograma.hechas(seguido) + 1);
-        return getString(R.string.inicio_hoy_dia_programa, hecha, dias);
+        // El mismo día que dice Entrenar (TuPrograma.diaHoy): contar las hechas más una daba otro.
+        int dia = TuPrograma.diaHoy(seguido);
+        int dias = TuPrograma.diasCiclo(seguido);
+        if (dia <= 0 || dias <= 0) return getString(R.string.hoy_toca);
+        return getString(R.string.inicio_hoy_dia_programa, dia, dias);
     }
 
     // El programa que el alta no pudo seguir (GP-103): Inicio lo ofrece con sus minutos.
