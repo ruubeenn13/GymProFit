@@ -394,19 +394,6 @@
     <string name="resumen_notas">Notas</string>
 
     <!-- Crear rutina — ejercicios -->
-    <string name="crear_rutina_buscar_ejercicio">Buscar ejercicio...</string>
-    <string name="crear_rutina_series">Series</string>
-    <string name="crear_rutina_repeticiones">Repeticiones</string>
-    <string name="crear_rutina_ejercicio_duplicado">Ejercicio ya añadido</string>
-    <string name="crear_rutina_dificultad_todos">Todos</string>
-    <string name="crear_rutina_siguiente">Siguiente</string>
-    <string name="anadir_ejercicios_titulo">Añadir ejercicios</string>
-    <string name="anadir_ejercicios_continuar_fmt">Continuar (%d)</string>
-    <string name="resumen_crear_rutina_titulo">Resumen</string>
-    <string name="resumen_crear_rutina_ejercicios_fmt">Ejercicios (%d)</string>
-    <string name="resumen_crear_rutina_cancelar">Cancelar</string>
-    <string name="resumen_crear_rutina_confirmar_titulo">Eliminar ejercicio</string>
-    <string name="resumen_crear_rutina_confirmar_msg">¿Quieres eliminar este ejercicio de la rutina?</string>
 
     <!-- Detalle rutina -->
     <string name="detalle_rutina_titulo">Detalle de rutina</string>
@@ -438,12 +425,7 @@
     <string name="detalle_ejercicio_equipamiento">Equipamiento</string>
 
     <!-- Editar rutina -->
-    <string name="editar_rutina_titulo">Editar rutina</string>
-    <string name="editar_rutina_guardar">Guardar cambios</string>
     <string name="editar_rutina_guardado">Rutina actualizada</string>
-    <string name="editar_rutina_anadir_ejercicio">Añadir ejercicio</string>
-    <string name="editar_rutina_eliminar_ejercicio">¿Eliminar este ejercicio de la rutina?</string>
-    <string name="editar_rutina_ejercicios_fmt">Ejercicios (%d)</string>
 
     <!-- ACERCA DE -->
     <string name="acerca_btn">Sobre GymProFit</string>
@@ -484,7 +466,6 @@
     <string name="entorno_pruebas_distintivo">PRUEBAS · LOCAL</string>
     <!-- Errores de validación de campos numéricos (ver utils/Numeros). -->
     <string name="error_numero_invalido">Introduce un número válido</string>
-    <string name="error_duracion_invalida">Pon una duración de entre 5 y 300 minutos</string>
     <!-- GP-145: la edad de Editar perfil, de 14 a 100; el mínimo es el de la política (DEC-038). -->
     <string name="error_edad_rango">Pon tu edad en años, entre %1$d y %2$d</string>
     <string name="error_edad_minima">GymProFit es para personas de %1$d años o más, como dice la política de privacidad</string>
@@ -645,7 +626,6 @@
     <string name="unidad_pct_decimal">%.1f\u00A0%%</string>
     <string name="unidad_g_redondeado">%.0f\u00A0g</string>
     <string name="series_por_reps">%1$d × %2$d</string>
-    <string name="nivel_y_duracion">%1$s  ·  %2$d\u00A0min</string>
     <string name="grafica_kcal_fecha">%1$d\u00A0kcal\n%2$s</string>
     <string name="grafica_kg_fecha">%1$s\u00A0kg%2$s\n%3$s</string>
     <string name="grafica_cm_fecha">%1$.1f\u00A0cm\n%2$s</string>
@@ -1024,18 +1004,11 @@
     <string name="seguir_regla">Con menos tiempo salen primero los extras, desde el final, y luego series de los básicos.</string>
     <string name="seguir_ajuste_avanzado">Por tu nivel, más series en cada ejercicio.</string>
     <string name="seguir_ajuste_fuerza">Por «Ganar fuerza», los básicos con carga van a 4–6\u00A0repeticiones y 3\u00A0min de descanso.</string>
-    <string name="seguir_sin">Sin %1$s</string>
-    <string name="seguir_separador">", "</string>
-    <string name="seguir_conector">" ni "</string>
-    <string name="seguir_completa">Completa</string>
-    <string name="seguir_ya_sigues_otro">Ya sigues %1$s. Al seguir este, sus rutinas salen de Entrenar; tus sesiones y récords se quedan.</string>
-    <string name="seguir_mismo">Tus rutinas de %1$s se rehacen con %2$s y pierdes los cambios que les hayas hecho; tus sesiones y récords se quedan.</string>
     <string name="seguir_boton">Seguir</string>
     <string name="seguir_boton_mismo">Cambiar a %1$s</string>
     <string name="seguir_boton_rehacer">Rehacer las rutinas</string>
     <string name="seguir_error_vista">No se ha podido calcular cómo quedaría.</string>
     <string name="seguir_hecho">Ya sigues %1$s</string>
-    <string name="seguir_rutina_linea">%1$s · %2$s</string>
     <string name="detalle_rutina_de_programa">Del programa %1$s</string>
     <string name="detalle_rutina_tuya">Tu rutina</string>
     <string name="detalle_rutina_programa_dia">%1$s · día %2$d de %3$d</string>
@@ -1054,10 +1027,6 @@
     <plurals name="tu_programa_hechas">
         <item quantity="one">%d hecha en esta vuelta.</item>
         <item quantity="other">%d hechas en esta vuelta.</item>
-    </plurals>
-    <plurals name="seguir_basicos">
-        <item quantity="one">Básicos a %d serie</item>
-        <item quantity="other">Básicos a %d series</item>
     </plurals>
     <plurals name="programa_dias">
         <item quantity="one">%d\u00A0día</item>
@@ -1105,7 +1074,6 @@
     <string name="envivo_descartar_si">Descartar</string>
     <string name="envivo_serie_a11y">Serie %1$d</string>
     <string name="envivo_anterior_a11y">Anterior: %1$s</string>
-    <string name="envivo_marcar">Marcar la serie %1$d</string>
     <string name="envivo_hecha">Hecha</string>
     <string name="envivo_sin_hacer">Sin hacer</string>
     <string name="envivo_kg_a11y">Kilos, serie %1$d</string>
@@ -1170,7 +1138,6 @@
         <item quantity="one">%d\u00A0rep.</item>
         <item quantity="other">%d\u00A0reps</item>
     </plurals>
-    <string name="envivo_anadido">Añadido: %1$s</string>
     <string name="apuntar_titulo">Apuntar entreno</string>
     <!-- Descanso entre series (GP-013) -->
     <string name="envivo_descanso">Descanso</string>
@@ -2392,7 +2359,6 @@
     <!-- El papel de una opción de SelectorPildora con semántica de pestañas (GP-224). -->
     <string name="selector_pestana">pestaña</string>
     <!-- El nombre de cada grupo de SelectorPildora para TalkBack (GP-224). -->
-    <string name="selector_grupo_nivel">Nivel</string>
     <string name="selector_grupo_periodo">Periodo</string>
     <string name="selector_grupo_metrica">Medida</string>
     <string name="selector_grupo_rango">Rango</string>
