@@ -86,15 +86,35 @@ public interface IEjercicioRepository extends JpaRepository<Ejercicio, Integer> 
     // Búsqueda paginada del catálogo de ejercicios activos. Filtra opcionalmente
     // por texto en el nombre (ES o EN, sin mayúsculas), grupos musculares y dificultad.
     // grupos nunca va vacío: sin filtro, el servicio pasa el enum entero (GP-244).
+    // Ordena por el nombre en español; en inglés se usa buscarCatalogoEn (GP-246).
+    // El id desempata dos nombres iguales para que las páginas no se pisen.
     @Query("SELECT e FROM Ejercicio e " +
             "WHERE e.activo = true " +
             "AND (:q IS NULL OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :q, '%')) " +
             "     OR LOWER(e.nombreEn) LIKE LOWER(CONCAT('%', :q, '%'))) " +
             "AND e.grupoMuscular IN :grupos " +
             "AND (:dificultad IS NULL OR e.dificultad = :dificultad) " +
-            "ORDER BY e.nombre")
+            "ORDER BY e.nombre, e.id")
     Page<Ejercicio> buscarCatalogo(@Param("q") String q,
                                    @Param("grupos") Collection<GrupoMuscular> grupos,
                                    @Param("dificultad") Dificultad dificultad,
                                    Pageable pageable);
+
+    // La misma búsqueda, ordenada por el nombre que se enseña en inglés (GP-246): el
+    // inglés y, si el ejercicio no lo tiene (nulo o en blanco), el español, igual que
+    // EjercicioMapper.localizarTextos. Una consulta aparte y no un parámetro en el ORDER
+    // BY: la consulta de conteo que deriva Spring quita el ORDER BY y no tendría dónde
+    // atar ese parámetro.
+    @Query("SELECT e FROM Ejercicio e " +
+            "WHERE e.activo = true " +
+            "AND (:q IS NULL OR LOWER(e.nombre) LIKE LOWER(CONCAT('%', :q, '%')) " +
+            "     OR LOWER(e.nombreEn) LIKE LOWER(CONCAT('%', :q, '%'))) " +
+            "AND e.grupoMuscular IN :grupos " +
+            "AND (:dificultad IS NULL OR e.dificultad = :dificultad) " +
+            "ORDER BY CASE WHEN e.nombreEn IS NULL OR TRIM(e.nombreEn) = '' THEN e.nombre " +
+            "ELSE e.nombreEn END, e.id")
+    Page<Ejercicio> buscarCatalogoEn(@Param("q") String q,
+                                     @Param("grupos") Collection<GrupoMuscular> grupos,
+                                     @Param("dificultad") Dificultad dificultad,
+                                     Pageable pageable);
 }
