@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `0aa2524` | fix(android): en Usuarios de administración el correo no se parte. |
+| `52213c5` | fix(android): las listas de administración dicen cuándo no hay nada. |
 | `0752c3f` | fix(android): el ⋮ de las listas de administración, como el resto de menús anclados. |
 | `fd282d3` | fix(api): fuera el borrado físico de rutinas (GP-256). |
 | `4e3b42c` | fix(android): el «·» del apoyo de un récord no se queda solo al final de la línea (GP-246). |
