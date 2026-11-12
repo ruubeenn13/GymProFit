@@ -111,12 +111,13 @@ Emulador `Medium_Phone_API_36.1` (x86_64), contra producción, con una cuenta de
 
 ### 6. Build, tests y lint
 
-`sh ./gradlew assembleDebug test lintDebug` en local, como el CI: verde (exit 0). CI: en el PR.
+`sh ./gradlew assembleDebug test lintDebug` en local, como el CI: verde (exit 0). CI: ver abajo.
 
-## Pendiente
+## Play App Signing dado de alta
 
-- **PEPK**: espera a que el propietario pase `pepk.jar` y la clave de cifrado de Play Console. La orden está en `PUBLICAR-EN-PLAY.md`; la salida va a la carpeta de claves, fuera del repositorio.
-- Lo de Play Console (subir la salida de PEPK y el certificado de subida, comparar huellas) lo hace el propietario.
+- **PEPK** (12-11): la clave de firma se exportó cifrada con la clave pública de Play, con la orden de `PUBLICAR-EN-PLAY.md`, solo leyéndola. La salida lleva `encryptedPrivateKey` y `certificate.pem`, y ese certificado da SHA-256 `91:D1:…:22:FD`. Vive fuera del repositorio. `pepk.jar` no lee la contraseña por la entrada estándar sin una consola (`System.console()` nulo): se pasa con `--keystore-pass` desde una variable de la misma orden, que no se escribe en ningún sitio.
+- **Play Console** (comprobado por el propietario el 12-11 a las 18:00): clave de firma de la app `91:D1:41:C2:B4:34:ED:EA:BB:DB:E5:44:F7:B4:65:7C:D7:17:3C:2F:1F:D4:68:42:98:C1:BF:B0:F6:D7:22:FD` y clave de subida `62:06:1C:7B:26:D1:F4:51:2A:79:3D:5B:35:38:EC:4F:34:00:EE:BA:89:13:4D:20:5C:32:EA:5B:1C:5B:7E:A7`, las de la tabla de `PUBLICAR-EN-PLAY.md`.
+- **CI del PR #109**: `cambios`, `android-build-test`, `api-build-test` y `app-release-r8` en verde. Fusión `f1ea1115`.
 
 ## Tests
 
