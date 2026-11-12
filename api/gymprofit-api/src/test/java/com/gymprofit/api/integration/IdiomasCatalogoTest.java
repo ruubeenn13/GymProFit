@@ -57,7 +57,8 @@ class IdiomasCatalogoTest {
      */
     static final Set<String> NOMBRES_IGUALES = Set.of(
             "superman", "good morning", "bird dog", "dead bug", "muscle up", "step jack",
-            "pallof press", "jm press", "hindu pushups", "stair master", "shotgun row", "pendular hack");
+            "pallof press", "jm press", "hindu pushups", "stair master", "shotgun row", "pendular hack",
+            "hollow hold");
 
     private static final String MIGRACION = "db/migration/V202611121810__Catalogo_textos_en.sql";
 
