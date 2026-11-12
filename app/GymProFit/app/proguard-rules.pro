@@ -58,6 +58,16 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
 
+# ---- MPAndroidChart: la animación de las gráficas ----
+# ChartAnimator anima con ObjectAnimator.ofFloat(this, "phaseX"/"phaseY"), que busca el setter
+# por su nombre. Nadie más los llama y R8 los quitaba: en la release ninguna gráfica animaba y
+# Android solo lo avisaba en el log («Method setPhaseX() … not found»). Lo vio la prueba de humo
+# de la release (GP-247), que falla con ese aviso.
+-keepclassmembers class com.github.mikephil.charting.animation.ChartAnimator {
+    public void setPhaseX(float);
+    public void setPhaseY(float);
+}
+
 # ---- Drawables con clase propia ----
 # Un drawable que nombra su clase en el XML (<drawable class=…>) solo se instancia por reflexión:
 # sin esta regla R8 la quitaba y la release se cerraba al abrir Inicio (GP-225, BurbujaProfi).
