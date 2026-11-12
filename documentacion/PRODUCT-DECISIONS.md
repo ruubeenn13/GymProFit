@@ -1100,6 +1100,21 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 **Qué la invalidaría.** Que el cálculo de récords por petición se note en producción con historiales largos (se mediría antes de guardarlos, DEC-021), o que una semana con muchísimas sesiones haga una página demasiado grande (entonces se partiría por sesiones, no por semanas).
 
+
+### DEC-061 · Las tareas programadas se bloquean en la base, y los errores de la API van a Sentry sin datos personales
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** GP-221
+
+**Contexto.** Para poder tener más de una instancia de la API sin pagar nada más, dos cosas tenían que estar listas antes: que cada tarea `@Scheduled` corra en una sola instancia, y que un 500 en producción se vea sin tener que mirar el log de Render a tiempo. La app ya tenía Crashlytics; la API, nada.
+
+**Decisión.**
+
+- **ShedLock con proveedor JDBC sobre la base de la API** (tabla `shedlock`), en las notificaciones programadas, los recordatorios y la purga de tokens. Sin Redis ni ningún servicio más. `VigilanteMemoria` no se bloquea: cada instancia vigila su memoria. Hora de la base (`usingDbTime`), bloqueo mínimo de 50 s para que el desfase de relojes no repita un ciclo, y un `lockAtMostFor` por tarea medido y explicado en el código. El gestor de transacciones es el de JPA: con el de JDBC por defecto, coger el bloqueo confirmaba la transacción en curso.
+- **Sentry, solo con `SENTRY_DSN`**, y solo los 500, los errores de las tareas programadas y las excepciones sin capturar. Ni los 4xx (del cliente) ni el 502/503 (Open Food Facts). Sin cuerpo, cabeceras, cookies, query, usuario ni breadcrumbs, y con correos y JWT tapados (`FiltroDatosSentry`), aunque alguien encienda `sendDefaultPii`. Sin trazas de rendimiento.
+
+**Consecuencias.** Una tarea programada nueva lleva `@SchedulerLock` salvo que sea por instancia, y `TareasUnaVezConDosInstanciasTest` encuentra sola las de las tres clases que hay. Un manejador nuevo de `ControllerExceptionHandler` que responda 500 pasa por `registrarError500`. La prueba de carga de referencia (`scripts/carga/`, informe de GP-221) da la cifra de partida para cualquier cambio de rendimiento (DEC-021).
+
+**Qué la invalidaría.** Una base que no aguante las escrituras de los bloqueos (son una por tarea y ciclo), o que haga falta ver también los 4xx para algo concreto (se añadiría ese caso, no todos). Pasar a un servicio de colas para las tareas.
+
 ---
 
 ## Pendientes de decidir
