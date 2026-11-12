@@ -355,7 +355,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
             borrador.quitarId(e.getId());
             anadido = false;
         } else {
-            borrador.anadir(e.getId(), e.getNombre(), e.getGrupoMuscular(), e.getEquipoNecesario());
+            borrador.anadir(e.getId(), e.getNombre(), e.getGrupoMuscular(), e.getEquipoNecesario(), e.esPorTiempo());
             anadido = true;
         }
         Movimiento.vibrar(fila, Movimiento.Vibracion.LIGERA);
@@ -409,6 +409,8 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                 JSONObject o = new JSONObject();
                 o.put("ejercicioId", e.ejercicioId);
                 o.put("nombre", e.nombre);
+                // La medida del catálogo (GP-130): en una sesión libre, la plancha pide segundos.
+                o.put("medida", e.segundos ? "SEGUNDOS" : "REPETICIONES");
                 o.put("series", 3);
                 o.put("repeticiones", 10);
                 arr.put(o);

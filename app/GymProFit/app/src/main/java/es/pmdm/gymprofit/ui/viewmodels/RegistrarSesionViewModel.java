@@ -355,6 +355,7 @@ public class RegistrarSesionViewModel extends ViewModel {
             e.id = borrador.siguienteId++;
             e.ejercicioId = n.ejercicioId;
             e.nombre = n.nombre;
+            e.medidaEjercicio = n.medida;
             for (int i = 0; i < SesionEnCurso.SERIES_AL_ANADIR; i++) {
                 e.series.add(SesionEnCursoRepositorio.nuevaSerie(borrador));
             }

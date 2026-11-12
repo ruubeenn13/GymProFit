@@ -35,6 +35,9 @@ public class RutinaEjercicio {
     private Integer repeticionesMin;
     private Integer repeticionesMax;
     private String medida;
+    // La medida del ejercicio en el catálogo (GP-130), de solo lectura: la que vale cuando la
+    // pauta no dice ninguna (filas de antes de GP-244). Null con una API de antes.
+    private String medidaEjercicio;
     private String tipo;
     private String porLado;
 
@@ -77,6 +80,15 @@ public class RutinaEjercicio {
     public String getMedida() { return medida; }
     public void setMedida(String medida) { this.medida = medida; }
 
+    public String getMedidaEjercicio() { return medidaEjercicio; }
+    public void setMedidaEjercicio(String medidaEjercicio) { this.medidaEjercicio = medidaEjercicio; }
+
+    /**
+     * La medida con la que se hace (GP-130): la de la pauta y, si la pauta no dice ninguna,
+     * la del ejercicio. REPETICIONES, SEGUNDOS o null.
+     */
+    public String medidaEfectiva() { return medida != null ? medida : medidaEjercicio; }
+
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
@@ -84,7 +96,7 @@ public class RutinaEjercicio {
     public void setPorLado(String porLado) { this.porLado = porLado; }
 
     /** Si la serie se mide en segundos (plancha…) y no en repeticiones (GP-125). */
-    public boolean esPorTiempo() { return "SEGUNDOS".equals(medida); }
+    public boolean esPorTiempo() { return "SEGUNDOS".equals(medidaEfectiva()); }
 
     /** Si es uno de los básicos de la rutina (se enseña como etiqueta). */
     public boolean esBasico() { return "BASICO".equals(tipo); }

@@ -272,7 +272,7 @@ public class TuRutinaActivity extends AppCompatActivity {
             int reps = f.getRepeticiones() > 0 ? f.getRepeticiones() : 10;
             e.min = f.getRepeticionesMin() != null ? f.getRepeticionesMin() : reps;
             e.max = f.getRepeticionesMax() != null ? f.getRepeticionesMax() : reps;
-            e.segundos = "SEGUNDOS".equals(f.getMedida());
+            e.segundos = f.esPorTiempo();
             e.porLado = f.getPorLado();
             e.descanso = f.getTiempoDescanso() != null ? f.getTiempoDescanso() : 90;
             Ejercicio c = catalogo != null ? catalogo.get(f.getEjercicioId()) : null;
@@ -508,8 +508,8 @@ public class TuRutinaActivity extends AppCompatActivity {
             if (ahora == segundos[0]) return;
             segundos[0] = ahora;
             // Al pasar de una medida a otra, un rango que tenga sentido en la nueva.
-            v[1] = ahora ? 30 : 8;
-            v[2] = ahora ? 45 : 12;
+            v[1] = ahora ? BorradorRutina.MIN_SEGUNDOS : 8;
+            v[2] = ahora ? BorradorRutina.MAX_SEGUNDOS : 12;
             pintarHoja[0].run();
         });
         pintarHoja[0].run();

@@ -182,4 +182,36 @@ public class BorradorRutinaTest {
         assertEquals("4 exercises and about 35 minutes.", EN.p("crear_pie", 4, 4, b.minutosEstimados()));
         assertEquals(12, b.seriesTotales());
     }
+
+    // ── GP-130 ───────────────────────────────────────────────
+
+    @Test
+    public void un_ejercicio_por_tiempo_entra_en_segundos_y_los_demas_en_repeticiones() {
+        BorradorRutina b = new BorradorRutina();
+        b.anadir(7, "Plancha", "ABDOMEN", null, true);
+        b.anadir(8, "Remo", "ESPALDA", null, false);
+        b.anadir(9, "Press", "PECHO", null);
+
+        assertTrue(b.ejercicios.get(0).segundos);
+        assertEquals(BorradorRutina.MIN_SEGUNDOS, b.ejercicios.get(0).min);
+        assertEquals(BorradorRutina.MAX_SEGUNDOS, b.ejercicios.get(0).max);
+        assertFalse(b.ejercicios.get(1).segundos);
+        assertEquals(8, b.ejercicios.get(1).min);
+        assertEquals(12, b.ejercicios.get(1).max);
+        assertFalse(b.ejercicios.get(2).segundos);
+    }
+
+    @Test
+    public void la_medida_de_una_fila_es_la_de_la_pauta_y_si_no_la_del_ejercicio() {
+        es.pmdm.gymprofit.model.rutina.RutinaEjercicio vieja = new es.pmdm.gymprofit.model.rutina.RutinaEjercicio();
+        vieja.setMedidaEjercicio("SEGUNDOS");
+        assertTrue("sin pauta, la del ejercicio", vieja.esPorTiempo());
+
+        vieja.setMedida("REPETICIONES");
+        assertFalse("la pauta manda", vieja.esPorTiempo());
+        assertEquals("REPETICIONES", vieja.medidaEfectiva());
+
+        es.pmdm.gymprofit.model.rutina.RutinaEjercicio deAntes = new es.pmdm.gymprofit.model.rutina.RutinaEjercicio();
+        assertFalse("con una API de antes, repeticiones", deAntes.esPorTiempo());
+    }
 }

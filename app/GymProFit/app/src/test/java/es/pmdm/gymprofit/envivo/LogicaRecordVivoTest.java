@@ -271,4 +271,21 @@ public class LogicaRecordVivoTest {
 
         assertFalse("sin respuesta se vuelve a preguntar", a.marcaCargada);
     }
+
+    // ── GP-130 ───────────────────────────────────────────────
+
+    @Test
+    public void el_record_de_la_plancha_en_una_sesion_libre_es_de_tiempo() {
+        SesionEnCurso.Ejercicio plancha = ejercicio(7, 1, null);
+        plancha.deRutina = false;
+        plancha.medidaEjercicio = "SEGUNDOS";
+        SesionEnCurso.Serie s = plancha.series.get(0);
+        s.segundos = "0:50";
+        s.hecha = true;
+
+        Marca m = LogicaRecordVivo.deSerie(plancha, s);
+        assertNotNull(m);
+        assertEquals("TIEMPO", m.tipo);
+        assertEquals(50, m.segundos);
+    }
 }

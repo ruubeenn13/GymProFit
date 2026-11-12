@@ -406,4 +406,33 @@ public class SesionEnCursoRepositorioTest {
         assertNotNull(repo.actual());
         assertNotNull(almacen.leer(7));
     }
+
+    // ── GP-130 ───────────────────────────────────────────────
+
+    @Test
+    public void un_ejercicio_anadido_lleva_la_medida_de_su_catalogo() {
+        repo.empezar(null, null, null);
+        repo.anadirEjercicios(java.util.Arrays.asList(
+                new SesionEnCursoRepositorio.Nuevo(7, "Plancha", "SEGUNDOS"),
+                new SesionEnCursoRepositorio.Nuevo(55, "Remo")));
+
+        assertEquals("SEGUNDOS", repo.actual().ejercicios.get(0).medidaEjercicio);
+        assertTrue(LogicaSesion.porTiempo(repo.actual().ejercicios.get(0)));
+        assertNull("sin medida (una build o API de antes), no se inventa", repo.actual().ejercicios.get(1).medidaEjercicio);
+    }
+
+    @Test
+    public void un_ejercicio_de_rutina_lleva_la_pauta_y_la_medida_del_ejercicio() {
+        SesionEnCurso s = new SesionEnCurso();
+        es.pmdm.gymprofit.model.rutina.RutinaEjercicio re = new es.pmdm.gymprofit.model.rutina.RutinaEjercicio();
+        re.setEjercicioId(7);
+        re.setSeries(3);
+        re.setMedidaEjercicio("SEGUNDOS");
+
+        SesionEnCurso.Ejercicio e = SesionEnCursoRepositorio.deRutina(s, re);
+
+        assertNull(e.medida);
+        assertEquals("SEGUNDOS", e.medidaEjercicio);
+        assertTrue("una fila vieja sin medida: la del ejercicio", LogicaSesion.porTiempo(e));
+    }
 }
