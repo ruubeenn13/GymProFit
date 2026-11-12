@@ -15,10 +15,16 @@ gradle/wrapper/gradle-wrapper.jar
 local.properties
 secrets.properties
 keystore.properties
+# Clave de subida a Play (GP-159): mismo trato que keystore.properties
+upload.properties
 
 # Keystores (firma de APK)
 *.keystore
 *.jks
+*.p12
+# Certificados y exportaciones de PEPK: viven fuera del repo, por si acaso
+*.pem
+*.pepk
 
 # Firebase (por si lo añades)
 google-services.json

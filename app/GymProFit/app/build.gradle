@@ -24,6 +24,32 @@ android {
     // Solo con -PreleaseCi: sin él, la release es exactamente la de siempre.
     def releaseCi = project.hasProperty('releaseCi')
 
+    // Play App Signing (GP-159, DEC-063). Dos claves y cada una firma una cosa:
+    // - keystore.properties → la clave actual. Firma los APK que se reparten fuera de Play
+    //   (assembleRelease) y es la que Play guarda como clave de firma de la app, para que los
+    //   APK ya instalados se actualicen desde Play sin desinstalar.
+    // - upload.properties → la clave de subida. Solo firma el AAB que se sube a Play
+    //   (bundleRelease); Play la comprueba, la quita y firma con la de arriba.
+    // AGP firma APK y AAB de una variante con el mismo signingConfig, así que se elige por las
+    // tareas pedidas: si la orden pide un bundle de release, la release usa la de subida. Pedir a
+    // la vez un bundle y un APK de release firmaría el APK con la clave equivocada: se rechaza.
+    def uploadProps = new Properties()
+    def uploadPropsFile = rootProject.file("upload.properties")
+    def hayFirmaSubida = uploadPropsFile.exists()
+    if (hayFirmaSubida) {
+        uploadProps.load(new FileInputStream(uploadPropsFile))
+    }
+    def tareasPedidas = gradle.startParameter.taskNames.collect { it.tokenize(':').last().toLowerCase() }
+    def pideBundleRelease = tareasPedidas.any { it.startsWith('bundle') && it.contains('release') }
+    def pideApkRelease = tareasPedidas.any { it.startsWith('assemble') && it.contains('release') ||
+            it in ['packagerelease', 'installrelease'] }
+    if (pideBundleRelease && pideApkRelease && !releaseCi) {
+        throw new GradleException(
+                "bundleRelease y un APK de release en la misma orden: cada uno se firma con una clave " +
+                "distinta (ver «Cómo se publica en Play» en documentacion/). Lánzalos por separado.")
+    }
+    def firmaConSubida = pideBundleRelease && !releaseCi
+
     namespace 'es.pmdm.gymprofit'
     compileSdk 36
 
@@ -83,6 +109,14 @@ android {
                 keyPassword keystoreProps['keyPassword']
             }
         }
+        if (hayFirmaSubida) {
+            upload {
+                storeFile file(uploadProps['storeFile'])
+                storePassword uploadProps['storePassword']
+                keyAlias uploadProps['keyAlias']
+                keyPassword uploadProps['keyPassword']
+            }
+        }
     }
 
     // Sin firma, AGP construiría un release SIN FIRMAR sin quejarse (app-release-unsigned),
@@ -94,7 +128,13 @@ android {
         def empaquetaRelease = grafo.allTasks.any {
             it.name in ['packageRelease', 'packageReleaseBundle', 'bundleRelease', 'signReleaseBundle']
         }
-        if (empaquetaRelease && !hayFirmaRelease && !releaseCi) {
+        if (firmaConSubida && !hayFirmaSubida) {
+            throw new GradleException(
+                    "No se puede construir el AAB de Play: falta upload.properties en ${rootProject.projectDir}.\n" +
+                    "El AAB se firma con la clave de subida, no con la de keystore.properties: ver " +
+                    "«Cómo se publica en Play» en documentacion/.")
+        }
+        if (empaquetaRelease && !firmaConSubida && !hayFirmaRelease && !releaseCi) {
             throw new GradleException(
                     "No se puede construir el release: falta keystore.properties en ${rootProject.projectDir}.\n" +
                     "La firma de release no se versiona: ver «Compilar y firmar» en app/GymProFit/README.md.\n" +
@@ -116,7 +156,11 @@ android {
             }
         }
         release {
-            if (hayFirmaRelease) signingConfig signingConfigs.release
+            if (firmaConSubida) {
+                if (hayFirmaSubida) signingConfig signingConfigs.upload
+            } else if (hayFirmaRelease) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

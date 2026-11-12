@@ -1146,6 +1146,23 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-063 · La clave de los APK repartidos pasa a Play como clave de firma, y a Play se sube con otra
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** GP-159 (paso 2)
+
+**Contexto.** Hay APK de la app repartidos fuera de Play, firmados con la clave de `keystore.properties` (RSA de 2048 bits, certificado SHA-256 `91d141c2…d722fd`). Android solo instala una actualización si la firma coincide: si Play firmara con una clave suya, nadie con un APK repartido podría actualizar desde Play sin desinstalar y perder lo que la app guarda en el móvil. Play exige subir un App Bundle (AAB) y que Play App Signing firme lo que entrega.
+
+**Decisión.**
+
+- **La clave actual es la clave de firma de la app en Play.** Se exporta una vez con PEPK, cifrada con la clave pública que da Play Console, y Play firma con ella los APK que genera del AAB. Así el móvil ve la misma firma y actualiza encima. La clave nunca se regenera, se mueve ni se sobrescribe: perderla es no poder actualizar los APK repartidos.
+- **A Play se sube con una clave distinta, la de subida** (RSA de 4096 bits, `upload.properties`, fuera del repositorio). Play la comprueba y la descarta. Si se pierde o se filtra, Play la cambia a petición; la de firma, no.
+- **Gradle elige la clave por la orden**: `bundleRelease` firma con la de subida; `assembleRelease` sigue firmando con la actual. AGP usa un solo `signingConfig` para el APK y el AAB de una variante, así que pedir los dos en la misma orden se rechaza. `-PreleaseCi` no cambia. Sin `upload.properties`, `bundleRelease` falla al empezar con un mensaje; el debug y el CI no lo necesitan.
+
+**Consecuencias.** Procedimiento en `documentacion/PUBLICAR-EN-PLAY.md`. Comprobado: el APK universal que `bundletool` saca del AAB, firmado con la clave actual (lo que hará Play), se instala encima de la release 1.8.0 sin perder la sesión, y sus `.so` están alineadas a 16 KB. Los APK que se sigan repartiendo fuera de Play conviven con los de Play porque llevan la misma firma.
+
+**Qué la invalidaría.** Perder la clave actual (entonces se pide a Play una clave de firma nueva y los APK repartidos tienen que desinstalar), o dejar de repartir fuera de Play antes de publicar (entonces bastaría una clave generada por Play).
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
