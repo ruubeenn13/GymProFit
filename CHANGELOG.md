@@ -8,6 +8,9 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `de0b6e2` | fix(android): las gráficas vuelven a animar en la release: R8 quitaba los setters de la animación de MPAndroidChart (GP-247). |
+| `1f88485` | fix(android): R8 conserva los tipos de Gson que viven fuera de `model` (`Anadidos.Anadido`), con `TiposGsonConservadosTest` (GP-247, aviso de GP-053). |
+| `56f2418` | ci(android): job `app-release-r8`, la release con R8 instalada en un emulador y recorrida con y sin sesión contra una API local (GP-247). |
 | `a3b49d7` | fix(android): los mensajes de error de red y de servidor acaban en punto. |
 | `7654dc2` | fix(android): «desde aquí» en la fila de la propia cuenta de administración. |
 | `213ab98` | fix(api): el IMC de las mediciones se calcula con la altura en metros (GP-204). |
