@@ -9,6 +9,9 @@ Rama `gp-221-escala-sin-coste`. Solo la parte sin coste de la ficha: pasos 2 y 4
 | `7871aa9` feat(api): cada tarea programada corre una sola vez con varias instancias | ShedLock con proveedor JDBC sobre la base (migración `V202611121000__Tabla_shedlock`), en `NotificacionProgramadaTask`, los diez generadores de `RecordatorioNotificacionesTask` y `RefreshTokenCleanupTask`. `VigilanteMemoria` queda fuera. |
 | `35ec5b2` feat(api): los errores 500 de la API llegan a Sentry, sin datos personales | `sentry-spring-boot-starter-jakarta` 8.64.0, `FiltroDatosSentry`, `ErroresTareasConfig`, los 500 de `ControllerExceptionHandler` y `SENTRY_DSN` en `render.yaml` con `sync: false`. |
 | `4b72d59` test(carga): prueba de carga reproducible de la API con k6 | `scripts/carga/` (`recorrido.js`, `correr.sh`, `README.md`). |
+| `7ff185c` test(api): ShedLock dice en el log de los tests cuándo se salta una tarea | Log de ShedLock a DEBUG en los tests; con él se vio la causa del rojo del CI. |
+| `35e2fc3` test(api): el test de dos instancias comprueba que no deja bloqueos | |
+| `4399d3b` fix(api): el test de dos instancias suelta los bloqueos en vez de borrar sus filas | Ver abajo. |
 
 ## 1. ShedLock
 
@@ -28,6 +31,14 @@ Rama `gp-221-escala-sin-coste`. Solo la parte sin coste de la ficha: pasos 2 y 4
 ### Lo que salió por el camino: el bloqueo confirmaba la transacción
 
 Sin gestor de transacciones explícito, ShedLock crea uno de JDBC sobre el mismo pool. Llamado desde dentro de una transacción de JPA, la confirmaba: la primera medición, en un test `@Transactional`, dejó **303 cuentas** escritas en la base local (las tres de `AbstractOwnershipTest` y 300 de la medición, con 300 dispositivos y 900 notificaciones), y la suite entera cayó con «Duplicate entry '__idor_owner__'». En producción, una tarea `@Transactional` que fallara a medias habría dejado escrita la mitad. Arreglo: el `PlatformTransactionManager` de JPA va en el proveedor, como pide el README de ShedLock con Hibernate. Las filas se borraron de la base local con permiso del propietario (por id, comprobado antes que no tuvieran nada en otras tablas), y las tres `__idor_*` que dejó escapar el rojo a propósito, también.
+
+### Y otra en el CI: borrar filas de `shedlock` deja tareas sin correr
+
+Los tres primeros runs del CI del PR cayeron en `RecordatorioNotificacionesTaskTest` (4 de 4, «expected: <1> but was: <0>»), y en local no se reproducía, ni con la JVM en UTC ni con una MariaDB 11 como la del CI. Con el log de ShedLock a DEBUG se vio: «Not executing 'recordatorio-cena'. It's locked.», 20 s después de que `TareasUnaVezConDosInstanciasTest` borrara la tabla y comprobara que quedaba vacía.
+
+La causa está en ShedLock (`StorageBasedLockProvider.doLock`, visto en el bytecode de 7.11.0): cada proveedor recuerda en memoria las filas que ya creó (`LockRecordRegistry`) y desde entonces solo hace `UPDATE … WHERE name = ? AND lock_until <= ahora`. El contexto compartido de la suite ya había creado la fila de la cena en `AvisosPorTipoTest`; el `DELETE` del test de dos instancias la quitó, y el `UPDATE` sobre nada se lee como «cogido». En local el orden de las clases lo tapaba.
+
+Arreglo: el test suelta los bloqueos (`UPDATE shedlock SET lock_until = locked_at`) en vez de borrar las filas. **En producción vale igual**: borrar a mano una fila de `shedlock` con la API en marcha deja esa tarea sin correr en esa instancia hasta reiniciarla. Queda escrito en `ShedLockConfig`.
 
 ## 2. Sentry
 
