@@ -109,7 +109,14 @@ p95 por paso con 1 usuario: login 4943 ms, usuario 2477, Inicio 802, guardar ses
 
 ## Comprobación en producción
 
-Pendiente de la fusión: `/actuator/info` en el hash de la fusión, Flyway con `V202611121000`, la tabla `shedlock` con sus filas tras el primer ciclo y ningún aviso de Sentry en el arranque. Se completa abajo cuando esté.
+PR #105 fusionado en `563fdcd`. Comprobado el 12-11 a las 15:28 (Madrid):
+
+- `/actuator/info` da `563fdcda38119b680ce18d501de24337822b5575`; `/actuator/health`, `UP`.
+- Log de Render: `Migrating schema gymprofit_db to version "202611121000 - Tabla shedlock"` y `Successfully applied 1 migration … now at version v202611121000`. Arranque en **140,5 s**, en línea con los 150 s del contenedor local a 0,1 de CPU que se usó para calibrar la prueba de carga.
+- Ningún aviso de Sentry: los únicos WARN del arranque son los tres de siempre (`open-in-view`, el dialecto de MariaDB con MySQL 8.4 y el `AuthenticationProvider`). Sin `SENTRY_DSN` en Render, Sentry no se inicializa.
+- **La tabla `shedlock` no se ha podido mirar**: la base de Aiven no es accesible desde aquí y ShedLock solo escribe en el log a DEBUG. Ningún error de ShedLock en el log tras el arranque. Lo que debería verse con `SELECT name, locked_at FROM shedlock`: `notificaciones-programadas` desde los 30 s del arranque, cada recordatorio tras su primera hora (la merienda a las 17:00, la cena a las 21:00, el desayuno mañana a las 08:00…), `purga-refresh-tokens` mañana a las 04:00 y `resumen-semanal` el domingo.
+
+Ninguna cuenta de prueba en producción: esta tarea no necesitó ninguna.
 
 ## Tareas del propietario
 
