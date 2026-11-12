@@ -1,8 +1,10 @@
 package com.gymprofit.api.service.notificacion;
 
+import com.gymprofit.api.config.ShedLockConfig;
 import com.gymprofit.api.entity.Notificacion;
 import com.gymprofit.api.repository.jpa.INotificacionRepository;
 import lombok.AllArgsConstructor;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,7 +31,17 @@ public class NotificacionProgramadaTask {
     private final Logger logger = LoggerFactory.getLogger(NotificacionProgramadaTask.class);
 
     // Barrido cada 60s (arranca a los 30s del boot para no competir con el arranque).
+    //
+    // Bloqueada con ShedLock (GP-221): con dos instancias, un solo barrido por minuto; sin el
+    // bloqueo las dos leerían las mismas pendientes y cada push saldría dos veces.
+    // lockAtMostFor = 5 min. Sin push, 300 vencidas de golpe tardan 149 ms en local (informe
+    // de GP-221); lo que pesa es el envío a FCM, síncrono, de 100 a 300 ms por notificación.
+    // 5 min dan para unas mil vencidas en el mismo minuto, y un minuto normal tiene muy pocas.
+    // Es también lo más que se retrasarían las programadas si una instancia muere con el
+    // bloqueo cogido: por eso no es más largo.
     @Scheduled(fixedDelay = 60000, initialDelay = 30000)
+    @SchedulerLock(name = "notificaciones-programadas", lockAtMostFor = "PT5M",
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     @Transactional
     public void enviarProgramadasVencidas() {
         List<Notificacion> pendientes =

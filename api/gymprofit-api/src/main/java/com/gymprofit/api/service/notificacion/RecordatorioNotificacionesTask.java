@@ -1,5 +1,6 @@
 package com.gymprofit.api.service.notificacion;
 
+import com.gymprofit.api.config.ShedLockConfig;
 import com.gymprofit.api.entity.MedicionCorporal;
 import com.gymprofit.api.entity.ObjetivoPersonal;
 import com.gymprofit.api.entity.SesionEntrenamiento;
@@ -13,6 +14,7 @@ import com.gymprofit.api.repository.jpa.INotificacionRepository;
 import com.gymprofit.api.repository.jpa.IObjetivoPersonalRepository;
 import com.gymprofit.api.repository.jpa.ISesionEntrenamientoRepository;
 import lombok.AllArgsConstructor;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -56,6 +58,16 @@ public class RecordatorioNotificacionesTask {
 
     // ---- Zona horaria común de todos los cron (prod corre en UTC). ----
     private static final String ZONA = "Europe/Madrid";
+
+    // ---- Bloqueo de ShedLock (GP-221): con dos instancias, cada aviso sale una vez. ----
+    // Todos los generadores recorren a los usuarios con dispositivo y por cada uno hacen
+    // unas pocas consultas y, si toca, un envío a FCM síncrono. Medido en local con 300
+    // usuarios con aviso y sin push (informe de GP-221): el más caro, el de la cena, 2,3 s,
+    // unos 8 ms por usuario. En producción se suma el envío (100-300 ms) y la red hasta la
+    // base: unos 0,3 s por usuario, así que 30 min dan para unos 6000. Pasarse no cuesta
+    // nada: cada cron corre una vez al día (el resumen, a la semana), y un bloqueo que se
+    // quedara cogido por una instancia muerta no tapa el ciclo siguiente.
+    private static final String BLOQUEO_MAXIMO = "PT30M";
 
     // ---- Idioma por defecto de las notificaciones (usuarios sin idioma resoluble). ----
     private static final String IDIOMA_DEFAULT = "es";
@@ -115,30 +127,40 @@ public class RecordatorioNotificacionesTask {
 
     // 8:00 — recordatorio de desayuno.
     @Scheduled(cron = "0 0 8 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-desayuno", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioDesayuno() {
         recordatorioComida(TipoComida.DESAYUNO, KEY_DESAYUNO_TITULO, KEY_DESAYUNO_MENSAJE);
     }
 
     // 11:00 — recordatorio de almuerzo.
     @Scheduled(cron = "0 0 11 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-almuerzo", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioAlmuerzo() {
         recordatorioComida(TipoComida.ALMUERZO, KEY_ALMUERZO_TITULO, KEY_ALMUERZO_MENSAJE);
     }
 
     // 14:00 — recordatorio de comida.
     @Scheduled(cron = "0 0 14 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-comida", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioComidaPrincipal() {
         recordatorioComida(TipoComida.COMIDA, KEY_COMIDA_TITULO, KEY_COMIDA_MENSAJE);
     }
 
     // 17:00 — recordatorio de merienda.
     @Scheduled(cron = "0 0 17 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-merienda", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioMerienda() {
         recordatorioComida(TipoComida.MERIENDA, KEY_MERIENDA_TITULO, KEY_MERIENDA_MENSAJE);
     }
 
     // 21:00 — recordatorio de cena.
     @Scheduled(cron = "0 0 21 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-cena", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioCena() {
         recordatorioComida(TipoComida.CENA, KEY_CENA_TITULO, KEY_CENA_MENSAJE);
     }
@@ -177,6 +199,8 @@ public class RecordatorioNotificacionesTask {
     // El anti-spam compara el título resuelto en el idioma ACTUAL del usuario (ver
     // edge case documentado en la cabecera de la clase).
     @Scheduled(cron = "0 0 12 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-inactividad", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioInactividad() {
         try {
             LocalDateTime ahora = LocalDateTime.now();
@@ -214,6 +238,8 @@ public class RecordatorioNotificacionesTask {
     // envía nada. «1 sesión» / «2 sesiones»: el plural lo pone el mensaje (ChoiceFormat).
     // Sin anti-spam: el cron solo dispara una vez por semana.
     @Scheduled(cron = "0 0 20 * * SUN", zone = ZONA)
+    @SchedulerLock(name = "resumen-semanal", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void resumenSemanal() {
         try {
             LocalDateTime lunes = LocalDate.now().with(DayOfWeek.MONDAY).atStartOfDay();
@@ -253,6 +279,8 @@ public class RecordatorioNotificacionesTask {
     // contador que LogroService (countByUsuarioIdAndCompletadaTrue).
     // Anti-spam de 7 días por si el usuario se queda parado justo en 6/29 sesiones.
     @Scheduled(cron = "0 30 20 * * *", zone = ZONA)
+    @SchedulerLock(name = "logro-proximo", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void logroProximo() {
         try {
             LocalDateTime ahora = LocalDateTime.now();
@@ -286,6 +314,8 @@ public class RecordatorioNotificacionesTask {
     // 10:00 — invita a registrar el peso a quien tiene mediciones pero la última es de
     // hace ≥30 días. Anti-spam de 30 días (un aviso por ciclo mensual como máximo).
     @Scheduled(cron = "0 0 10 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-medicion", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioMedicionMensual() {
         try {
             LocalDateTime ahora = LocalDateTime.now();
@@ -320,6 +350,8 @@ public class RecordatorioNotificacionesTask {
     // El anti-spam (3 días) es por título exacto, por eso el título es FIJO y el nombre
     // del objetivo va solo en el mensaje: así un mismo objetivo no genera un aviso diario.
     @Scheduled(cron = "0 30 12 * * *", zone = ZONA)
+    @SchedulerLock(name = "recordatorio-objetivo", lockAtMostFor = BLOQUEO_MAXIMO,
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     public void recordatorioObjetivoProximo() {
         try {
             LocalDateTime ahora = LocalDateTime.now();

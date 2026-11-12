@@ -1,8 +1,10 @@
 package com.gymprofit.api.service.auth;
 
+import com.gymprofit.api.config.ShedLockConfig;
 import com.gymprofit.api.repository.jpa.IPasswordResetCodigoRepository;
 import com.gymprofit.api.repository.jpa.IRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,7 +33,14 @@ public class RefreshTokenCleanupTask {
 
     // Se ejecuta cada día a las 04:00 (hora del servidor). Borra los refresh tokens
     // ya revocados o cuya fecha de expiración es anterior a ahora. Loguea el nº borrado.
+    //
+    // Bloqueada con ShedLock (GP-221): con dos instancias, una sola purga al día.
+    // lockAtMostFor = 10 min. Son dos DELETE por fecha: con 300 tokens caducados tardan 26 ms
+    // en local (informe de GP-221); aunque las tablas crecieran mil veces seguirían lejos del
+    // tope. Si la instancia muere con el bloqueo cogido, la purga la retoma al día siguiente.
     @Scheduled(cron = "0 0 4 * * *")
+    @SchedulerLock(name = "purga-refresh-tokens", lockAtMostFor = "PT10M",
+            lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     @Transactional
     public void purgarTokensInutiles() {
         LocalDateTime ahora = LocalDateTime.now();

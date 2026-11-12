@@ -139,6 +139,18 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- ShedLock (GP-221): con más de una instancia, cada tarea @Scheduled corre en una sola.
+		     El bloqueo vive en la propia base (tabla shedlock), sin Redis ni nada más que pagar. -->
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-spring</artifactId>
+			<version>7.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.javacrumbs.shedlock</groupId>
+			<artifactId>shedlock-provider-jdbc-template</artifactId>
+			<version>7.11.0</version>
+		</dependency>
 		<!-- Firebase Admin SDK: envío de notificaciones push (FCM) desde el backend -->
 		<dependency>
 			<groupId>com.google.firebase</groupId>
