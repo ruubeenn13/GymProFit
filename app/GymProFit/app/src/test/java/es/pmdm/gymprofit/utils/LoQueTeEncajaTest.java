@@ -379,4 +379,81 @@ public class LoQueTeEncajaTest {
         assertEquals(GruposBusqueda.Tipo.CABECERA, l.get(0).tipo);
         assertEquals(0, GruposBusqueda.filasEncaja(l));
     }
+
+    // ── GP-226: una cuenta nueva ve ideas de los básicos ────────────────────
+
+    // Un básico del catálogo (grupo BASICO, revisado) con su primera ración, en gramos.
+    private static Alimento basico(int id, int kcal100, double prot100, double gramosRacion) {
+        Alimento a = alimento(id, kcal100, prot100, 0);
+        a.setGrupo("BASICO");
+        a.setFuente("CIQUAL");
+        a.setRevisado(true);
+        a.setRaciones(lista2(new Racion(id * 10, "1 ración", gramosRacion)));
+        return a;
+    }
+
+    private static List<Racion> lista2(Racion... r) {
+        return new ArrayList<>(Arrays.asList(r));
+    }
+
+    // Pollo, atún, pavo y claras (ricos en proteína); pan y plátano (no lo son).
+    private static List<Alimento> basicos() {
+        return lista(basico(101, 110, 23.4, 113), basico(102, 143, 26.8, 52), basico(103, 99, 20.9, 30),
+                basico(104, 48, 10.9, 33), basico(105, 287, 9.06, 40), basico(106, 88, 1.06, 120));
+    }
+
+    @Test
+    public void sin_historial_salen_tres_basicos_ricos_en_proteina_con_su_racion() {
+        LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(1500, 120, lista(), lista(), lista(), NADA, NADA, NADA,
+                basicos());
+        assertNotNull(r);
+        assertEquals(3, r.sugerencias.size());
+        // Por la proteína que cubren: pollo (26,4 g), atún (13,9 g), pavo (6,3 g).
+        assertEquals(Arrays.asList(101, 102, 103), orden(r));
+        // Con la cantidad habitual: su primera ración.
+        assertEquals(113, r.sugerencias.get(0).cantidad.gramos(), 0);
+    }
+
+    @Test
+    public void lo_tuyo_va_primero_y_los_basicos_completan_hasta_tres() {
+        // Aunque el pollo cubre más proteína que lo tuyo, lo tuyo va delante.
+        Alimento mio = alimento(1, 100, 5, 100);
+        LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(1500, 120, lista(), lista(mio), lista(), NADA, NADA, NADA,
+                basicos());
+        assertEquals(Arrays.asList(1, 101, 102), orden(r));
+    }
+
+    @Test
+    public void con_tres_tuyos_no_sale_ningun_basico() {
+        LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(1500, 120, lista(),
+                lista(alimento(1, 100, 5, 100), alimento(2, 100, 4, 100), alimento(3, 100, 3, 100)),
+                lista(), NADA, NADA, NADA, basicos());
+        assertEquals(Arrays.asList(1, 2, 3), orden(r));
+    }
+
+    @Test
+    public void ni_productos_de_marca_ni_lo_que_no_es_rico_en_proteina() {
+        Alimento marca = basico(201, 120, 25, 100);
+        marca.setMarca("Hacendado");
+        Alimento producto = basico(202, 120, 25, 100);
+        producto.setGrupo("PRODUCTO");
+        producto.setFuente("OFF");
+        Alimento pan = basico(105, 287, 9.06, 40);
+        Alimento platano = basico(106, 88, 1.06, 120);
+        assertNull(LoQueTeEncaja.de(1500, 120, lista(), lista(), lista(), NADA, NADA, NADA,
+                lista(marca, producto, pan, platano)));
+    }
+
+    @Test
+    public void un_basico_ya_tuyo_o_ya_apuntado_no_se_repite() {
+        Alimento pollo = basico(101, 110, 23.4, 113);
+        LoQueTeEncaja.Resultado r = LoQueTeEncaja.de(1500, 120, lista(), lista(pollo), lista(), NADA, NADA, ids(102),
+                basicos());
+        assertEquals(Arrays.asList(101, 103, 104), orden(r));
+    }
+
+    @Test
+    public void sin_proteina_que_falte_no_se_proponen_basicos() {
+        assertNull(LoQueTeEncaja.de(1500, 0, lista(), lista(), lista(), NADA, NADA, NADA, basicos()));
+    }
 }

@@ -1171,16 +1171,35 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 **Decisión.**
 
 - **El embudo del alta es un recuento por día de Madrid y paso** (`alta_pasos`: `dia`, `paso`, `total`, y nada más). La app avisa con `POST /alta/pasos` y el cuerpo `{"paso": "<NOMBRE>"}` al llegar a cada pantalla del alta de verdad: `BIENVENIDA`, `OBJETIVO`, `NIVEL`, `SOBRE_TI`, `DONDE`, `DIAS`, `PLAN`, `GUARDA`, `CUENTA` («Todo listo») y `AVISOS`. La cuenta que entró sin onboarding no avisa.
-- **Sin nada de quién.** La ruta es pública y la app la llama por un cliente propio (`ApiClient.anonimo`) que no lleva token aunque haya sesión, ni `Accept-Language`, ni reintentos. La API no lee la cuenta ni la IP para contar: solo el paso, y suma uno con una sentencia. Un nombre que no existe da 400 y no cuenta.
-- **Una vez por intento.** El móvil apunta los pasos ya avisados y no repite ninguno al ir atrás, girar la pantalla o retomar el alta. Un intento nuevo empieza en la bienvenida después de un alta terminada (`CUENTA`). Si un aviso falla, se pierde: no se espera ni se reintenta.
+- **Sin nada de quién.** La ruta es pública y la app la llama por un cliente propio (`ApiClient.anonimo`) que no lleva token aunque haya sesión, ni `Accept-Language`, ni los reintentos de OkHttp. La API no lee la cuenta ni la IP para contar: solo el paso, y suma uno con una sentencia. Un nombre que no existe da 400 y no cuenta.
+- **Una vez por intento.** El móvil apunta los pasos ya avisados y no repite ninguno al ir atrás, girar la pantalla o retomar el alta. Un intento nuevo empieza en la bienvenida después de un alta terminada (`CUENTA`).
+- **Un reintento como mucho por aviso** (GP-264, 12-11; antes no había ninguno). Tras un 429, el que se programa pasado el `Retry-After`, con tope de 60 s, o 60 s si no viene; tras un fallo de red, uno en el acto. Un 400 o un 5xx no se reintentan. Vive en memoria, sin cola ni WorkManager: si la app se cierra antes, el aviso se pierde y se acepta. No espera ni retrasa el alta y sale igual, sin token ni identificadores (`ReintentoEmbudo`). El 429 no cuenta, así que su reintento no puede contar doble; el de red sí puede, si la petición llegó y se perdió la respuesta, y se acepta. Motivo: en la prueba del lote 20, el alta se lanzó 24 s después de la ráfaga que gastaba el cupo desde la misma IP, y `BIENVENIDA` a `SOBRE_TI` se perdieron con 429.
 - **Cupo propio por IP** en `AuthRateLimitFilter` (30 por minuto, con `IpCliente`, DEC-062): es lo único que frena inflar el recuento. Los contadores del cupo viven en memoria y no se guardan.
 - **El núcleo sale de lo que ya hay**, sin columnas ni seguimiento nuevos: la fecha de alta de cada cuenta y las fechas de sus entrenos completados, comidas con algún alimento, agua (más de 0 ml) y peso. «Vuelve» es apuntar cualquiera de esas cosas un día distinto al del alta, dentro de sus primeros 7 días (el del alta y los seis siguientes). Por semana de alta, de lunes a domingo en Madrid.
 - **Solo totales, en `GET /admin/embudo`** (ADMIN) y la página Embudo de `admin/`, como el Resumen (S24 a S26): ninguna cuenta aparece.
 - **Fuera `firebase-analytics`**, y `com.google.android.gms.permission.AD_ID` quitado del manifiesto fusionado con `tools:node="remove"`. Crashlytics y FCM se quedan. Guava, que llegaba al compilar por Analytics, se declara directa porque CameraX la necesita.
 
-**Consecuencias.** Un paso nuevo del alta se añade al final de `PasoAlta` en la API y en la app a la vez (`EmbudoAltaTest` de la app compara las dos listas); cambiar o quitar un nombre rompe las builds que ya avisan. El embudo cuenta intentos, no personas: dos móviles de la misma persona son dos, y quien cierra sesión y vuelve a la bienvenida después de un alta terminada empieza otro. Las cuentas borradas desaparecen del núcleo. La política de privacidad lo cuenta en «Recuentos que no identifican a nadie».
+**Consecuencias.** Un paso nuevo del alta se añade al final de `PasoAlta` en la API y en la app a la vez (`EmbudoAltaTest` de la app compara las dos listas); cambiar o quitar un nombre rompe las builds que ya avisan. El embudo cuenta intentos, no personas: dos móviles de la misma persona son dos, y quien cierra sesión y vuelve a la bienvenida después de un alta terminada empieza otro. Las cuentas borradas desaparecen del núcleo. **Toda prueba del cupo del embudo o del login gasta el de la IP durante 60 s: hay que esperar 61 s antes de cualquier alta de prueba** (`scripts/comprobar-limite-ip.sh`, `RUTA=embudo`). La política de privacidad lo cuenta en «Recuentos que no identifican a nadie».
 
 **Qué la invalidaría.** Necesitar saber qué hizo una cuenta concreta (eso sería seguimiento, otra decisión y otro consentimiento), o que Play o la ley pidan tratar estos recuentos como datos personales.
+
+---
+
+### DEC-065 · El objetivo de agua es la bebida de referencia de la EFSA por sexo, sin peso ni actividad
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** GP-255 · **Sustituye a:** los 35 ml por kilo de `CalculadoraNutricional`
+
+**Contexto.** El objetivo de agua eran 35 ml por kilo de peso: 45 kg daban 1,6 L y 120 kg, 4,2 L. Crecía sin freno con el peso, no decía si era agua total o bebida, y la pantalla lo pintaba como lo que hay que beber.
+
+**Decisión.**
+
+- **2,0 L al día si `esHombre` y 1,6 L si no**, sin ajuste por peso ni por actividad (`AGUA_HOMBRE_L` y `AGUA_MUJER_L`). Quien no da su sexo queda en 1,6 L, como en el resto del cálculo.
+- **Es bebida, no agua total.** Fuente: EFSA Panel on Dietetic Products, Nutrition and Allergies (NDA), «Scientific Opinion on Dietary reference values for water», *EFSA Journal* 2010; 8(3):1459, doi:10.2903/j.efsa.2010.1459. Da como ingesta adecuada de agua total 2,5 L para un hombre adulto y 2,0 L para una mujer, y estima que en torno al 20 % llega con la comida: quedan 2,0 y 1,6 L de bebida.
+- **La tarjeta del agua de Nutrición lo dice**, en ES y EN, debajo de los vasos y solo si hay objetivo: el objetivo es lo que se bebe, no el agua total, y con entreno o calor hay que beber más (`agua_nota`).
+- **Lo ya guardado se conserva.** El objetivo de agua no está en la API: vive en el móvil con el resto del objetivo (`agua_diaria` en `PreferencesManager`). Como la proteína en DEC-054, no se recalcula solo: cambia cuando la persona edita su perfil (Tus datos), cuando llega un perfil distinto de la API (`PerfilRemoto`) o en un alta nueva.
+
+**Consecuencias.** Una cuenta con objetivo anterior sigue viendo sus litros de antes hasta que edite el perfil. No hay ajuste por calor, entreno ni embarazo o lactancia: la nota lo cubre con «bebe más», y un ajuste cuantificado sería otra decisión.
+
+**Qué la invalidaría.** Que la EFSA revise los valores de referencia, o que la app pase a saber cuánto entrena o qué tiempo hace (entonces se mide antes un ajuste con fuente).
 
 ---
 

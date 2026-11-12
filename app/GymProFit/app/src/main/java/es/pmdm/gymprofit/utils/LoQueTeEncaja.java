@@ -33,6 +33,9 @@ import es.pmdm.gymprofit.model.alimento.Alimento;
 //     demás (1.6.8; antes era desde el 25 % de la que falta, y con mucha pendiente lo
 //     decían todos o ninguno).
 //   · Lo que ya está apuntado en esa comida ese día no se propone (1.6.8).
+//   · Sin historial no había nada (GP-226): ahora, si falta proteína, los básicos del
+//     catálogo ricos en proteína (de la búsqueda vacía, sin marca) completan detrás de lo
+//     tuyo hasta tres, con su ración habitual. Lo tuyo va siempre primero.
 // Sin kcal que queden o sin candidatos, no hay sección (null): no ocupa sitio.
 // ============================================================
 public final class LoQueTeEncaja {
@@ -41,6 +44,10 @@ public final class LoQueTeEncaja {
     public static final int MAXIMO = 3;
     /** Por debajo de esto ya no falta proteína (como en la ficha). */
     private static final double SIN_PROTEINA = 0.5;
+    /** Un básico es idea de proteína desde estos gramos por 100 g (GP-226)... */
+    private static final double MIN_PROTEINA_100G = 10;
+    /** ...y si al menos esta parte de sus kcal viene de la proteína (4 kcal por gramo). */
+    private static final double MIN_PARTE_KCAL = 0.30;
 
     /** Por qué sale: la línea de debajo de cada uno. */
     public enum Motivo { SUELES, AYER, PROTEINA, CABE }
@@ -125,6 +132,22 @@ public final class LoQueTeEncaja {
                                @Nullable List<Alimento> favoritos, @Nullable List<Alimento> recientes,
                                @Nullable Set<Integer> habituales, @Nullable Set<Integer> deAyer,
                                @Nullable Set<Integer> yaApuntados) {
+        return de(kcalQuedan, proteinaQuedan, platos, favoritos, recientes, habituales, deAyer, yaApuntados, null);
+    }
+
+    /**
+     * Lo que te encaja, completado con básicos del catálogo ricos en proteína (GP-226): lo
+     * tuyo va siempre delante y los básicos solo rellenan hasta {@link #MAXIMO}. Así una
+     * cuenta sin historial también ve ideas.
+     *
+     * @param basicos los básicos que la búsqueda vacía trae (grupo BASICO); null, ninguno.
+     * @see #de(int, double, List, List, List, Set, Set, Set)
+     */
+    @Nullable
+    public static Resultado de(int kcalQuedan, double proteinaQuedan, @Nullable List<Alimento> platos,
+                               @Nullable List<Alimento> favoritos, @Nullable List<Alimento> recientes,
+                               @Nullable Set<Integer> habituales, @Nullable Set<Integer> deAyer,
+                               @Nullable Set<Integer> yaApuntados, @Nullable List<Alimento> basicos) {
         // Sin kcal que queden no hay nada que quepa (lo que no suma kcal no sale): null.
         double falta = proteinaQuedan >= SIN_PROTEINA ? proteinaQuedan : 0;
         Set<Integer> suele = habituales != null ? habituales : Collections.emptySet();
@@ -149,10 +172,27 @@ public final class LoQueTeEncaja {
                 candidatos.add(new Candidato(a, c, kcal, proteina, sueles, candidatos.size()));
             }
         }
-        if (candidatos.isEmpty()) return null;
-
         candidatos.sort(orden(falta, kcalQuedan));
-        List<Candidato> salen = candidatos.subList(0, Math.min(MAXIMO, candidatos.size()));
+        List<Candidato> salen = new ArrayList<>(candidatos.subList(0, Math.min(MAXIMO, candidatos.size())));
+
+        // Los básicos rellenan detrás de lo tuyo, y solo si falta proteína: son ideas de proteína.
+        if (falta > 0 && basicos != null && salen.size() < MAXIMO) {
+            List<Candidato> deCatalogo = new ArrayList<>();
+            for (Alimento a : basicos) {
+                if (a == null || !esBasicoProteico(a) || yaEsta.contains(a.getId()) || !vistos.add(a.getId())) continue;
+                CantidadFicha c = AnadirRapido.cantidad(a);
+                long kcal = AnadirRapido.kcal(a, c);
+                if (kcal <= 0 || kcal > kcalQuedan) continue;
+                double proteina = a.getProteinas() * c.gramos() / 100.0;
+                deCatalogo.add(new Candidato(a, c, kcal, proteina, false, candidatos.size() + deCatalogo.size()));
+            }
+            deCatalogo.sort(orden(falta, kcalQuedan));
+            for (Candidato c : deCatalogo) {
+                if (salen.size() >= MAXIMO) break;
+                salen.add(c);
+            }
+        }
+        if (salen.isEmpty()) return null;
         Candidato masProteico = falta > 0 ? masProteico(salen, falta) : null;
         List<Sugerencia> lista = new ArrayList<>();
         for (Candidato c : salen) {
@@ -193,6 +233,18 @@ public final class LoQueTeEncaja {
             }
         }
         return salen.size() > 1 && !empate ? mejor : null;
+    }
+
+    // Un básico que sirve de idea de proteína: del catálogo y sin marca (ni producto de Open
+    // Food Facts), con al menos 10 g por 100 g y al menos el 30 % de sus kcal de proteína.
+    // Entran pollo, atún, pavo, claras, jamón, lentejas...; no el pan, la avena ni las
+    // almendras, que tienen proteína pero sobre todo otra cosa.
+    static boolean esBasicoProteico(@NonNull Alimento a) {
+        if (!"BASICO".equals(a.getGrupo()) || a.esProducto() || a.esExterno()) return false;
+        String marca = a.getMarca();
+        if (marca != null && !marca.trim().isEmpty()) return false;
+        double p = a.getProteinas();
+        return p >= MIN_PROTEINA_100G && a.getCalorias() > 0 && p * 4 >= a.getCalorias() * MIN_PARTE_KCAL;
     }
 
     private static long cubre(Candidato c, double falta) {

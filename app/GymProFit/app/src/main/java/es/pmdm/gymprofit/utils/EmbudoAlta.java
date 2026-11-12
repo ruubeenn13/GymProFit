@@ -1,6 +1,8 @@
 package es.pmdm.gymprofit.utils;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -11,6 +13,7 @@ import java.util.Set;
 
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.EmbudoApi;
+import es.pmdm.gymprofit.network.ReintentoEmbudo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,8 +28,9 @@ import retrofit2.Response;
 // atrás, se gire la pantalla o Android cierre la app y se retome. Lo avisado se guarda en
 // el móvil; un intento nuevo empieza en la bienvenida después de un alta terminada.
 //
-// Sin esperar respuesta ni reintentar: si falla, ese paso no se cuenta y el alta sigue
-// igual. Solo el alta de verdad: la cuenta que entró sin onboarding no avisa.
+// Sin esperar respuesta: el alta sigue igual. Un 429 o un fallo de red se reintentan una
+// vez y solo una (ReintentoEmbudo, GP-264); si vuelve a fallar, ese paso no se cuenta.
+// Solo el alta de verdad: la cuenta que entró sin onboarding no avisa.
 // ============================================================
 public final class EmbudoAlta {
 
@@ -78,22 +82,36 @@ public final class EmbudoAlta {
         return true;
     }
 
-    /** Avisa de {@code paso} desde una pantalla, sin esperar ni reintentar. */
+    // El reintento espera en el hilo principal sin bloquearlo: solo programa el segundo envío.
+    // Perezoso: los tests de la JVM cargan esta clase sin Looper.
+    private static Handler principal;
+
+    private static synchronized Handler principal() {
+        if (principal == null) principal = new Handler(Looper.getMainLooper());
+        return principal;
+    }
+
+    /**
+     * Avisa de {@code paso} desde una pantalla, sin esperar la respuesta. Un 429 o un fallo
+     * de red se reintentan una vez (ReintentoEmbudo); si vuelve a fallar, el paso se pierde.
+     */
     public static void avisar(@NonNull Context contexto, @NonNull Paso paso) {
         PreferencesManager prefs = new PreferencesManager(contexto.getApplicationContext());
         avisar(paso, new Avisados() {
             @NonNull @Override public Set<String> leer() { return prefs.getEmbudoAvisados(); }
             @Override public void guardar(@NonNull Set<String> pasos) { prefs.guardarEmbudoAvisados(pasos); }
-        }, cuerpo -> ApiClient.anonimo(EmbudoApi.class).avisar(cuerpo).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                // Contado, o rechazado (un 429 por el cupo de la IP): no hay nada que enseñar.
-            }
+        }, cuerpo -> ReintentoEmbudo.enviar(resultado -> ApiClient.anonimo(EmbudoApi.class)
+                .avisar(cuerpo).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (response.isSuccessful()) resultado.contado();
+                        else resultado.rechazado(response.code(), response.headers().get("Retry-After"));
+                    }
 
-            @Override
-            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                // Se ignora a propósito: es un recuento, y perder un paso no cambia el alta.
-            }
-        }));
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        resultado.falloDeRed();
+                    }
+                }), (ms, tarea) -> principal().postDelayed(tarea, ms)));
     }
 }

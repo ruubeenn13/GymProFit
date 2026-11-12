@@ -1982,6 +1982,7 @@
     <string name="agua_vaso_a11y">Añadir un vaso de agua, %1$d mililitros</string>
     <string name="agua_quitar_a11y">Quitar un vaso</string>
     <string name="agua_quitado_a11y">Vaso quitado</string>
+    <string name="agua_nota">El objetivo es lo que bebes, no el agua total: parte llega con la comida. Con entreno o calor, bebe más.</string>
     <string name="agua_fallo">No se ha guardado el agua: %1$s</string>
     <string name="comida_hoy_no">Hoy no</string>
     <string name="hoy_no_boton">Hoy no</string>

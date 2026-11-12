@@ -1114,6 +1114,8 @@ public class NutricionFragment extends BaseFragment {
         TextView de = findViewById(R.id.tvAguaDe);
         de.setVisibility(litrosObjetivo > 0 ? View.VISIBLE : View.GONE);
         if (litrosObjetivo > 0) de.setText(getString(R.string.agua_de, Agua.litrosObjetivo(litrosObjetivo, idioma)));
+        // Qué es el objetivo (GP-255): sin objetivo no hay nada que explicar.
+        findViewById(R.id.tvAguaNota).setVisibility(litrosObjetivo > 0 ? View.VISIBLE : View.GONE);
     }
 
     private void anadirVaso(View origen) {

@@ -1948,6 +1948,7 @@
     <string name="agua_vaso_a11y">Add a glass of water, %1$d milliliters</string>
     <string name="agua_quitar_a11y">Remove a glass</string>
     <string name="agua_quitado_a11y">Glass removed</string>
+    <string name="agua_nota">The goal is what you drink, not your total water: some comes from food. On training days or in the heat, drink more.</string>
     <string name="agua_fallo">Water wasn\'t saved: %1$s</string>
     <string name="comida_hoy_no">Not today</string>
     <string name="hoy_no_boton">Not today</string>
