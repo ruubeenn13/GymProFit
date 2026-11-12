@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gymprofit.api.entity.Ejercicio;
 import com.gymprofit.api.enums.Equipamiento;
+import com.gymprofit.api.enums.MedidaSerie;
 import com.gymprofit.api.repository.jpa.IEjercicioRepository;
 import com.gymprofit.api.service.ejercicio.CatalogoEs;
 import org.junit.jupiter.api.DisplayName;
@@ -109,5 +110,33 @@ class WgerImportServiceTest {
 
         assertEquals("Sin texto original", e.getNombre());
         assertNull(e.getDescripcion());
+    }
+    @Test
+    @DisplayName("GP-220: reimportar sin inglés no borra la descripción en inglés escrita a mano")
+    void reimportarNoBorraElIngles() {
+        Ejercicio existente = new Ejercicio();
+        existente.setDescripcionEn("1. Stand with your feet shoulder-width apart.");
+        for (String vacia : new String[]{null, "", "  "}) {
+            Ejercicio importado = new Ejercicio();
+            importado.setDescripcionEn(vacia);
+            WgerImportService.copiarCampos(importado, existente);
+            assertEquals("1. Stand with your feet shoulder-width apart.", existente.getDescripcionEn());
+        }
+
+        Ejercicio conIngles = new Ejercicio();
+        conIngles.setDescripcionEn("1. New English text.");
+        WgerImportService.copiarCampos(conIngles, existente);
+        assertEquals("1. New English text.", existente.getDescripcionEn());
+    }
+
+    @Test
+    @DisplayName("GP-130: reimportar no toca la medida del ejercicio")
+    void reimportarNoTocaLaMedida() {
+        Ejercicio existente = new Ejercicio();
+        existente.setMedida(MedidaSerie.SEGUNDOS);
+
+        WgerImportService.copiarCampos(new Ejercicio(), existente);
+
+        assertEquals(MedidaSerie.SEGUNDOS, existente.getMedida());
     }
 }

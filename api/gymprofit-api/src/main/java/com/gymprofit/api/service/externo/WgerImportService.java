@@ -496,12 +496,17 @@ public class WgerImportService {
         return primera;
     }
 
-    // Copia los campos importables sobre la entidad ya existente (upsert).
-    private void copiarCampos(Ejercicio origen, Ejercicio destino) {
+    // Copia los campos importables sobre la entidad ya existente (upsert). La medida
+    // (GP-130) no se importa y no se toca: la marcó una migración, no la fuente.
+    static void copiarCampos(Ejercicio origen, Ejercicio destino) {
         destino.setNombre(origen.getNombre());
         destino.setNombreEn(origen.getNombreEn());
         destino.setDescripcion(origen.getDescripcion());
-        destino.setDescripcionEn(origen.getDescripcionEn());
+        // Una fuente sin inglés no borra el que hay: tres descripciones se escribieron a mano
+        // porque FED y wger no traían ninguna (GP-220, V202611121810).
+        if (origen.getDescripcionEn() != null && !origen.getDescripcionEn().isBlank()) {
+            destino.setDescripcionEn(origen.getDescripcionEn());
+        }
         destino.setInstrucciones(origen.getInstrucciones());
         destino.setInstruccionesEn(origen.getInstruccionesEn());
         destino.setGrupoMuscular(origen.getGrupoMuscular());
