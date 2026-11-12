@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.model.PageDTO;
 import es.pmdm.gymprofit.model.alimento.Alimento;
 import es.pmdm.gymprofit.model.comida.AlimentoComida;
 import es.pmdm.gymprofit.model.comida.AnadirRespuesta;
@@ -139,6 +140,10 @@ public class ComidaActivity extends BaseActivity {
     // «Para tus 48 g de proteína» (tablero 24): lo que cabe, de LoQueTeEncaja, con lo que llega de
     // la API (el día, favoritos, tus platos, lo habitual y la comida de ayer); null si no hay.
     @Nullable private LoQueTeEncaja.Resultado ideas;
+    // Los básicos de la búsqueda vacía, para completar las ideas (GP-226).
+    @Nullable private List<Alimento> basicos;
+    // Cuántos pide: lo tuyo reciente más los 31 básicos habituales caben en una página.
+    private static final int PAGINA_BASICOS = 60;
     @Nullable private List<Comida> comidasDelDia;
     @Nullable private Favoritos favoritos;
     @Nullable private LoMio loMio;
@@ -556,8 +561,9 @@ public class ComidaActivity extends BaseActivity {
         comidasDelDia = null;
         favoritos = null;
         loMio = null;
+        basicos = null;
         boolean conCopia = !prefsManager.copiaAyerDescartada(dia(), tipoComida);
-        ideasPendientes = conCopia ? 5 : 4;
+        ideasPendientes = conCopia ? 6 : 5;
         pintarSugerencias(false);
         ComidaApi api = ApiClient.service(ComidaApi.class);
         String dia = dia();
@@ -603,6 +609,24 @@ public class ComidaActivity extends BaseActivity {
             @Override
             public void onFail(int code, String message) {
                 // Sin el día no se sabe qué falta: no hay ideas, y la pantalla sigue.
+                ideaLista(miTurno);
+            }
+        });
+        // La búsqueda vacía: sus básicos completan las ideas de una cuenta sin historial (GP-226).
+        alimentoApi.buscar(null, null, 0, PAGINA_BASICOS).enqueue(new ApiCallback<PageDTO<Alimento>>() {
+            @Override
+            public void onOk(PageDTO<Alimento> pag) {
+                List<Alimento> l = new ArrayList<>();
+                if (pag != null && pag.getContent() != null) {
+                    for (Alimento a : pag.getContent()) if ("BASICO".equals(a.getGrupo())) l.add(a);
+                }
+                basicos = l;
+                ideaLista(miTurno);
+            }
+
+            @Override
+            public void onFail(int code, String message) {
+                // Se ignora a propósito: sin básicos, las ideas salen de lo tuyo.
                 ideaLista(miTurno);
             }
         });
@@ -654,7 +678,7 @@ public class ComidaActivity extends BaseActivity {
         if (copiaAyer != null) for (AlimentoComida l : copiaAyer.getLineas()) ayer.add(l.getAlimentoId());
         return LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
                 loMio != null ? loMio.getPlatos() : null, favoritos != null ? favoritos.getFavoritos() : null,
-                sueles, suele, ayer, null);
+                sueles, suele, ayer, null, basicos);
     }
 
     // El título, «Es la que toca ahora» y «Hoy no». Marcada, ni toca ni se sugiere nada.

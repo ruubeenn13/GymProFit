@@ -1304,7 +1304,14 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (objetivo == null || comidasDia == null || loMio == null) return null;
         es.pmdm.gymprofit.utils.DiaNutricion d = es.pmdm.gymprofit.utils.DiaNutricion.de(comidasDia, objetivo);
         List<Alimento> recientes = new ArrayList<>();
-        if (listaGuardada != null) for (Alimento a : listaGuardada) if ("TUYO".equals(a.getGrupo())) recientes.add(a);
+        // Los básicos de la búsqueda vacía completan las ideas detrás de lo tuyo (GP-226).
+        List<Alimento> basicos = new ArrayList<>();
+        if (listaGuardada != null) {
+            for (Alimento a : listaGuardada) {
+                if ("TUYO".equals(a.getGrupo())) recientes.add(a);
+                else if ("BASICO".equals(a.getGrupo())) basicos.add(a);
+            }
+        }
         java.util.Set<Integer> suele = new java.util.HashSet<>();
         if (habituales != null) for (Alimento a : habituales) suele.add(a.getId());
         java.util.Set<Integer> ayer = new java.util.HashSet<>();
@@ -1312,7 +1319,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         if (deAyer != null) for (AlimentoComida l : deAyer.getLineas()) ayer.add(l.getAlimentoId());
         return es.pmdm.gymprofit.utils.LoQueTeEncaja.de(d.kcalRestantes(), d.objetivoProteinas - d.proteinas,
                 loMio.getPlatos(), favoritos != null ? favoritos.getFavoritos() : null, recientes, suele, ayer,
-                yaApuntados);
+                yaApuntados, basicos);
     }
 
     // «Crear un plato»: su hoja añade una ración a la comida de la etiqueta (o no).
