@@ -10,7 +10,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,13 +77,15 @@
                     android:orientation="vertical" />
             </LinearLayout>
 
-            <!-- Carga, vacío (con «Crea tu primera rutina») y error con «Reintentar» de «Mis
-                 rutinas»: view_estado (GP-064; antes un bloque a mano sin reintentar) -->
+            <!-- Carga, vacío y error con «Reintentar» de «Mis rutinas»: view_estado (GP-064;
+                 antes un bloque a mano sin reintentar). Sin el aire de abajo del bloque, que se
+                 sumaba al de la sección siguiente (revisor). -->
             <include
                 android:id="@+id/estadoMisRutinas"
                 layout="@layout/view_estado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/estado_sin_aire_abajo"
                 android:layout_marginStart="@dimen/margen_pantalla"
                 android:layout_marginEnd="@dimen/margen_pantalla" />
         </LinearLayout>

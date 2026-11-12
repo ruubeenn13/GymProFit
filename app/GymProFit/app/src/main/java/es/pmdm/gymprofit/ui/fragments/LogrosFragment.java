@@ -20,7 +20,6 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.LogroApi;
 import es.pmdm.gymprofit.ui.adapters.LogroAdapter;
 import es.pmdm.gymprofit.utils.LogrosVisibles;
-import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
@@ -73,7 +72,8 @@ public class LogrosFragment extends BaseFragment {
                 // Sin la respuesta no hay nada fiable que pintar: ni el catálogo ni el
                 // estado. Se dice en la sección, con «Reintentar», no una lista a medias.
                 rvLogros.setVisibility(View.GONE);
-                estado.error(UiFeedback.mensaje(requireContext(), code, message), LogrosFragment.this::cargar);
+                estado.error(VistaEstado.mensaje(requireContext(), R.string.progreso_logros_error, code, message),
+                        LogrosFragment.this::cargar);
             }
         });
     }

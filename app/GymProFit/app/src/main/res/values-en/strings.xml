@@ -326,7 +326,7 @@
     <string name="admin_vacio_usuarios">There are no users.</string>
     <string name="admin_vacio_filtros">Nothing matches the search or filters.</string>
     <string name="admin_lista_error">The list couldn\'t be loaded.</string>
-    <string name="admin_estadisticas_error">The statistics could not be loaded.</string>
+    <string name="admin_estadisticas_error">The statistics couldn\'t be loaded.</string>
     <string name="admin_usuarios_titulo">User management</string>
     <string name="admin_rutinas_titulo">Predefined routines</string>
     <string name="admin_ejercicios_titulo">Exercise management</string>
@@ -955,7 +955,7 @@
     <string name="tu_programa_dejado">You have left the program</string>
     <string name="tu_programa_borradas">You have deleted every routine in this program.</string>
     <string name="tu_programa_volver_a_seguir">Follow it again</string>
-    <string name="tu_programa_error">Your program could not be loaded.</string>
+    <string name="tu_programa_error">Your program couldn\'t be loaded.</string>
     <string name="programas_titulo">Programs</string>
     <string name="programas_donde">Where you train</string>
     <string name="programas_dias">Days per week</string>

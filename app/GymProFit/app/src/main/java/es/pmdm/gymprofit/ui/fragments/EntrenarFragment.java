@@ -82,6 +82,9 @@ public class EntrenarFragment extends BaseFragment {
     @Nullable private ProgramaQueSigue seguido;
     private boolean seguidoListo;
     private boolean falloPropias;
+    /** «Tu programa» no cargó: su error ya dice el fallo de red y su «Reintentar» recarga también
+     *  «Mis rutinas»; un segundo bloque igual debajo sobra (revisor, GP-064). */
+    private boolean falloPrograma;
     private VistaEstado estadoMisRutinas;
     // Para que una respuesta de «Más programas» de una carga anterior no pise la actual.
     private int generacionProgramas;
@@ -164,6 +167,8 @@ public class EntrenarFragment extends BaseFragment {
         seguido = null;
         seguidoListo = false;
         falloPropias = false;
+        falloPrograma = false;
+        findViewById(R.id.bloqueMisRutinas).setVisibility(View.VISIBLE);
         if (uid == -1) {
             // Sin id de cuenta: ni rutinas ni programa propios; la tarjeta lleva a Programas.
             propias = new ArrayList<>();
@@ -224,6 +229,8 @@ public class EntrenarFragment extends BaseFragment {
                 // El fallo se enseña en la tarjeta, con reintentar; «Mis rutinas» se pinta
                 // igual, sin marcar ninguna como la de hoy.
                 seguidoListo = true;
+                falloPrograma = true;
+                if (falloPropias) findViewById(R.id.bloqueMisRutinas).setVisibility(View.GONE);
                 tuPrograma.error(VistaEstado.mensaje(requireContext(), R.string.tu_programa_error, code, message),
                         () -> cargarMisRutinas());
                 cargarMasProgramas(null);
@@ -244,8 +251,8 @@ public class EntrenarFragment extends BaseFragment {
         boolean vacia = mias.isEmpty();
         findViewById(R.id.cardMisRutinas).setVisibility(vacia ? View.GONE : View.VISIBLE);
         if (vacia) {
-            estadoMisRutinas.vacio(R.drawable.ic_ms_fitness_center, 0, R.string.mis_rutinas_vacio,
-                    R.string.btn_crea_primera_rutina, this::crearRutina);
+            // Sin acción: «Crear una rutina» está justo debajo, en «Por tu cuenta» (revisor).
+            estadoMisRutinas.vacio(R.drawable.ic_ms_fitness_center, R.string.mis_rutinas_vacio);
             return;
         }
         estadoMisRutinas.oculto();
@@ -296,6 +303,10 @@ public class EntrenarFragment extends BaseFragment {
     private void pintarErrorMisRutinas(int code, String message) {
         ((LinearLayout) findViewById(R.id.listaMisRutinas)).removeAllViews();
         findViewById(R.id.cardMisRutinas).setVisibility(View.GONE);
+        if (falloPrograma) {
+            findViewById(R.id.bloqueMisRutinas).setVisibility(View.GONE);
+            return;
+        }
         estadoMisRutinas.error(VistaEstado.mensaje(requireContext(), R.string.mis_rutinas_error, code, message),
                 this::cargarMisRutinas);
     }

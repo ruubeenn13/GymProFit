@@ -89,7 +89,8 @@ public class RecordsFragment extends BaseFragment {
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 rvRecords.setVisibility(View.GONE);
-                estado.error(UiFeedback.mensaje(requireContext(), code, message), RecordsFragment.this::cargar);
+                estado.error(VistaEstado.mensaje(requireContext(), R.string.progreso_records_error, code, message),
+                        RecordsFragment.this::cargar);
             }
         });
     }
