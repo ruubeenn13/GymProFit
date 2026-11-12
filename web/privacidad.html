@@ -30,7 +30,7 @@
   <div class="wrap">
 
     <h1>Política de privacidad</h1>
-    <p class="meta">Última actualización: 20 de octubre de 2026</p>
+    <p class="meta">Última actualización: 12 de noviembre de 2026</p>
 
     <p class="lead">Esta política describe qué datos trata GymProFit, con qué finalidad, durante cuánto tiempo y con quién se comparten. Está escrita a partir de lo que la aplicación hace de verdad, no de una plantilla.</p>
 
@@ -89,8 +89,14 @@
     <h3>Datos recogidos automáticamente</h3>
     <ul>
       <li><strong>Informes de fallo</strong> (Firebase Crashlytics): cuando la aplicación se cierra inesperadamente se envía el estado técnico del fallo, el modelo de dispositivo y la versión del sistema. No se incluyen tus datos de entrenamiento, nutrición ni salud.</li>
-      <li><strong>Uso básico</strong> (Firebase Analytics): eventos automáticos como la primera apertura y el inicio de sesión de uso, junto con datos de dispositivo y país aproximado. No se envían eventos con contenido personal.</li>
     </ul>
+
+    <h3 id="recuentos">Recuentos que no identifican a nadie</h3>
+    <ul>
+      <li><strong>Los pasos del alta.</strong> Mientras creas la cuenta, la aplicación avisa al servidor de cada pantalla del alta a la que llegas, como «Tu objetivo» o «Guarda tu plan», una vez por pantalla. El aviso lleva solo el nombre de la pantalla: ni tu cuenta, ni el identificador del móvil, ni la hora. El servidor suma uno al total de ese día y de esa pantalla, y no guarda tu dirección IP ni nada más. Sirve para saber en qué paso se deja el alta.</li>
+      <li><strong>La primera semana de las cuentas nuevas.</strong> Para saber cuántas cuentas nuevas entrenan, apuntan una comida y vuelven otro día en sus primeros 7 días, se cuentan en conjunto las fechas que tu cuenta ya guarda. No se recoge ningún dato nuevo ni se sigue lo que haces en la aplicación, y lo que se ve son totales por semana, nunca una cuenta.</li>
+    </ul>
+    <p>La aplicación no usa el identificador de publicidad del móvil ni ninguna herramienta de analítica de terceros.</p>
 
     <h2>3. Para qué se usan</h2>
     <ul>
@@ -102,6 +108,7 @@
       <li>Enviarte los recordatorios que hayas activado.</li>
       <li>Avisarte de la beta y del lanzamiento, si te has apuntado a la lista de espera.</li>
       <li>Detectar y corregir fallos de la aplicación.</li>
+      <li>Saber, en conjunto y sin identificar a nadie, en qué paso se deja el alta y si las cuentas nuevas vuelven su primera semana.</li>
     </ul>
     <p><strong>Tus datos no se venden, no se ceden con fines publicitarios y no se usan para elaborar perfiles comerciales.</strong></p>
 
@@ -109,7 +116,7 @@
     <ul>
       <li><strong>Ejecución del servicio</strong> (art. 6.1.b RGPD): los datos de cuenta, entrenamiento, nutrición y progreso son necesarios para que la aplicación funcione. Sin ellos no hay servicio que prestar.</li>
       <li><strong>Consentimiento</strong> (art. 6.1.a): el sexo, la edad, la altura, el peso y el nivel de actividad, la fotografía de perfil, las mediciones corporales y las notificaciones son opcionales. Los das si quieres, para calcular tus calorías o para recibir avisos, y puedes retirarlos cuando quieras. También la <a href="#beta">lista de espera de la beta</a>: te apuntas tú y te das de baja cuando quieras.</li>
-      <li><strong>Interés legítimo</strong> (art. 6.1.f): los informes de fallo y el uso básico, para mantener la aplicación en funcionamiento.</li>
+      <li><strong>Interés legítimo</strong> (art. 6.1.f): los informes de fallo, para mantener la aplicación en funcionamiento, y los <a href="#recuentos">recuentos que no identifican a nadie</a>, para mejorar el alta y la aplicación.</li>
     </ul>
 
     <h2>5. Con quién se comparten</h2>
@@ -123,7 +130,7 @@
         <tr><td>Render</td><td>Alojamiento de la API</td><td>Todo el tráfico de la aplicación</td></tr>
         <tr><td>Aiven</td><td>Base de datos gestionada</td><td>Los datos almacenados de tu cuenta</td></tr>
         <tr><td>Brevo</td><td>Envío de correo transaccional y la lista de espera de la beta</td><td>Tu dirección de correo y el contenido del mensaje; en la lista de espera, también los datos de conexión al enviar el formulario</td></tr>
-        <tr><td>Google (Firebase)</td><td>Notificaciones, informes de fallo y uso básico</td><td>Identificador de dispositivo y datos técnicos</td></tr>
+        <tr><td>Google (Firebase)</td><td>Notificaciones e informes de fallo</td><td>Identificador de dispositivo y datos técnicos</td></tr>
         <tr><td>Cloudflare</td><td>DNS, correo entrante y esta web</td><td>Datos de conexión</td></tr>
         <tr><td>Open Food Facts</td><td>Consulta de alimentos por código de barras</td><td>Solo el código de barras consultado; ningún dato tuyo</td></tr>
       </tbody>
