@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +71,17 @@ class LoginSinBaseTest {
     void pool_agotado_da_503() throws Exception {
         List<Connection> retenidas = new ArrayList<>();
         try {
-            for (int i = 0; i < TAMANO_POOL; i++) {
-                retenidas.add(dataSource.getConnection());
+            // Todas las del pool, aunque tarde: en la suite completa, una tarea programada
+            // del contexto puede tener una un momento, y si el login la recogiera al
+            // soltarla el pool no estaría agotado.
+            long limite = System.currentTimeMillis() + 30_000;
+            while (retenidas.size() < TAMANO_POOL) {
+                try {
+                    retenidas.add(dataSource.getConnection());
+                } catch (SQLTransientConnectionException ocupada) {
+                    assertThat(System.currentTimeMillis()).as("no se pudo retener el pool entero")
+                            .isLessThan(limite);
+                }
             }
             mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON)
                             .content("{\"username\":\"__sin_base__\",\"password\":\"Test1234\"}"))
@@ -85,7 +95,9 @@ class LoginSinBaseTest {
 
         assertThat(ServidorSentryFalso.recibidos()).as("el fallo de la base tenía que llegar a Sentry")
                 .isNotEmpty();
-        assertThat(String.join("\n", ServidorSentryFalso.recibidos())).doesNotContain("Test1234");
+        assertThat(String.join("\n", ServidorSentryFalso.recibidos()))
+                .contains("/auth/login")
+                .doesNotContain("Test1234");
     }
 
     @Test
