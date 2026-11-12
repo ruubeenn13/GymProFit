@@ -49,8 +49,10 @@ export const options = {
   summaryTrendStats: ['avg', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
 };
 
-// Cada cuenta, una IP propia: el límite de peticiones va por IP (X-Forwarded-For, como tras
-// el proxy de Render), y cien usuarios reales no salen todos de la misma.
+// Cada cuenta, una IP propia: el límite de peticiones va por IP, y cien usuarios reales no
+// salen todos de la misma. La API toma la última entrada de X-Forwarded-For (IpCliente):
+// en local no hay proxy delante, así que es la que pone k6; en Render, el proxy añade la
+// IP real detrás de lo que mande el cliente, y esta cabecera ya no cuenta.
 function ip(i) {
   return `10.77.${Math.floor(i / 250)}.${(i % 250) + 1}`;
 }

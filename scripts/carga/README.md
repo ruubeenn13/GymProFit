@@ -12,7 +12,7 @@ En bucle, con 1 a 3 s de pausa entre pantallas, las mismas llamadas que la app:
 4. **Diario de hoy**: comidas del día y `/diario`.
 5. **Busca un alimento**: `GET /alimentos/buscar?q=…`.
 
-Cada cuenta va con su propia IP en `X-Forwarded-For`, como llegan los usuarios reales tras el proxy de Render: el límite de peticiones es por IP.
+Cada cuenta va con su propia IP en `X-Forwarded-For`: el límite de peticiones es por IP, y la API toma la última entrada de esa cabecera. En local, sin proxy delante, esa entrada es la que pone k6. En Render, el proxy añade la IP real al final, así que la de k6 no serviría allí: solo vale en local.
 
 ## Cómo se corre
 

@@ -249,4 +249,37 @@ class AuthRateLimitFilterTest {
         assertEquals(200, disparar(f, "GET", "/programas/a/b/vista-previa", "10.0.0.9").getStatus());
         assertEquals(200, disparar(f, "GET", "/programas/GIM-CC", "10.0.0.9").getStatus());
     }
+
+    // Login desde detrás del proxy: la IP que ve el proxy va al final de X-Forwarded-For
+    // y lo que hubiera antes lo escribió quien hizo la petición.
+    private int loginTrasProxy(AuthRateLimitFilter f, String cabecera) throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/auth/login");
+        req.setServletPath("/auth/login");
+        req.setRemoteAddr("162.158.110.48");
+        req.addHeader("X-Forwarded-For", cabecera);
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        f.doFilterInternal(req, res, new MockFilterChain());
+        return res.getStatus();
+    }
+
+    @Test
+    @DisplayName("cambiar el principio de X-Forwarded-For en cada petición no da cupo nuevo")
+    void xff_distinto_en_cada_peticion_comparte_cupo() throws Exception {
+        AuthRateLimitFilter f = nuevoFiltro(15, 60);
+        for (int i = 1; i <= 15; i++) {
+            assertEquals(200, loginTrasProxy(f, "198.51.100." + i + ", 193.228.204.206"),
+                    "la petición " + i + " debería pasar");
+        }
+        assertEquals(429, loginTrasProxy(f, "198.51.100.99, 193.228.204.206"),
+                "la 16ª sale de la misma IP real y debería ser 429");
+    }
+
+    @Test
+    @DisplayName("dos IPs reales distintas tras el proxy no comparten cupo")
+    void dos_ips_reales_no_comparten_cupo() throws Exception {
+        AuthRateLimitFilter f = nuevoFiltro(1, 60);
+        assertEquals(200, loginTrasProxy(f, "193.228.204.206"));
+        assertEquals(200, loginTrasProxy(f, "203.0.113.20"), "otra IP real tiene su propio cupo");
+        assertEquals(429, loginTrasProxy(f, "193.228.204.206"));
+    }
 }

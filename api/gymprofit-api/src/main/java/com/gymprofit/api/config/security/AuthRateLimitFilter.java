@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 //    un alta normal, que las pide dos o tres veces, no roza.
 //  - Nivel GLOBAL (backstop): TODAS las demás rutas, con un cupo alto que un
 //    usuario real nunca alcanza pero que frena scraping/DoS (vaciar la BD).
-// Ventana fija por IP y nivel; al superar el cupo responde 429 + Retry-After.
+// Ventana fija por IP (la de IpCliente) y nivel; al superar el cupo responde 429 + Retry-After.
 // Se ejecuta antes del filtro JWT. Es en memoria (válido con una sola instancia,
 // como el free tier de Render; si se escala a varias haría falta un store compartido).
 // Configurable/deshabilitable por properties (se desactiva en dev y en tests).
@@ -127,7 +127,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
-        String ip = clientIp(request);
+        String ip = IpCliente.de(request);
         String ruta = request.getServletPath();
         boolean estricta = RUTAS_ESTRICTAS.contains(ruta);
         boolean programa = !estricta && RUTAS_PROGRAMA.matcher(ruta).matches();
@@ -170,15 +170,5 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             return actual;
         });
         return c.peticiones <= max;
-    }
-
-    // Obtiene la IP real del cliente. Tras el proxy de Render la IP va en X-Forwarded-For
-    // (primer salto); si no está, usa la IP remota directa.
-    private String clientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
     }
 }
