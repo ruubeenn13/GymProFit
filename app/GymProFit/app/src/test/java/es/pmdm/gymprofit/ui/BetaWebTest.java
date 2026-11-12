@@ -289,8 +289,29 @@ public class BetaWebTest {
         assertTrue("Brevo no está en la tabla de proveedores", brevo.find());
         assertTrue("Brevo no figura para la lista de espera", brevo.group(1).contains("lista de espera"));
         assertTrue("no dice que Brevo recibe los datos de conexión", brevo.group(1).contains("datos de conexión"));
-        assertEquals("la fecha de la política no es la de la lista de espera",
-                1, ocurrencias(texto, "Última actualización: 20 de octubre de 2026"));
+        // La fecha es la del último cambio de la política: hoy, los recuentos del alta (GP-019).
+        assertEquals("la fecha de la política no es la de su último cambio",
+                1, ocurrencias(texto, "Última actualización: 12 de noviembre de 2026"));
+    }
+
+    // GP-019 (DEC-064): la política cuenta los recuentos del alta y de la primera semana,
+    // dice que no identifican a nadie, y Firebase Analytics ya no está.
+    @Test
+    public void laPoliticaCuentaLosRecuentosDelAlta() throws IOException {
+        String html = pagina("privacidad.html");
+        String texto = texto(html);
+        Matcher seccion = Pattern.compile("Recuentos que no identifican a nadie(.*?)3\\. Para qué se usan").matcher(texto);
+        assertTrue("falta «Recuentos que no identifican a nadie»", seccion.find());
+        String recuentos = seccion.group(1);
+        for (String debe : new String[]{"nombre de la pantalla", "ni tu cuenta", "ni el identificador del móvil",
+                "ni la hora", "no guarda tu dirección IP", "primeros 7 días", "nunca una cuenta",
+                "identificador de publicidad"}) {
+            assertTrue("los recuentos no dicen «" + debe + "»", recuentos.contains(debe));
+        }
+        assertFalse("la política sigue citando Firebase Analytics", texto.contains("Analytics"));
+        Matcher google = Pattern.compile("<tr><td>Google \\(Firebase\\)</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
+        assertTrue("Google (Firebase) no está en la tabla de proveedores", google.find());
+        assertFalse("Firebase sigue figurando para el uso", google.group(1).contains("uso"));
     }
 
     // El único <form> de /beta.
