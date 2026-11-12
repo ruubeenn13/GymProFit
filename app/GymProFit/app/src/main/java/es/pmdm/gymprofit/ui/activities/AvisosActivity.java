@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.ui.widget.FilaAviso;
 import es.pmdm.gymprofit.utils.AvisosCuenta;
+import es.pmdm.gymprofit.utils.EmbudoAlta;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PermisoAvisos;
@@ -60,6 +61,14 @@ public class AvisosActivity extends BaseActivity {
     private static final String EXTRA_PROGRESO = "avisos_progreso";
     /** Al terminar, cerrarse y volver a donde estaba (Inicio) en vez de abrir Inicio de cero. */
     private static final String EXTRA_VOLVER = "avisos_volver";
+    /** Viene de crear la cuenta en el alta: el embudo la cuenta (GP-019). */
+    private static final String EXTRA_DEL_ALTA = "avisos_del_alta";
+
+    /** «¿Te avisamos?» al final del alta, con los interruptores de serie. */
+    @NonNull
+    public static Intent delAlta(@NonNull android.content.Context ctx) {
+        return new Intent(ctx, AvisosActivity.class).putExtra(EXTRA_DEL_ALTA, true);
+    }
 
     private final UsuarioApi usuarioApi = ApiClient.service(UsuarioApi.class);
     private FilaAviso entrenar, comidas, progreso;
@@ -138,6 +147,9 @@ public class AvisosActivity extends BaseActivity {
                 in.getBooleanExtra(EXTRA_COMIDAS, deSerie.comidas),
                 in.getBooleanExtra(EXTRA_PROGRESO, deSerie.progreso));
         boolean girada = savedInstanceState != null;
+        if (!girada && in.getBooleanExtra(EXTRA_DEL_ALTA, false)) {
+            EmbudoAlta.avisar(this, EmbudoAlta.Paso.AVISOS);
+        }
         entrenar.setActiva(girada ? savedInstanceState.getBoolean("entrenar") : inicial.entrenar);
         comidas.setActiva(girada ? savedInstanceState.getBoolean("comidas") : inicial.comidas);
         progreso.setActiva(girada ? savedInstanceState.getBoolean("progreso") : inicial.progreso);

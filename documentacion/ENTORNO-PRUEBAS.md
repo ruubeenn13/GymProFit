@@ -14,7 +14,8 @@ Verificado en emulador el 18 de septiembre de 2026.
 |---|---|---|
 | API | `http://10.0.2.2:8080/api/` (tu PC) | `https://api.gymprofit.app/api/` |
 | Base de datos | MariaDB local, puerto **3308** | Aiven MySQL |
-| Crashlytics y Analytics | **apagados** | activos |
+| Crashlytics | **apagado** | activo |
+| Embudo del alta (GP-019) | cuenta en la base local | cuenta en producción |
 | Distintivo en pantalla | `PRUEBAS · LOCAL` arriba | ninguno |
 | Usuario | `prueba` / `Prueba1234.` | cuentas reales |
 
@@ -79,8 +80,8 @@ capturas, vídeos y pruebas.
 
 ### Extra: telemetría apagada
 
-`app/src/debug/AndroidManifest.xml` desactiva Crashlytics y Analytics en el build
-de pruebas. Los fallos provocados probando no ensucian la consola de producción
+`app/src/debug/AndroidManifest.xml` desactiva Crashlytics en el build de pruebas
+(Analytics ya no está en la app desde GP-019). Los fallos provocados probando no ensucian la consola de producción
 ni se mezclan con los de usuarios reales.
 
 ---

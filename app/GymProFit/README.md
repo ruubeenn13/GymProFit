@@ -23,7 +23,7 @@
 | Retrofit 3 + OkHttp 4.12 + Gson 2.14 | Cliente HTTP tipado por interfaces (`network/*Api`), con el token por interceptor en `ApiClient` |
 | Material Components 1.14 (Material Design 3) | Componentes visuales y temas (claro/oscuro) |
 | EncryptedSharedPreferences (security-crypto 1.1.0) | Token JWT y datos de sesión cifrados, siempre a través de `PreferencesManager` |
-| Firebase (BoM 34.19.0) | Push, Analytics y Crashlytics |
+| Firebase (BoM 34.19.0) | Push y Crashlytics (sin Analytics desde GP-019) |
 | Gradle 9.8 + plugin de Android 9.2.1 | Build system |
 
 ---

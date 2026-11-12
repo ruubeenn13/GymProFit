@@ -89,6 +89,40 @@ public class ApiClient {
         return retrofit;
     }
 
+    /**
+     * Un servicio que sale sin nada de la sesión (GP-019): para el embudo del alta, que no
+     * puede llevar el token aunque ya haya cuenta (DEC-064). Cliente propio, sin el
+     * AuthInterceptor ni el TokenAuthenticator, sin Accept-Language y sin reintentar.
+     */
+    public static <T> T anonimo(Class<T> clazz) {
+        return retrofitAnonimo(clienteAnonimo()).create(clazz);
+    }
+
+    /** El cliente de {@link #anonimo}; los tests le añaden un interceptor que no sale a la red. */
+    static OkHttpClient clienteAnonimo() {
+        OkHttpClient c = CLIENTE_ANONIMO;
+        if (c == null) {
+            c = new OkHttpClient.Builder()
+                    .connectTimeout(15, TimeUnit.SECONDS)
+                    .callTimeout(60, TimeUnit.SECONDS)
+                    // Un aviso que no llega se pierde: reintentarlo podría contarlo dos veces.
+                    .retryOnConnectionFailure(false)
+                    .build();
+            CLIENTE_ANONIMO = c;
+        }
+        return c;
+    }
+
+    static Retrofit retrofitAnonimo(OkHttpClient cliente) {
+        return new Retrofit.Builder()
+                .baseUrl(BuildConfig.BASE_URL)
+                .client(cliente)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    private static volatile OkHttpClient CLIENTE_ANONIMO;
+
     // Construye el OkHttpClient (interceptor + authenticator + timeouts) y el Retrofit con Gson.
     private static Retrofit crear() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

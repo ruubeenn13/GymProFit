@@ -249,6 +249,10 @@ dependencies {
     implementation libs.camera.lifecycle
     implementation libs.camera.view
     implementation libs.mlkit.barcode
+    // ProcessCameraProvider.getInstance devuelve un ListenableFuture de Guava. Guava ya
+    // llega al APK por otras librerías (la misma 33.3.1-android); hasta GP-019 también
+    // llegaba al compilar por firebase-analytics, y al quitarlo hay que pedirlo aquí.
+    implementation libs.guava
     // El arranque (GP-223): la API SplashScreen de Android 12 con su compatibilidad hacia atrás.
     // Sin ella, Android pinta su propio splash y después entra el de la app: dos pantallas.
     implementation libs.core.splashscreen
@@ -259,7 +263,8 @@ dependencies {
     androidTestImplementation libs.espresso.core
 
     implementation platform('com.google.firebase:firebase-bom:34.19.0')
-    implementation 'com.google.firebase:firebase-analytics'
+    // Sin firebase-analytics (GP-019, DEC-064): la medición del alta es propia y anónima, y
+    // así la app no lleva el ID de publicidad. Crashlytics y FCM no lo necesitan.
     // Cloud Messaging: recepción de notificaciones push (versión fijada por el BOM)
     implementation 'com.google.firebase:firebase-messaging'
     // Crashlytics: reporte automático de crashes en producción (versión por el BOM)
@@ -283,6 +288,10 @@ tasks.withType(Test).configureEach {
     relativa(inputs.files(
             rootProject.file('../../api/gymprofit-api/src/main/java/com/gymprofit/api/controller/AlimentoController.java'),
             rootProject.file('../../api/gymprofit-api/src/test/resources/platos/cuenta_plato_casos.csv'),
-            rootProject.file('../../api/gymprofit-api/src/test/resources/programas/duracion_rutina_casos.csv'))
+            rootProject.file('../../api/gymprofit-api/src/test/resources/programas/duracion_rutina_casos.csv'),
+            // EmbudoAltaTest compara los pasos con los de la API (GP-019).
+            rootProject.file('../../api/gymprofit-api/src/main/java/com/gymprofit/api/enums/PasoAlta.java'))
             .withPropertyName('api'))
+    // EmbudoAnonimoTest mira que no vuelvan firebase-analytics ni el ID de publicidad (GP-019).
+    relativa(inputs.files(file('build.gradle'), file('src/main/AndroidManifest.xml')).withPropertyName('manifiesto'))
 }
