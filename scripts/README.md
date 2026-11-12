@@ -2,7 +2,7 @@
 
 | Script | Para qué |
 |---|---|
-| `comprobar-limite-ip.sh` | Comprueba desde fuera que el límite de peticiones del login no se salta cambiando `X-Forwarded-For` (S28, DEC-062). Hay que repetirlo tras cualquier cambio de infraestructura o de plan en Render. |
+| `comprobar-limite-ip.sh` | Comprueba desde fuera que el límite de peticiones del login (o, con `RUTA=embudo`, el de `/alta/pasos`) no se salta cambiando `X-Forwarded-For` (S28, DEC-062). Hay que repetirlo tras cualquier cambio de infraestructura o de plan en Render. Gasta el cupo de tu IP: **espera 61 s después de la ráfaga antes de cualquier login o alta de prueba** (GP-264). |
 | `entorno-pruebas.sh` | Comprueba el aislamiento y la BD local y arranca la API local (`estado`, `parar`). Ver `documentacion/ENTORNO-PRUEBAS.md`. |
 | `reset-datos-pruebas.sh` | Restaura los datos de pruebas al estado base. Exige la API parada. |
 | `sembrar_demo.py` | Crea la cuenta demo de las capturas, `@dani.entrena`, con tres semanas de datos. Solo en local. |

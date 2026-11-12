@@ -92,7 +92,7 @@ public class ApiClient {
     /**
      * Un servicio que sale sin nada de la sesión (GP-019): para el embudo del alta, que no
      * puede llevar el token aunque ya haya cuenta (DEC-064). Cliente propio, sin el
-     * AuthInterceptor ni el TokenAuthenticator, sin Accept-Language y sin reintentar.
+     * AuthInterceptor ni el TokenAuthenticator, sin Accept-Language y sin los reintentos de OkHttp.
      */
     public static <T> T anonimo(Class<T> clazz) {
         return retrofitAnonimo(clienteAnonimo()).create(clazz);
@@ -105,7 +105,8 @@ public class ApiClient {
             c = new OkHttpClient.Builder()
                     .connectTimeout(15, TimeUnit.SECONDS)
                     .callTimeout(60, TimeUnit.SECONDS)
-                    // Un aviso que no llega se pierde: reintentarlo podría contarlo dos veces.
+                    // OkHttp no reintenta por su cuenta: el único reintento lo decide
+                    // ReintentoEmbudo (uno como mucho, GP-264).
                     .retryOnConnectionFailure(false)
                     .build();
             CLIENTE_ANONIMO = c;
