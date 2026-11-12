@@ -282,4 +282,48 @@ class AuthRateLimitFilterTest {
         assertEquals(200, loginTrasProxy(f, "203.0.113.20"), "otra IP real tiene su propio cupo");
         assertEquals(429, loginTrasProxy(f, "193.228.204.206"));
     }
+
+    // ── GP-019: el embudo del alta tiene su propio cupo ────────────────────────
+
+    private AuthRateLimitFilter filtroEmbudo() {
+        AuthRateLimitFilter f = nuevoFiltro(15, 60);
+        ReflectionTestUtils.setField(f, "maxEmbudo", 3);
+        ReflectionTestUtils.setField(f, "ventanaEmbudoSeg", 60L);
+        return f;
+    }
+
+    // Un paso del alta desde detrás del borde: la IP real al final de X-Forwarded-For.
+    private MockHttpServletResponse pasoTrasProxy(AuthRateLimitFilter f, String cabecera) throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/alta/pasos");
+        req.setServletPath("/alta/pasos");
+        req.setRemoteAddr("162.158.110.48");
+        req.addHeader("X-Forwarded-For", cabecera);
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        f.doFilterInternal(req, res, new MockFilterChain());
+        return res;
+    }
+
+    @Test
+    @DisplayName("GP-019: los pasos del alta tienen cupo propio por IP real, con 429 y Retry-After")
+    void embudo_tiene_cupo_propio_por_ip() throws Exception {
+        AuthRateLimitFilter f = filtroEmbudo();
+        for (int i = 1; i <= 3; i++) {
+            assertEquals(200, pasoTrasProxy(f, "198.51.100." + i + ", 193.228.204.206").getStatus(),
+                    "el paso " + i + " debería pasar");
+        }
+        MockHttpServletResponse cuarto = pasoTrasProxy(f, "198.51.100.99, 193.228.204.206");
+        assertEquals(429, cuarto.getStatus(), "inventar el principio de X-Forwarded-For no da cupo nuevo");
+        assertEquals("60", cuarto.getHeader("Retry-After"));
+        assertEquals(200, pasoTrasProxy(f, "203.0.113.20").getStatus(), "otra IP real tiene su cupo");
+    }
+
+    @Test
+    @DisplayName("GP-019: el cupo del embudo no gasta el estricto ni el global")
+    void embudo_no_gasta_otros_cupos() throws Exception {
+        AuthRateLimitFilter f = filtroEmbudo();
+        ReflectionTestUtils.setField(f, "maxGlobal", 1);
+        for (int i = 0; i < 3; i++) pasoTrasProxy(f, "10.0.0.5");
+        assertEquals(200, disparar(f, "GET", "/rutinas", "10.0.0.5").getStatus());
+        assertEquals(200, disparar(f, "POST", "/auth/login", "10.0.0.5").getStatus());
+    }
 }

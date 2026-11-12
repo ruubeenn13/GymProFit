@@ -129,6 +129,11 @@ public class SecurityConfig {
                                 // ClaveImportacion antes de leer el cuerpo. Sin ella, 403 a todos.
                                 .requestMatchers(HttpMethod.POST, "/importacion/**").permitAll()
 
+                                // El embudo del alta (GP-019, DEC-064): la app avisa de cada pantalla
+                                // antes de que haya cuenta, y sin token aunque la haya. Solo suma un
+                                // recuento por día y paso; el cupo por IP lo pone AuthRateLimitFilter.
+                                .requestMatchers(HttpMethod.POST, "/alta/pasos").permitAll()
+
                                 // Swagger público
                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/webjars/**").permitAll()
 
