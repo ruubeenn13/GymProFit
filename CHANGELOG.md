@@ -8,6 +8,10 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `c3b5d6ca` | feat(api): los estiramientos que se mantienen (62) y la liberación con rodillo (14) se miden en segundos; los dinámicos, Superman, Bird Dog y Dead bug siguen en repeticiones (migración `V202611122130`, GP-262). |
+| `e699e63a` | feat(android): el objetivo de agua es 2,0 L para un hombre y 1,6 L si no, la bebida de referencia de la EFSA, sin peso ni actividad; la tarjeta del agua explica que es lo que se bebe (GP-255, DEC-065). |
+| `0fa42f0c` | feat(android): una cuenta sin historial ve ideas de proteína de los básicos del catálogo, sin marca y con su ración, en «Lo que te encaja» y en la comida vacía; lo tuyo va siempre primero (GP-226). |
+| `2bb194ff` | fix(android): un aviso del embudo del alta se reintenta una vez tras un 429 (pasado el `Retry-After`, tope de 60 s) o un fallo de red; nunca un tercero (GP-264). |
 | `8f59077b` | feat(android): cada pantalla del alta (de la bienvenida a «¿Te avisamos?») avisa a la API con solo su nombre, una vez por intento, sin token ni reintentos; fuera `firebase-analytics` y el permiso `AD_ID` del manifiesto fusionado (GP-019, DEC-064). |
 | `7d041e7f` | feat(admin): página Embudo con los pasos del alta por semana y lo que hacen las cuentas nuevas en sus primeros 7 días, solo totales (GP-019). |
 | `4ca6f602` | feat(api): `POST /alta/pasos`, pública, suma uno por día y paso sin guardar cuenta, IP ni hora, con cupo propio por IP; `GET /admin/embudo` con el embudo y el núcleo de las cuentas nuevas (migración `V202611122000`, GP-019, DEC-064). |
