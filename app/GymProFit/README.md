@@ -75,9 +75,13 @@ keyAlias=…
 keyPassword=…
 ```
 
-Sin ese fichero, empaquetar el release (`assembleRelease`, `bundleRelease`) falla al empezar
+Sin ese fichero, empaquetar el release (`assembleRelease`) falla al empezar
 con un mensaje que lo dice, en vez de sacar un APK sin firmar que no se instala encima del
 repartido.
+
+El **AAB para Play** (`bundleRelease`) se firma con otra clave, la de subida, desde
+`upload.properties` (misma forma, tampoco se versiona). Qué firma cada clave y cómo se
+comprueba: `documentacion/PUBLICAR-EN-PLAY.md` (DEC-063).
 
 ---
 
