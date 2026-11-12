@@ -133,7 +133,17 @@ public class ApiClient {
         public Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
             String tok = UtilREST.getToken();
-            if (tok != null && !tok.isEmpty() && !esEndpointAuth(original)) {
+            boolean sinToken = tok == null || tok.isEmpty();
+            // Sin access ni refresh no hay sesión: una ruta que la pide no sale (GP-258). La
+            // API diría 401, y ese 401 no es una sesión que se acaba. Con solo el refresh sí
+            // sale: es una sesión, y el TokenAuthenticator la renueva al 401.
+            if (sinToken && !esRutaSinSesion(original)) {
+                String refresh = UtilREST.getRefreshToken();
+                if (refresh == null || refresh.isEmpty()) {
+                    throw new SinSesionException(original.url().encodedPath());
+                }
+            }
+            if (!sinToken && !esEndpointAuth(original)) {
                 original = original.newBuilder()
                         .header("Authorization", "Bearer " + tok)
                         .build();
@@ -370,8 +380,22 @@ public class ApiClient {
     }
 
     // ¿La URL es de autenticación (/auth/...)? Sobre ellas no se inyecta token ni se refresca.
+    // Menos /auth/change-password, la única de /auth/ que pide sesión en SecurityConfig: salía
+    // sin token, la API la rechazaba con 401 y cambiar la contraseña cerraba la sesión (GP-258).
     private static boolean esEndpointAuth(Request request) {
-        return request.url().encodedPath().contains("/auth/");
+        String ruta = request.url().encodedPath();
+        return ruta.contains("/auth/") && !ruta.endsWith("/auth/change-password");
+    }
+
+    // Las rutas que la API deja pedir sin token (SecurityConfig, permitAll) y que la app usa
+    // antes de entrar: las de /auth/ de arriba, el programa recomendado y su vista previa del
+    // alta (GP-103) y el actuator. Una ruta pública nueva que falte aquí falla sin sesión con
+    // onFail(401) y sin salir del móvil, así que se ve en cuanto se prueba sin cuenta.
+    private static final java.util.regex.Pattern RUTA_SIN_SESION = java.util.regex.Pattern.compile(
+            ".*/(programas/recomendado|programas/[^/]+/vista-previa|actuator/.*)");
+
+    static boolean esRutaSinSesion(Request request) {
+        return esEndpointAuth(request) || RUTA_SIN_SESION.matcher(request.url().encodedPath()).matches();
     }
 
     // Extrae el token que llevaba una petición (para detectar si ya fue renovado por otro hilo).

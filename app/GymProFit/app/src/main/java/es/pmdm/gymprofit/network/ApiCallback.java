@@ -45,7 +45,12 @@ public abstract class ApiCallback<T> implements Callback<T> {
             // Un 401 que el TokenAuthenticator deja pasar: sin refresh guardado, o el
             // reintento con el access recién renovado también dio 401.
             // Si la API dice que la cuenta está desactivada (GP-083), el aviso lo explica.
-            UtilREST.notifyUnauthorized(esCuentaDesactivada(leerError(response)));
+            // Solo cierra la sesión si la petición llevaba una (GP-258): el 401 de una
+            // contraseña mal escrita en Entrar, o el de una petición sin token, no es una
+            // sesión que se acaba, y abría Entrar con «Tu sesión ha terminado».
+            if (llevabaSesion(response)) {
+                UtilREST.notifyUnauthorized(esCuentaDesactivada(leerError(response)));
+            }
             onFail(401, "Sesión expirada");
         } else if (response.isSuccessful()) {
             onOk(response.body());
@@ -64,6 +69,11 @@ public abstract class ApiCallback<T> implements Callback<T> {
             // /auth/refresh dijo 401 (DEC-059): el mismo cierre que el 401 de arriba.
             UtilREST.notifyUnauthorized(((SesionCerradaException) t).cuentaDesactivada);
             onFail(401, "Sesión expirada");
+            return;
+        }
+        if (t instanceof SinSesionException) {
+            // No salió: pedía sesión y no la hay (GP-258). Como un 401, sin sesión que cerrar.
+            onFail(401, t.getMessage());
             return;
         }
         if (t instanceof RenovacionLimitadaException) {
@@ -89,6 +99,13 @@ public abstract class ApiCallback<T> implements Callback<T> {
      */
     static boolean esCuentaDesactivada(String cuerpo) {
         return cuerpo != null && cuerpo.contains(CODIGO_CUENTA_DESACTIVADA);
+    }
+
+    // Si la petición que dio el 401 salió con un access token: la última, la del reintento
+    // si el TokenAuthenticator la repitió con uno renovado.
+    private static boolean llevabaSesion(Response<?> response) {
+        String h = response.raw().request().header("Authorization");
+        return h != null && h.startsWith("Bearer ");
     }
 
     // Lee el cuerpo de error como texto (o un mensaje genérico si no se puede).

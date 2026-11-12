@@ -82,6 +82,22 @@ public final class DecisionArranque {
     }
 
     /**
+     * Si MainActivity decide por el arranque o monta las pestañas (GP-258).
+     *
+     * <p>Abierta por el icono, siempre decide. Abierta de otra forma (una notificación, un
+     * acceso directo, un {@code am start} sin la categoría LAUNCHER) o recreada por un cambio de
+     * configuración mientras el arranque aún decidía, montaba las pestañas aunque no hubiera
+     * sesión: Inicio pedía sus datos sin token y el 401 abría Entrar con «Tu sesión ha
+     * terminado» en una instalación limpia. Sin sesión no hay pestañas que montar.
+     *
+     * @param desdeIcono la abrió el icono, con estado nuevo (PantallaArranque.esArranque).
+     * @param conSesion  hay un access token guardado.
+     */
+    public static boolean pasaPorElArranque(boolean desdeIcono, boolean conSesion) {
+        return desdeIcono || !conSesion;
+    }
+
+    /**
      * El destino con lo que hay en el móvil, sin llamar a la API.
      *
      * @return un destino final, o {@link Destino#RENOVAR} si hay que preguntar antes.
