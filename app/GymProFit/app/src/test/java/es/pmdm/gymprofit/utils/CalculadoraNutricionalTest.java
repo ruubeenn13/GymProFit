@@ -21,7 +21,7 @@ public class CalculadoraNutricionalTest {
         assertEquals(111, r.proteinas);
         assertEquals(339, r.carbohidratos);
         assertEquals(66, r.grasas);
-        assertEquals(2.2, r.agua, 0.001);
+        assertEquals(1.6, r.agua, 0.001); // GP-255: 1,6 L de bebida para una mujer, sin mirar el peso
         assertFalse(r.mantenimientoPorEdad);
     }
 
@@ -213,5 +213,35 @@ public class CalculadoraNutricionalTest {
                 CalculadoraNutricional.ACTIVIDAD_LIGERO, CalculadoraNutricional.OBJETIVO_MANTENER_PESO, 20.0, 5);
         assertEquals(mantener.proteinas, perder.proteinas);
         assertEquals(96, perder.proteinas);   // MM 48 kg × 2,0, no × 2,4
+    }
+
+    // ── GP-255: el agua es de bebida, por sexo (EFSA, 2010), y el peso no cuenta ──
+
+    @Test
+    public void elAguaDeUnHombreSonDosLitros() {
+        ResultadoNutricional r = CalculadoraNutricional.calcular(80, 180, 30, true,
+                CalculadoraNutricional.ACTIVIDAD_MODERADO, CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR);
+        assertEquals(2.0, r.agua, 0.0001);
+    }
+
+    @Test
+    public void elAguaDeUnaMujerSonUnoComaSeisLitros() {
+        ResultadoNutricional r = CalculadoraNutricional.calcular(60, 165, 30, false,
+                CalculadoraNutricional.ACTIVIDAD_MODERADO, CalculadoraNutricional.OBJETIVO_GANAR_MASA_MUSCULAR);
+        assertEquals(1.6, r.agua, 0.0001);
+    }
+
+    @Test
+    public void niElPesoNiLaActividadMuevenElAgua() {
+        // Antes eran 35 ml/kg: 45 kg daban 1,6 L y 120 kg, 4,2 L.
+        for (double peso : new double[]{45, 70, 120}) {
+            for (String actividad : new String[]{CalculadoraNutricional.ACTIVIDAD_SEDENTARIO,
+                    CalculadoraNutricional.ACTIVIDAD_MODERADO, CalculadoraNutricional.ACTIVIDAD_ACTIVO}) {
+                assertEquals(2.0, CalculadoraNutricional.calcular(peso, 175, 30, true, actividad,
+                        CalculadoraNutricional.OBJETIVO_PERDER_PESO).agua, 0.0001);
+                assertEquals(1.6, CalculadoraNutricional.calcular(peso, 165, 30, false, actividad,
+                        CalculadoraNutricional.OBJETIVO_PERDER_PESO).agua, 0.0001);
+            }
+        }
     }
 }

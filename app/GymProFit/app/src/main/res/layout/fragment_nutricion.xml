@@ -513,6 +513,15 @@
                         android:layout_marginTop="4dp"
                         android:orientation="vertical"
                         android:importantForAccessibility="no" />
+
+                    <!-- Qué es el objetivo (GP-255): lo que se bebe, no el agua total; con entreno o calor, más. -->
+                    <TextView
+                        android:id="@+id/tvAguaNota"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/espacio_8"
+                        android:text="@string/agua_nota"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

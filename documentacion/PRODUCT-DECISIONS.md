@@ -1185,6 +1185,24 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-065 · El objetivo de agua es la bebida de referencia de la EFSA por sexo, sin peso ni actividad
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** GP-255 · **Sustituye a:** los 35 ml por kilo de `CalculadoraNutricional`
+
+**Contexto.** El objetivo de agua eran 35 ml por kilo de peso: 45 kg daban 1,6 L y 120 kg, 4,2 L. Crecía sin freno con el peso, no decía si era agua total o bebida, y la pantalla lo pintaba como lo que hay que beber.
+
+**Decisión.**
+
+- **2,0 L al día si `esHombre` y 1,6 L si no**, sin ajuste por peso ni por actividad (`AGUA_HOMBRE_L` y `AGUA_MUJER_L`). Quien no da su sexo queda en 1,6 L, como en el resto del cálculo.
+- **Es bebida, no agua total.** Fuente: EFSA Panel on Dietetic Products, Nutrition and Allergies (NDA), «Scientific Opinion on Dietary reference values for water», *EFSA Journal* 2010; 8(3):1459, doi:10.2903/j.efsa.2010.1459. Da como ingesta adecuada de agua total 2,5 L para un hombre adulto y 2,0 L para una mujer, y estima que en torno al 20 % llega con la comida: quedan 2,0 y 1,6 L de bebida.
+- **La tarjeta del agua de Nutrición lo dice**, en ES y EN, debajo de los vasos y solo si hay objetivo: el objetivo es lo que se bebe, no el agua total, y con entreno o calor hay que beber más (`agua_nota`).
+- **Lo ya guardado se conserva.** El objetivo de agua no está en la API: vive en el móvil con el resto del objetivo (`agua_diaria` en `PreferencesManager`). Como la proteína en DEC-054, no se recalcula solo: cambia cuando la persona edita su perfil (Tus datos), cuando llega un perfil distinto de la API (`PerfilRemoto`) o en un alta nueva.
+
+**Consecuencias.** Una cuenta con objetivo anterior sigue viendo sus litros de antes hasta que edite el perfil. No hay ajuste por calor, entreno ni embarazo o lactancia: la nota lo cubre con «bebe más», y un ajuste cuantificado sería otra decisión.
+
+**Qué la invalidaría.** Que la EFSA revise los valores de referencia, o que la app pase a saber cuánto entrena o qué tiempo hace (entonces se mide antes un ajuste con fuente).
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

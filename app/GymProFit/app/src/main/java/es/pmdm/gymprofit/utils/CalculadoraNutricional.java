@@ -44,6 +44,11 @@ public class CalculadoraNutricional {
     private static final double MINIMO_G_KG = 1.6;
 
     // Niveles de actividad física soportados (deben coincidir con los usados por la API).
+    /** Bebida al día de un hombre adulto, en litros (EFSA NDA Panel, 2010; GP-255). */
+    public static final double AGUA_HOMBRE_L = 2.0;
+    /** Bebida al día de una mujer adulta, en litros (EFSA NDA Panel, 2010; GP-255). */
+    public static final double AGUA_MUJER_L = 1.6;
+
     public static final String ACTIVIDAD_SEDENTARIO = "SEDENTARIO";
     public static final String ACTIVIDAD_LIGERO     = "LIGERO";
     public static final String ACTIVIDAD_MODERADO   = "MODERADO";
@@ -158,8 +163,11 @@ public class CalculadoraNutricional {
                 break;
         }
 
-        // Agua recomendada: 35ml por kg de peso corporal
-        double agua = Math.round(pesoKg * 0.035 * 10.0) / 10.0;
+        // Agua (GP-255, DEC-065): lo que hay que beber, no el agua total. EFSA (2010) da 2,5 L
+        // de agua total al día para un hombre y 2,0 L para una mujer, y un 20 % llega con la
+        // comida: 2,0 y 1,6 L de bebida. Sin ajuste por peso ni actividad: con entreno o calor
+        // se bebe más, y la pantalla del agua lo dice.
+        double agua = esHombre ? AGUA_HOMBRE_L : AGUA_MUJER_L;
 
         ResultadoNutricional r = new ResultadoNutricional(
                 calorias,
