@@ -40,14 +40,26 @@ public class ControllerExceptionHandler {
     // Logger para registrar la causa real de los errores internos.
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
-    // Un 500 es un fallo nuestro: va al log y a Sentry (GP-221). Solo los 500: los 4xx son
-    // del cliente, y el 502 y el 503 son Open Food Facts caído o sin cupo, que ya se ven en
+    // Un 500 es un fallo nuestro: va al log y a Sentry (GP-221). También el 503 de la base
+    // de datos caída (GP-260). No los 4xx, que son del cliente, ni el 502 y el 503 de
+    // Open Food Facts caído o sin cupo, que ya se ven en
     // el log y llenarían Sentry de avisos sin nada que arreglar. Este manejador resuelve
     // todas las excepciones de los controladores, así que el SentryExceptionResolver de
     // serie no llega a verlas: hay que mandarlas desde aquí. Sin SENTRY_DSN no hace nada.
     private void registrarError500(Exception ex) {
         logger.error(ex.getMessage(), ex);
         Sentry.captureException(ex);
+    }
+
+    // La base de datos no responde: pool agotado, base caída o conexión cortada (GP-260).
+    // 503 y no 500, porque la petición puede repetirse tal cual; y sí va a Sentry, a
+    // diferencia del 503 de Open Food Facts, porque la base es nuestra.
+    private ResponseEntity<Response> servicioNoDisponible(Exception ex) {
+        registrarError500(ex);
+        return new ResponseEntity<>(
+                Response.generalError(HttpStatus.SERVICE_UNAVAILABLE.value(), mensajes.texto("error.servicioNoDisponible")),
+                HttpStatus.SERVICE_UNAVAILABLE
+        );
     }
 
     // Errores de validación de @Valid en DTOs: junta todos los mensajes de campo en un solo string.
@@ -365,6 +377,9 @@ public class ControllerExceptionHandler {
                     estado
             );
         }
+        if (FalloInfraestructura.es(ex)) {
+            return servicioNoDisponible(ex);
+        }
         registrarError500(ex);
 
         return new ResponseEntity<>(
@@ -381,6 +396,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Response> handleAuthenticationException(AuthenticationException ex) {
+        // La base no respondía mientras se comprobaba la clave (GP-260): Spring Security lo
+        // envuelve en una AuthenticationException, pero no es la contraseña lo que falla.
+        if (FalloInfraestructura.es(ex)) {
+            return servicioNoDisponible(ex);
+        }
         logger.warn("Fallo de autenticación: {}", ex.getMessage());
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.UNAUTHORIZED.value(), mensajes.texto("error.credenciales")),
