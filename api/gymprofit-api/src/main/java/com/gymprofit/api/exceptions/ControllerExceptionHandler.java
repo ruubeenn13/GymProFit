@@ -1,6 +1,7 @@
 package com.gymprofit.api.exceptions;
 
 import io.jsonwebtoken.JwtException;
+import io.sentry.Sentry;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,16 @@ public class ControllerExceptionHandler {
 
     // Logger para registrar la causa real de los errores internos.
     private final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+
+    // Un 500 es un fallo nuestro: va al log y a Sentry (GP-221). Solo los 500: los 4xx son
+    // del cliente, y el 502 y el 503 son Open Food Facts caído o sin cupo, que ya se ven en
+    // el log y llenarían Sentry de avisos sin nada que arreglar. Este manejador resuelve
+    // todas las excepciones de los controladores, así que el SentryExceptionResolver de
+    // serie no llega a verlas: hay que mandarlas desde aquí. Sin SENTRY_DSN no hace nada.
+    private void registrarError500(Exception ex) {
+        logger.error(ex.getMessage(), ex);
+        Sentry.captureException(ex);
+    }
 
     // Errores de validación de @Valid en DTOs: junta todos los mensajes de campo en un solo string.
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -98,7 +109,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(CreateEntityException.class)
     public ResponseEntity<Response> handleCreateEntityException(CreateEntityException ex) {
         // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
-        logger.error(ex.getMessage(), ex);
+        registrarError500(ex);
 
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.crear")),
@@ -111,7 +122,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UpdateEntityException.class)
     public ResponseEntity<Response> handleUpdateEntityException(UpdateEntityException ex) {
         // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
-        logger.error(ex.getMessage(), ex);
+        registrarError500(ex);
 
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.actualizar")),
@@ -124,7 +135,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(DeleteEntityException.class)
     public ResponseEntity<Response> handleDeleteEntityException(DeleteEntityException ex) {
         // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
-        logger.error(ex.getMessage(), ex);
+        registrarError500(ex);
 
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.guardar.eliminar")),
@@ -285,7 +296,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ErrorGenericoException.class)
     public ResponseEntity<Response> handleErrorGenericoException(ErrorGenericoException ex) {
         // La causa (SQL/Hibernate) se registra en el log, NUNCA se devuelve al cliente.
-        logger.error(ex.getMessage(), ex);
+        registrarError500(ex);
 
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto(ex)),
@@ -354,7 +365,7 @@ public class ControllerExceptionHandler {
                     estado
             );
         }
-        logger.error(ex.getMessage(), ex);
+        registrarError500(ex);
 
         return new ResponseEntity<>(
                 Response.generalError(HttpStatus.INTERNAL_SERVER_ERROR.value(), mensajes.texto("error.interno")),

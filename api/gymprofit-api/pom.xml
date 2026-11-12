@@ -151,6 +151,14 @@
 			<artifactId>shedlock-provider-jdbc-template</artifactId>
 			<version>7.11.0</version>
 		</dependency>
+		<!-- Sentry (GP-221): los 500 y las excepciones sin capturar de la API llegan como aviso.
+		     Solo se enciende con SENTRY_DSN (su autoconfiguración pide sentry.dsn); sin ella, en
+		     local y en el CI, no se inicializa y no sale nada. -->
+		<dependency>
+			<groupId>io.sentry</groupId>
+			<artifactId>sentry-spring-boot-starter-jakarta</artifactId>
+			<version>8.64.0</version>
+		</dependency>
 		<!-- Firebase Admin SDK: envío de notificaciones push (FCM) desde el backend -->
 		<dependency>
 			<groupId>com.google.firebase</groupId>

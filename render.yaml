@@ -69,3 +69,10 @@ services:
       # de administracion publica.
       - key: ADMIN_PASSWORD
         sync: false
+      # --- Seguimiento de errores (Sentry, GP-221) ---
+      # OPCIONAL: sin ella (o vacía) Sentry no se enciende y la API arranca igual. Con ella,
+      # solo salen los 500 y las excepciones sin capturar, sin cuerpo de la petición, sin
+      # cabeceras (Authorization incluida) y sin datos personales (FiltroDatosSentry). Es el
+      # DSN del proyecto de Sentry: Settings > Client Keys (DSN).
+      - key: SENTRY_DSN
+        sync: false
