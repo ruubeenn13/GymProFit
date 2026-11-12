@@ -112,6 +112,8 @@ public final class InicioProgreso {
 
     private void cargarKilos(int uid) {
         final int esta = ++generacionKilos;
+        // La carga, en la sección, si la tarjeta no está a la vista (GP-064).
+        if (raiz.findViewById(R.id.cardProgreso).getVisibility() != View.VISIBLE) estado.cargando();
         sesionApi.getVolumenSemanal(uid, primerLunesIso(), SEMANAS).enqueue(new ApiCallback<List<VolumenSemanal>>() {
             @Override
             public void onOk(List<VolumenSemanal> semanas) {
