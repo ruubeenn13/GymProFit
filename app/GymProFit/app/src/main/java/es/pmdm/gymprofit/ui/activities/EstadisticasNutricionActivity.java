@@ -37,6 +37,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.utils.EjeFechas;
 import es.pmdm.gymprofit.utils.FechaUtils;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.ChartMarker;
 import es.pmdm.gymprofit.utils.ChartStyler;
 import es.pmdm.gymprofit.utils.PreferencesManager;
@@ -57,6 +58,10 @@ public class EstadisticasNutricionActivity extends BaseActivity {
     private BarChart chartKcal;
     private PieChart chartMacros;
     private TextView tvMacrosVacia;
+    private VistaEstado estado;
+    private View contenido;
+    /** Si ya se ha pintado algún periodo: al cambiar de periodo no se vuelve a la carga. */
+    private boolean pintado;
     private GridLayout gridHeatmap;
 
     // Colores del sistema (GP-228, revisor): los macros con gp_macro_* (antes, hex a fuego con el
@@ -121,6 +126,8 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         chartKcal    = findViewById(R.id.chartKcal);
         chartMacros  = findViewById(R.id.chartMacros);
         tvMacrosVacia = findViewById(R.id.tvMacrosVacia);
+        estado = new VistaEstado(findViewById(R.id.estadoEstadisticas));
+        contenido = findViewById(R.id.contenidoEstadisticas);
         gridHeatmap  = findViewById(R.id.gridHeatmap);
         btnNext      = findViewById(R.id.btnNext);
         // Son ImageView pulsables: TalkBack los anuncia como botón (revisor, GP-225).
@@ -185,16 +192,24 @@ public class EstadisticasNutricionActivity extends BaseActivity {
         finPeriodo = finCorta;
 
         int usuarioId = prefs.getUsuarioId();
+        if (!pintado) estado.cargando();
         comidaApi.getResumen(usuarioId, inicio, fin).enqueue(new ApiCallback<List<ResumenDiarioNutricion>>() {
             @Override
             public void onOk(List<ResumenDiarioNutricion> lista) {
                 if (isFinishing()) return;
+                pintado = true;
+                estado.oculto();
+                contenido.setVisibility(View.VISIBLE);
                 render(lista);
             }
             @Override
             public void onFail(int code, String message) {
                 if (isFinishing()) return;
-                render(null);
+                // Sin el resumen no se sabe si el periodo tiene comidas: el fallo, no el vacío.
+                pintado = false;
+                contenido.setVisibility(View.INVISIBLE);
+                estado.error(VistaEstado.mensaje(EstadisticasNutricionActivity.this,
+                        R.string.estadisticas_error, code, message), EstadisticasNutricionActivity.this::cargar);
             }
         });
     }

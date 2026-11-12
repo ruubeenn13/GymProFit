@@ -2478,6 +2478,7 @@
     <string name="estadisticas_mapa_a11y">Días en objetivo: %1$d. Fuera: %2$d. Sin datos: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>
     <string name="estadisticas_periodo_vacio">No hay comidas apuntadas en estas fechas.</string>
+    <string name="estadisticas_error">No se ha podido cargar el resumen de este periodo.</string>
     <string name="estadisticas_porcentaje">%1$d %%</string>
     <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
     <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>

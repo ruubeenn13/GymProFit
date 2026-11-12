@@ -85,6 +85,19 @@
 
             </LinearLayout>
 
+            <!-- Carga y error con «Reintentar» del periodo (GP-064): antes un fallo se pintaba
+                 como un periodo sin comidas. El vacío del periodo lo dice cada gráfica. -->
+            <include
+                android:id="@+id/estadoEstadisticas"
+                layout="@layout/view_estado" />
+
+            <LinearLayout
+                android:id="@+id/contenidoEstadisticas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="invisible">
+
             <!-- KPIs 2×2. Las dos tarjetas de cada fila, a la altura de la más alta (AltoIgual, en
                  la pantalla): con letra 1,3 «DÍAS REGISTRADOS» va en dos líneas y la tarjeta de al
                  lado se quedaba corta (GP-225). -->
@@ -309,6 +322,8 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -140,6 +140,9 @@ public class NutricionFragment extends BaseFragment {
     private ActivityResultLauncher<Intent> recargar;
     // El fallo de cargar el día, con su «Reintentar» (como Progreso e Historial).
     private VistaEstado estado;
+    private VistaEstado estadoDiario;
+    /** El día no se pudo cargar: su error ya ocupa la pantalla y el del diario sobra. */
+    private boolean falloDia;
 
     // «¿Copiar la de ayer?» (1.6.4): la comida de ayer y a qué comida de hoy va; null si no
     // toca. Mientras se copia no se vuelve a pintar, y si falla vuelve.
@@ -178,6 +181,7 @@ public class NutricionFragment extends BaseFragment {
         fechaContada = null;
         // «Tu semana de nutrición» (tablero 12); desde ahí se llega a las semanas y los meses.
         estado = new VistaEstado(findViewById(R.id.estadoNutricion));
+        estadoDiario = new VistaEstado(findViewById(R.id.estadoDiario));
         findViewById(R.id.cardSemana).setOnClickListener(v -> startActivity(
                 new Intent(requireContext(), SemanaNutricionActivity.class)
                         .putExtra(SemanaNutricionActivity.EXTRA_LUNES, fechaStr(lunesDe(fechaSel)))));
@@ -432,6 +436,7 @@ public class NutricionFragment extends BaseFragment {
                 alimentosPorComida.clear();
                 if (lista != null) for (Comida c : lista) comidasDia.put(c.getTipoComida(), c);
                 comidasDe = fecha;
+                falloDia = false;
                 contenidoDia(true);
                 pintar();
                 cargarAlimentos(fecha);
@@ -442,6 +447,7 @@ public class NutricionFragment extends BaseFragment {
                 if (!isAdded()) return;
                 // Un día sin comidas no llega aquí: es 200 con []. Esto es un fallo de
                 // verdad: se dice dónde irían las cifras, con su botón; no se pinta un día vacío que no lo es.
+                falloDia = true;
                 contenidoDia(false);
                 estado.error(VistaEstado.mensaje(requireContext(), R.string.nutricion_error_dia, code, message),
                         () -> {
@@ -461,6 +467,8 @@ public class NutricionFragment extends BaseFragment {
         findViewById(R.id.cardComidas).setVisibility(v);
         findViewById(R.id.cabeceraComidas).setVisibility(v);
         if (!hay) {
+            // El fallo del día ya lo dice arriba, y su «Reintentar» vuelve a pedir el diario.
+            estadoDiario.oculto();
             findViewById(R.id.pildoraEntreno).setVisibility(View.GONE);
             findViewById(R.id.cardAgua).setVisibility(View.GONE);
             findViewById(R.id.cardSemana).setVisibility(View.GONE);
@@ -468,8 +476,8 @@ public class NutricionFragment extends BaseFragment {
     }
 
     // La semana de la tira: puntos, entrenos, agua y «Hoy no» de cada día. Si falla se
-    // dice, y el diario se queda sin lo que sale de aquí (puntos, agua, día completo):
-    // lo de las comidas sigue siendo cierto.
+    // dice en el sitio del agua, con «Reintentar», y el diario se queda sin lo que sale de
+    // aquí (puntos, agua, día completo): lo de las comidas sigue siendo cierto.
     private void cargarDiario() {
         if (prefsManager.getUsuarioId() == -1) return;
         int miTurno = ++turnoDiario;
@@ -480,6 +488,7 @@ public class NutricionFragment extends BaseFragment {
             @Override
             public void onOk(List<DiaDiario> dias) {
                 if (!isAdded() || miTurno != turnoDiario) return;
+                estadoDiario.oculto();
                 semana.clear();
                 if (dias != null) for (DiaDiario d : dias) if (d.getFecha() != null) semana.put(d.getFecha(), d);
                 pintarDiario();
@@ -489,8 +498,11 @@ public class NutricionFragment extends BaseFragment {
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded() || miTurno != turnoDiario) return;
-                UIHelper.mostrarToastError(requireActivity(), getString(R.string.diario_fallo,
-                        UiFeedback.mensaje(requireContext(), code, message)));
+                // Con el día en pantalla; si el día también falló, ya lo dice su error.
+                if (falloDia) return;
+                findViewById(R.id.cardAgua).setVisibility(View.GONE);
+                estadoDiario.error(getString(R.string.diario_fallo,
+                        UiFeedback.mensaje(requireContext(), code, message)), NutricionFragment.this::cargarDiario);
             }
         });
     }

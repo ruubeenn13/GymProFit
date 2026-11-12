@@ -2434,6 +2434,7 @@
     <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
     <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
+    <string name="estadisticas_error">This period’s summary couldn’t be loaded.</string>
     <string name="estadisticas_porcentaje">%1$d%%</string>
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
     <string name="abrir_rutina_a11y">Open %1$s</string>
