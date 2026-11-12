@@ -484,4 +484,51 @@ public class LogicaSesionTest {
         assertEquals("es", s.idioma);
         org.junit.Assert.assertTrue(LogicaSesion.hayQueTraducir(s, "en"));
     }
+
+    // ── La medida del ejercicio (GP-130) ─────────────────────
+
+    @Test
+    public void por_tiempo_mira_la_pauta_despues_el_ejercicio_y_por_ultimo_la_ultima_vez() {
+        SesionEnCurso.Ejercicio pautaManda = ejercicio(1, 1);
+        pautaManda.medida = "REPETICIONES";
+        pautaManda.medidaEjercicio = "SEGUNDOS";
+        assertFalse("la pauta manda sobre el ejercicio", LogicaSesion.porTiempo(pautaManda));
+
+        SesionEnCurso.Ejercicio libre = ejercicio(2, 1);
+        libre.deRutina = false;
+        libre.medidaEjercicio = "SEGUNDOS";
+        assertTrue("sin pauta ni última vez, la plancha va por tiempo", LogicaSesion.porTiempo(libre));
+
+        SesionEnCurso.Ejercicio hechoPorTiempo = ejercicio(3, 1);
+        hechoPorTiempo.medidaEjercicio = "REPETICIONES";
+        SesionEnCurso s = new SesionEnCurso();
+        s.ejercicios.add(hechoPorTiempo);
+        LogicaSesion.aplicarUltimaVez(s, Collections.singletonList(3), Collections.singletonList(
+                ultima(3, serie(1, null, 0, 30))));
+        assertTrue("REPETICIONES es lo de por defecto: no tapa la última vez", LogicaSesion.porTiempo(hechoPorTiempo));
+
+        SesionEnCurso.Ejercicio nada = ejercicio(4, 1);
+        assertFalse(LogicaSesion.porTiempo(nada));
+    }
+
+    @Test
+    public void la_plancha_en_una_sesion_libre_pide_segundos_y_los_guarda() {
+        SesionEnCurso s = new SesionEnCurso();
+        SesionEnCurso.Ejercicio plancha = ejercicio(7, 1);
+        plancha.deRutina = false;
+        plancha.medidaEjercicio = "SEGUNDOS";
+        s.ejercicios.add(plancha);
+
+        assertEquals("sin segundos ni última vez, los pide", LogicaSesion.Marcado.FALTAN_SEGUNDOS,
+                LogicaSesion.marcar(plancha, 0, ES));
+        plancha.series.get(0).segundos = "0:45";
+        assertEquals(LogicaSesion.Marcado.HECHA, LogicaSesion.marcar(plancha, 0, ES));
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> ejercicios =
+                (java.util.List<Map<String, Object>>) LogicaSesion.cuerpo(s, "clave", 10, MADRID).get("ejercicios");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> serie = ((java.util.List<Map<String, Object>>) ejercicios.get(0).get("series")).get(0);
+        assertEquals(45, serie.get("segundos"));
+    }
 }

@@ -436,6 +436,7 @@ public class SesionEnCursoRepositorio {
         e.minimo = re.getRepeticionesMin();
         e.maximo = re.getRepeticionesMax();
         e.medida = re.getMedida();
+        e.medidaEjercicio = re.getMedidaEjercicio();
         e.porLado = re.getPorLado();
         e.descanso = re.getTiempoDescanso();
         e.notasPauta = re.getNotas();
@@ -700,10 +701,17 @@ public class SesionEnCursoRepositorio {
     public static final class Nuevo {
         public final int ejercicioId;
         @Nullable public final String nombre;
+        /** La medida del catálogo (GP-130): REPETICIONES, SEGUNDOS o null si no se sabe. */
+        @Nullable public final String medida;
 
         public Nuevo(int ejercicioId, @Nullable String nombre) {
+            this(ejercicioId, nombre, null);
+        }
+
+        public Nuevo(int ejercicioId, @Nullable String nombre, @Nullable String medida) {
             this.ejercicioId = ejercicioId;
             this.nombre = nombre;
+            this.medida = medida;
         }
     }
 
@@ -716,6 +724,7 @@ public class SesionEnCursoRepositorio {
             e.id = s.siguienteId++;
             e.ejercicioId = n.ejercicioId;
             e.nombre = n.nombre;
+            e.medidaEjercicio = n.medida;
             // La última vez de ese ejercicio ya se sabe si está en la sesión.
             for (SesionEnCurso.Ejercicio otro : s.ejercicios) {
                 if (otro.ejercicioId == n.ejercicioId && otro.anteriorCargado) {

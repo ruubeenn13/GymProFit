@@ -39,4 +39,7 @@ public class RutinaEjercicioDTO implements Serializable {
     private String medida;
     private String tipo;
     private String porLado;
+    // La medida del ejercicio en el catálogo (GP-130), solo de lectura: la que se propone si
+    // la pauta no dice ninguna (las filas de antes de GP-244). La pauta manda sobre ella.
+    private String medidaEjercicio;
 }

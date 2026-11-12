@@ -50,7 +50,7 @@ public final class Pauta {
     /** La pauta de un ejercicio de rutina, en el idioma de la app. */
     public static String texto(Context ctx, RutinaEjercicio re) {
         return texto(Formatos.de(ctx), re.getSeries(), re.getRepeticionesMin(), re.getRepeticionesMax(),
-                re.getRepeticiones(), re.getMedida(), re.getPorLado());
+                re.getRepeticiones(), re.medidaEfectiva(), re.getPorLado());
     }
 
     /**

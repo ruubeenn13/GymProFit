@@ -25,6 +25,7 @@ public interface RutinaEjercicioMapper {
     @Mapping(target = "rutinaId", source = "rutina.id")
     @Mapping(target = "ejercicioId", source = "ejercicio.id")
     @Mapping(target = "nombreEjercicio", source = "ejercicio.nombre")
+    @Mapping(target = "medidaEjercicio", source = "ejercicio.medida")
     RutinaEjercicioDTO toDTO(RutinaEjercicio rutinaEjercicio);
 
     // Con la petición en inglés (Accept-Language → LocaleContextHolder) y traducción en el

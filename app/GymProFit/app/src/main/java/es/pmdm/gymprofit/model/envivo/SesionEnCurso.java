@@ -104,8 +104,13 @@ public class SesionEnCurso implements java.io.Serializable {
         public int repeticionesPauta;
         @Nullable public Integer minimo;
         @Nullable public Integer maximo;
-        /** REPETICIONES, SEGUNDOS o null. */
+        /** La de la pauta de la rutina: REPETICIONES, SEGUNDOS o null. */
         @Nullable public String medida;
+        /**
+         * La del ejercicio en el catálogo (GP-130): REPETICIONES, SEGUNDOS o null si no se
+         * sabe (una sesión guardada antes, o una API de antes). Vale si la pauta no dice nada.
+         */
+        @Nullable public String medidaEjercicio;
         /** PIERNA, BRAZO, LADO o null. */
         @Nullable public String porLado;
         @Nullable public Integer descanso;

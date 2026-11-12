@@ -66,6 +66,10 @@ public class BorradorRutina {
         }
     }
 
+    /** El rango con que entra un ejercicio por tiempo, en segundos (y al pasar a segundos). */
+    public static final int MIN_SEGUNDOS = 30;
+    public static final int MAX_SEGUNDOS = 45;
+
     /** null al crear. */
     @Nullable public Integer rutinaId;
     @Nullable public String nombre;
@@ -185,12 +189,27 @@ public class BorradorRutina {
      * @return false si ya estaba.
      */
     public boolean anadir(int ejercicioId, String nombre, @Nullable String grupo, @Nullable String equipo) {
+        return anadir(ejercicioId, nombre, grupo, equipo, false);
+    }
+
+    /**
+     * Añade un ejercicio con la medida de su catálogo (GP-130): uno por tiempo entra en
+     * segundos, de 30 a 45, como al cambiarlo de medida en la pauta; los demás, de 8 a 12.
+     * La pauta deja cambiarla después. Falso si ya estaba.
+     */
+    public boolean anadir(int ejercicioId, String nombre, @Nullable String grupo, @Nullable String equipo,
+                          boolean porTiempo) {
         if (contiene(ejercicioId)) return false;
         Ejercicio e = new Ejercicio();
         e.ejercicioId = ejercicioId;
         e.nombre = nombre;
         e.grupo = grupo;
         e.equipo = equipo;
+        if (porTiempo) {
+            e.segundos = true;
+            e.min = MIN_SEGUNDOS;
+            e.max = MAX_SEGUNDOS;
+        }
         ejercicios.add(e);
         return true;
     }

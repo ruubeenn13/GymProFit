@@ -8,6 +8,9 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `b3c19311` | feat(android): la plancha y los demás isométricos van en segundos al añadirlos a una rutina propia y en una sesión libre (sesión en vivo y Apuntar entreno), y su récord es de tiempo; la pauta deja cambiar la medida (GP-130). |
+| `a269813e` | fix(api): ocho descripciones y dos nombres de ejercicio ya no salen en el idioma equivocado («Curl de muñeca con barra», «Flexión»), con un test que falla si un ejercicio o un logro sale igual en ES y en EN (migración `V202611121810`, GP-220). |
+| `499a33e5` | feat(api): el ejercicio del catálogo lleva su medida (`REPETICIONES` o `SEGUNDOS`), aditiva en el DTO y en la pauta (`medidaEjercicio`); una build vieja que añade la plancha a una rutina la guarda en segundos (migraciones `V202611121800` y `V202611121801`, GP-130). |
 | `62e98f88` | build(android): `bundleRelease` firma el AAB de Play con una clave de subida propia (`upload.properties`) y `assembleRelease` sigue con la de siempre, que pasa a Play como clave de firma de la app; procedimiento en `documentacion/PUBLICAR-EN-PLAY.md` (GP-159, DEC-063). Play App Signing dado de alta el 12-11: Play Console tiene la clave de firma `91:D1…22:FD` y la de subida `62:06…7E:A7`. |
 | `d14eef7` | fix(api): el límite de peticiones por IP ya no se salta cambiando `X-Forwarded-For`. Antes contaba la primera entrada, que escribe el cliente; ahora `IpCliente` usa la última, la que añade el borde de Render, y sin cabecera la dirección remota. Decidido tras medir la cadena de producción (S28, DEC-062). Comprobación repetible en `scripts/comprobar-limite-ip.sh`. |
 | `1834b91` | fix(api): un fallo de la base (pool agotado, base caída) da 503 y llega a Sentry en vez de un 401 de «credenciales inválidas» en el login; una clave mala sigue dando 401 (GP-260). |

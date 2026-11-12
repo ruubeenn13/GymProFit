@@ -131,7 +131,7 @@ public final class InicioHoyDetalle {
             View item = inflater.inflate(R.layout.item_hoy_ejercicio, carrusel, false);
             ((TextView) item.findViewById(R.id.tvNombreEjercicio)).setText(re.getNombreEjercicio());
             ((TextView) item.findViewById(R.id.tvMetaEjercicio)).setText(Pauta.texto(formatos, re.getSeries(),
-                    re.getRepeticionesMin(), re.getRepeticionesMax(), re.getRepeticiones(), re.getMedida(),
+                    re.getRepeticionesMin(), re.getRepeticionesMax(), re.getRepeticiones(), re.medidaEfectiva(),
                     re.getPorLado()));
             ((ImageView) item.findViewById(R.id.ivIconoEjercicio)).setImageResource(R.drawable.ic_ms_fitness_center);
             tarjetas.put(re.getEjercicioId(), item);

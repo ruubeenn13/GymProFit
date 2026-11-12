@@ -676,7 +676,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             JSONArray arr = new JSONArray(json);
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject o = arr.getJSONObject(i);
-                nuevos.add(new SesionEnCursoRepositorio.Nuevo(o.getInt("ejercicioId"), o.optString("nombre", null)));
+                nuevos.add(new SesionEnCursoRepositorio.Nuevo(o.getInt("ejercicioId"), o.optString("nombre", null),
+                        o.has("medida") ? o.optString("medida") : null));
             }
         } catch (JSONException e) {
             // La biblioteca lo escribe siempre bien; si no, no se añade nada y la sesión

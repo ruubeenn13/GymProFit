@@ -41,8 +41,17 @@ public class Ejercicio {
     // La búsqueda admin (EjercicioJooqDTO) envía "activo" como Byte 0/1; el adaptador lo tolera.
     @JsonAdapter(BooleanNumericAdapter.class)
     private boolean activo;
+    // REPETICIONES o SEGUNDOS (GP-130): en qué se mide una serie de este ejercicio. Null con
+    // una API de antes, que se lee como repeticiones.
+    private String medida;
 
     public Ejercicio() {}
+
+    public String getMedida() { return medida; }
+    public void setMedida(String medida) { this.medida = medida; }
+
+    /** Si una serie de este ejercicio se mide en segundos (la plancha…), GP-130. */
+    public boolean esPorTiempo() { return "SEGUNDOS".equals(medida); }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

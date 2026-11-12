@@ -216,11 +216,16 @@ public final class LogicaSesion {
     // ── Por tiempo y pauta ───────────────────────────────────
 
     /**
-     * Si las series del ejercicio se miden en segundos. Lo dice la pauta; un ejercicio
-     * añadido durante la sesión no la tiene, y entonces lo dice la última vez.
+     * Si las series del ejercicio se miden en segundos. Primero lo dice la pauta de la
+     * rutina; sin pauta (un ejercicio añadido durante la sesión, una fila vieja), el
+     * ejercicio del catálogo si va por tiempo (GP-130); y si no, la última vez.
+     * <p>
+     * Que el catálogo diga REPETICIONES no corta la búsqueda: es lo que tiene todo ejercicio
+     * por defecto, dudosos incluidos, y no debe tapar que la última vez se hizo por tiempo.
      */
     public static boolean porTiempo(@NonNull SesionEnCurso.Ejercicio e) {
         if (e.medida != null) return "SEGUNDOS".equals(e.medida);
+        if ("SEGUNDOS".equals(e.medidaEjercicio)) return true;
         for (SesionEnCurso.SerieAnterior a : e.anterior) {
             if (a.segundos != null && a.segundos > 0) return true;
         }

@@ -793,4 +793,21 @@ public class RegistrarSesionViewModelTest {
             ultimas.get(ultimas.size() - 1).respuesta.ok(lista);
         }
     }
+
+    // ── GP-130 ───────────────────────────────────────────────
+
+    @Test
+    public void en_un_entreno_libre_la_plancha_anadida_va_por_tiempo() {
+        Falso red = new Falso();
+        RegistrarSesionViewModel vm = new RegistrarSesionViewModel(new SavedStateHandle(), red);
+        vm.iniciar(null);
+        red.responderDatos(rutinas(), new ArrayList<>(), null);
+        vm.elegirRutina(null);
+
+        vm.anadirEjercicios(Arrays.asList(new SesionEnCursoRepositorio.Nuevo(7, "Plancha", "SEGUNDOS")));
+
+        SesionEnCurso.Ejercicio plancha = vm.getBorrador().ejercicios.get(0);
+        assertEquals("SEGUNDOS", plancha.medidaEjercicio);
+        assertTrue(es.pmdm.gymprofit.envivo.LogicaSesion.porTiempo(plancha));
+    }
 }

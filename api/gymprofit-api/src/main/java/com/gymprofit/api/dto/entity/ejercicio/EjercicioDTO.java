@@ -41,4 +41,7 @@ public class EjercicioDTO implements Serializable {
     private String equipoNecesario;
     // Indica si el ejercicio está activo (visible/usable) o dado de baja lógica
     private Boolean activo;
+    // REPETICIONES o SEGUNDOS (GP-130): en qué se mide una serie. Campo nuevo; una build
+    // vieja lo ignora.
+    private String medida;
 }
