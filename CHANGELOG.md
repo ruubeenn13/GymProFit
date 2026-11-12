@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `2512439` | fix(android): sin sesión guardada no sale «Tu sesión ha terminado»: MainActivity sin sesión pasa siempre por el arranque, un 401 solo cierra la sesión si la petición llevaba token, nada que pida sesión sale sin ella, y cambiar la contraseña vuelve a llevar el token (GP-258). |
 | `de0b6e2` | fix(android): las gráficas vuelven a animar en la release: R8 quitaba los setters de la animación de MPAndroidChart (GP-247). |
 | `1f88485` | fix(android): R8 conserva los tipos de Gson que viven fuera de `model` (`Anadidos.Anadido`), con `TiposGsonConservadosTest` (GP-247, aviso de GP-053). |
 | `56f2418` | ci(android): job `app-release-r8`, la release con R8 instalada en un emulador y recorrida con y sin sesión contra una API local (GP-247). |
