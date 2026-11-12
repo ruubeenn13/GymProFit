@@ -36,7 +36,7 @@ function AltasPorSemana({ semanas }: { semanas: DatosResumen['altasPorSemana'] }
     <div className="tarjeta grafica">
       <div className="grafica__cabeza">
         <h2>Altas por semana</h2>
-        <span>últimas {semanas.length}</span>
+        <Link to="/embudo" className="enlace-accion">Ver el embudo del alta</Link>
       </div>
       <div className="grafica__barras grafica__barras--altas" role="img" aria-label={descripcion}>
         {semanas.map((s, i) => {

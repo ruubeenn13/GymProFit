@@ -9,6 +9,9 @@
 
     <!-- Permisos requeridos: red, notificaciones, cámara/galería (foto de perfil) y contactos -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Ni la app ni sus librerías leen el ID de publicidad (GP-019, DEC-064): se quita del
+         manifiesto fusionado por si alguna lo vuelve a traer. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
     <!-- Para decir «sin conexión» cuando una subida falla sin respuesta (GP-188). -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

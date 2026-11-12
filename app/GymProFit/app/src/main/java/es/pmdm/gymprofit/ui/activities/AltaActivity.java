@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.ui.alta.PasoPlanFragment;
 import es.pmdm.gymprofit.ui.alta.PasoSobreTiFragment;
 import es.pmdm.gymprofit.utils.Transiciones;
 import es.pmdm.gymprofit.utils.AltaPasos;
+import es.pmdm.gymprofit.utils.EmbudoAlta;
 import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.PerfilAlta;
 import es.pmdm.gymprofit.utils.UiFeedback;
@@ -126,6 +127,8 @@ public class AltaActivity extends BaseActivity implements Alta {
     private void mostrar(@NonNull AltaPasos.Paso nuevo, @Nullable AltaPasos.Paso anterior) {
         paso = nuevo;
         prefsManager.guardarBorradorPaso(nuevo.ordinal());
+        // El embudo cuenta el alta de verdad, no la cuenta que entró sin onboarding (GP-019).
+        if (!esCuentaExistente()) EmbudoAlta.avisar(this, EmbudoAlta.Paso.de(nuevo));
         barra.mostrar(nuevo, anterior, nombreCapitulo(nuevo));
         // Avanzar en el flujo: eje X compartido. El de ahora se va y el nuevo llega por el
         // mismo lado; al retroceder, al revés (Movimiento.EJE_X).

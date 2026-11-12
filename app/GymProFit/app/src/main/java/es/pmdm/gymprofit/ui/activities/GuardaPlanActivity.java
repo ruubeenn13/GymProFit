@@ -37,6 +37,7 @@ import es.pmdm.gymprofit.network.UsuarioApi;
 import es.pmdm.gymprofit.network.UtilREST;
 import es.pmdm.gymprofit.ui.alta.AnchoCreando;
 import es.pmdm.gymprofit.ui.alta.CheckTrazado;
+import es.pmdm.gymprofit.utils.EmbudoAlta;
 import es.pmdm.gymprofit.utils.ErrorAlta;
 import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.NombreVisible;
@@ -127,6 +128,7 @@ public class GuardaPlanActivity extends BaseActivity {
         });
 
         if (savedInstanceState == null) {
+            EmbudoAlta.avisar(this, EmbudoAlta.Paso.GUARDA);
             Movimiento.entrar(0, findViewById(R.id.filaPlanListo), findViewById(R.id.tvTituloGuarda),
                     findViewById(R.id.tvTextoGuarda), findViewById(R.id.bloqueNombre),
                     findViewById(R.id.bloqueCorreo), findViewById(R.id.bloqueClave), crear);
@@ -339,6 +341,7 @@ public class GuardaPlanActivity extends BaseActivity {
         String programa = prefsManager.getBorradorProgramaNombre();
         boolean conPrograma = !programa.isEmpty() && prefsManager.getProgramaPendienteCodigo().isEmpty();
         PerfilAlta.terminar(prefsManager, usuario);
+        EmbudoAlta.avisar(this, EmbudoAlta.Paso.CUENTA);
         creando = false;
         ancho.quedarseEnCirculo();
 
@@ -358,7 +361,7 @@ public class GuardaPlanActivity extends BaseActivity {
         View seguir = findViewById(R.id.btnSeguirListo);
         Movimiento.entrarUna(seguir, 700, Movimiento.ENTRA, 16);
         seguir.setOnClickListener(v -> {
-            startActivity(new Intent(this, AvisosActivity.class)
+            startActivity(AvisosActivity.delAlta(this)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
         });

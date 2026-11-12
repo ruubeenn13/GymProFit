@@ -290,6 +290,21 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     public String getFcmTokenEnviado() { return prefs.getString("fcm_token_enviado", ""); }
     public void clearFcmTokenEnviado() { editor.remove("fcm_token_enviado"); editor.apply(); }
 
+    // ── El embudo del alta (GP-019) ──
+    // Los pasos del alta ya avisados en este intento, para no contar uno dos veces
+    // (EmbudoAlta). Del móvil, no de una cuenta: el alta empieza antes de que la haya.
+    private static final String KEY_EMBUDO_AVISADOS = "embudo_alta_avisados";
+
+    /** Los pasos ya avisados en este intento; una copia que se puede cambiar. */
+    @NonNull
+    public java.util.Set<String> getEmbudoAvisados() {
+        return new java.util.HashSet<>(prefs.getStringSet(KEY_EMBUDO_AVISADOS, java.util.Collections.emptySet()));
+    }
+
+    public void guardarEmbudoAvisados(@NonNull java.util.Set<String> pasos) {
+        editor.putStringSet(KEY_EMBUDO_AVISADOS, new java.util.HashSet<>(pasos)).apply();
+    }
+
     // ── «¿Copiar la de ayer?» (lote 1.6.4) ──
     // La ✗ la pliega ese día para esa comida, en el diario y en su pantalla, y no vuelve.
     // Por cuenta: en un móvil con dos cuentas cada una descarta lo suyo.

@@ -10,6 +10,7 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.SaludApi;
+import es.pmdm.gymprofit.utils.EmbudoAlta;
 import es.pmdm.gymprofit.utils.FechaUtils;
 import es.pmdm.gymprofit.utils.Movimiento;
 
@@ -43,6 +44,7 @@ public class BienvenidaActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             despertarApi();
+            EmbudoAlta.avisar(this, EmbudoAlta.Paso.BIENVENIDA);
             Movimiento.entrarUna(findViewById(R.id.cabeceraBienvenida), 0, 400, 16);
             Movimiento.entrarUna(findViewById(R.id.tvTituloBienvenida), 150, 450, 16);
             Movimiento.entrarUna(findViewById(R.id.tvTextoBienvenida), 230, 450, 16);

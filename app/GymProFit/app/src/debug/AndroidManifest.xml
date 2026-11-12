@@ -2,8 +2,8 @@
 <!--
   AndroidManifest.xml (variante DEBUG) — solo se fusiona en el build de desarrollo.
 
-  Apaga la telemetría de Firebase en el entorno de pruebas: ni los fallos ni los
-  eventos de una sesión de pruebas deben aparecer en la consola de producción,
+  Apaga Crashlytics en el entorno de pruebas: los fallos de una sesión de pruebas no
+  deben aparecer en la consola de producción,
   donde se mezclarían con los de usuarios reales. El manifest de producción
   (src/main) no se toca, así que el APK de release sigue reportando con normalidad.
 -->
@@ -14,11 +14,6 @@
         <!-- Crashlytics: no enviar informes de fallo desde builds de pruebas. -->
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
-            android:value="false" />
-
-        <!-- Analytics: no registrar eventos de uso desde builds de pruebas. -->
-        <meta-data
-            android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
         <!-- Medidor de accesibilidad (solo depuración): vuelca al log el tamaño de
