@@ -215,6 +215,7 @@
     <string name="detalle_pestanas_a11y">Secciones del ejercicio</string>
     <string name="detalle_periodo_a11y">Periodo: %1$s</string>
     <string name="detalle_ejercicio_sin_datos">Todavía no has hecho este ejercicio. Cuando lo hagas, aquí verás cómo progresas.</string>
+    <string name="detalle_ejercicio_error">No se han podido cargar tus marcas de este ejercicio.</string>
     <string name="detalle_ejercicio_ultimas_veces">Tus últimas veces</string>
     <string name="detalle_ejercicio_sin_pasos">Este ejercicio todavía no tiene los pasos explicados.</string>
     <string name="detalle_ejercicio_mejor_marca">Tu mejor marca · %1$s</string>
@@ -782,6 +783,8 @@
     <string name="empezar_rutina_a11y">Empezar %1$s</string>
     <string name="mis_rutinas_vacio">Todavía no tienes rutinas propias. Crea una a tu medida o sigue un programa.</string>
     <string name="mis_rutinas_error">No se han podido cargar tus rutinas.</string>
+    <string name="biblioteca_vacio">Ningún ejercicio coincide con la búsqueda o la zona.</string>
+    <string name="biblioteca_error">No se han podido cargar los ejercicios.</string>
     <string name="biblioteca_ejercicios">Biblioteca de ejercicios</string>
     <string name="biblioteca_titulo">Ejercicios</string>
     <string name="biblioteca_buscar_n">Busca entre %1$s ejercicios</string>
@@ -1021,6 +1024,7 @@
     <string name="detalle_rutina_programa_dia">%1$s · día %2$d de %3$d</string>
     <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
     <string name="detalle_rutina_sin_ejercicios">Esta rutina todavía no tiene ejercicios.</string>
+    <string name="detalle_rutina_error">No se han podido cargar los ejercicios de la rutina.</string>
     <string name="detalle_rutina_ultima_vez">La última vez, %1$s: %2$s y %3$s</string>
     <string name="detalle_rutina_ultima_vez_sin_kilos">La última vez, %1$s: %2$s</string>
     <string name="detalle_rutina_empezar">Empezar %1$s</string>

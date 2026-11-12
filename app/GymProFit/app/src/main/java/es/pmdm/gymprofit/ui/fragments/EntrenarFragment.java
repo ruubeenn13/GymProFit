@@ -82,6 +82,7 @@ public class EntrenarFragment extends BaseFragment {
     @Nullable private ProgramaQueSigue seguido;
     private boolean seguidoListo;
     private boolean falloPropias;
+    private VistaEstado estadoMisRutinas;
     // Para que una respuesta de «Más programas» de una carga anterior no pise la actual.
     private int generacionProgramas;
 
@@ -103,7 +104,7 @@ public class EntrenarFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findViewById(R.id.btnCrearRutina).setOnClickListener(v -> crearRutina());
-        findViewById(R.id.btnCrearPrimera).setOnClickListener(v -> crearRutina());
+        estadoMisRutinas = new VistaEstado(findViewById(R.id.estadoMisRutinas));
         findViewById(R.id.btnSinRutina).setOnClickListener(v -> empezar(null));
         findViewById(R.id.btnBuscarEjercicios).setOnClickListener(v -> abrirBiblioteca());
         findViewById(R.id.btnVerTodosProgramas).setOnClickListener(v ->
@@ -174,6 +175,10 @@ public class EntrenarFragment extends BaseFragment {
             return;
         }
         cargarPrograma();
+        // Carga en la sección la primera vez; al volver, las tarjetas se quedan hasta que llega lo nuevo.
+        if (findViewById(R.id.cardMisRutinas).getVisibility() != View.VISIBLE) {
+            estadoMisRutinas.cargando();
+        }
         rutinaApi.getDeUsuarioActivas(uid).enqueue(new ApiCallback<List<Rutina>>() {
             @Override public void onOk(List<Rutina> l) {
                 propias = l != null ? l : new ArrayList<>();
@@ -184,8 +189,7 @@ public class EntrenarFragment extends BaseFragment {
             @Override public void onFail(int code, String message) {
                 if (!isAdded()) return;
                 falloPropias = true;
-                UiFeedback.toastError(requireActivity(), code, message);
-                pintarErrorMisRutinas();
+                pintarErrorMisRutinas(code, message);
             }
         });
         sesionApi.getDeUsuario(uid).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
@@ -239,10 +243,12 @@ public class EntrenarFragment extends BaseFragment {
         List<Rutina> mias = TuPrograma.misRutinas(propias);
         boolean vacia = mias.isEmpty();
         findViewById(R.id.cardMisRutinas).setVisibility(vacia ? View.GONE : View.VISIBLE);
-        findViewById(R.id.layoutRutinasVacio).setVisibility(vacia ? View.VISIBLE : View.GONE);
-        ((TextView) findViewById(R.id.tvRutinasVacio)).setText(R.string.mis_rutinas_vacio);
-        findViewById(R.id.btnCrearPrimera).setVisibility(View.VISIBLE);
-        if (vacia) return;
+        if (vacia) {
+            estadoMisRutinas.vacio(R.drawable.ic_ms_fitness_center, 0, R.string.mis_rutinas_vacio,
+                    R.string.btn_crea_primera_rutina, this::crearRutina);
+            return;
+        }
+        estadoMisRutinas.oculto();
 
         // Siguiendo un programa, lo que toca está arriba: aquí no se marca ninguna.
         HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
@@ -286,12 +292,12 @@ public class EntrenarFragment extends BaseFragment {
         }
     }
 
-    private void pintarErrorMisRutinas() {
+    // Sin la lista no se sabe si hay rutinas: el fallo, con «Reintentar», en el sitio de las tarjetas.
+    private void pintarErrorMisRutinas(int code, String message) {
         ((LinearLayout) findViewById(R.id.listaMisRutinas)).removeAllViews();
         findViewById(R.id.cardMisRutinas).setVisibility(View.GONE);
-        findViewById(R.id.layoutRutinasVacio).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tvRutinasVacio)).setText(R.string.mis_rutinas_error);
-        findViewById(R.id.btnCrearPrimera).setVisibility(View.GONE);
+        estadoMisRutinas.error(VistaEstado.mensaje(requireContext(), R.string.mis_rutinas_error, code, message),
+                this::cargarMisRutinas);
     }
 
     private void crearRutina() {

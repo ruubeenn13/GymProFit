@@ -216,6 +216,7 @@
     <string name="detalle_pestanas_a11y">Exercise sections</string>
     <string name="detalle_periodo_a11y">Period: %1$s</string>
     <string name="detalle_ejercicio_sin_datos">You haven\'t done this exercise yet. Once you do, you\'ll see how you progress here.</string>
+    <string name="detalle_ejercicio_error">Your marks for this exercise couldn\'t be loaded.</string>
     <string name="detalle_ejercicio_ultimas_veces">Your last sessions</string>
     <string name="detalle_ejercicio_sin_pasos">This exercise doesn\'t have its steps explained yet.</string>
     <string name="detalle_ejercicio_mejor_marca">Your best · %1$s</string>
@@ -763,6 +764,8 @@
     <string name="empezar_rutina_a11y">Start %1$s</string>
     <string name="mis_rutinas_vacio">You don\'t have any routines of your own yet. Build one for you or follow a program.</string>
     <string name="mis_rutinas_error">Your routines couldn\'t be loaded.</string>
+    <string name="biblioteca_vacio">No exercise matches your search or area.</string>
+    <string name="biblioteca_error">The exercises couldn\'t be loaded.</string>
     <string name="biblioteca_ejercicios">Exercise library</string>
     <string name="biblioteca_titulo">Exercises</string>
     <string name="biblioteca_buscar_n">Search %1$s exercises</string>
@@ -1000,6 +1003,7 @@
     <string name="detalle_rutina_programa_dia">%1$s · day %2$d of %3$d</string>
     <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
     <string name="detalle_rutina_sin_ejercicios">This routine has no exercises yet.</string>
+    <string name="detalle_rutina_error">The routine\'s exercises couldn\'t be loaded.</string>
     <string name="detalle_rutina_ultima_vez">Last time, %1$s: %2$s and %3$s</string>
     <string name="detalle_rutina_ultima_vez_sin_kilos">Last time, %1$s: %2$s</string>
     <string name="detalle_rutina_empezar">Start %1$s</string>

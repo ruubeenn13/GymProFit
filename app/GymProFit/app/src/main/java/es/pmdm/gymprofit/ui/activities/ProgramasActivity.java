@@ -177,7 +177,9 @@ public class ProgramasActivity extends BaseActivity {
             if (elegido != null && p.getCodigo().equals(elegido.getCodigo())) continue;
             lista.addView(tarjeta(lista, p, null, false));
         }
-        findViewById(R.id.tvProgramasVacio).setVisibility(lista.getChildCount() == 0 ? View.VISIBLE : View.GONE);
+        VistaEstado vacio = new VistaEstado(findViewById(R.id.estadoListaProgramas));
+        if (lista.getChildCount() == 0) vacio.vacio(R.drawable.ic_ms_assignment, R.string.programas_vacio);
+        else vacio.oculto();
     }
 
     // Un programa (GP-232): el nivel con su punto y en frase, «Lo sigues» y la tira de su ciclo. El

@@ -58,6 +58,7 @@ import es.pmdm.gymprofit.utils.Movimiento;
 import es.pmdm.gymprofit.utils.PasosEjercicio;
 import es.pmdm.gymprofit.ui.widget.SelectorPildora;
 import es.pmdm.gymprofit.utils.KilosMovidos;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.PeriodoProgreso;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ProximaVez;
@@ -106,6 +107,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     private int ejercicioId;
     @Nullable private Integer repsMax;
     private boolean yaResuelto;
+    private VistaEstado estadoDatos;
 
     // Lo cargado, para repintar la gráfica al cambiar de periodo sin volver a pedirlo.
     @Nullable private List<PuntoProgresion> progresion;
@@ -118,6 +120,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_ejercicio);
+        estadoDatos = new VistaEstado(findViewById(R.id.estadoDatos));
 
         findViewById(R.id.btnAtras).setOnClickListener(v -> finish());
         es.pmdm.gymprofit.ui.widget.BarraSuperior.enlazar(findViewById(R.id.scrollDetalle), findViewById(R.id.barraSuperior));
@@ -142,7 +145,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
         configurarPeriodos();
 
         if (ejercicioId > 0) cargarDatos();
-        else mostrarSinDatos();
+        else estadoDatos.vacio(R.drawable.ic_ms_trending_up, R.string.detalle_ejercicio_sin_datos);
     }
 
     // ── Cabecera ────────────────────────────────────────────────────────────
@@ -260,9 +263,13 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     // ── Datos del usuario ───────────────────────────────────────────────────
 
     // Pide lo que depende de la cuenta: los récords, la progresión y las ejecuciones con las
-    // fechas de las sesiones. Cada pieza se pinta cuando llega la suya; si una falla, la ficha
-    // se lee igual sin ella y se deja rastro en el log (un toast encima estorbaría más).
+    // fechas de las sesiones. Cada pieza se pinta cuando llega la suya; si una falla, lo que llegó
+    // se queda y, al responder las cuatro, el fallo se dice debajo con «Reintentar» (GP-064).
     private void cargarDatos() {
+        respondidas.set(0);
+        yaResuelto = false;
+        falloDatos = null;
+        estadoDatos.cargando();
         // Récords: «Tu mejor marca».
         recordApi.getRecords(null).enqueue(new ApiCallback<Records>() {
             @Override public void onOk(Records r) {
@@ -275,6 +282,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
             @Override public void onFail(int code, String message) {
                 Log.w("GymProFit", "ficha: records falló (" + code + "): " + message);
+                fallo(code, message);
                 unaMas();
             }
         });
@@ -289,6 +297,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             @Override public void onFail(int code, String message) {
                 // «Sin progreso» es 200 con []; lo que cae aquí es un fallo de verdad.
                 Log.w("GymProFit", "ficha: progresión falló (" + code + "): " + message);
+                fallo(code, message);
                 unaMas();
             }
         });
@@ -301,6 +310,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
             @Override public void onFail(int code, String message) {
                 Log.w("GymProFit", "ficha: ejecuciones falló (" + code + "): " + message);
+                fallo(code, message);
                 unaMas();
             }
         });
@@ -321,6 +331,7 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
             }
             @Override public void onFail(int code, String message) {
                 Log.w("GymProFit", "ficha: sesiones falló (" + code + "): " + message);
+                fallo(code, message);
                 fechasSesion = new HashMap<>();
                 pintarUltimasVeces();
                 unaMas();
@@ -332,18 +343,31 @@ public class DetalleEjercicioActivity extends AppCompatActivity {
     @Nullable private List<EjercicioRealizado> ejecuciones;
     @Nullable private Map<Integer, String> fechasSesion;
     private final AtomicInteger respondidas = new AtomicInteger();
+    /** El primer fallo de las cuatro peticiones, ya con su texto; nulo si todas fueron bien. */
+    @Nullable private CharSequence falloDatos;
 
-    // Cuando han vuelto las cuatro, si no hay nada de nada se dice en vez de dejar el hueco.
+    // Guarda el primer fallo: es el que se enseña.
+    private void fallo(int code, String message) {
+        if (falloDatos == null) falloDatos = VistaEstado.mensaje(this, R.string.detalle_ejercicio_error, code, message);
+    }
+
+    // Cuando han vuelto las cuatro: el fallo con «Reintentar» si lo hubo; si no hay nada de nada,
+    // se dice en vez de dejar el hueco.
     private void unaMas() {
         if (respondidas.incrementAndGet() < 4 || yaResuelto) return;
         yaResuelto = true;
+        if (isFinishing() || isDestroyed()) return;
+        if (falloDatos != null) {
+            estadoDatos.error(falloDatos, this::cargarDatos);
+            return;
+        }
         boolean sinProgresion = progresion == null || progresion.isEmpty();
         boolean sinEjecuciones = ejecuciones == null || ejecuciones.isEmpty();
-        if (sinProgresion && sinEjecuciones && recordVigente == null) mostrarSinDatos();
-    }
-
-    private void mostrarSinDatos() {
-        findViewById(R.id.tvSinDatos).setVisibility(View.VISIBLE);
+        if (sinProgresion && sinEjecuciones && recordVigente == null) {
+            estadoDatos.vacio(R.drawable.ic_ms_trending_up, R.string.detalle_ejercicio_sin_datos);
+        } else {
+            estadoDatos.oculto();
+        }
     }
 
     // ── Tu mejor marca ──────────────────────────────────────────────────────

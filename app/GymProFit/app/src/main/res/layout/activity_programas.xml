@@ -117,17 +117,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
 
-                <TextView
-                    android:id="@+id/tvProgramasVacio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:text="@string/programas_vacio"
-                    android:textSize="@dimen/text_body"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:visibility="gone" />
+                <!-- Ningún otro programa con estos filtros: view_estado (GP-064) -->
+                <include
+                    android:id="@+id/estadoListaProgramas"
+                    layout="@layout/view_estado" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
