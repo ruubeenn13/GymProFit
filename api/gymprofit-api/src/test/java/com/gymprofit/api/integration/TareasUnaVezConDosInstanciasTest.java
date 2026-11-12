@@ -102,12 +102,19 @@ class TareasUnaVezConDosInstanciasTest {
         ENTRADAS_CONTADAS.set(0);
     }
 
-    /** Borra los bloqueos y comprueba que no queda ninguno: si quedara, otro test lo pagaría. */
+    /**
+     * Suelta los bloqueos y comprueba que no queda ninguno cogido: si quedara, otro test lo
+     * pagaría. Se sueltan, NO se borran las filas: ShedLock recuerda en memoria qué filas
+     * existen y desde entonces solo hace UPDATE, así que un contexto que ya conocía la fila
+     * la daría por cogida para siempre. Pasó en el CI: el DELETE de esta prueba dejaba sin
+     * correr los recordatorios en el contexto compartido de los demás tests.
+     */
     private static void quitarBloqueos() {
         JdbcTemplate jdbc = instanciaA.getBean(JdbcTemplate.class);
-        int borrados = jdbc.update("DELETE FROM shedlock");
-        Integer quedan = jdbc.queryForObject("SELECT COUNT(*) FROM shedlock", Integer.class);
-        assertThat(quedan).as("bloqueos tras borrar %d", borrados).isZero();
+        jdbc.update("UPDATE shedlock SET lock_until = locked_at");
+        Integer cogidos = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM shedlock WHERE lock_until > UTC_TIMESTAMP(3)", Integer.class);
+        assertThat(cogidos).as("bloqueos aún cogidos").isZero();
     }
 
     static Stream<Arguments> tareasProgramadas() {

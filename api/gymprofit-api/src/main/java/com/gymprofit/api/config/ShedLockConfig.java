@@ -25,6 +25,11 @@ import javax.sql.DataSource;
 //   · defaultLockAtMostFor: solo es el tope si una tarea se olvida de poner el suyo.
 //     Cada tarea lleva el propio, medido, y explica de dónde sale.
 //
+//   · NO se borran filas de shedlock con la API en marcha: ShedLock recuerda en memoria
+//     qué filas existen y desde entonces solo hace UPDATE, así que una fila borrada deja
+//     esa tarea sin correr en esa instancia hasta que se reinicie. Para soltar un bloqueo,
+//     UPDATE shedlock SET lock_until = locked_at WHERE name = '...'.
+//
 // VigilanteMemoria NO se bloquea: cada instancia vigila su propia memoria.
 // ============================================================
 @Configuration
