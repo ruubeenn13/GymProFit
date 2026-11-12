@@ -38,6 +38,18 @@
                 android:textAppearance="@style/TextAppearance.GymProFit.Headline"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Carga y error con «Reintentar» de las cifras (GP-064; antes un diálogo y un toast) -->
+            <include
+                android:id="@+id/estadoEstadisticas"
+                layout="@layout/view_estado" />
+
+            <LinearLayout
+                android:id="@+id/bloqueEstadisticas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
             <!-- Fila 1: total usuarios + activos -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -286,6 +298,8 @@
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
 
             </LinearLayout>
 

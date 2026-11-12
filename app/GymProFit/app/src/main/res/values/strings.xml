@@ -325,6 +325,7 @@
     <string name="admin_vacio_usuarios">No hay usuarios.</string>
     <string name="admin_vacio_filtros">Nada coincide con la búsqueda o los filtros.</string>
     <string name="admin_lista_error">No se ha podido cargar la lista.</string>
+    <string name="admin_estadisticas_error">No se han podido cargar las estadísticas.</string>
     <string name="admin_usuarios_titulo">Gestión de usuarios</string>
     <string name="admin_rutinas_titulo">Rutinas predefinidas</string>
     <string name="admin_ejercicios_titulo">Gestión de ejercicios</string>

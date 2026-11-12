@@ -326,6 +326,7 @@
     <string name="admin_vacio_usuarios">There are no users.</string>
     <string name="admin_vacio_filtros">Nothing matches the search or filters.</string>
     <string name="admin_lista_error">The list couldn\'t be loaded.</string>
+    <string name="admin_estadisticas_error">The statistics could not be loaded.</string>
     <string name="admin_usuarios_titulo">User management</string>
     <string name="admin_rutinas_titulo">Predefined routines</string>
     <string name="admin_ejercicios_titulo">Exercise management</string>
