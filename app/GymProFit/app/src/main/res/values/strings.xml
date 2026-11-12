@@ -912,6 +912,7 @@
     <string name="cambiar_password_vuelve_mensaje">Por seguridad se han cerrado tus sesiones. Entra con la contraseña nueva.</string>
     <string name="cambiar_correo_titulo">Cambiar correo</string>
     <string name="cambiar_correo_actual">Ahora: %1$s</string>
+    <string name="cambiar_correo_error_leer">No se ha podido leer tu correo actual. Puedes cambiarlo igual.</string>
     <string name="cambiar_correo_nuevo">Correo nuevo</string>
     <string name="cambiar_correo_boton">Cambiar correo</string>
     <string name="cambiar_correo_ok">Correo cambiado</string>
@@ -1388,6 +1389,7 @@
     <string name="avisos_ahora_no">Ahora no</string>
     <string name="avisos_guardar">Guardar</string>
     <string name="avisos_error_guardar">No se han podido guardar tus avisos. Cámbialos cuando quieras en Ajustes › Notificaciones.</string>
+    <string name="notificaciones_error">No se han podido leer tus avisos.</string>
     <string name="notificaciones_sin_permiso">Android no deja que GymProFit te avise: hasta que lo actives, no te llegará ninguno.</string>
     <string name="notificaciones_activar">Activar</string>
     <string name="notificaciones_que_avisamos">Qué te avisamos</string>

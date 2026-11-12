@@ -93,6 +93,12 @@
                 <include android:id="@+id/filaAvisoProgreso" layout="@layout/view_fila_ajuste" />
             </LinearLayout>
 
+            <!-- Mientras se leen los avisos de la cuenta, y su fallo con «Reintentar» (GP-064):
+                 sin leerlos, los de entrenar, comidas y progreso se quedan desactivados -->
+            <include
+                android:id="@+id/estadoAvisos"
+                layout="@layout/view_estado" />
+
             <LinearLayout
                 style="@style/Widget.GymProFit.GrupoAjustes.Pantalla"
                 android:layout_marginTop="@dimen/espacio_16">

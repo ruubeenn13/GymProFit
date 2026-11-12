@@ -892,6 +892,7 @@
     <string name="cambiar_password_vuelve_mensaje">For your security, your sessions were closed. Sign in with the new password.</string>
     <string name="cambiar_correo_titulo">Change email</string>
     <string name="cambiar_correo_actual">Now: %1$s</string>
+    <string name="cambiar_correo_error_leer">Your current email couldn\'t be read. You can still change it.</string>
     <string name="cambiar_correo_nuevo">New email</string>
     <string name="cambiar_correo_boton">Change email</string>
     <string name="cambiar_correo_ok">Email changed</string>
@@ -1367,6 +1368,7 @@
     <string name="avisos_ahora_no">Not now</string>
     <string name="avisos_guardar">Save</string>
     <string name="avisos_error_guardar">We couldn’t save your alerts. Change them any time in Settings › Notifications.</string>
+    <string name="notificaciones_error">Your notifications couldn\'t be read.</string>
     <string name="notificaciones_sin_permiso">Android isn’t letting GymProFit alert you: until you turn it on, none will reach you.</string>
     <string name="notificaciones_activar">Turn on</string>
     <string name="notificaciones_que_avisamos">What we alert you about</string>
@@ -2434,7 +2436,7 @@
     <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
     <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
-    <string name="estadisticas_error">This period’s summary couldn’t be loaded.</string>
+    <string name="estadisticas_error">This period\'s summary couldn\'t be loaded.</string>
     <string name="estadisticas_porcentaje">%1$d%%</string>
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
     <string name="abrir_rutina_a11y">Open %1$s</string>

@@ -28,6 +28,7 @@ import es.pmdm.gymprofit.ui.widget.FilaAviso;
 import es.pmdm.gymprofit.utils.AvisosCuenta;
 import es.pmdm.gymprofit.utils.PermisoAvisos;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // NotificacionesActivity — Ajustes › Notificaciones (GP-112, lote 1.5.1).
@@ -94,9 +95,13 @@ public class NotificacionesActivity extends BaseActivity {
         pintarPermiso();
     }
 
+    @androidx.annotation.Nullable private VistaEstado estado;
+
     private void cargar() {
         int id = prefsManager.getUsuarioId();
         if (id == -1) return;
+        if (estado == null) estado = new VistaEstado(findViewById(R.id.estadoAvisos));
+        estado.cargando();
         usuarioApi.getPorId(id).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
@@ -107,14 +112,16 @@ public class NotificacionesActivity extends BaseActivity {
                 comidas.setActiva(e.comidas);
                 progreso.setActiva(e.progreso);
                 habilitar(true);
+                estado.oculto();
             }
 
             @Override
             public void onFail(int code, String message) {
                 if (isFinishing()) return;
-                // Sin leerlos no se pueden cambiar sin pisar lo de la cuenta: se dice y se
-                // quedan apagados hasta volver a entrar.
-                UiFeedback.toastError(NotificacionesActivity.this, code, message);
+                // Sin leerlos no se pueden cambiar sin pisar lo de la cuenta: se dice bajo las
+                // filas, que se quedan desactivadas, con «Reintentar».
+                estado.error(VistaEstado.mensaje(NotificacionesActivity.this, R.string.notificaciones_error,
+                        code, message), NotificacionesActivity.this::cargar);
             }
         });
     }

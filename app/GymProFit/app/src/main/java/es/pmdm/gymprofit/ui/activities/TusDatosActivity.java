@@ -21,7 +21,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.math.BigDecimal;
@@ -56,6 +55,7 @@ import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ReglasEdad;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // TusDatosActivity — Tus datos y objetivos (GP-216, tablero 18). Sustituye a Editar perfil.
@@ -229,10 +229,14 @@ public class TusDatosActivity extends AppCompatActivity {
     private void cargarPerfil() {
         int id = prefs.getUsuarioId();
         if (id == -1) return;
+        VistaEstado estado = new VistaEstado(findViewById(R.id.estadoPerfil));
+        estado.cargando();
         usuarioApi.getPorId(id).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
-                if (u == null || isFinishing()) return;
+                if (isFinishing()) return;
+                estado.oculto();
+                if (u == null) return;
                 nivelGuardado = u.getNivelExperiencia();
                 double peso = 0;
                 try {
@@ -255,11 +259,15 @@ public class TusDatosActivity extends AppCompatActivity {
             @Override
             public void onFail(int code, String message) {
                 // Sin el perfil cargado, guardar pisaría los datos reales con el formulario del móvil:
-                // «Guardar» se queda apagado y se dice, con la manera de reintentar. El 401 ya lo
+                // «Guardar» se queda apagado y se dice arriba, con «Reintentar». El 401 ya lo
                 // resuelve el aviso global.
-                if (code == 401 || isFinishing()) return;
-                Snackbar.make(findViewById(R.id.raizTusDatos), R.string.editar_perfil_error_carga_corto,
-                        Snackbar.LENGTH_INDEFINITE).setAction(R.string.btn_reintentar, v -> cargarPerfil()).show();
+                if (isFinishing()) return;
+                if (code == 401) {
+                    estado.oculto();
+                    return;
+                }
+                estado.error(VistaEstado.mensaje(TusDatosActivity.this, R.string.editar_perfil_error_carga_corto,
+                        code, message), TusDatosActivity.this::cargarPerfil);
             }
         });
     }
@@ -608,7 +616,7 @@ public class TusDatosActivity extends AppCompatActivity {
      * mediciones para no usar un % viejo; si no llegan, va con el último guardado en el móvil.
      */
     private void recalcularObjetivo(int usuarioId) {
-        LoadingDialog.show(this);
+        LoadingDialog.show(this); // GP-064: acción. Sigue al guardado: sin el % nuevo no se cierra.
         ApiClient.service(MedicionApi.class).getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
