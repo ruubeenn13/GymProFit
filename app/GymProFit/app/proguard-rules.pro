@@ -22,6 +22,15 @@
     public static ** valueOf(java.lang.String);
 }
 
+# ---- Lo que pasa por Gson fuera de model (GP-247) ----
+# Anadido viaja en JSON entre Añadir, la ficha, el escáner y Crear plato. Sin regla, R8 renombraba
+# sus campos (a…g) y quitaba su constructor vacío: funcionaba solo porque quien escribe y quien lee
+# están en la misma APK. TiposGsonConservadosTest exige una regla por cada tipo así.
+-keep class es.pmdm.gymprofit.utils.Anadidos$Anadido {
+    <fields>;
+    <init>();
+}
+
 # ---- Interfaces Retrofit tipadas y adaptador Gson custom (registrado por reflexión) ----
 -keep interface es.pmdm.gymprofit.network.** { *; }
 -keep class es.pmdm.gymprofit.network.BooleanNumericAdapter { *; }
@@ -48,6 +57,16 @@
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
+
+# ---- MPAndroidChart: la animación de las gráficas ----
+# ChartAnimator anima con ObjectAnimator.ofFloat(this, "phaseX"/"phaseY"), que busca el setter
+# por su nombre. Nadie más los llama y R8 los quitaba: en la release ninguna gráfica animaba y
+# Android solo lo avisaba en el log («Method setPhaseX() … not found»). Lo vio la prueba de humo
+# de la release (GP-247), que falla con ese aviso.
+-keepclassmembers class com.github.mikephil.charting.animation.ChartAnimator {
+    public void setPhaseX(float);
+    public void setPhaseY(float);
+}
 
 # ---- Drawables con clase propia ----
 # Un drawable que nombra su clase en el XML (<drawable class=…>) solo se instancia por reflexión:
