@@ -88,17 +88,26 @@ class TareasUnaVezConDosInstanciasTest {
     static void apagar() {
         // Los bloqueos que deja la prueba duran el mínimo de producción: si se quedaran,
         // otro test que corra en el mismo minuto vería sus tareas saltadas.
-        if (instanciaA != null) {
-            instanciaA.getBean(JdbcTemplate.class).update("DELETE FROM shedlock");
-            instanciaA.close();
+        try {
+            if (instanciaA != null) quitarBloqueos();
+        } finally {
+            if (instanciaA != null) instanciaA.close();
+            if (instanciaB != null) instanciaB.close();
         }
-        if (instanciaB != null) instanciaB.close();
     }
 
     @BeforeEach
     void sinBloqueosNiCuentas() {
-        instanciaA.getBean(JdbcTemplate.class).update("DELETE FROM shedlock");
+        quitarBloqueos();
         ENTRADAS_CONTADAS.set(0);
+    }
+
+    /** Borra los bloqueos y comprueba que no queda ninguno: si quedara, otro test lo pagaría. */
+    private static void quitarBloqueos() {
+        JdbcTemplate jdbc = instanciaA.getBean(JdbcTemplate.class);
+        int borrados = jdbc.update("DELETE FROM shedlock");
+        Integer quedan = jdbc.queryForObject("SELECT COUNT(*) FROM shedlock", Integer.class);
+        assertThat(quedan).as("bloqueos tras borrar %d", borrados).isZero();
     }
 
     static Stream<Arguments> tareasProgramadas() {
