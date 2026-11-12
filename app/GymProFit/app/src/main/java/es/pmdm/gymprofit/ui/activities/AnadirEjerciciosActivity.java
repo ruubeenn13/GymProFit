@@ -333,7 +333,7 @@ public class AnadirEjerciciosActivity extends AppCompatActivity {
                         resultados.addAll(l);
                         if (p == 0) adaptador.notifyDataSetChanged();
                         else adaptador.notifyItemRangeInserted(desde, l.size());
-                        if (resultados.isEmpty()) estado.vacio(R.string.elegir_ej_vacio);
+                        if (resultados.isEmpty()) estado.vacio(R.drawable.ic_ms_search, R.string.elegir_ej_vacio);
                         else estado.oculto();
                     }
                     @Override public void onFail(int code, String message) {

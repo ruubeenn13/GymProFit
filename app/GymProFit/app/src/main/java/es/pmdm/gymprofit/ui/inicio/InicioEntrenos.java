@@ -104,7 +104,7 @@ public final class InicioEntrenos {
         View scroll = raiz.findViewById(R.id.scrollEntrenos);
         if (todas.isEmpty()) {
             scroll.setVisibility(View.GONE);
-            estado.vacio(R.string.inicio_entrenos_vacio);
+            estado.vacio(R.drawable.ic_ms_history, R.string.inicio_entrenos_vacio);
             return;
         }
         estado.oculto();

@@ -184,7 +184,7 @@ public class AdminUsuariosActivity extends BaseActivity {
     /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
     private void mostrarEstado() {
         if (lista.isEmpty()) {
-            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_usuarios);
+            estado.vacio(R.drawable.ic_ms_person, hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_usuarios);
         } else {
             estado.oculto();
         }

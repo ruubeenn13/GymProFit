@@ -1177,7 +1177,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         List<GruposBusqueda.Elemento> lista = GruposBusqueda.de(resultados, buscando, recientesTodos,
                 buscando ? null : comidasRecientes);
         ponerLista(lista, cascada);
-        if (lista.isEmpty()) estado.vacio(R.string.anadir_vacio);
+        if (lista.isEmpty()) estado.vacio(R.drawable.ic_ms_search, R.string.anadir_vacio);
         else estado.oculto();
     }
 
@@ -1379,7 +1379,7 @@ public class AnadirAlimentoActivity extends BaseActivity {
         }
         List<GruposBusqueda.Elemento> lista = GruposBusqueda.favoritos(deFavoritos, propuesta);
         ponerLista(lista, false);
-        if (deFavoritos.isEmpty() && propuesta == null && !hayEncaja()) estado.vacio(R.string.favoritos_vacio);
+        if (deFavoritos.isEmpty() && propuesta == null && !hayEncaja()) estado.vacio(R.drawable.ic_ms_favorite, R.string.favoritos_vacio);
         else estado.oculto();
     }
 

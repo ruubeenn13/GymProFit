@@ -35,7 +35,7 @@ public class AdminVacioTest {
                     layout.contains("android:id=\"@+id/estadoLista\"") && layout.contains("layout=\"@layout/view_estado\""));
             String codigo = leer(ACT.resolve("Admin" + l[0] + "Activity.java"));
             assertTrue(l[0] + ": no crea la VistaEstado", codigo.contains("new VistaEstado(findViewById(R.id.estadoLista))"));
-            assertTrue(l[0] + ": no dice el vacío", codigo.contains("estado.vacio(hayFiltros()"));
+            assertTrue(l[0] + ": no dice el vacío", codigo.matches("(?s).*estado\\.vacio\\((?:R\\.drawable\\.\\w+, )?hayFiltros\\(\\).*"));
             assertTrue(l[0] + ": el vacío no usa su frase", codigo.contains("R.string.admin_vacio_" + l[1]));
             assertTrue(l[0] + ": un fallo de carga no se queda en la pantalla", codigo.contains("estado.error(VistaEstado.mensaje("));
         }

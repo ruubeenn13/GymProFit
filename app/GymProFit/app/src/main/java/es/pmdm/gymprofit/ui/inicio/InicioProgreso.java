@@ -255,6 +255,8 @@ public final class InicioProgreso {
 
                     @Override
                     public void onFail(int code, String message) {
+                        // GP-064: acción. Se pide al tocar, para abrir la ficha del ejercicio: lo que había
+                        // sigue en pantalla, y el toast dice por qué no se abre.
                         if (!fragment.isAdded()) return;
                         UiFeedback.toastError(fragment.requireActivity(), code, message);
                     }
@@ -283,7 +285,7 @@ public final class InicioProgreso {
             estado.error(VistaEstado.mensaje(fragment.requireContext(), R.string.inicio_progreso_error,
                     fallo.code, fallo.message), () -> cargarKilos(prefs.getUsuarioId()));
         } else {
-            estado.vacio(R.string.inicio_progreso_vacio);
+            estado.vacio(R.drawable.ic_ms_trending_up, R.string.inicio_progreso_vacio);
         }
     }
 }

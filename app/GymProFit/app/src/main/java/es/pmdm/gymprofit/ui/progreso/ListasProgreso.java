@@ -119,7 +119,7 @@ final class ListasProgreso {
             VacioRecords.Que que = VacioRecords.de(sesiones.lista(), sesiones.fallo(),
                     sesiones.dato() == null ? 0 : sesiones.dato().size());
             if (que == VacioRecords.Que.CARGANDO) estadoRecords.cargando();
-            else estadoRecords.vacio(VacioRecords.texto(que));
+            else estadoRecords.vacio(R.drawable.ic_ms_trophy, VacioRecords.texto(que));
             return;
         }
         estadoRecords.oculto();
@@ -171,6 +171,8 @@ final class ListasProgreso {
 
             @Override
             public void onFail(int code, String message) {
+                // GP-064: acción. Se pide al tocar, para abrir la ficha del ejercicio: lo que había
+                // sigue en pantalla, y el toast dice por qué no se abre.
                 if (fragment.isAdded()) UiFeedback.toastError(fragment.requireActivity(), code, message);
             }
         });
@@ -194,7 +196,7 @@ final class ListasProgreso {
         List<LogroProgreso> elegidos = LogrosProgreso.elegir(fuente.dato());
         if (elegidos.isEmpty()) {
             scroll.setVisibility(View.GONE);
-            estadoLogros.vacio(R.string.progreso_logros_vacio);
+            estadoLogros.vacio(R.drawable.ic_ms_workspace_premium, R.string.progreso_logros_vacio);
             return;
         }
         estadoLogros.oculto();
@@ -245,7 +247,7 @@ final class ListasProgreso {
         if (todas.isEmpty()) {
             card.setVisibility(View.GONE);
             enlace.setVisibility(View.GONE);
-            estadoHistorial.vacio(R.string.progreso_historial_vacio);
+            estadoHistorial.vacio(R.drawable.ic_ms_history, R.string.progreso_historial_vacio);
             return;
         }
         estadoHistorial.oculto();

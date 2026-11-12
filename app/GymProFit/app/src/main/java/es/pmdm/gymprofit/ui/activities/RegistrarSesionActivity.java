@@ -362,7 +362,7 @@ public class RegistrarSesionActivity extends AppCompatActivity {
         } else if (ejercicios == Carga.ERROR) {
             estadoEjercicios.error(getString(R.string.apuntar_error_ejercicios), vm::reintentar);
         } else if (libre && s.ejercicios.isEmpty()) {
-            estadoEjercicios.vacio(R.string.apuntar_libre_vacio);
+            estadoEjercicios.vacio(R.drawable.ic_ms_fitness_center, R.string.apuntar_libre_vacio);
         } else {
             estadoEjercicios.oculto();
         }

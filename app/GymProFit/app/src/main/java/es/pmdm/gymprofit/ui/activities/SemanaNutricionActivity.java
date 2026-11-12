@@ -259,7 +259,7 @@ public class SemanaNutricionActivity extends AppCompatActivity {
         SemanaNutricion s = semana(objetivo);
         if (s.vacia()) {
             contenido.setVisibility(View.GONE);
-            estado.vacio(R.string.sn_vacio);
+            estado.vacio(R.drawable.ic_ms_restaurant, R.string.sn_vacio);
             return;
         }
         estado.oculto();

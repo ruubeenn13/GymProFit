@@ -17,53 +17,8 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- Estado vacío -->
-        <LinearLayout
-            android:id="@+id/tvVacio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_ms_monitor_weight"
-                android:alpha="0.3"
-                android:contentDescription="@null" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/mediciones_sin_mediciones"
-                android:textSize="@dimen/text_subtitle"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/medicion_sin_datos_subtitulo"
-                android:textSize="@dimen/text_caption"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:gravity="center" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRegistrarPrimera"
-                style="@style/Widget.GymProFit.BotonPildora"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/medicion_registrar_primera"
-                app:icon="@drawable/ic_ms_add" />
-
-        </LinearLayout>
-
-        <!-- La carga fallida: su texto y «Reintentar» (lote 12). -->
+        <!-- Carga, vacío (con «Registrar primera medición») y error con «Reintentar»: view_estado
+             (lote 12; GP-064 le pasa el vacío, que era un bloque a mano). -->
         <include
             android:id="@+id/estadoMedidas"
             layout="@layout/view_estado"

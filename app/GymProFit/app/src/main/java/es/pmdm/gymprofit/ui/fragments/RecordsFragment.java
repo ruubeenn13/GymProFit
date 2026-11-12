@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +25,7 @@ import java.util.List;
 import es.pmdm.gymprofit.ui.adapters.RecordAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // RecordsFragment — sección Récords de Progreso (GP-105; antes RecordsActivity).
@@ -33,13 +33,12 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 // El récord vigente de cada ejercicio, por zona del cuerpo, calculado por la API a
 // partir de las series de las sesiones (GP-088). La primera vez que se hace un
 // ejercicio no es un récord sino el punto de partida. Estados: cargando, vacío,
-// error con reintentar (en el contenido, no en un aviso que se va) y lista.
+// error con reintentar (en el contenido, no en un aviso que se va) y lista, en VistaEstado.
 // ============================================================
 public class RecordsFragment extends BaseFragment {
 
     private RecyclerView rvRecords;
-    private View layoutVacio, layoutError, cargando;
-    private TextView tvError, tvVacioTexto;
+    private VistaEstado estado;
 
     private final RecordApi recordApi = ApiClient.service(RecordApi.class);
     private final EjercicioApi ejercicioApi = ApiClient.service(EjercicioApi.class);
@@ -56,13 +55,8 @@ public class RecordsFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvRecords   = findViewById(R.id.rvRecords);
-        layoutVacio = findViewById(R.id.layoutVacio);
-        layoutError = findViewById(R.id.layoutError);
-        tvError     = findViewById(R.id.tvError);
-        tvVacioTexto = findViewById(R.id.tvVacioTexto);
-        cargando    = findViewById(R.id.cargandoRecords);
+        estado      = new VistaEstado(findViewById(R.id.estadoRecords));
         rvRecords.setLayoutManager(new LinearLayoutManager(requireContext()));
-        findViewById(R.id.btnReintentar).setOnClickListener(v -> cargar());
     }
 
     @Override
@@ -75,10 +69,10 @@ public class RecordsFragment extends BaseFragment {
     private void cargar() {
         // Sin id de cuenta no hay récords que pedir: el vacío de siempre.
         if (prefsManager.getUsuarioId() == -1) {
-            mostrar(layoutVacio);
+            vacio(VacioRecords.Que.SIN_SABER);
             return;
         }
-        if (rvRecords.getAdapter() == null) mostrar(cargando);
+        if (rvRecords.getAdapter() == null) cargando();
         recordApi.getRecords(null).enqueue(new ApiCallback<Records>() {
             @Override
             public void onOk(Records r) {
@@ -88,13 +82,14 @@ public class RecordsFragment extends BaseFragment {
                     return;
                 }
                 rvRecords.setAdapter(new RecordAdapter(r.getRecords(), RecordsFragment.this::abrirEjercicio));
-                mostrar(rvRecords);
+                rvRecords.setVisibility(View.VISIBLE);
+                estado.oculto();
             }
             @Override
             public void onFail(int code, String message) {
                 if (!isAdded()) return;
-                tvError.setText(UiFeedback.mensaje(requireContext(), code, message));
-                mostrar(layoutError);
+                rvRecords.setVisibility(View.GONE);
+                estado.error(UiFeedback.mensaje(requireContext(), code, message), RecordsFragment.this::cargar);
             }
         });
     }
@@ -102,7 +97,7 @@ public class RecordsFragment extends BaseFragment {
     // Sin récords: lo que se dice depende de si ya hay entrenos (GP-229). La lista de sesiones
     // solo se pide entonces.
     private void pintarVacio() {
-        if (rvRecords.getAdapter() == null) mostrar(cargando);
+        if (rvRecords.getAdapter() == null) cargando();
         sesionApi.getDeUsuario(prefsManager.getUsuarioId()).enqueue(new ApiCallback<List<SesionEntrenamiento>>() {
             @Override
             public void onOk(List<SesionEntrenamiento> sesiones) {
@@ -120,15 +115,13 @@ public class RecordsFragment extends BaseFragment {
     }
 
     private void vacio(VacioRecords.Que que) {
-        tvVacioTexto.setText(VacioRecords.texto(que));
-        mostrar(layoutVacio);
+        rvRecords.setVisibility(View.GONE);
+        estado.vacio(R.drawable.ic_ms_trophy, R.string.records_vacio_titulo, VacioRecords.texto(que), 0, null);
     }
 
-    private void mostrar(View visible) {
-        rvRecords.setVisibility(visible == rvRecords ? View.VISIBLE : View.GONE);
-        layoutVacio.setVisibility(visible == layoutVacio ? View.VISIBLE : View.GONE);
-        layoutError.setVisibility(visible == layoutError ? View.VISIBLE : View.GONE);
-        cargando.setVisibility(visible == cargando ? View.VISIBLE : View.GONE);
+    private void cargando() {
+        rvRecords.setVisibility(View.GONE);
+        estado.cargando();
     }
 
     // La ficha espera el ejercicio entero en extras: se pide al pulsar.
@@ -143,6 +136,8 @@ public class RecordsFragment extends BaseFragment {
             }
             @Override
             public void onFail(int code, String message) {
+                // GP-064: acción. Se pide al tocar, para abrir la ficha del ejercicio: lo que había
+                // sigue en pantalla, y el toast dice por qué no se abre.
                 if (!isAdded()) return;
                 UiFeedback.toastError(requireActivity(), code, message);
             }

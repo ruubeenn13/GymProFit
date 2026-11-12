@@ -172,7 +172,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
     /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
     private void mostrarEstado() {
         if (lista.isEmpty()) {
-            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_ejercicios);
+            estado.vacio(R.drawable.ic_ms_fitness_center, hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_ejercicios);
         } else {
             estado.oculto();
         }
