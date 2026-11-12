@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `d14eef7` | fix(api): la IP del límite de peticiones sale de `IpCliente`, decidida tras medir la cadena de proxies de producción (S28). |
+| `1834b91` | fix(api): un fallo de la base (pool agotado, base caída) da 503 y llega a Sentry en vez de un 401 de «credenciales inválidas» en el login; una clave mala sigue dando 401 (GP-260). |
 | `4b72d59` | test(carga): prueba de carga reproducible de la API con k6 en `scripts/carga/`, con los límites de Render y la base local (GP-221). |
 | `35ec5b2` | feat(api): los 500, los errores de las tareas programadas y las excepciones sin capturar llegan a Sentry si hay `SENTRY_DSN`, sin cuerpo, cabeceras ni datos personales (GP-221, DEC-061). |
 | `7871aa9` | feat(api): con varias instancias, cada tarea programada corre una sola vez (ShedLock sobre la base, migración `V202611121000`) (GP-221, DEC-061). |
