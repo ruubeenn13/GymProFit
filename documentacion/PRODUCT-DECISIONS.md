@@ -1163,6 +1163,27 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-064 · El alta y la primera semana se miden con recuentos propios que no saben de quién son, y la app deja Firebase Analytics
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** GP-019 (camino A, decidido el 01-10)
+
+**Contexto.** Para empezar la prueba cerrada de Play (GP-159) hacían falta dos respuestas: en qué paso del alta se va la gente, y cuántas cuentas nuevas entrenan, apuntan una comida y vuelven otro día en sus primeros 7 días. La app llevaba `firebase-analytics`, que no contestaba a ninguna de las dos sin eventos propios y traía el permiso del ID de publicidad, con lo que la declaración de Play no podía ser «No».
+
+**Decisión.**
+
+- **El embudo del alta es un recuento por día de Madrid y paso** (`alta_pasos`: `dia`, `paso`, `total`, y nada más). La app avisa con `POST /alta/pasos` y el cuerpo `{"paso": "<NOMBRE>"}` al llegar a cada pantalla del alta de verdad: `BIENVENIDA`, `OBJETIVO`, `NIVEL`, `SOBRE_TI`, `DONDE`, `DIAS`, `PLAN`, `GUARDA`, `CUENTA` («Todo listo») y `AVISOS`. La cuenta que entró sin onboarding no avisa.
+- **Sin nada de quién.** La ruta es pública y la app la llama por un cliente propio (`ApiClient.anonimo`) que no lleva token aunque haya sesión, ni `Accept-Language`, ni reintentos. La API no lee la cuenta ni la IP para contar: solo el paso, y suma uno con una sentencia. Un nombre que no existe da 400 y no cuenta.
+- **Una vez por intento.** El móvil apunta los pasos ya avisados y no repite ninguno al ir atrás, girar la pantalla o retomar el alta. Un intento nuevo empieza en la bienvenida después de un alta terminada (`CUENTA`). Si un aviso falla, se pierde: no se espera ni se reintenta.
+- **Cupo propio por IP** en `AuthRateLimitFilter` (30 por minuto, con `IpCliente`, DEC-062): es lo único que frena inflar el recuento. Los contadores del cupo viven en memoria y no se guardan.
+- **El núcleo sale de lo que ya hay**, sin columnas ni seguimiento nuevos: la fecha de alta de cada cuenta y las fechas de sus entrenos completados, comidas con algún alimento, agua (más de 0 ml) y peso. «Vuelve» es apuntar cualquiera de esas cosas un día distinto al del alta, dentro de sus primeros 7 días (el del alta y los seis siguientes). Por semana de alta, de lunes a domingo en Madrid.
+- **Solo totales, en `GET /admin/embudo`** (ADMIN) y la página Embudo de `admin/`, como el Resumen (S24 a S26): ninguna cuenta aparece.
+- **Fuera `firebase-analytics`**, y `com.google.android.gms.permission.AD_ID` quitado del manifiesto fusionado con `tools:node="remove"`. Crashlytics y FCM se quedan. Guava, que llegaba al compilar por Analytics, se declara directa porque CameraX la necesita.
+
+**Consecuencias.** Un paso nuevo del alta se añade al final de `PasoAlta` en la API y en la app a la vez (`EmbudoAltaTest` de la app compara las dos listas); cambiar o quitar un nombre rompe las builds que ya avisan. El embudo cuenta intentos, no personas: dos móviles de la misma persona son dos, y quien cierra sesión y vuelve a la bienvenida después de un alta terminada empieza otro. Las cuentas borradas desaparecen del núcleo. La política de privacidad lo cuenta en «Recuentos que no identifican a nadie».
+
+**Qué la invalidaría.** Necesitar saber qué hizo una cuenta concreta (eso sería seguimiento, otra decisión y otro consentimiento), o que Play o la ley pidan tratar estos recuentos como datos personales.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
