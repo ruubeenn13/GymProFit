@@ -164,6 +164,30 @@
 .sistema__mal { color: var(--peligro); font-weight: 600; }
 .sistema__commit { font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* ---------- Embudo (GP-019) ---------- */
+.embudo, .nucleo { padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.embudo .grafica__cabeza { flex-wrap: wrap; align-items: center; }
+.embudo__nota { font-size: 14px; color: var(--texto-apagado); }
+.embudo__vacio { font-size: 15px; color: var(--texto-secundario); padding: 12px 0; }
+.embudo__pasos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.embudo__paso {
+  display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr) 56px 48px 48px; align-items: center;
+  gap: 12px; min-height: 44px; border-bottom: 1px solid var(--borde-suave); font-size: 15px;
+}
+.embudo__paso:last-child { border-bottom: 0; }
+.embudo__nombre { color: var(--texto); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.embudo__barra-marco { height: 12px; }
+.embudo__barra { display: block; height: 100%; min-width: 2px; border-radius: 2px 6px 6px 2px; background: var(--barra-alta); }
+.embudo__barra--cuenta { background: var(--acento); }
+.embudo__total { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.embudo__por, .embudo__caida { text-align: right; font-size: 14px; color: var(--texto-apagado); font-variant-numeric: tabular-nums; }
+.tabla--nucleo th:nth-child(1) { width: 32%; }
+.tabla--nucleo tbody tr { cursor: default; }
+.tabla--nucleo tbody th { font-weight: 600; text-align: left; color: var(--texto); padding-left: 16px; height: 48px; border-bottom: 1px solid var(--borde-suave); }
+.tabla--nucleo tbody tr:last-child th { border-bottom: 0; }
+.nucleo__curso { font-weight: 400; color: var(--texto-apagado); }
+.nucleo__tarjeta { padding: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: var(--texto-secundario); }
+
 /* ---------- Listas ---------- */
 .lista { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .lista__filtros { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -313,6 +337,12 @@
 
 /* ---------- Por debajo de 768 px: el móvil ---------- */
 @media (max-width: 767px) {
+  .embudo__paso { grid-template-columns: minmax(0, 1fr) 48px 44px; grid-template-areas: "nombre total por" "barra barra barra"; row-gap: 4px; padding: 8px 0; }
+  .embudo__nombre { grid-area: nombre; }
+  .embudo__barra-marco { grid-area: barra; }
+  .embudo__total { grid-area: total; }
+  .embudo__por { grid-area: por; }
+  .embudo__caida { display: none; }
   :root { --gutter: 16px; }
   .marco { grid-template-columns: minmax(0, 1fr); background: none; padding-bottom: calc(var(--pestanas-alto) + env(safe-area-inset-bottom)); }
   .lateral { display: none; }

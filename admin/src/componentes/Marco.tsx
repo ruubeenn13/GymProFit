@@ -14,13 +14,15 @@ import { Dialogo } from './Dialogo';
 import { LineaApi } from './EstadoApi';
 import { Icono, type NombreIcono } from './Icono';
 
-// En el móvil, cuatro pestañas como en la app (DESIGN.md): Avisos se abre desde Alimentos.
+// En el móvil, cuatro pestañas como en la app (DESIGN.md): Avisos se abre desde Alimentos y
+// Embudo desde Resumen.
 const SECCIONES: { ruta: string; texto: string; icono: NombreIcono; iconoActivo: NombreIcono; soloLateral?: boolean }[] = [
   { ruta: '/', texto: 'Resumen', icono: 'monitoring', iconoActivo: 'monitoring_relleno' },
   { ruta: '/usuarios', texto: 'Usuarios', icono: 'group', iconoActivo: 'group_relleno' },
   { ruta: '/ejercicios', texto: 'Ejercicios', icono: 'fitness_center', iconoActivo: 'fitness_center_relleno' },
   { ruta: '/alimentos', texto: 'Alimentos', icono: 'nutrition', iconoActivo: 'nutrition_relleno' },
   { ruta: '/avisos', texto: 'Avisos', icono: 'warning', iconoActivo: 'warning', soloLateral: true },
+  { ruta: '/embudo', texto: 'Embudo', icono: 'format_list_numbered', iconoActivo: 'format_list_numbered', soloLateral: true },
 ];
 
 /**

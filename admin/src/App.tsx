@@ -32,6 +32,7 @@ const Usuarios = pantalla(() => import('./paginas/Usuarios'), 'Usuarios');
 const Ejercicios = pantalla(() => import('./paginas/Ejercicios'), 'Ejercicios');
 const Alimentos = pantalla(() => import('./paginas/Alimentos'), 'Alimentos');
 const Avisos = pantalla(() => import('./paginas/Avisos'), 'Avisos');
+const Embudo = pantalla(() => import('./paginas/Embudo'), 'Embudo');
 
 function Cargando() {
   return (
@@ -61,5 +62,6 @@ export const rutas: RouteObject[] = [
   { path: '/ejercicios', element: <ConSesion><Ejercicios /></ConSesion> },
   { path: '/alimentos', element: <ConSesion><Alimentos /></ConSesion> },
   { path: '/avisos', element: <ConSesion><Avisos /></ConSesion> },
+  { path: '/embudo', element: <ConSesion><Embudo /></ConSesion> },
   { path: '*', element: <Navigate to="/" replace /> },
 ];

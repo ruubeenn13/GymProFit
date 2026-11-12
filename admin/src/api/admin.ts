@@ -26,6 +26,20 @@ export interface Resumen {
   catalogo: { ejerciciosActivos: number; ejerciciosSinRevisar: number; alimentosCatalogo: number; alimentosSinIngles: number };
 }
 
+/** Las pantallas del alta que cuenta el embudo (GP-019), en su orden. */
+export type PasoAlta = 'BIENVENIDA' | 'OBJETIVO' | 'NIVEL' | 'SOBRE_TI' | 'DONDE' | 'DIAS' | 'PLAN' | 'GUARDA' | 'CUENTA' | 'AVISOS';
+
+/**
+ * El embudo del alta y el núcleo de las cuentas nuevas (GP-019). Solo recuentos, por
+ * semana de lunes (Madrid), la más antigua primero.
+ */
+export interface Embudo {
+  hoy: string;
+  embudo: { lunes: string; pasos: { paso: PasoAlta; total: number }[] }[];
+  /** completa: a todas las cuentas de esa semana ya les han pasado sus 7 primeros días. */
+  nucleo: { lunes: string; cuentas: number; entrenan: number; comen: number; vuelven: number; completa: boolean }[];
+}
+
 export type Rol = 'ADMIN' | 'USER' | 'GUEST';
 
 export interface Cuenta {
@@ -174,6 +188,7 @@ function consulta(parametros: Record<string, string | number | boolean | null | 
 export function rutasAdmin(cliente: Cliente = api) {
   return {
     resumen: (senal?: AbortSignal) => cliente.pedir<Resumen>('/admin/resumen', { senal }),
+    embudo: (senal?: AbortSignal) => cliente.pedir<Embudo>('/admin/embudo', { senal }),
 
     cuentas: (f: { q?: string; rol?: string; activo?: string; page: number; size: number }, senal?: AbortSignal) =>
       cliente.pedir<Pagina<Cuenta>>('/admin/cuentas' + consulta(f), { senal }),

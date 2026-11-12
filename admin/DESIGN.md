@@ -243,7 +243,8 @@ con un velo negro al 60%.
 
 Esquinas suaves y consistentes: 12px en campos y notas, 18px en tarjetas y diálogos, y píldora
 completa (la mitad del alto) en botones, filtros, chips, etiquetas e interruptor. Las barras de
-las gráficas, redondeadas arriba (6 o 4px) y casi rectas abajo (2px).
+las gráficas, redondeadas arriba (6 o 4px) y casi rectas abajo (2px); las horizontales del Embudo,
+de 12px de alto, igual pero tumbadas: 6px al final y 2px al principio.
 
 ## Components
 

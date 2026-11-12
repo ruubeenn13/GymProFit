@@ -44,8 +44,9 @@ navegador.
 
 ## Capabilities and Constraints
 
-- Pantallas: Entrada, Resumen, Usuarios, Ejercicios y Alimentos. Plantillas llega en la fase 2 y
-  no se anuncia antes de existir.
+- Pantallas: Entrada, Resumen, Usuarios, Ejercicios y Alimentos; Avisos y Embudo (GP-019: pasos del
+  alta y primera semana de las cuentas nuevas, solo totales) desde la barra lateral, y en el móvil
+  desde Alimentos y Resumen. Plantillas llega en la fase 2 y no se anuncia antes de existir.
 - Solo en español. Solo en tema oscuro.
 - React + Vite + TypeScript con React Router. Sin librerías de componentes ni de gráficas, y
   ninguna dependencia nueva.
