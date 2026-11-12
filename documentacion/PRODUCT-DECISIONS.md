@@ -1117,6 +1117,35 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 
 ---
 
+### DEC-062 · La IP del cliente es la última entrada de X-Forwarded-For, la que añade el borde de Render
+**Estado:** Aceptada · **Fecha:** 2026-11-12 · **Tarea:** S28
+
+**Contexto.** El límite de peticiones (`AuthRateLimitFilter`) cuenta por IP. Hasta `d14eef7` la tomaba de la **primera** entrada de `X-Forwarded-For`, y esa entrada la escribe quien hace la petición: cambiándola en cada una, el cupo de login, alta, refresh y recuperación de contraseña no se agotaba nunca. Antes de elegir la regla se midió la cadena real de producción con un registro temporal (`ce39f2c`, retirado en `d14eef7`):
+
+| Petición (2026-11-12) | `X-Forwarded-For` que llega a la API | `CF-Connecting-IP` | `getRemoteAddr` |
+|---|---|---|---|
+| `api.gymprofit.app`, sin cabeceras | `<IP real>` | `<IP real>` | IP de Cloudflare (`188.114.111.235`) |
+| `api.gymprofit.app`, con XFF inventado | `203.0.113.9,198.51.100.7,<IP real>` | `<IP real>` | IP de Cloudflare (`162.158.110.48`) |
+| `gymprofit-api.onrender.com`, sin y con XFF | igual: lo inventado delante, `<IP real>` al final | `<IP real>` | IP de Cloudflare (`162.158.110.25`, `172.68.135.104`) |
+| Cualquiera de los dos, con `CF-Connecting-IP` inventado | — | — | **403 en el borde**, no llega a la API |
+
+`api.gymprofit.app` es un CNAME a onrender sin proxy de una zona propia; los dos nombres pasan por el mismo borde, que es el Cloudflare del propio Render. Ese borde **añade la IP real al final** de lo que mande el cliente, y no hay otro proxy detrás que añada su propia entrada.
+
+**Decisión.** La IP del cliente la da `IpCliente`, y todo lo que necesite la IP pasa por ella:
+
+- **la última entrada de `X-Forwarded-For`**;
+- sin cabecera, o con la última entrada vacía, **`getRemoteAddr`**.
+
+No se usa `CF-Connecting-IP` ni se guardan rangos de Cloudflare: con lo medido, la última entrada ya es la IP real en los dos nombres, y la comprobación de rangos que se planteó (sobre la última entrada) nunca habría dado verdadero, porque la IP de Cloudflare llega en `getRemoteAddr`.
+
+En local, sin proxy delante, la última entrada es la que manda el cliente: así la prueba de carga (`scripts/carga/`) sigue dando una IP a cada cuenta sin perfil aparte, y en producción esa cabecera ya no cuenta porque el borde añade la real detrás.
+
+**Consecuencias.** La regla **depende de que el borde de Render siga añadiendo la IP real al final de `X-Forwarded-For`** y de que la API no sea alcanzable sin pasar por él. `scripts/comprobar-limite-ip.sh` lo comprueba desde fuera: logins con clave mala y un `X-Forwarded-For` distinto en cada uno hasta el cupo, y la siguiente tiene que dar 429. Se repite tras cualquier cambio de infraestructura o de plan en Render, o de dominio, CDN o proxy delante de la API. Antes del arreglo daba `401` en la petición 16; después, `429`.
+
+**Qué la invalidaría.** Un proxy más entre el borde y la API (la última entrada sería la suya y todos compartirían cupo), poner la zona propia de Cloudflare con proxy delante de `api.gymprofit.app`, o un plan de Render que exponga la instancia sin el borde. En cualquiera de esos casos se vuelve a medir antes de tocar la regla.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
