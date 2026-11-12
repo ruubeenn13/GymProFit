@@ -141,6 +141,9 @@ public class RutinaEjercicioService implements IRutinaEjercicioService {
             RutinaEjercicio rutinaEjercicio = rutinaEjercicioMapper.toEntity(createDTO);
             aplicarPauta(rutinaEjercicio, createDTO.getRepeticiones(), createDTO.getRepeticionesMin(),
                     createDTO.getRepeticionesMax(), createDTO.getMedida());
+            // Una build de antes de GP-130 no manda medida: se copia la del ejercicio, para
+            // que la plancha añadida desde ella quede en segundos y no en repeticiones.
+            if (rutinaEjercicio.getMedida() == null) rutinaEjercicio.setMedida(ejercicio.getMedida());
             rutinaEjercicio.setRutina(rutina);
             rutinaEjercicio.setEjercicio(ejercicio);
 

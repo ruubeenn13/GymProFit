@@ -3,6 +3,7 @@ package com.gymprofit.api.entity;
 import com.gymprofit.api.enums.Dificultad;
 import com.gymprofit.api.enums.Equipamiento;
 import com.gymprofit.api.enums.GrupoMuscular;
+import com.gymprofit.api.enums.MedidaSerie;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -85,6 +86,13 @@ public class Ejercicio {
     // Alguien ha revisado el nombre en español (GP-085). Lo que se importa llega sin revisar.
     @Column(name = "nombre_revisado", nullable = false)
     private Boolean nombreRevisado = false;
+
+    // En qué se mide una serie de este ejercicio (GP-130): SEGUNDOS en la plancha y los
+    // demás isométricos, REPETICIONES en todo lo demás. La pauta de una rutina puede
+    // cambiarla; esto es lo que se propone al añadirlo. La importación no la toca.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 15)
+    private MedidaSerie medida = MedidaSerie.REPETICIONES;
 
     @Column(columnDefinition = "TINYINT(1) DEFAULT 1")
     private Boolean activo;
