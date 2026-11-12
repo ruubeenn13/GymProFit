@@ -30,7 +30,7 @@ DB_PASSWORD='<la de la base local>' sh scripts/carga/correr.sh 5 10 20 40
 
 Variables: `DURACION` (3m), `CPUS` (0.1), `EJERCICIO_ID` (860, uno del catálogo local), `DB_URL`, `DB_USER`.
 
-El arranque con 0,1 de CPU pasa de 7 minutos en local (en Render ronda los 3): el script espera hasta 15.
+El arranque con 0,1 de CPU tarda unos 150 s en local con el equipo tranquilo (en Render, 185-207 s), y pasa de 7 minutos si el equipo está ocupado: el script espera hasta 15. Si tarda mucho más de 150 s, las cifras de esa pasada no valen.
 
 ## Qué deja
 
