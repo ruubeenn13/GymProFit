@@ -5,7 +5,8 @@
 # Instala la APK, arranca la app y recorre lo que se puede sin sesión (Bienvenida, el alta,
 # Entrar, recuperar la contraseña); después entra con la cuenta de usar y tirar que el job
 # acaba de crear en la API local y recorre las pestañas, el Perfil y «Tus datos». Falla si la
-# app se cierra o si en el logcat de fallos aparece un FATAL EXCEPTION de la app.
+# app se cierra, si en el logcat de fallos aparece un FATAL EXCEPTION de la app, o si sin
+# sesión guardada sale «Tu sesión ha terminado» (GP-258).
 #
 # Por qué existe: R8 quita lo que solo se nombra por reflexión, y la debug no lo enseña. En el
 # lote 7 quitó BurbujaProfi (un <drawable class=…>) y la release se cerraba al abrir Inicio.
@@ -136,6 +137,26 @@ abrir_como_el_icono() {
     adb shell am start -W -a android.intent.action.MAIN -c android.intent.category.LAUNCHER         -n "$PAQ/$MAIN" > /dev/null
 }
 
+# Sin sesión guardada, «Tu sesión ha terminado» (avisoSesionCerrada en Entrar) no sale nunca
+# (GP-258): lo vería quien acaba de instalar la app. Espera a la vista dada y falla si el aviso
+# aparece antes o con ella.
+esperar_sin_aviso() {
+    t=0
+    while :; do
+        arbol=$(volcar)
+        if printf '%s\n' "$arbol" | grep -qF "$ID/avisoSesionCerrada\""; then
+            captura aviso-sin-sesion
+            fallar "«Tu sesión ha terminado» sin sesión guardada ($2)"
+        fi
+        if printf '%s\n' "$arbol" | grep -qF "$ID/$1\""; then break; fi
+        vivo || fallar "la app se ha cerrado ($2)"
+        t=$((t + 1))
+        [ "$t" -lt 60 ] || fallar "no aparece $1 ($2)"
+        sleep 1
+    done
+    sin_fatal "$2"
+}
+
 pestana() {
     adb shell am start -W -f 0x24000000 -n "$PAQ/$MAIN" --ei nav_tab "$1" > /dev/null
     sleep 3
@@ -156,10 +177,19 @@ adb shell pm grant "$PAQ" android.permission.POST_NOTIFICATIONS 2> /dev/null || 
 adb shell settings put global hide_error_dialogs 1 2> /dev/null || true
 adb logcat -b all -c
 
-paso "Arranque sin sesión: Bienvenida"
+paso "Arranque sin sesión: Bienvenida, sin el aviso de sesión terminada"
 abrir_como_el_icono
-ver btnYaTengoCuenta 60
+esperar_sin_aviso btnYaTengoCuenta "arranque desde el icono"
 captura bienvenida
+
+# Sin la categoría LAUNCHER (una notificación, un acceso directo) MainActivity no pasa por
+# PantallaArranque.esArranque: antes montaba Inicio sin sesión, Inicio pedía sus datos sin
+# token y el 401 abría Entrar con el aviso (los runs 43105641695 y 43113670636). Es el mismo
+# camino que una MainActivity recreada mientras el arranque decide.
+paso "Abierta sin la categoría LAUNCHER y sin sesión: Bienvenida, sin el aviso"
+adb shell am force-stop "$PAQ"
+adb shell am start -W -n "$PAQ/$MAIN" > /dev/null
+esperar_sin_aviso btnYaTengoCuenta "abierta sin LAUNCHER"
 
 paso "El alta"
 tocar btnEmpezar
@@ -176,10 +206,25 @@ ver etIdentificador
 captura recuperar
 volver_a btnEntrar
 
-paso "Entrar con la cuenta de usar y tirar"
+# El 401 de una contraseña mal escrita no es una sesión que se acaba (GP-258): antes, el
+# primero tras instalar reabría Entrar con «Tu sesión ha terminado».
+paso "Entrar con la contraseña mal: sin el aviso de sesión terminada"
 tocar etUsuario
 adb shell input text "$USUARIO"
 tocar etPassword
+adb shell input text "NoEsLaClave-258"
+atras
+tocar btnEntrar
+sleep 4
+esperar_sin_aviso btnEntrar "contraseña mal escrita"
+captura entrar-clave-mal
+
+paso "Entrar con la cuenta de usar y tirar"
+tocar etPassword
+# Fuera la contraseña mala: el cursor queda al final y se borra hacia atrás.
+adb shell input keyevent KEYCODE_MOVE_END
+# shellcheck disable=SC2046
+adb shell input keyevent $(printf 'KEYCODE_DEL %.0s' $(seq 1 30))
 adb shell input text "$CLAVE"
 # Fuera el teclado: puede tapar el botón.
 atras

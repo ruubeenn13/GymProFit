@@ -31,6 +31,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.List;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.arranque.DecisionArranque;
 import es.pmdm.gymprofit.arranque.PantallaArranque;
 import es.pmdm.gymprofit.model.medicion.MedicionCorporal;
 import es.pmdm.gymprofit.model.rutina.Rutina;
@@ -148,9 +149,11 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         getOnBackPressedDispatcher().addCallback(this, atrasCierraHoja);
 
         // BaseActivity ya cerró la sesión de invitado y salió: nada más que hacer. Abierta por
-        // el icono, el arranque decide; si no, las pestañas, como siempre.
+        // el icono, el arranque decide; si no, las pestañas, como siempre. Sin sesión decide
+        // el arranque venga de donde venga (GP-258): sin sesión no hay pestañas que montar.
         if (isFinishing()) return;
-        if (PantallaArranque.esArranque(getIntent(), savedInstanceState)) {
+        if (DecisionArranque.pasaPorElArranque(
+                PantallaArranque.esArranque(getIntent(), savedInstanceState), prefsManager.haySesion())) {
             // Sin la transición de entrada de todas las pantallas (deslizar con alfa de 0,6 a 1):
             // al abrir desde el icono se sumaba al fundido del splash y la G se apagaba y volvía.
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
