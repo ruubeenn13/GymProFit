@@ -81,9 +81,12 @@ final class PlantillaCorreo {
 
     /**
      * El logo de la cabecera: la G de la marca, la misma de la app y de la web (GP-231),
-     * alojada en gymprofit.app. 180 px que se pintan a 28: de sobra para pantallas de 2x y 3x.
+     * alojada en gymprofit.app. La G sola sobre fondo transparente (GP-266): el
+     * apple-touch-icon que se usaba antes es opaco y salía como un cuadrado negro sobre el
+     * blanco de Gmail. 84 px que se pintan a 28, 3x; lo genera
+     * {@code scripts/trazar-g-arranque.py correo}.
      */
-    static final String URL_LOGO = "https://gymprofit.app/img/apple-touch-icon.png";
+    static final String URL_LOGO = "https://gymprofit.app/img/logo-correo.png";
 
     /** Idioma del correo: el del atributo lang y el del pie (lote 24). */
     enum Idioma {
@@ -399,7 +402,7 @@ final class PlantillaCorreo {
             <tr><td style="padding:30px 40px 26px;border-bottom:1px solid #F0EBE4;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
             <td width="28" style="width:28px;padding:0;">
-            <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;border-radius:6px;">
+            <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;">
             </td>
             <td style="padding-left:10px;font-family:{{FUENTE}};font-size:15px;line-height:22px;font-weight:700;letter-spacing:1.4px;color:#1A1512;">GYMPROFIT</td>
             </tr></table>

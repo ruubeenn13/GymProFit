@@ -16,7 +16,8 @@ js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licenc
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
-img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057) + las texturas
+img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057), logo-correo.png
+          (la G sola y transparente de los correos, GP-266) + las texturas
 img/capturas/  las cuatro capturas de la portada, en webp a 360 y 720 de ancho
 ```
 
