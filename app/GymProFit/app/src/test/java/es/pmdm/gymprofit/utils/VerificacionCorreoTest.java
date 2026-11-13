@@ -111,4 +111,14 @@ public class VerificacionCorreoTest {
         assertEquals("1:05", VerificacionCorreo.cuentaAtras(65));
         assertEquals("0:00", VerificacionCorreo.cuentaAtras(-3));
     }
+
+    // GP-267: la respuesta al reenvío que se pide al entrar desde Perfil.
+    @Test
+    public void alEntrarDesdePerfil_el429EsLaCuentaAtrasYNoUnFallo() {
+        assertEquals(VerificacionCorreo.Apertura.ENVIADO, VerificacionCorreo.apertura(204));
+        assertEquals(VerificacionCorreo.Apertura.YA_VERIFICADO, VerificacionCorreo.apertura(409));
+        assertEquals(VerificacionCorreo.Apertura.ESPERA, VerificacionCorreo.apertura(429));
+        assertEquals(VerificacionCorreo.Apertura.FALLO, VerificacionCorreo.apertura(-1));
+        assertEquals(VerificacionCorreo.Apertura.FALLO, VerificacionCorreo.apertura(500));
+    }
 }
