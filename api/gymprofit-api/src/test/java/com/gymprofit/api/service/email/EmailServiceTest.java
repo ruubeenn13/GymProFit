@@ -206,8 +206,9 @@ class EmailServiceTest {
                 .andRespond(withStatus(HttpStatus.CREATED)
                         .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
 
+        // Desde el lote 24 el saludo lleva el nombre visible, que también lo elige el usuario.
         Usuario usuario = usuario();
-        usuario.setUsername("<a href=\"http://malo\">pulsa</a>");
+        usuario.setNombre("<a href=\"http://malo\">pulsa</a>");
         servicio("prod", buzon, builder.build(), CLAVE_API)
                 .enviarCodigoRecuperacion(usuario, CODIGO, MINUTOS);
 
@@ -363,7 +364,7 @@ class EmailServiceTest {
         brevo.verify();
         JsonNode cuerpo = json.readTree(enviado.toString());
         assertThat(cuerpo.path("to").get(0).path("email").asText()).isEqualTo("ruben@example.com");
-        assertThat(cuerpo.path("subject").asText()).contains(CODIGO).containsIgnoringCase("verifica");
+        assertThat(cuerpo.path("subject").asText()).isEqualTo(CODIGO + " es tu código de GymProFit");
         assertThat(cuerpo.path("textContent").asText())
                 .contains(CODIGO).contains("15 minutos").containsIgnoringCase("verifica")
                 .doesNotContainIgnoringCase("contraseña nueva");
@@ -397,6 +398,80 @@ class EmailServiceTest {
         assertThat(entregas.get(0).getFileName().toString()).startsWith("verificacion-");
         assertThat(Files.readString(entregas.get(0), StandardCharsets.UTF_8)).contains(CODIGO);
         assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+    }
+
+    // --- El correo del lote 24: logo, asunto, saludo, pie e idioma ---------
+
+    @org.junit.jupiter.api.AfterEach
+    void soltarElIdioma() {
+        org.springframework.context.i18n.LocaleContextHolder.resetLocaleContext();
+    }
+
+    // Captura el JSON que sale hacia Brevo con el correo que se pida.
+    private JsonNode enviado(java.util.function.Consumer<EmailService> envio, Path buzon) throws Exception {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        EmailService servicio = servicio("prod", buzon, builder.build(), CLAVE_API);
+        StringBuilder cuerpo = new StringBuilder();
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andExpect(peticion -> cuerpo.append(((MockClientHttpRequest) peticion).getBodyAsString()))
+                .andRespond(withStatus(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+        envio.accept(servicio);
+        brevo.verify();
+        return json.readTree(cuerpo.toString());
+    }
+
+    private Usuario conNombre(String nombre) {
+        Usuario u = usuario();
+        u.setNombre(nombre);
+        return u;
+    }
+
+    @Test
+    void elAsuntoYElPreheaderDicenElCodigo_enLosDosCorreos(@TempDir Path buzon) throws Exception {
+        JsonNode verificacion = enviado(s -> s.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS), buzon);
+        assertThat(verificacion.path("subject").asText()).isEqualTo(CODIGO + " es tu código de GymProFit");
+        assertThat(verificacion.path("htmlContent").asText())
+                .contains(">" + CODIGO + " es tu código de GymProFit</div>");
+
+        JsonNode recuperacion = enviado(s -> s.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS), buzon);
+        assertThat(recuperacion.path("subject").asText()).isEqualTo(CODIGO + " es tu código de GymProFit");
+    }
+
+    @Test
+    void elSaludoLlevaElNombreYDosPuntos_ySinNombreSoloHola(@TempDir Path buzon) throws Exception {
+        JsonNode conNombre = enviado(s -> s.enviarCodigoVerificacion(conNombre("Rubén"), CODIGO, MINUTOS), buzon);
+        assertThat(conNombre.path("textContent").asText()).contains("Hola, Rubén:");
+        assertThat(conNombre.path("htmlContent").asText()).contains("Hola, Rubén:");
+
+        JsonNode sinNombre = enviado(s -> s.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS), buzon);
+        assertThat(sinNombre.path("textContent").asText()).contains("Hola:").doesNotContain("Hola, ruben");
+    }
+
+    @Test
+    void laCabeceraLlevaElLogoRealYElPieElCorreoDeSoporte(@TempDir Path buzon) throws Exception {
+        String html = enviado(s -> s.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS), buzon)
+                .path("htmlContent").asText();
+        assertThat(html).contains("src=\"https://gymprofit.app/img/apple-touch-icon.png\"")
+                .contains("alt=\"GymProFit\"")
+                .contains("soporte@gymprofit.app");
+        // El código, un único texto: ni un span por cifra ni espacios entre ellas.
+        assertThat(html).contains(">" + CODIGO + "</div>");
+    }
+
+    @Test
+    void enInglesTodoElCorreoVaEnIngles(@TempDir Path buzon) throws Exception {
+        org.springframework.context.i18n.LocaleContextHolder.setLocale(java.util.Locale.ENGLISH);
+        JsonNode correo = enviado(s -> s.enviarCodigoVerificacion(conNombre("Ruben"), CODIGO, MINUTOS), buzon);
+        assertThat(correo.path("subject").asText()).isEqualTo(CODIGO + " is your GymProFit code");
+        assertThat(correo.path("textContent").asText()).contains("Hi Ruben,").contains("15 minutes")
+                .doesNotContain("Hola").doesNotContain("minutos");
+        assertThat(correo.path("htmlContent").asText()).contains("lang=\"en\"")
+                .contains("Verify your email").contains("Questions?");
+
+        JsonNode recuperacion = enviado(s -> s.enviarCodigoRecuperacion(usuario(), CODIGO, MINUTOS), buzon);
+        assertThat(recuperacion.path("subject").asText()).isEqualTo(CODIGO + " is your GymProFit code");
+        assertThat(recuperacion.path("textContent").asText()).contains("Hi,").contains("Reset your password");
     }
 
     // --- Ayudas -------------------------------------------------------------

@@ -42,6 +42,8 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_ULTIMA_ENTRADA = "ultima_entrada";
     private static final String KEY_NIVEL = "nivel_experiencia";
     private static final String KEY_OBJETIVO = "objetivo";
+    private static final String KEY_CODIGO_CORREO_EN = "codigo_correo_en_";
+    private static final String KEY_CODIGO_CORREO_FALLOS = "codigo_correo_fallos_";
     private static final String KEY_SEXO = "sexo";
     private static final String KEY_ACTIVIDAD = "actividad";
     // De qué cuenta son el sexo y la actividad guardados (GP-111): ver PerfilCuenta.
@@ -451,12 +453,46 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    /**
+     * Como {@link #leer}, pero solo si el perfil guardado es de la cuenta que ha entrado
+     * (GP-265): lo de otra cuenta del mismo móvil es como si no hubiera nada.
+     *
+     * @return el valor guardado de esta cuenta, o null.
+     */
+    @Nullable
+    public String leerPropio(@NonNull PerfilCuenta.Campo campo) {
+        return perfilUsable() ? leer(campo) : null;
+    }
+
     @Override
     public void borrar(@NonNull PerfilCuenta.Campo campo) { editor.remove(clave(campo)); editor.apply(); }
 
     /** Usuario de quien son el sexo y la actividad guardados; null en instalaciones anteriores. */
     @Nullable @Override
     public String getDuenoPerfil() { return prefs.getString(KEY_PERFIL_DUENO, null); }
+
+    // ── Código de verificación del correo (GP-045) ────────────────────────────
+    // Cuándo se mandó el último y cuántos fallos lleva, por cuenta. La API da el mismo 400
+    // a todo fallo y no dice cuánto le queda al código: la pantalla lo cuenta aquí.
+
+    /** El alta, un reenvío o un cambio de correo acaban de mandar un código nuevo. */
+    public void apuntarCodigoCorreo(long ahora) {
+        editor.putLong(KEY_CODIGO_CORREO_EN + getUsername(), ahora)
+                .putInt(KEY_CODIGO_CORREO_FALLOS + getUsername(), 0).apply();
+    }
+
+    /** Cuándo se mandó el último código a esta cuenta, en ms; 0 si no se sabe. */
+    public long getCodigoCorreoEn() { return prefs.getLong(KEY_CODIGO_CORREO_EN + getUsername(), 0L); }
+
+    /** Códigos equivocados desde el último que se mandó. */
+    public int getCodigoCorreoFallos() { return prefs.getInt(KEY_CODIGO_CORREO_FALLOS + getUsername(), 0); }
+
+    /** Suma un código equivocado y devuelve cuántos lleva. */
+    public int sumarFalloCodigoCorreo() {
+        int n = getCodigoCorreoFallos() + 1;
+        editor.putInt(KEY_CODIGO_CORREO_FALLOS + getUsername(), n).apply();
+        return n;
+    }
 
     @Override
     public void apuntarDuenoPerfil(String usuario) { editor.putString(KEY_PERFIL_DUENO, usuario); editor.apply(); }

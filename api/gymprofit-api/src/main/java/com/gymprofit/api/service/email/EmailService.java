@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -207,10 +208,8 @@ public class EmailService implements IEmailService {
             MensajeBrevo mensaje = new MensajeBrevo(
                     remitenteDeBrevo(),
                     List.of(new MensajeBrevo.Destinatario(usuario.getEmail(), usuario.getUsername())),
-                    codigo + correo.finAsunto,
-                    correo == Correo.RECUPERACION
-                            ? cuerpoHtml(usuario, codigo, minutosValidez)
-                            : cuerpoHtmlVerificacion(usuario, codigo, minutosValidez),
+                    asunto(codigo),
+                    cuerpoHtml(correo, usuario, codigo, minutosValidez),
                     cuerpoTexto(correo, usuario, codigo, minutosValidez));
 
             // onStatus con predicado siempre cierto y manejador vacío desactiva el
@@ -331,100 +330,113 @@ public class EmailService implements IEmailService {
         return environment.matchesProfiles("prod");
     }
 
+    // ── Textos (lote 24) ─────────────────────────────────────────────────────
+    // Los dos correos en español y en inglés, según el idioma de la petición que los
+    // provocó (Accept-Language de la app; CorreoAsyncConfig lo trae hasta este hilo). La
+    // cuenta no guarda idioma: el de la app al pedir el código es el mejor que hay.
+
+    // Si el correo va en inglés. Cualquier otro idioma, en español, el de la casa. Sin
+    // contexto de idioma (fuera de una petición) también en español: getLocale() caería al
+    // de la JVM, que en el CI y en Render es inglés.
+    private static boolean ingles() {
+        org.springframework.context.i18n.LocaleContext contexto = LocaleContextHolder.getLocaleContext();
+        java.util.Locale idioma = contexto == null ? null : contexto.getLocale();
+        return idioma != null && "en".equals(idioma.getLanguage());
+    }
+
+    /**
+     * El asunto, que es también el preencabezado: el código delante, para leerlo en el
+     * aviso del móvil sin abrir el correo.
+     */
+    private static String asunto(String codigo) {
+        return ingles() ? codigo + " is your GymProFit code" : codigo + " es tu código de GymProFit";
+    }
+
+    // «Hola, Rubén:» con el nombre visible; sin él, «Hola:». En inglés, «Hi Rubén,» y «Hi,».
+    private static String saludo(Usuario usuario) {
+        String nombre = usuario.getNombre();
+        boolean conNombre = StringUtils.hasText(nombre);
+        if (ingles()) return conNombre ? "Hi " + nombre.trim() + "," : "Hi,";
+        return conNombre ? "Hola, " + nombre.trim() + ":" : "Hola:";
+    }
+
+    private static String titular(Correo correo) {
+        if (correo == Correo.VERIFICACION) return ingles() ? "Verify your email" : "Verifica tu correo";
+        return ingles() ? "Reset your password" : "Restablece tu contraseña";
+    }
+
+    private static String instruccion(Correo correo) {
+        if (correo == Correo.VERIFICACION) {
+            return ingles() ? "Enter this code in the app to verify your email."
+                    : "Escribe este código en la aplicación para verificar tu correo.";
+        }
+        return ingles() ? "Enter this code in the app to choose a new password."
+                : "Escribe este código en la aplicación para elegir una contraseña nueva.";
+    }
+
+    private static String caducidad(int minutos) {
+        return ingles() ? "It expires in " + minutos + " minutes and works only once."
+                : "Caduca en " + minutos + " minutos y solo sirve una vez.";
+    }
+
+    private static String cierre(Correo correo) {
+        if (correo == Correo.VERIFICACION) {
+            return ingles() ? "Did not sign up for GymProFit? Ignore this email. Without the code, nobody can verify this address."
+                    : "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, nadie puede verificar esta dirección.";
+        }
+        return ingles() ? "Did not ask for this code? Ignore this email. Your password has not changed and nobody has signed in to your account."
+                : "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado y nadie ha entrado en tu cuenta.";
+    }
+
     // Alternativa en texto plano, para clientes que no pintan HTML. Dice lo mismo que el
     // HTML y en el mismo orden: primero el propósito, luego el código, luego la caducidad.
     private String cuerpoTexto(Correo correo, Usuario usuario, String codigo, int minutos) {
-        if (correo == Correo.VERIFICACION) {
-            return "Verifica tu correo\n\n"
-                    + "Hola, " + usuario.getUsername() + ". Escribe este código en la aplicación "
-                    + "para verificar tu correo:\n\n"
-                    + codigo + "\n\n"
-                    + "Caduca en " + minutos + " minutos y solo sirve una vez.\n\n"
-                    + "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, "
-                    + "nadie puede verificar esta dirección.\n";
-        }
-        return "Restablece tu contraseña\n\n"
-                + "Hola, " + usuario.getUsername() + ". Escribe este código en la aplicación "
-                + "para elegir una contraseña nueva:\n\n"
+        return titular(correo) + "\n\n"
+                + saludo(usuario) + "\n" + instruccion(correo) + "\n\n"
                 + codigo + "\n\n"
-                + "Caduca en " + minutos + " minutos y solo sirve una vez.\n\n"
-                + "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado "
-                + "y nadie ha entrado en tu cuenta.\n";
+                + caducidad(minutos) + "\n\n"
+                + cierre(correo) + "\n\n"
+                + (ingles() ? "Questions? Write to us at " : "¿Dudas? Escríbenos a ")
+                + PlantillaCorreo.CORREO_SOPORTE + "\n";
     }
 
     /**
-     * Cuerpo HTML del correo de recuperación: forma ACCIÓN con el código de protagonista y
-     * pie TRANSACCIONAL, porque este correo lo ha pedido el usuario y no se puede dar de
-     * baja de él sin quedarse sin forma de recuperar la cuenta.
+     * Cuerpo HTML de los dos correos con código: forma ACCIÓN con el código de protagonista
+     * y pie TRANSACCIONAL, porque los ha pedido el usuario (o su alta) y no se puede dar de
+     * baja de ellos sin quedarse sin forma de recuperar o verificar la cuenta.
      * <p>
-     * La envoltura, los colores y las reglas de compatibilidad con Outlook viven en
-     * {@link PlantillaCorreo}; aquí solo está lo que distingue a este correo de los otros.
-     * El titular dice el propósito en vez de saludar: en la bandeja, junto al asunto, «Hola,
-     * ruben» no informa de nada, y el saludo funciona igual una línea más abajo.
-     * <p>
-     * El preencabezado repite el código a propósito. Ya va en el asunto por el mismo motivo:
-     * en un aviso de móvil, un código escondido en el cuerpo obliga a abrir el correo para
-     * leer seis dígitos.
+     * El titular dice el propósito; el saludo va en la primera línea del párrafo, con su
+     * nombre visible y dos puntos («Hola, Rubén:»), o «Hola:» si no lo tiene. El nombre lo
+     * elige el usuario y acaba dentro del HTML: se escapa aquí.
      *
+     * @param correo  cuál de los dos.
      * @param usuario destinatario, del que sale el nombre que se saluda.
      * @param codigo  los seis dígitos.
      * @param minutos minutos de validez.
      * @return el documento HTML completo.
      */
-    private String cuerpoHtml(Usuario usuario, String codigo, int minutos) {
-        // El nombre de usuario lo elige el usuario y acaba dentro del HTML: se escapa aquí,
-        // porque los párrafos que recibe la plantilla son fragmentos de HTML, no texto plano.
-        String parrafo = "Hola, " + PlantillaCorreo.escapar(usuario.getUsername())
-                + ", escribe este código en la aplicación para elegir una contraseña nueva.";
-        String nota = "Caduca en " + PlantillaCorreo.destacar(minutos + " minutos")
-                + " y solo sirve una vez.";
-
+    private String cuerpoHtml(Correo correo, Usuario usuario, String codigo, int minutos) {
+        String parrafo = PlantillaCorreo.escapar(saludo(usuario)) + "<br>" + PlantillaCorreo.escapar(instruccion(correo));
+        String nota = PlantillaCorreo.escapar(caducidad(minutos));
         return PlantillaCorreo.renderizar(
-                "Código " + codigo + ", válido " + minutos + " minutos.",
-                "Restablece tu contraseña",
-                PlantillaCorreo.Accion.conCodigo(parrafo, "TU CÓDIGO", codigo, nota),
-                "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado "
-                + "y nadie ha entrado en tu cuenta.",
+                ingles() ? PlantillaCorreo.Idioma.EN : PlantillaCorreo.Idioma.ES,
+                asunto(codigo),
+                titular(correo),
+                PlantillaCorreo.Accion.conCodigo(parrafo, ingles() ? "YOUR CODE" : "TU CÓDIGO", codigo, nota),
+                PlantillaCorreo.escapar(cierre(correo)),
                 PlantillaCorreo.Pie.transaccional());
     }
 
-    /**
-     * Cuerpo HTML del correo de verificación (GP-045): la misma forma ACCIÓN con el código
-     * de protagonista y el mismo pie TRANSACCIONAL que el de recuperación. Lo ha provocado
-     * el alta o un cambio de correo de la propia cuenta, no es comercial.
-     *
-     * @param usuario destinatario, del que sale el nombre que se saluda.
-     * @param codigo  los seis dígitos.
-     * @param minutos minutos de validez.
-     * @return el documento HTML completo.
-     */
-    private String cuerpoHtmlVerificacion(Usuario usuario, String codigo, int minutos) {
-        String parrafo = "Hola, " + PlantillaCorreo.escapar(usuario.getUsername())
-                + ", escribe este código en la aplicación para verificar tu correo.";
-        String nota = "Caduca en " + PlantillaCorreo.destacar(minutos + " minutos")
-                + " y solo sirve una vez.";
-
-        return PlantillaCorreo.renderizar(
-                "Código " + codigo + ", válido " + minutos + " minutos.",
-                "Verifica tu correo",
-                PlantillaCorreo.Accion.conCodigo(parrafo, "TU CÓDIGO", codigo, nota),
-                "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, nadie "
-                + "puede verificar esta dirección.",
-                PlantillaCorreo.Pie.transaccional());
-    }
-
-    // Los dos correos con código. Lo que los distingue fuera del cuerpo: el final del
-    // asunto, el nombre que sale en el log y el prefijo del fichero del buzón local.
+    // Los dos correos con código. Lo que los distingue fuera de los textos: el nombre que
+    // sale en el log y el prefijo del fichero del buzón local.
     private enum Correo {
-        RECUPERACION(" · Tu código de GymProFit", "recuperación", "codigo-"),
-        VERIFICACION(" · Verifica tu correo en GymProFit", "verificación del correo", "verificacion-");
+        RECUPERACION("recuperación", "codigo-"),
+        VERIFICACION("verificación del correo", "verificacion-");
 
-        private final String finAsunto;
         private final String nombre;
         private final String prefijoBuzon;
 
-        Correo(String finAsunto, String nombre, String prefijoBuzon) {
-            this.finAsunto = finAsunto;
+        Correo(String nombre, String prefijoBuzon) {
             this.nombre = nombre;
             this.prefijoBuzon = prefijoBuzon;
         }

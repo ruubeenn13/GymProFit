@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_dato_perfil — un dato de «Tus datos» en el Perfil (GP-242, tablero Objetivo-1): la cifra en
-  condensada encima y su nombre debajo. Para TalkBack, una frase: «Peso, 78 kg».
+  condensada encima y su nombre debajo. Para TalkBack, una frase: «Peso, 78 kg». Desde GP-265 van
+  los cuatro en una fila (Peso, Altura, Años, Actividad), centrados y con una raya si falta.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_weight="1"
     android:focusable="true"
+    android:gravity="center_horizontal"
     android:importantForAccessibility="yes"
-    android:orientation="vertical">
+    android:minHeight="@dimen/zona_tactil"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/espacio_4"
+    android:paddingEnd="@dimen/espacio_4">
 
     <TextView
         android:id="@+id/tvDatoValor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dato_perfil_alto"
+        android:gravity="center"
         android:importantForAccessibility="no"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
 
     <TextView

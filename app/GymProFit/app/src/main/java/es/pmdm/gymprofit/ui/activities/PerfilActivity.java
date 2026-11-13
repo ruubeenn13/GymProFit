@@ -52,6 +52,9 @@ import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.VerificacionCorreo;
+import es.pmdm.gymprofit.utils.PerfilCuenta;
+import es.pmdm.gymprofit.utils.ResumenPerfil;
 
 // ============================================================
 // PerfilActivity — Perfil y ajustes (GP-216, tablero 17). Sustituye a Ajustes: se abre con el
@@ -103,6 +106,10 @@ public class PerfilActivity extends BaseActivity {
         // Cuenta
         fila(R.id.filaCorreo, R.drawable.ic_ms_mail, R.string.ajustes_correo,
                 () -> startActivity(new Intent(this, CambiarCorreoActivity.class)));
+        // El aviso discreto del correo sin verificar (GP-045): una fila más de Cuenta, que
+        // solo sale cuando la API dice que no lo está (pintarVerificacion).
+        fila(R.id.filaVerificarCorreo, R.drawable.ic_ms_mail, R.string.perfil_verificar_correo,
+                () -> startActivity(VerificarCorreoActivity.desdePerfil(this, usuario == null ? null : usuario.getEmail())));
         fila(R.id.filaContrasena, R.drawable.ic_ms_lock, R.string.ajustes_contrasena,
                 () -> startActivity(new Intent(this, CambiarPasswordActivity.class)));
 
@@ -184,89 +191,91 @@ public class PerfilActivity extends BaseActivity {
         pintarDatos(idioma);
     }
 
-    // El objetivo con su icono, la frase de lo que supone y el plan: las kcal y la barra del reparto
-    // con los gramos de cada macro, en sus colores de Nutrición. TalkBack lo lee en frases.
-    private void pintarObjetivo(@Nullable String objetivo, Locale idioma) {
-        String nombre = UIHelper.traducirObjetivo(this, objetivo);
-        ((android.widget.ImageView) findViewById(R.id.ivObjetivo)).setImageResource(ObjetivoPerfil.icono(objetivo));
-        ((TextView) findViewById(R.id.tvObjetivoNombre)).setText(nombre);
+    // GP-265: la tarjeta destacada. Con objetivo, su icono, su nombre y, si la app tiene el plan
+    // calculado (DiaNutricion), las fichas de kcal y proteína del día; sin plan no salen. Sin
+    // objetivo, el estado vacío y «Elegir». Nada se inventa: lo que no hay no se pinta.
+    private void pintarObjetivo(@Nullable String objetivoCrudo, Locale idioma) {
+        String objetivo = ResumenPerfil.objetivo(objetivoCrudo, null);
+        View con = findViewById(R.id.bloqueObjetivo);
+        View vacio = findViewById(R.id.objetivoPorElegir);
+        MaterialButton cambiar = findViewById(R.id.btnCambiarObjetivo);
+        if (objetivo == null) {
+            con.setVisibility(View.GONE);
+            vacio.setVisibility(View.VISIBLE);
+            cambiar.setText(R.string.perfil_objetivo_elegir);
+            cambiar.setContentDescription(getString(R.string.perfil_objetivo_elegir_a11y));
+            return;
+        }
+        con.setVisibility(View.VISIBLE);
+        vacio.setVisibility(View.GONE);
+        cambiar.setText(R.string.apuntar_cambiar);
+        cambiar.setContentDescription(getString(R.string.perfil_objetivo_cambiar_a11y));
 
-        ResultadoNutricional plan = DiaNutricion.objetivo(prefsManager);
-        int frase = ObjetivoPerfil.frase(objetivo, plan != null && plan.mantenimientoPorEdad);
-        String fraseTexto = frase == 0 ? "" : getString(frase);
-        TextView tvFrase = findViewById(R.id.tvObjetivoFrase);
-        tvFrase.setText(fraseTexto);
-        tvFrase.setVisibility(frase == 0 ? View.GONE : View.VISIBLE);
+        String nombre = UIHelper.traducirObjetivo(this, objetivo);
+        ((ImageView) findViewById(R.id.ivObjetivo)).setImageResource(ObjetivoPerfil.icono(objetivo));
+        ((TextView) findViewById(R.id.tvObjetivoNombre)).setText(nombre);
         String enFrase = Enumeracion.enMedio(nombre, idioma);
 
-        View bloque = findViewById(R.id.bloquePlan);
-        View lectura = findViewById(R.id.bloqueObjetivo);
-        if (plan == null) {
-            bloque.setVisibility(View.GONE);
-            lectura.setContentDescription(getString(R.string.perfil_objetivo_sin_plan_a11y, enFrase, fraseTexto));
+        ResultadoNutricional plan = DiaNutricion.objetivo(prefsManager);
+        View fichas = findViewById(R.id.fichasObjetivo);
+        if (!ResumenPerfil.conFichas(objetivo, plan != null)) {
+            fichas.setVisibility(View.GONE);
+            con.setContentDescription(getString(R.string.perfil_objetivo_solo_a11y, enFrase));
             return;
         }
         NumberFormat entero = NumberFormat.getIntegerInstance(idioma);
-        bloque.setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.tvPlanKcal)).setText(entero.format(plan.calorias));
-        ((TextView) findViewById(R.id.tvPlanProteina)).setText(getString(R.string.perfil_macro_gramos, plan.proteinas));
-        ((TextView) findViewById(R.id.tvPlanHidratos)).setText(getString(R.string.perfil_macro_gramos, plan.carbohidratos));
-        ((TextView) findViewById(R.id.tvPlanGrasa)).setText(getString(R.string.perfil_macro_gramos, plan.grasas));
-        int[] reparto = ObjetivoPerfil.reparto(plan.proteinas, plan.carbohidratos, plan.grasas);
-        int[] tramos = {R.id.tramoProteina, R.id.tramoHidratos, R.id.tramoGrasa};
-        int[] columnas = {R.id.columnaProteina, R.id.columnaHidratos, R.id.columnaGrasa};
-        // Las cifras bajo su tramo, sin bajar del 30 % del ancho: con letra 1,3 un tramo estrecho
-        // partiría «de proteína» (revisor, pasada 2).
-        int[] anchos = ObjetivoPerfil.columnas(reparto, 30);
-        for (int i = 0; i < 3; i++) {
-            pesar(findViewById(tramos[i]), reparto[i]);
-            pesar(findViewById(columnas[i]), anchos[i]);
-        }
-        lectura.setContentDescription(getString(R.string.perfil_objetivo_a11y, enFrase, fraseTexto,
-                entero.format(plan.calorias), plan.proteinas, plan.carbohidratos, plan.grasas));
+        fichas.setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tvFichaKcal)).setText(entero.format(plan.calorias));
+        ((TextView) findViewById(R.id.tvFichaProteina)).setText(getString(R.string.perfil_macro_gramos, plan.proteinas));
+        con.setContentDescription(getString(R.string.perfil_objetivo_fichas_a11y, enFrase,
+                entero.format(plan.calorias), plan.proteinas));
     }
 
-    private static void pesar(View v, int peso) {
-        android.widget.LinearLayout.LayoutParams lp = (android.widget.LinearLayout.LayoutParams) v.getLayoutParams();
-        lp.weight = Math.max(peso, 1);
-        v.setLayoutParams(lp);
-    }
-
-    // Tus datos en rejilla: peso, altura y edad arriba; nivel y actividad abajo. Lo que no se sabe no sale.
+    // GP-265: Peso, Altura, Años y Actividad en una fila. De lo guardado de esta cuenta y, si
+    // no, de lo que trae la API; si no se sabe, una raya. Antes salían los valores de serie
+    // de PreferencesManager (70 kg, 170 cm, «Moderada») a quien no los había dado.
     private void pintarDatos(Locale idioma) {
-        android.widget.LinearLayout fila1 = findViewById(R.id.filaDatos1);
-        android.widget.LinearLayout fila2 = findViewById(R.id.filaDatos2);
-        fila1.removeAllViews();
-        fila2.removeAllViews();
-        double peso = prefsManager.getPeso();
-        if (peso > 0) {
-            NumberFormat nf = NumberFormat.getNumberInstance(idioma);
-            nf.setMaximumFractionDigits(1);
-            anadirDato(fila1, getString(R.string.perfil_dato_kg, nf.format(peso)), getString(R.string.perfil_peso));
-        }
-        if (prefsManager.getAltura() > 0) {
-            anadirDato(fila1, getString(R.string.perfil_dato_cm, (int) Math.round(prefsManager.getAltura())),
-                    getString(R.string.perfil_altura));
-        }
-        if (prefsManager.getEdad() > 0) {
-            anadirDato(fila1, getResources().getQuantityString(R.plurals.perfil_dato_anios,
-                    prefsManager.getEdad(), prefsManager.getEdad()), getString(R.string.perfil_edad));
-        }
-        String nivel = usuario != null && usuario.getNivelExperiencia() != null
-                ? usuario.getNivelExperiencia() : prefsManager.getNivel();
-        if (!nivel.isEmpty()) anadirDato(fila2, UIHelper.traducirNivel(this, nivel), getString(R.string.perfil_dato_nivel));
-        String actividad = actividadCorta(prefsManager.getActividad());
-        if (actividad != null && !actividad.isEmpty()) {
-            anadirDato(fila2, actividad, getString(R.string.perfil_dato_actividad));
-        }
-        fila1.setVisibility(fila1.getChildCount() == 0 ? View.GONE : View.VISIBLE);
-        fila2.setVisibility(fila2.getChildCount() == 0 ? View.GONE : View.VISIBLE);
+        Double peso = ResumenPerfil.medida(prefsManager.leerPropio(PerfilCuenta.Campo.PESO));
+        if (peso == null && usuario != null) peso = ResumenPerfil.medida(usuario.getPeso());
+        NumberFormat nf = NumberFormat.getNumberInstance(idioma);
+        nf.setMaximumFractionDigits(1);
+        dato(R.id.datoPeso, peso == null ? null : getString(R.string.perfil_dato_kg, nf.format(peso)),
+                getString(R.string.perfil_peso), false);
+
+        Double altura = ResumenPerfil.medida(prefsManager.leerPropio(PerfilCuenta.Campo.ALTURA));
+        // La API la guarda en metros.
+        if (altura == null && usuario != null && usuario.getAltura() > 0) altura = usuario.getAltura() * 100;
+        dato(R.id.datoAltura, altura == null ? null : getString(R.string.perfil_dato_cm, (int) Math.round(altura)),
+                getString(R.string.perfil_altura), false);
+
+        Integer edad = ResumenPerfil.edad(usuario == null ? null : usuario.getEdad(),
+                prefsManager.leerPropio(PerfilCuenta.Campo.EDAD));
+        dato(R.id.datoEdad, edad == null ? null : String.valueOf(edad), getString(R.string.perfil_dato_anios_rotulo), false);
+
+        String actividad = prefsManager.leerPropio(PerfilCuenta.Campo.ACTIVIDAD);
+        if (actividad == null && usuario != null) actividad = usuario.getNivelActividad();
+        dato(R.id.datoActividad, actividadCorta(actividad), getString(R.string.perfil_dato_actividad), true);
+    }
+
+    // Un dato de la fila. La actividad va a 20 sp para que quepa; las cifras, a 26. Las dos
+    // encogen solas si con la letra grande no caben, sin partir la línea.
+    private void dato(int id, @Nullable String valor, String nombre, boolean esTexto) {
+        View v = findViewById(id);
+        TextView tvValor = v.findViewById(R.id.tvDatoValor);
+        boolean hay = valor != null && !valor.isEmpty();
+        tvValor.setText(hay ? valor : getString(R.string.perfil_dato_raya));
+        int maximo = esTexto ? 20 : 26;
+        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                tvValor, 12, maximo, 1, TypedValue.COMPLEX_UNIT_SP);
+        ((TextView) v.findViewById(R.id.tvDatoNombre)).setText(nombre);
+        v.setContentDescription(getString(R.string.perfil_dato_a11y, nombre,
+                hay ? valor : getString(R.string.perfil_dato_sin)));
     }
 
     // La actividad con el nombre corto de Tus datos («Moderada»), el mismo que se elige allí.
     @Nullable
     private String actividadCorta(@Nullable String actividad) {
-        if (actividad == null) return null;
+        if (actividad == null || actividad.isEmpty()) return null;
         switch (actividad) {
             case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_SEDENTARIO: return getString(R.string.actividad_corta_poca);
             case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_LIGERO: return getString(R.string.actividad_corta_ligera);
@@ -274,18 +283,6 @@ public class PerfilActivity extends BaseActivity {
             case es.pmdm.gymprofit.utils.CalculadoraNutricional.ACTIVIDAD_ACTIVO: return getString(R.string.actividad_corta_mucha);
             default: return UIHelper.traducirActividad(this, actividad);
         }
-    }
-
-    private void anadirDato(android.widget.LinearLayout fila, String valor, String nombre) {
-        View dato = getLayoutInflater().inflate(R.layout.item_dato_perfil, fila, false);
-        ((TextView) dato.findViewById(R.id.tvDatoValor)).setText(valor);
-        ((TextView) dato.findViewById(R.id.tvDatoNombre)).setText(nombre);
-        dato.setContentDescription(getString(R.string.perfil_dato_a11y, nombre, valor));
-        if (fila.getChildCount() > 0) {
-            ((android.widget.LinearLayout.LayoutParams) dato.getLayoutParams())
-                    .setMarginStart(getResources().getDimensionPixelSize(R.dimen.espacio_12));
-        }
-        fila.addView(dato);
     }
 
     private int colorDe(int attr) {
@@ -342,6 +339,7 @@ public class PerfilActivity extends BaseActivity {
                 if (u == null || isFinishing()) return;
                 usuario = u;
                 valor(R.id.filaCorreo, R.string.ajustes_correo, Correo.enmascarar(u.getEmail()));
+                pintarVerificacion(u);
                 pintarNotificaciones(AvisosCuenta.Estado.de(u.getAvisosEntrenar(), u.getAvisosComidas(), u.getAvisosProgreso()));
                 pintarResumen();
             }
@@ -522,6 +520,21 @@ public class PerfilActivity extends BaseActivity {
         tv.setVisibility(hay ? View.VISIBLE : View.GONE);
         f.setContentDescription(hay ? getString(R.string.ajustes_fila_valor_a11y, getString(titulo), valor)
                 : getString(titulo));
+    }
+
+    // GP-045: la fila «Verifica tu correo» sale solo cuando la API dice que no lo está
+    // (con una API anterior, que no lo dice, no sale). Lleva la dirección enmascarada.
+    private void pintarVerificacion(@NonNull Usuario u) {
+        View f = findViewById(R.id.filaVerificarCorreo);
+        boolean mostrar = VerificacionCorreo.mostrarAviso(u.getEmailVerificado());
+        f.setVisibility(mostrar ? View.VISIBLE : View.GONE);
+        if (!mostrar) return;
+        String texto = getString(R.string.perfil_verificar_correo_sub, Correo.enmascarar(u.getEmail()));
+        TextView sub = f.findViewById(R.id.tvSub);
+        sub.setText(texto);
+        sub.setVisibility(View.VISIBLE);
+        f.setContentDescription(getString(R.string.ajustes_fila_sub_a11y,
+                getString(R.string.perfil_verificar_correo), texto));
     }
 
     // Las que salen de la app llevan la flecha de «abre fuera» y lo dicen a TalkBack.

@@ -915,7 +915,34 @@
     <string name="cambiar_correo_error_leer">No se ha podido leer tu correo actual. Puedes cambiarlo igual.</string>
     <string name="cambiar_correo_nuevo">Correo nuevo</string>
     <string name="cambiar_correo_boton">Cambiar correo</string>
-    <string name="cambiar_correo_ok">Correo cambiado</string>
+    <string name="cambiar_correo_ok">Correo cambiado. Te hemos mandado un código para verificarlo.</string>
+    <!-- GP-045: «Mira tu correo» (DEC-066). La cuenta se usa entera sin verificar. -->
+    <string name="verificar_correo_paso">Paso 1 de 1 · Opcional</string>
+    <string name="verificar_correo_ahora_no">Ahora no</string>
+    <string name="verificar_correo_titulo">Mira tu correo</string>
+    <string name="verificar_correo_explicacion">Te hemos mandado un código de 6 cifras. Escríbelo y listo.</string>
+    <string name="verificar_correo_cambiar">Cambiar</string>
+    <string name="verificar_correo_cambiar_a11y">Cambiar el correo</string>
+    <string name="verificar_correo_codigo_rotulo">Código</string>
+    <string name="verificar_correo_cifras_a11y">%1$d de %2$d cifras</string>
+    <string name="verificar_correo_ayuda">Se comprueba solo al poner la sexta cifra. Caduca en 15\u00A0min.</string>
+    <string name="verificar_correo_abrir">Abrir el correo</string>
+    <string name="verificar_correo_pegar">Pegar código</string>
+    <string name="verificar_correo_pegar_nada">No hay un código de 6 cifras copiado</string>
+    <string name="verificar_correo_reenviar">¿No te llega? Mira en spam o reenvíalo</string>
+    <string name="verificar_correo_reenviar_en">¿No te llega? Mira en spam o reenvíalo en %1$s</string>
+    <string name="verificar_correo_reenviado">Te hemos mandado otro código</string>
+    <plurals name="verificar_correo_error">
+        <item quantity="one">Ese código no es. Te queda %1$d intento.</item>
+        <item quantity="other">Ese código no es. Te quedan %1$d intentos.</item>
+    </plurals>
+    <string name="verificar_correo_caducado_titulo">Ese código ya no vale</string>
+    <string name="verificar_correo_caducado_texto">Pide otro y te llega en unos segundos.</string>
+    <string name="verificar_correo_enviar_otro">Enviar otro código</string>
+    <string name="verificar_correo_confirmado">Correo confirmado</string>
+    <string name="verificar_correo_ya">Tu correo ya está verificado</string>
+    <string name="perfil_verificar_correo">Verifica tu correo</string>
+    <string name="perfil_verificar_correo_sub">Sin verificar · %1$s</string>
     <string name="cambiar_correo_igual">Es el mismo correo que ya tienes</string>
 
     <!-- GP-105 · añadir alimento: para qué comida -->
@@ -2888,4 +2915,16 @@
     <string name="crear_pauta_aplicar">Aplicar</string>
     <string name="crear_pauta_con_descanso">%1$s, %2$d\u00A0s de descanso</string>
     <string name="rutina_sin_ejercicios">Sin ejercicios todavía</string>
+    <!-- GP-265: «Tu objetivo» destacado y «Tus datos» en una fila. -->
+    <string name="perfil_ficha_kcal">kcal al día</string>
+    <string name="perfil_ficha_proteina">proteína al día</string>
+    <string name="perfil_objetivo_vacio_titulo">Aún no tienes objetivo</string>
+    <string name="perfil_objetivo_vacio_texto">Elígelo y te calculamos las calorías y la proteína del día.</string>
+    <string name="perfil_objetivo_elegir">Elegir</string>
+    <string name="perfil_objetivo_elegir_a11y">Elegir tu objetivo</string>
+    <string name="perfil_objetivo_fichas_a11y">Tu objetivo, %1$s. %2$s kcal al día y %3$d gramos de proteína al día.</string>
+    <string name="perfil_objetivo_solo_a11y">Tu objetivo, %1$s.</string>
+    <string name="perfil_dato_anios_rotulo">Años</string>
+    <string name="perfil_dato_sin">Sin dato</string>
+    <string name="perfil_dato_raya">—</string>
 </resources>

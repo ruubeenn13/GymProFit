@@ -19,4 +19,9 @@
         android:font="@font/barlow_condensed_bold"
         android:fontStyle="normal"
         android:fontWeight="700" />
+    <!-- 800 (GP-045 y GP-265): los titulares de «Mira tu correo» y del objetivo. -->
+    <font
+        android:font="@font/barlow_condensed_extrabold"
+        android:fontStyle="normal"
+        android:fontWeight="800" />
 </font-family>

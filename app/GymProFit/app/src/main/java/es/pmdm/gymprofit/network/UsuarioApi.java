@@ -73,6 +73,24 @@ public interface UsuarioApi {
     Call<Void> cambiarEmail(@Body Map<String, Object> body);
 
     /**
+     * Verifica el correo de la cuenta con el código que le llegó (GP-045).
+     *
+     * <p>Sin id: la cuenta sale del token. El cuerpo lleva {@code codigo}, los seis
+     * dígitos. 200 verificado (también si ya lo estaba), 400 si el código no sirve
+     * (equivocado, caducado o agotado: la API no dice cuál), 429 por el límite.
+     */
+    @POST("usuarios/me/email/verificar")
+    Call<Void> verificarCorreo(@Body Map<String, Object> body);
+
+    /**
+     * Pide otro código para verificar el correo (GP-045). Mata el anterior.
+     *
+     * <p>204 enviado, 409 si el correo ya está verificado, 429 por el límite.
+     */
+    @POST("usuarios/me/email/reenviar")
+    Call<Void> reenviarCodigoCorreo();
+
+    /**
      * Borra definitivamente la cuenta del usuario autenticado (GP-008).
      *
      * <p>No lleva id en la ruta a propósito: el usuario que se borra sale del token

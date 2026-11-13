@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GP-265: las fichas de kcal y proteína de la tarjeta del objetivo. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/gp_objetivo_ficha" />
+    <corners android:radius="12dp" />
+</shape>
