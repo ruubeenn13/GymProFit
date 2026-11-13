@@ -6,6 +6,7 @@
 | `entorno-pruebas.sh` | Comprueba el aislamiento y la BD local, rellena las fotos de los ejercicios que falten (GP-248) y arranca la API local (`estado` solo comprueba, `parar`). Ver `documentacion/ENTORNO-PRUEBAS.md`. |
 | `reset-datos-pruebas.sh` | Restaura los datos de pruebas al estado base. Exige la API parada. |
 | `sembrar_demo.py` | Crea la cuenta demo de las capturas, `@dani.entrena`, con tres semanas de datos. Solo en local. |
+| `clave_local.py` | Regenera la clave de una cuenta de la BD local (`admin`, `dani.entrena`) y la guarda en `docs/credenciales-locales.txt`, ignorado por git. Ver `documentacion/ENTORNO-PRUEBAS.md`. |
 | `versionar-hojas-web.py` | Pone en las páginas de `web/` la versión de sus hojas. Ver `web/README.md`. |
 | `sesion-arranque/` | Pruebas de la renovación de sesión y del arranque (GP-237, GP-235, GP-234). `proxy-refresh.py` se pone en el 8080 delante de la API local (en el 8081, con el access de 60 s) y decide qué contesta `/auth/refresh`; `tanda.sh <modo>` cuenta las llamadas al volver a Inicio y en la siguiente acción; `matar_y_volver.sh` cuenta cuántas veces se crea cada pantalla al volver tras matar el proceso. Cómo arrancar cada pieza, en la cabecera de cada script. Al acabar, se paran el proxy y la API para dejar libre el 8080. |
 | `extraer-musculos.py`, `generar-icono-app.py` | Utilidades sueltas de la app; cada una explica su uso en la cabecera. |
@@ -29,6 +30,9 @@ demostración en el entorno **local** de pruebas: ni producción ni datos de nad
 
    - La contraseña de la demo no puede contener «gymprofit» ni el nombre de usuario.
      Ninguna de las dos tiene valor fijo en el código.
+   - Al acabar, guardar la clave en `docs/credenciales-locales.txt` (línea
+     `dani.entrena=<clave>`), que git ignora; nunca en el repositorio ni en un informe.
+     Si se pierde, `python scripts/clave_local.py dani.entrena` pone otra.
    - El script **se niega a arrancar** si `GYMPROFIT_API_URL` no es de `localhost` o
      `127.0.0.1`.
    - `MARIADB_CLI` apunta al cliente si no está en el PATH (en Windows,
