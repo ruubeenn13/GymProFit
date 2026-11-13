@@ -216,6 +216,7 @@
     <string name="detalle_pestanas_a11y">Exercise sections</string>
     <string name="detalle_periodo_a11y">Period: %1$s</string>
     <string name="detalle_ejercicio_sin_datos">You haven\'t done this exercise yet. Once you do, you\'ll see how you progress here.</string>
+    <string name="detalle_ejercicio_error">Your marks for this exercise couldn\'t be loaded.</string>
     <string name="detalle_ejercicio_ultimas_veces">Your last sessions</string>
     <string name="detalle_ejercicio_sin_pasos">This exercise doesn\'t have its steps explained yet.</string>
     <string name="detalle_ejercicio_mejor_marca">Your best · %1$s</string>
@@ -325,6 +326,7 @@
     <string name="admin_vacio_usuarios">There are no users.</string>
     <string name="admin_vacio_filtros">Nothing matches the search or filters.</string>
     <string name="admin_lista_error">The list couldn\'t be loaded.</string>
+    <string name="admin_estadisticas_error">The statistics couldn\'t be loaded.</string>
     <string name="admin_usuarios_titulo">User management</string>
     <string name="admin_rutinas_titulo">Predefined routines</string>
     <string name="admin_ejercicios_titulo">Exercise management</string>
@@ -763,6 +765,8 @@
     <string name="empezar_rutina_a11y">Start %1$s</string>
     <string name="mis_rutinas_vacio">You don\'t have any routines of your own yet. Build one for you or follow a program.</string>
     <string name="mis_rutinas_error">Your routines couldn\'t be loaded.</string>
+    <string name="biblioteca_vacio">No exercise matches your search or area.</string>
+    <string name="biblioteca_error">The exercises couldn\'t be loaded.</string>
     <string name="biblioteca_ejercicios">Exercise library</string>
     <string name="biblioteca_titulo">Exercises</string>
     <string name="biblioteca_buscar_n">Search %1$s exercises</string>
@@ -889,6 +893,7 @@
     <string name="cambiar_password_vuelve_mensaje">For your security, your sessions were closed. Sign in with the new password.</string>
     <string name="cambiar_correo_titulo">Change email</string>
     <string name="cambiar_correo_actual">Now: %1$s</string>
+    <string name="cambiar_correo_error_leer">Your current email couldn\'t be read. You can still change it.</string>
     <string name="cambiar_correo_nuevo">New email</string>
     <string name="cambiar_correo_boton">Change email</string>
     <string name="cambiar_correo_ok">Email changed</string>
@@ -950,7 +955,7 @@
     <string name="tu_programa_dejado">You have left the program</string>
     <string name="tu_programa_borradas">You have deleted every routine in this program.</string>
     <string name="tu_programa_volver_a_seguir">Follow it again</string>
-    <string name="tu_programa_error">Your program could not be loaded.</string>
+    <string name="tu_programa_error">Your program couldn\'t be loaded.</string>
     <string name="programas_titulo">Programs</string>
     <string name="programas_donde">Where you train</string>
     <string name="programas_dias">Days per week</string>
@@ -1000,6 +1005,7 @@
     <string name="detalle_rutina_programa_dia">%1$s · day %2$d of %3$d</string>
     <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
     <string name="detalle_rutina_sin_ejercicios">This routine has no exercises yet.</string>
+    <string name="detalle_rutina_error">The routine\'s exercises couldn\'t be loaded.</string>
     <string name="detalle_rutina_ultima_vez">Last time, %1$s: %2$s and %3$s</string>
     <string name="detalle_rutina_ultima_vez_sin_kilos">Last time, %1$s: %2$s</string>
     <string name="detalle_rutina_empezar">Start %1$s</string>
@@ -1363,6 +1369,7 @@
     <string name="avisos_ahora_no">Not now</string>
     <string name="avisos_guardar">Save</string>
     <string name="avisos_error_guardar">We couldn’t save your alerts. Change them any time in Settings › Notifications.</string>
+    <string name="notificaciones_error">Your notifications couldn\'t be read.</string>
     <string name="notificaciones_sin_permiso">Android isn’t letting GymProFit alert you: until you turn it on, none will reach you.</string>
     <string name="notificaciones_activar">Turn on</string>
     <string name="notificaciones_que_avisamos">What we alert you about</string>
@@ -2430,6 +2437,7 @@
     <string name="estadisticas_mapa_a11y">Days on target: %1$d. Off target: %2$d. No data: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Days with meals: %1$d. No data: %2$d</string>
     <string name="estadisticas_periodo_vacio">No meals logged on these dates.</string>
+    <string name="estadisticas_error">This period\'s summary couldn\'t be loaded.</string>
     <string name="estadisticas_porcentaje">%1$d%%</string>
     <string name="entrenar_entreno_libre_a11y">Free workout: start without a routine</string>
     <string name="abrir_rutina_a11y">Open %1$s</string>

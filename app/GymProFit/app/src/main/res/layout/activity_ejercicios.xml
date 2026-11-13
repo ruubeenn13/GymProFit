@@ -132,7 +132,7 @@
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
 
-    <!-- Lista + estado vacío superpuesto -->
+    <!-- Lista + su estado superpuesto -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -145,18 +145,16 @@
             android:clipToPadding="false"
             android:paddingBottom="@dimen/espacio_28" />
 
-        <!-- «No hay nada»: sobre la lista, debajo de la cabecera de «Los que más haces» -->
-        <TextView
-            android:id="@+id/tvEmpty"
-            android:layout_width="wrap_content"
+        <!-- Carga, vacío y error con «Reintentar» (GP-064): sobre la lista, debajo de la cabecera de
+             «Los que más haces» -->
+        <include
+            android:id="@+id/estadoEjercicios"
+            layout="@layout/view_estado"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/margen_pantalla"
             android:layout_marginTop="120dp"
-            android:gravity="center"
-            android:padding="24dp"
-            android:text="@string/feedback_lista_vacia"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="@dimen/text_subtitle"
-            android:visibility="gone" />
+            android:layout_marginEnd="@dimen/margen_pantalla" />
     </FrameLayout>
 </LinearLayout>

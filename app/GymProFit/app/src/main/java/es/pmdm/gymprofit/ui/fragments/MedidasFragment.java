@@ -58,7 +58,8 @@ import es.pmdm.gymprofit.utils.Numeros;
 public class MedidasFragment extends BaseFragment {
 
 
-    private View tvVacio;
+    /** Sin ninguna medición: el vacío de view_estado está a la vista. */
+    private boolean sinMediciones;
     // La carga fallida, con su «Reintentar» (lote 12).
     private VistaEstado estado;
     private View scrollMediciones;
@@ -97,7 +98,6 @@ public class MedidasFragment extends BaseFragment {
     public void onViewCreated(@androidx.annotation.NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvVacio         = findViewById(R.id.tvVacio);
         estado          = new VistaEstado(findViewById(R.id.estadoMedidas));
         scrollMediciones = findViewById(R.id.scrollMediciones);
         tvFechaUltima   = findViewById(R.id.tvFechaUltima);
@@ -148,7 +148,6 @@ public class MedidasFragment extends BaseFragment {
 
         // Sin FAB: registrar la primera medición desde el estado vacío; el resto se
         // edita in-place tocando cada fila (upsert por día al guardar).
-        findViewById(R.id.btnRegistrarPrimera).setOnClickListener(v -> registrarPrimeraMedicion());
 
         configurarFilas();
     }
@@ -167,7 +166,7 @@ public class MedidasFragment extends BaseFragment {
         if (!isAdded() || getView() == null) { pesoPendiente = true; return; }
         if (ultimaMedicion != null) {
             editarCampoNumerico("peso", getString(R.string.perfil_peso), ultimaMedicion.getPeso());
-        } else if (scrollMediciones.getVisibility() != View.VISIBLE && tvVacio.getVisibility() == View.VISIBLE) {
+        } else if (scrollMediciones.getVisibility() != View.VISIBLE && sinMediciones) {
             registrarPrimeraMedicion();
         } else {
             pesoPendiente = true;
@@ -228,14 +227,15 @@ public class MedidasFragment extends BaseFragment {
         // Sin id de cuenta no hay mediciones que pedir: el vacío.
         if (usuarioId == -1) { mostrarVacio(); return; }
 
-        // Spinner durante la carga (pantalla en blanco hasta responder).
-        LoadingDialog.show(requireActivity());
+        // La carga va en la sección (GP-064), no en un diálogo que tapa la pantalla. Al volver
+        // con datos, lo que había se queda hasta que llega lo nuevo: sin parpadeo. Si una
+        // acción (guardar un campo) dejó su «Guardando…», lo quitan los puntos finales.
+        if (scrollMediciones.getVisibility() != View.VISIBLE) estado.cargando();
 
         // Respuesta ya deserializada a POJOs por Gson (sin UtilJSONParser).
         medicionApi.getOrdenadas(usuarioId).enqueue(new ApiCallback<List<MedicionCorporal>>() {
             @Override
             public void onOk(List<MedicionCorporal> lista) {
-                estado.oculto();
                 // Para la proteína sobre masa magra (GP-206): el % más reciente, o ninguno.
                 prefsManager.saveGrasaReciente(GrasaReciente.elegir(lista));
                 if (lista == null || lista.isEmpty()) {
@@ -258,13 +258,7 @@ public class MedidasFragment extends BaseFragment {
                 // fallida terminaba en un POST) y sin red decía que no había mediciones (lote 12).
                 if (!isAdded()) return;
                 LoadingDialog.hide(requireActivity());
-                scrollMediciones.setVisibility(View.GONE);
-                tvVacio.setVisibility(View.GONE);
-                estado.error(VistaEstado.mensaje(requireContext(), R.string.medidas_error, code, message),
-                        () -> {
-                            estado.oculto();
-                            cargarMedicion();
-                        });
+                mostrarError(code, message);
             }
         });
     }
@@ -292,8 +286,10 @@ public class MedidasFragment extends BaseFragment {
 
                             @Override
                             public void onFail(int code, String msg) {
+                                // Sin crearla no se sabe si hay medición: un fallo con «Reintentar»,
+                                // no el vacío (GP-064: el error no se disfraza de vacío).
                                 Log.e("MedidasFragment", "Error al crear medición desde perfil: " + msg);
-                                mostrarVacio();
+                                mostrarError(code, msg);
                             }
                         });
                     } else {
@@ -306,7 +302,8 @@ public class MedidasFragment extends BaseFragment {
 
             @Override
             public void onFail(int code, String message) {
-                mostrarVacio();
+                // Sin el perfil no se sabe si se puede sembrar: error con «Reintentar» (GP-064).
+                mostrarError(code, message);
             }
         });
     }
@@ -491,21 +488,35 @@ public class MedidasFragment extends BaseFragment {
         return String.format(Locale.US, "%tF", c);
     }
 
-    // Oculta el scroll de datos y muestra el mensaje de "sin mediciones".
+    // Oculta el scroll de datos y muestra el vacío, con «Registrar primera medición».
     private void mostrarVacio() {
         if (!isAdded()) return;
         LoadingDialog.hide(requireActivity());
         ultimaMedicion = null;
+        sinMediciones = true;
         scrollMediciones.setVisibility(View.GONE);
-        tvVacio.setVisibility(View.VISIBLE);
+        estado.vacio(R.drawable.ic_ms_monitor_weight, R.string.mediciones_sin_mediciones,
+                R.string.medicion_sin_datos_subtitulo, R.string.medicion_registrar_primera,
+                this::registrarPrimeraMedicion);
         trasCargar();
+    }
+
+    // Un fallo de carga: en la sección, con «Reintentar».
+    private void mostrarError(int code, String message) {
+        if (!isAdded()) return;
+        LoadingDialog.hide(requireActivity());
+        sinMediciones = false;
+        scrollMediciones.setVisibility(View.GONE);
+        estado.error(VistaEstado.mensaje(requireContext(), R.string.medidas_error, code, message),
+                this::cargarMedicion);
     }
 
     // Rellena todos los TextView con los valores de la última medición,
     // mostrando el texto "añadir" en los campos aún no registrados.
     private void mostrarMedicion() {
         LoadingDialog.hide(requireActivity());
-        tvVacio.setVisibility(View.GONE);
+        sinMediciones = false;
+        estado.oculto();
         scrollMediciones.setVisibility(View.VISIBLE);
 
         String anadir = getString(R.string.medicion_anadir);

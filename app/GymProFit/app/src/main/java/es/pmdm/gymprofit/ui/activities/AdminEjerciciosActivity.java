@@ -142,16 +142,15 @@ public class AdminEjerciciosActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de ejercicios con los filtros actuales y refresca la lista
     private void cargar() {
-        // Spinner solo cuando la carga no viene de teclear.
-        boolean conDialogo = !cargaDesdeBuscador;
+        // La carga, bajo los chips (GP-064; antes un diálogo que tapaba la lista), solo cuando no
+        // viene de teclear: al escribir, la lista cambia sin parpadeo.
+        boolean conCarga = !cargaDesdeBuscador;
         cargaDesdeBuscador = false;
-        if (conDialogo) LoadingDialog.show(this);
+        if (conCarga) estado.cargando();
         adminApi.buscarEjercicios(filtroNombre, null, null, filtroActivo)
                 .enqueue(new ApiCallback<List<Ejercicio>>() {
                     @Override
                     public void onOk(List<Ejercicio> nuevos) {
-                        // Oculta el spinner al completar la carga
-                        if (conDialogo) LoadingDialog.hide(AdminEjerciciosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
@@ -159,8 +158,6 @@ public class AdminEjerciciosActivity extends BaseActivity {
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        // Oculta el spinner y mapea el error de carga
-                        if (conDialogo) LoadingDialog.hide(AdminEjerciciosActivity.this);
                         lista.clear();
                         adapter.notifyDataSetChanged();
                         estado.error(VistaEstado.mensaje(AdminEjerciciosActivity.this, R.string.admin_lista_error,
@@ -172,7 +169,7 @@ public class AdminEjerciciosActivity extends BaseActivity {
     /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
     private void mostrarEstado() {
         if (lista.isEmpty()) {
-            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_ejercicios);
+            estado.vacio(R.drawable.ic_ms_fitness_center, hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_ejercicios);
         } else {
             estado.oculto();
         }

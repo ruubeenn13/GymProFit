@@ -156,16 +156,15 @@ public class AdminRutinasActivity extends BaseActivity {
 
     // Llama al endpoint admin de búsqueda de rutinas predefinidas con los filtros actuales
     private void cargar() {
-        // Spinner solo cuando la carga no viene de teclear.
-        boolean conDialogo = !cargaDesdeBuscador;
+        // La carga, bajo los chips (GP-064; antes un diálogo que tapaba la lista), solo cuando no
+        // viene de teclear: al escribir, la lista cambia sin parpadeo.
+        boolean conCarga = !cargaDesdeBuscador;
         cargaDesdeBuscador = false;
-        if (conDialogo) LoadingDialog.show(this);
+        if (conCarga) estado.cargando();
         adminApi.buscarRutinasPredefinidas(filtroNombre, filtroNivel, null, filtroActiva)
                 .enqueue(new ApiCallback<List<Rutina>>() {
                     @Override
                     public void onOk(List<Rutina> nuevas) {
-                        // Oculta el spinner al completar la carga
-                        if (conDialogo) LoadingDialog.hide(AdminRutinasActivity.this);
                         lista.clear();
                         if (nuevas != null) lista.addAll(nuevas);
                         adapter.notifyDataSetChanged();
@@ -173,8 +172,6 @@ public class AdminRutinasActivity extends BaseActivity {
                     }
                     @Override
                     public void onFail(int code, String message) {
-                        // Oculta el spinner y mapea el error de carga
-                        if (conDialogo) LoadingDialog.hide(AdminRutinasActivity.this);
                         lista.clear();
                         adapter.notifyDataSetChanged();
                         estado.error(VistaEstado.mensaje(AdminRutinasActivity.this, R.string.admin_lista_error,
@@ -186,7 +183,7 @@ public class AdminRutinasActivity extends BaseActivity {
     /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
     private void mostrarEstado() {
         if (lista.isEmpty()) {
-            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_rutinas);
+            estado.vacio(R.drawable.ic_ms_assignment, hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_rutinas);
         } else {
             estado.oculto();
         }

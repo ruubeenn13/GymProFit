@@ -117,7 +117,7 @@ final class CuerpoProgreso {
         CambioPeso.Resultado r = CambioPeso.de(puntos);
         if (r == null) {
             card.setVisibility(View.GONE);
-            estado.vacio(R.string.progreso_cuerpo_vacio);
+            estado.vacio(R.drawable.ic_ms_monitor_weight, R.string.progreso_cuerpo_vacio);
             return;
         }
         estado.oculto();

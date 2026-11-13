@@ -215,6 +215,7 @@
     <string name="detalle_pestanas_a11y">Secciones del ejercicio</string>
     <string name="detalle_periodo_a11y">Periodo: %1$s</string>
     <string name="detalle_ejercicio_sin_datos">Todavía no has hecho este ejercicio. Cuando lo hagas, aquí verás cómo progresas.</string>
+    <string name="detalle_ejercicio_error">No se han podido cargar tus marcas de este ejercicio.</string>
     <string name="detalle_ejercicio_ultimas_veces">Tus últimas veces</string>
     <string name="detalle_ejercicio_sin_pasos">Este ejercicio todavía no tiene los pasos explicados.</string>
     <string name="detalle_ejercicio_mejor_marca">Tu mejor marca · %1$s</string>
@@ -324,6 +325,7 @@
     <string name="admin_vacio_usuarios">No hay usuarios.</string>
     <string name="admin_vacio_filtros">Nada coincide con la búsqueda o los filtros.</string>
     <string name="admin_lista_error">No se ha podido cargar la lista.</string>
+    <string name="admin_estadisticas_error">No se han podido cargar las estadísticas.</string>
     <string name="admin_usuarios_titulo">Gestión de usuarios</string>
     <string name="admin_rutinas_titulo">Rutinas predefinidas</string>
     <string name="admin_ejercicios_titulo">Gestión de ejercicios</string>
@@ -782,6 +784,8 @@
     <string name="empezar_rutina_a11y">Empezar %1$s</string>
     <string name="mis_rutinas_vacio">Todavía no tienes rutinas propias. Crea una a tu medida o sigue un programa.</string>
     <string name="mis_rutinas_error">No se han podido cargar tus rutinas.</string>
+    <string name="biblioteca_vacio">Ningún ejercicio coincide con la búsqueda o la zona.</string>
+    <string name="biblioteca_error">No se han podido cargar los ejercicios.</string>
     <string name="biblioteca_ejercicios">Biblioteca de ejercicios</string>
     <string name="biblioteca_titulo">Ejercicios</string>
     <string name="biblioteca_buscar_n">Busca entre %1$s ejercicios</string>
@@ -909,6 +913,7 @@
     <string name="cambiar_password_vuelve_mensaje">Por seguridad se han cerrado tus sesiones. Entra con la contraseña nueva.</string>
     <string name="cambiar_correo_titulo">Cambiar correo</string>
     <string name="cambiar_correo_actual">Ahora: %1$s</string>
+    <string name="cambiar_correo_error_leer">No se ha podido leer tu correo actual. Puedes cambiarlo igual.</string>
     <string name="cambiar_correo_nuevo">Correo nuevo</string>
     <string name="cambiar_correo_boton">Cambiar correo</string>
     <string name="cambiar_correo_ok">Correo cambiado</string>
@@ -1021,6 +1026,7 @@
     <string name="detalle_rutina_programa_dia">%1$s · día %2$d de %3$d</string>
     <string name="detalle_rutina_resumen">%1$s · %2$s · %3$s</string>
     <string name="detalle_rutina_sin_ejercicios">Esta rutina todavía no tiene ejercicios.</string>
+    <string name="detalle_rutina_error">No se han podido cargar los ejercicios de la rutina.</string>
     <string name="detalle_rutina_ultima_vez">La última vez, %1$s: %2$s y %3$s</string>
     <string name="detalle_rutina_ultima_vez_sin_kilos">La última vez, %1$s: %2$s</string>
     <string name="detalle_rutina_empezar">Empezar %1$s</string>
@@ -1384,6 +1390,7 @@
     <string name="avisos_ahora_no">Ahora no</string>
     <string name="avisos_guardar">Guardar</string>
     <string name="avisos_error_guardar">No se han podido guardar tus avisos. Cámbialos cuando quieras en Ajustes › Notificaciones.</string>
+    <string name="notificaciones_error">No se han podido leer tus avisos.</string>
     <string name="notificaciones_sin_permiso">Android no deja que GymProFit te avise: hasta que lo actives, no te llegará ninguno.</string>
     <string name="notificaciones_activar">Activar</string>
     <string name="notificaciones_que_avisamos">Qué te avisamos</string>
@@ -2474,6 +2481,7 @@
     <string name="estadisticas_mapa_a11y">Días en objetivo: %1$d. Fuera: %2$d. Sin datos: %3$d</string>
     <string name="estadisticas_mapa_a11y_sin_objetivo">Días con comidas: %1$d. Sin datos: %2$d</string>
     <string name="estadisticas_periodo_vacio">No hay comidas apuntadas en estas fechas.</string>
+    <string name="estadisticas_error">No se ha podido cargar el resumen de este periodo.</string>
     <string name="estadisticas_porcentaje">%1$d %%</string>
     <!-- GP-228 (revisor): el nombre empieza por el texto visible de la tarjeta. -->
     <string name="entrenar_entreno_libre_a11y">Entreno libre: empezar sin rutina</string>

@@ -77,6 +77,11 @@
     <dimen name="espacio_24">24dp</dimen>
     <dimen name="espacio_28">28dp</dimen>
     <dimen name="espacio_36">36dp</dimen>
+    <!-- Icono de view_estado (GP-064): el vacío y el error, dentro de una tarjeta o a pantalla entera. -->
+    <dimen name="estado_icono">48dp</dimen>
+    <!-- Quita el aire de abajo de view_estado (24) cuando debajo empieza otra sección con su propio
+         margen: si no, se suman (Entrenar, «Mis rutinas»). -->
+    <dimen name="estado_sin_aire_abajo">-24dp</dimen>
     <!-- Margen lateral de pantalla, entre secciones (36 en las pestañas, 28 en las
          subpantallas) y del título de sección a su contenido. -->
     <dimen name="margen_pantalla">20dp</dimen>

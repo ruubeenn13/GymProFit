@@ -26,6 +26,7 @@ import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.RequisitosClave;
 import es.pmdm.gymprofit.ui.widget.RequisitosUi;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // CambiarCorreoActivity — cambiar el correo desde Ajustes (GP-105).
@@ -50,7 +51,6 @@ public class CambiarCorreoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PreferencesManager prefs = new PreferencesManager(this);
         setContentView(R.layout.activity_cambiar_correo);
 
         tilEmail = findViewById(R.id.tilEmail);
@@ -72,10 +72,19 @@ public class CambiarCorreoActivity extends AppCompatActivity {
         });
         pintarRequisitos();
 
-        usuarioApi.getPorId(prefs.getUsuarioId()).enqueue(new ApiCallback<Usuario>() {
+        cargarCorreo();
+    }
+
+    // El correo de la cuenta, para decirlo enmascarado y no dejar poner el mismo.
+    private void cargarCorreo() {
+        VistaEstado estado = new VistaEstado(findViewById(R.id.estadoCorreo));
+        estado.cargando();
+        usuarioApi.getPorId(new PreferencesManager(this).getUsuarioId()).enqueue(new ApiCallback<Usuario>() {
             @Override
             public void onOk(Usuario u) {
-                if (u == null || isFinishing()) return;
+                if (isFinishing()) return;
+                estado.oculto();
+                if (u == null) return;
                 emailActual = u.getEmail();
                 pintarRequisitos();
                 ((TextView) findViewById(R.id.tvCorreoActual))
@@ -84,8 +93,10 @@ public class CambiarCorreoActivity extends AppCompatActivity {
             @Override
             public void onFail(int code, String message) {
                 // Sin el correo actual no se puede comparar, pero sí cambiar: la API dice
-                // si es el mismo. Se avisa del fallo.
-                UiFeedback.toastError(CambiarCorreoActivity.this, code, message);
+                // si es el mismo. El fallo se queda bajo el título, con «Reintentar».
+                if (isFinishing()) return;
+                estado.error(VistaEstado.mensaje(CambiarCorreoActivity.this, R.string.cambiar_correo_error_leer,
+                        code, message), CambiarCorreoActivity.this::cargarCorreo);
             }
         });
     }

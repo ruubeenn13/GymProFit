@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.model.ejercicio.Ejercicio;
@@ -46,16 +47,15 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
 import es.pmdm.gymprofit.utils.FechaUtils;
-import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Musculos;
 import es.pmdm.gymprofit.utils.Pauta;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.UIHelper;
-import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.UltimaMarca;
 import es.pmdm.gymprofit.utils.UltimasVeces;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import es.pmdm.gymprofit.utils.ZonasDelDia;
 import es.pmdm.gymprofit.utils.Zonas;
 
@@ -99,6 +99,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> editarLauncher;
 
     private final List<RutinaEjercicio> relaciones = new ArrayList<>();
+    private VistaEstado estadoEjercicios;
     private final Map<Integer, Ejercicio> catalogo = new HashMap<>();
     private final Map<Integer, UltimaVez> ultimas = new HashMap<>();
     private final Map<Integer, Record> records = new HashMap<>();
@@ -110,6 +111,7 @@ public class DetalleRutinaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         prefsManager = new PreferencesManager(this);
         setContentView(R.layout.activity_detalle_rutina);
+        estadoEjercicios = new VistaEstado(findViewById(R.id.estadoEjerciciosRutina));
 
         rutinaId        = getIntent().getIntExtra("rutinaId", -1);
         nombre          = getIntent().getStringExtra("nombre");
@@ -191,42 +193,56 @@ public class DetalleRutinaActivity extends AppCompatActivity {
     // combina los resultados cuando ambas terminan.
     private void cargarEjercicios() {
         AtomicInteger pendientes = new AtomicInteger(2);
-        // Spinner de carga durante las dos peticiones (la lista estaría en blanco mientras carga).
-        LoadingDialog.show(this);
+        // Un fallo de cualquiera de las dos: la lista no se pinta a medias.
+        AtomicReference<CharSequence> fallo = new AtomicReference<>();
+        relaciones.clear();
+        // La carga, en el sitio de la lista (GP-064; antes un diálogo que tapaba la cabecera).
+        findViewById(R.id.cardEjerciciosRutina).setVisibility(View.GONE);
+        estadoEjercicios.cargando();
 
         // El catálogo (fotos y músculos) se pide una vez por proceso: Entrenar ya lo suele tener.
         CatalogoEjercicios.cargar(porId -> {
             if (porId != null) {
                 catalogo.putAll(porId);
             } else {
-                // El catálogo es la carga esencial: se dice (evita doble toast).
-                UiFeedback.toastError(DetalleRutinaActivity.this, 0, getString(R.string.error_conexion));
+                // El catálogo es la carga esencial: sin él no hay nombres ni fotos.
+                fallo.compareAndSet(null, VistaEstado.mensaje(this, R.string.detalle_rutina_error, 0,
+                        getString(R.string.error_conexion)));
             }
-            if (pendientes.decrementAndGet() == 0) listaLista();
+            if (pendientes.decrementAndGet() == 0) listaLista(fallo.get());
         });
 
         rutinaApi.getEjerciciosDeRutina(rutinaId).enqueue(new ApiCallback<List<RutinaEjercicio>>() {
             @Override public void onOk(List<RutinaEjercicio> lista) {
                 if (lista != null) relaciones.addAll(lista);
-                if (pendientes.decrementAndGet() == 0) listaLista();
+                if (pendientes.decrementAndGet() == 0) listaLista(fallo.get());
             }
             @Override public void onFail(int code, String message) {
                 // Una rutina sin ejercicios llega como 200 con [] (GP-069): aquí solo caen fallos de
                 // verdad, y un 404 significa que la rutina ya no existe, no que esté vacía.
-                UiFeedback.toastError(DetalleRutinaActivity.this, code, message);
-                if (pendientes.decrementAndGet() == 0) listaLista();
+                fallo.compareAndSet(null, VistaEstado.mensaje(DetalleRutinaActivity.this,
+                        R.string.detalle_rutina_error, code, message));
+                if (pendientes.decrementAndGet() == 0) listaLista(fallo.get());
             }
         });
     }
 
-    // Con el catálogo y las relaciones: se pinta la lista, las zonas y se piden las marcas.
-    private void listaLista() {
-        LoadingDialog.hide(this);
+    // Con el catálogo y las relaciones: se pinta la lista, las zonas y se piden las marcas. Con un
+    // fallo, el error con «Reintentar» en el sitio de la lista.
+    private void listaLista(@Nullable CharSequence fallo) {
         if ((isFinishing() || isDestroyed())) return;
+        if (fallo != null) {
+            estadoEjercicios.error(fallo, this::cargarEjercicios);
+            return;
+        }
         Collections.sort(relaciones, (a, b) -> Integer.compare(a.getOrden(), b.getOrden()));
         ((TextView) findViewById(R.id.tvEjerciciosTituloDetalle)).setText(
                 getString(R.string.detalle_rutina_ejercicios_fmt, relaciones.size()));
-        findViewById(R.id.tvSinEjercicios).setVisibility(relaciones.isEmpty() ? View.VISIBLE : View.GONE);
+        if (relaciones.isEmpty()) {
+            estadoEjercicios.vacio(R.drawable.ic_ms_fitness_center, R.string.detalle_rutina_sin_ejercicios);
+        } else {
+            estadoEjercicios.oculto();
+        }
         findViewById(R.id.cardEjerciciosRutina).setVisibility(relaciones.isEmpty() ? View.GONE : View.VISIBLE);
         pintarResumen(relaciones.size());
         pintarZonas();

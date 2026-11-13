@@ -150,7 +150,7 @@ public class HistorialFragment extends BaseFragment {
                 siguiente = p != null ? p.getSiguiente() : null;
                 if (adapter.sesiones() == 0) {
                     rv.setVisibility(View.GONE);
-                    estado.vacio(R.string.inicio_entrenos_vacio);
+                    estado.vacio(R.drawable.ic_ms_history, R.string.inicio_entrenos_vacio);
                 } else {
                     estado.oculto();
                     rv.setVisibility(View.VISIBLE);
@@ -234,7 +234,7 @@ public class HistorialFragment extends BaseFragment {
         quitar.quitar(s, 0);
         if (adapter.sesiones() == 0 && siguiente == null) {
             rv.setVisibility(View.GONE);
-            estado.vacio(R.string.inicio_entrenos_vacio);
+            estado.vacio(R.drawable.ic_ms_history, R.string.inicio_entrenos_vacio);
         }
         mostrarAviso(s);
     }

@@ -42,7 +42,9 @@ public class MedidasErrorTest {
         String f = leer(JAVA.resolve("ui/fragments/MedidasFragment.java"));
         String fallo = onFailDeLaCarga(f);
         assertFalse("un fallo de lectura no escribe", fallo.contains("intentarCrearDesdePerfil"));
-        assertTrue("el fallo se ve con su «Reintentar»", fallo.contains(".error("));
+        // GP-064: el error lo pinta mostrarError, que lo pone en view_estado con «Reintentar».
+        assertTrue("el fallo se ve con su «Reintentar»", fallo.contains(".error(")
+                || (fallo.contains("mostrarError(") && f.matches("(?s).*private void mostrarError\\(.*?estado\\.error\\(.*")));
         assertTrue(leer(RES.resolve("layout/fragment_medidas.xml")).contains("@layout/view_estado"));
     }
 

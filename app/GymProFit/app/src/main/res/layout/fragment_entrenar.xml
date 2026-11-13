@@ -10,7 +10,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="false">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,33 +77,17 @@
                     android:orientation="vertical" />
             </LinearLayout>
 
-            <!-- Sin rutinas propias -->
-            <LinearLayout
-                android:id="@+id/layoutRutinasVacio"
+            <!-- Carga, vacío y error con «Reintentar» de «Mis rutinas»: view_estado (GP-064;
+                 antes un bloque a mano sin reintentar). Sin el aire de abajo del bloque, que se
+                 sumaba al de la sección siguiente (revisor). -->
+            <include
+                android:id="@+id/estadoMisRutinas"
+                layout="@layout/view_estado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/estado_sin_aire_abajo"
                 android:layout_marginStart="@dimen/margen_pantalla"
-                android:layout_marginTop="@dimen/espacio_12"
-                android:layout_marginEnd="@dimen/margen_pantalla"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/tvRutinasVacio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mis_rutinas_vacio"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCrearPrimera"
-                    style="@style/Widget.GymProFit.BotonPildora"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="@dimen/espacio_12"
-                    android:text="@string/btn_crea_primera_rutina"
-                    app:icon="@drawable/ic_ms_add" />
-            </LinearLayout>
+                android:layout_marginEnd="@dimen/margen_pantalla" />
         </LinearLayout>
 
         <!-- Por tu cuenta -->

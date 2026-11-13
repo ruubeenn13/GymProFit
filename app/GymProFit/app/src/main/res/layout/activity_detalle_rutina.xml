@@ -139,17 +139,14 @@
                     android:paddingBottom="@dimen/espacio_4" />
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/tvSinEjercicios"
+            <!-- Carga, vacío y error con «Reintentar» de los ejercicios (GP-064) -->
+            <include
+                android:id="@+id/estadoEjerciciosRutina"
+                layout="@layout/view_estado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margen_pantalla"
-                android:layout_marginTop="@dimen/espacio_12"
-                android:layout_marginEnd="@dimen/margen_pantalla"
-                android:text="@string/detalle_rutina_sin_ejercicios"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="@dimen/text_body"
-                android:visibility="gone" />
+                android:layout_marginEnd="@dimen/margen_pantalla" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

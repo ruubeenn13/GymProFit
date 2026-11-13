@@ -2,6 +2,7 @@ package es.pmdm.gymprofit.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import es.pmdm.gymprofit.R;
@@ -9,8 +10,7 @@ import es.pmdm.gymprofit.model.admin.EstadisticasGlobales;
 import es.pmdm.gymprofit.network.AdminApi;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
-import es.pmdm.gymprofit.utils.LoadingDialog;
-import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 import com.google.android.material.appbar.MaterialToolbar;
 
 // ============================================================
@@ -57,16 +57,23 @@ public class AdminActivity extends BaseActivity {
         cargarEstadisticas();
     }
 
-    // Solicita a la API las estadísticas globales y actualiza los TextViews (callback ya en hilo UI)
+    // Solicita a la API las estadísticas globales y actualiza los TextViews (callback ya en hilo UI).
+    // La carga y el fallo, con «Reintentar», en el sitio de las cifras.
     private void cargarEstadisticas() {
-        // Muestra el overlay de carga mientras se piden las estadísticas
-        LoadingDialog.show(this);
+        VistaEstado estado = new VistaEstado(findViewById(R.id.estadoEstadisticas));
+        View bloque = findViewById(R.id.bloqueEstadisticas);
+        bloque.setVisibility(View.GONE);
+        estado.cargando();
         api.getEstadisticas().enqueue(new ApiCallback<EstadisticasGlobales>() {
             @Override
             public void onOk(EstadisticasGlobales e) {
-                // Oculta el overlay al terminar la carga con éxito
-                LoadingDialog.hide(AdminActivity.this);
-                if (e == null) return;
+                if (isFinishing() || isDestroyed()) return;
+                if (e == null) {
+                    estado.error(getString(R.string.admin_estadisticas_error), AdminActivity.this::cargarEstadisticas);
+                    return;
+                }
+                estado.oculto();
+                bloque.setVisibility(View.VISIBLE);
                 tvTotalUsuarios.setText(String.valueOf(e.getTotalUsuarios()));
                 tvUsuariosActivos.setText(String.valueOf(e.getUsuariosActivos()));
                 tvTotalSesiones.setText(String.valueOf(e.getTotalSesiones()));
@@ -76,9 +83,9 @@ public class AdminActivity extends BaseActivity {
             }
             @Override
             public void onFail(int code, String message) {
-                // Oculta el overlay y muestra el error mapeado al fallar la carga
-                LoadingDialog.hide(AdminActivity.this);
-                UiFeedback.toastError(AdminActivity.this, code, message);
+                if (isFinishing() || isDestroyed()) return;
+                estado.error(VistaEstado.mensaje(AdminActivity.this, R.string.admin_estadisticas_error, code, message),
+                        AdminActivity.this::cargarEstadisticas);
             }
         });
     }

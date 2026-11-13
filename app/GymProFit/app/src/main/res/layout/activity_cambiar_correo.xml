@@ -36,6 +36,12 @@
                 android:textSize="@dimen/text_body"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
+            <!-- Mientras se lee el correo de la cuenta, y su fallo con «Reintentar» (GP-064). Sin
+                 él se puede cambiar igual: la API dice si es el mismo. -->
+            <include
+                android:id="@+id/estadoCorreo"
+                layout="@layout/view_estado" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmail"
                 android:layout_width="match_parent"

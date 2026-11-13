@@ -15,13 +15,13 @@
     android:paddingHorizontal="32dp"
     android:paddingVertical="28dp">
 
-    <!-- Spinner indeterminado con el dorado corporativo (#C9963A) -->
+    <!-- Spinner indeterminado en el naranja del tema (GP-064: antes el dorado #C9963A a mano) -->
     <ProgressBar
         android:id="@+id/pbLoading"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:indeterminate="true"
-        android:indeterminateTint="#C9963A" />
+        android:indeterminateTint="?attr/colorPrimary" />
 
     <!-- Mensaje de carga; el texto lo fija LoadingDialog según el contexto -->
     <TextView

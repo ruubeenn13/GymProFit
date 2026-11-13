@@ -266,17 +266,15 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Sin ninguna vez todavía -->
-                <TextView
-                    android:id="@+id/tvSinDatos"
+                <!-- Tus datos de este ejercicio: carga, «todavía no lo has hecho» y error con
+                     «Reintentar» (GP-064; antes el fallo solo iba al log) -->
+                <include
+                    android:id="@+id/estadoDatos"
+                    layout="@layout/view_estado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margen_pantalla"
-                    android:layout_marginEnd="@dimen/margen_pantalla"
-                    android:text="@string/detalle_ejercicio_sin_datos"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_body"
-                    android:visibility="gone" />
+                    android:layout_marginEnd="@dimen/margen_pantalla" />
 
                 <!-- Tus últimas veces -->
                 <LinearLayout

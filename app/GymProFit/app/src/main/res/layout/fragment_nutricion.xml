@@ -399,6 +399,14 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
             </com.google.android.material.card.MaterialCardView>
+            <!-- Sin el diario de la semana no hay agua ni día completo: el fallo y «Reintentar» en
+                 su sitio (GP-064; antes solo un toast) -->
+            <include
+                android:id="@+id/estadoDiario"
+                layout="@layout/view_estado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
             <!-- El agua (GP-166) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAgua"

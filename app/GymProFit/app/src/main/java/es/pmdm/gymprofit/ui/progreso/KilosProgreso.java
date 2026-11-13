@@ -146,14 +146,14 @@ final class KilosProgreso {
             case VACIO_CUENTA_NUEVA:
             case VACIO:
                 mostrarEstado();
-                estado.vacio(R.string.progreso_kilos_vacio);
+                estado.vacio(R.drawable.ic_ms_bar_chart, R.string.progreso_kilos_vacio);
                 break;
             case BARRAS:
                 MedidaSemanal.Medida medida = MedidaSemanal.de(kilos.dato());
                 pintarTitulo(medida);
                 if (medida == MedidaSemanal.Medida.NINGUNA) {
                     mostrarEstado();
-                    estado.vacio(R.string.progreso_series_vacio_periodo);
+                    estado.vacio(R.drawable.ic_ms_bar_chart, R.string.progreso_series_vacio_periodo);
                 } else {
                     pintarBarras(ctx, kilos.dato(), medida);
                 }

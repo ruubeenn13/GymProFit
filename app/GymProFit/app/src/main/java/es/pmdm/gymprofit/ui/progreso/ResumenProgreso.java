@@ -62,7 +62,7 @@ final class ResumenProgreso {
         int nLogros = LogrosVisibles.conseguidos(logros.dato());
         if (nSesiones == 0 && nRecords == 0 && nLogros == 0) {
             fila.setVisibility(View.GONE);
-            estado.vacio(R.string.progreso_resumen_vacio);
+            estado.vacio(R.drawable.ic_ms_insights, R.string.progreso_resumen_vacio);
             return;
         }
         estado.oculto();

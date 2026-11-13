@@ -33,7 +33,12 @@
 
     <include
         android:id="@+id/estadoPrograma"
-        layout="@layout/view_estado" />
+        layout="@layout/view_estado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margen_pantalla"
+        android:layout_marginEnd="@dimen/margen_pantalla"
+        android:layout_marginBottom="@dimen/estado_sin_aire_abajo" />
 
     <!-- Sin programa -->
     <com.google.android.material.card.MaterialCardView

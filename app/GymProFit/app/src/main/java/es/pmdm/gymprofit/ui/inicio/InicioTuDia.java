@@ -96,6 +96,9 @@ public final class InicioTuDia {
         final int esta = ++generacion;
         pendientes = 2;
         fallo = false;
+        // La carga, en el bloque, si no hay nada pintado (la primera vez o tras un fallo); al
+        // volver con el día a la vista, se queda hasta que llega lo nuevo (GP-064).
+        if (raiz.findViewById(R.id.scrollTuDia).getVisibility() != View.VISIBLE) estado.cargando();
         String hoy = TiempoRelativo.hoy();
         comidaApi.getDeUsuarioFecha(uid, hoy).enqueue(new ApiCallback<List<Comida>>() {
             @Override public void onOk(List<Comida> lista) {

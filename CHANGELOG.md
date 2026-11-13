@@ -8,6 +8,13 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `42d45e3a` | fix(android): sin red, Entrenar enseña un solo error (el de «Tu programa», que recarga también «Mis rutinas»); el vacío de «Mis rutinas» no repite «Crear una rutina»; las tarjetas de «Por tu cuenta» ya no se estiran con poco contenido; el error de Récords y Logros dice qué falló (GP-064). |
+| `bfbb14ef` | feat(android): Tu día, Tu progreso y Tus músculos de Inicio enseñan su carga cuando no hay nada pintado (GP-064). |
+| `ee239a86` | feat(android): el panel y las cuatro listas de administración cargan en su sitio, sin el diálogo modal; el fallo de las cifras del panel lleva «Reintentar» (GP-064). |
+| `d7ddf31b` | feat(android): Notificaciones, Cambiar correo y Tus datos leen la cuenta con su carga y su error con «Reintentar» en la pantalla, no en un toast ni en un aviso abajo (GP-064). |
+| `fae28f0f` | feat(android): Estadísticas de nutrición ya no pinta un fallo como un periodo vacío, y en Nutrición el fallo del diario (agua y día completo) se queda en su sitio con «Reintentar» (GP-064). |
+| `ce720f33` | feat(android): «Mis rutinas», la Biblioteca y los detalles de rutina y de ejercicio cargan en su sitio y distinguen el vacío del error, con «Reintentar»; en la ficha del ejercicio un fallo ya no dice «todavía no lo has hecho» (GP-064). |
+| `4b170cd7` | feat(android): un solo bloque de estado (`view_estado`) con icono, título y acción del vacío, y error con su icono y «Reintentar»; Récords, Logros y Medidas dejan su vacío a mano y el diálogo de carga usa el naranja del tema (GP-064). |
 | `c3b5d6ca` | feat(api): los estiramientos que se mantienen (62) y la liberación con rodillo (14) se miden en segundos; los dinámicos, Superman, Bird Dog y Dead bug siguen en repeticiones (migración `V202611122130`, GP-262). |
 | `e699e63a` | feat(android): el objetivo de agua es 2,0 L para un hombre y 1,6 L si no, la bebida de referencia de la EFSA, sin peso ni actividad; la tarjeta del agua explica que es lo que se bebe (GP-255, DEC-065). |
 | `0fa42f0c` | feat(android): una cuenta sin historial ve ideas de proteína de los básicos del catálogo, sin marca y con su ración, en «Lo que te encaja» y en la comida vacía; lo tuyo va siempre primero (GP-226). |

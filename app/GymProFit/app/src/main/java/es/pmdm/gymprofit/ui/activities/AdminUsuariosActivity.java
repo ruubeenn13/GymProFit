@@ -153,17 +153,16 @@ public class AdminUsuariosActivity extends BaseActivity {
 
     // Llama al endpoint admin de usuarios filtrados (primera página, hasta 100 resultados)
     private void cargar() {
-        // Muestra el overlay de carga mientras se piden los usuarios filtrados
-        // Spinner solo cuando la carga no viene de teclear.
-        boolean conDialogo = !cargaDesdeBuscador;
+        // La carga, bajo los chips (GP-064; antes un diálogo que tapaba la lista), solo cuando no
+        // viene de teclear: al escribir, la lista cambia sin parpadeo.
+        boolean conCarga = !cargaDesdeBuscador;
         cargaDesdeBuscador = false;
-        if (conDialogo) LoadingDialog.show(this);
+        if (conCarga) estado.cargando();
         api.getUsuarios(filtroActivo, filtroRol, filtroUsername, 0, 100)
                 .enqueue(new ApiCallback<List<Usuario>>() {
                     @Override
                     public void onOk(List<Usuario> nuevos) {
                         // Oculta el overlay al terminar la carga con éxito
-                        if (conDialogo) LoadingDialog.hide(AdminUsuariosActivity.this);
                         lista.clear();
                         if (nuevos != null) lista.addAll(nuevos);
                         adapter.notifyDataSetChanged();
@@ -172,7 +171,6 @@ public class AdminUsuariosActivity extends BaseActivity {
                     @Override
                     public void onFail(int code, String message) {
                         // Oculta el overlay y muestra el error mapeado al fallar la carga
-                        if (conDialogo) LoadingDialog.hide(AdminUsuariosActivity.this);
                         lista.clear();
                         adapter.notifyDataSetChanged();
                         estado.error(VistaEstado.mensaje(AdminUsuariosActivity.this, R.string.admin_lista_error,
@@ -184,7 +182,7 @@ public class AdminUsuariosActivity extends BaseActivity {
     /** Sin filas, la frase del vacío; con filas, nada. Con filtros puestos dice que nada coincide. */
     private void mostrarEstado() {
         if (lista.isEmpty()) {
-            estado.vacio(hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_usuarios);
+            estado.vacio(R.drawable.ic_ms_person, hayFiltros() ? R.string.admin_vacio_filtros : R.string.admin_vacio_usuarios);
         } else {
             estado.oculto();
         }

@@ -2,11 +2,10 @@
 <!--
   fragment_records — sección Récords de Progreso (GP-105; antes RecordsActivity, GP-088).
   El récord vigente de cada ejercicio, agrupado por zona. Además de la lista:
-  cargando, vacío (todavía no ha superado ninguna marca) y error con reintentar.
+  cargando, vacío (todavía no ha superado ninguna marca) y error con reintentar, en view_estado.
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -27,87 +26,16 @@
             android:clipToPadding="false"
             android:visibility="gone" />
 
-        <!-- Cargando: en la sección, sin tapar la pantalla entera -->
-        <ProgressBar
-            android:id="@+id/cargandoRecords"
-            android:layout_width="wrap_content"
+        <!-- Cargando, vacío (la primera vez que se hace un ejercicio es el punto de partida) y
+             error con «Reintentar»: view_estado, centrado en la sección (GP-064) -->
+        <include
+            android:id="@+id/estadoRecords"
+            layout="@layout/view_estado"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <!-- Vacío: la primera vez que se hace un ejercicio es el punto de partida -->
-        <LinearLayout
-            android:id="@+id/layoutVacio"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_ms_trending_up"
-                app:tint="?attr/colorOnSurfaceVariant"
-                android:importantForAccessibility="no" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:id="@+id/tvVacioTitulo"
-                android:text="@string/records_vacio_titulo"
-                android:textAppearance="@style/TextAppearance.GymProFit.Headline" />
-
-            <TextView
-                android:id="@+id/tvVacioTexto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="@string/records_vacio_texto"
-                android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
-        </LinearLayout>
-
-        <!-- Error: se dice y se ofrece reintentar -->
-        <LinearLayout
-            android:id="@+id/layoutError"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:src="@drawable/ic_ms_error"
-                app:tint="?attr/colorOnSurfaceVariant"
-                android:importantForAccessibility="no" />
-
-            <TextView
-                android:id="@+id/tvError"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorOnSurface" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReintentar"
-                style="@style/Widget.GymProFit.BotonPildora.Contorno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/sesiones_error_reintentar" />
-
-        </LinearLayout>
+            android:layout_marginStart="@dimen/margen_pantalla"
+            android:layout_marginEnd="@dimen/margen_pantalla" />
 
     </FrameLayout>
 

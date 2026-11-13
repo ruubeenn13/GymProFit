@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,10 +39,10 @@ import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.adapters.BibliotecaCabeceraAdapter;
 import es.pmdm.gymprofit.ui.adapters.EjercicioAdapter;
 import es.pmdm.gymprofit.utils.EjercicioNavHelper;
-import es.pmdm.gymprofit.utils.LoadingDialog;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.PaginacionScrollListener;
 import es.pmdm.gymprofit.utils.UiFeedback;
+import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
 // EjerciciosActivity — la biblioteca de ejercicios (GP-105, rehecha en GP-216, tablero 29).
@@ -77,7 +76,7 @@ public class EjerciciosActivity extends AppCompatActivity {
     private EditText etBuscar;
     private View btnLimpiar;
     private ChipGroup chipGroupFiltros;
-    private TextView tvEmpty;
+    private VistaEstado estado;
 
     private String queryActual = "";
     private String grupoActual = null;
@@ -104,7 +103,7 @@ public class EjerciciosActivity extends AppCompatActivity {
         etBuscar = findViewById(R.id.etBuscar);
         btnLimpiar = findViewById(R.id.btnLimpiarBusqueda);
         chipGroupFiltros = findViewById(R.id.chipGroupFiltros);
-        tvEmpty = findViewById(R.id.tvEmpty);
+        estado = new VistaEstado(findViewById(R.id.estadoEjercicios));
 
         configurarRecyclerView();
         // El chip de la zona con la que se entra se marca antes de escuchar los chips,
@@ -148,17 +147,17 @@ public class EjerciciosActivity extends AppCompatActivity {
         cargarPagina(0);
     }
 
-    // Pide una página al servidor; la 0 reemplaza la lista (con spinner),
-    // las siguientes se añaden al final en silencio (scroll infinito).
+    // Pide una página al servidor; la 0 reemplaza la lista (con la carga de view_estado si no hay
+    // nada a la vista; si lo hay, se queda hasta que llega lo nuevo), las siguientes se añaden al
+    // final en silencio (scroll infinito).
     private void cargarPagina(int pagina) {
         cargando = true;
         final int miGeneracion = generacion;
-        if (pagina == 0) LoadingDialog.show(this);
+        if (pagina == 0 && adapter.getItemCount() == 0) estado.cargando();
         api.buscar(queryActual.isEmpty() ? null : queryActual, grupoActual, null, pagina, TAM_PAGINA)
                 .enqueue(new ApiCallback<PageDTO<Ejercicio>>() {
                     @Override
                     public void onOk(PageDTO<Ejercicio> resultado) {
-                        if (pagina == 0) LoadingDialog.hide(EjerciciosActivity.this);
                         if (miGeneracion != generacion) return;
                         cargando = false;
                         if (resultado == null || (isFinishing() || isDestroyed())) return;
@@ -174,18 +173,27 @@ public class EjerciciosActivity extends AppCompatActivity {
 
                     @Override
                     public void onFail(int code, String message) {
-                        if (pagina == 0) LoadingDialog.hide(EjerciciosActivity.this);
                         if (miGeneracion != generacion) return;
                         cargando = false;
                         if ((isFinishing() || isDestroyed())) return;
-                        UiFeedback.toastError(EjerciciosActivity.this, code, message);
-                        actualizarEstadoVacio();
+                        if (pagina > 0) {
+                            // La lista sigue entera a la vista y la página se vuelve a pedir al
+                            // seguir bajando: el toast acompaña, no es lo único que se ve.
+                            UiFeedback.toastError(EjerciciosActivity.this, code, message);
+                            return;
+                        }
+                        // La página 0 es la de la búsqueda o la zona nuevas: lo que había ya no
+                        // vale. El fallo, en la lista, con «Reintentar».
+                        adapter.setEjercicios(new ArrayList<>());
+                        estado.error(VistaEstado.mensaje(EjerciciosActivity.this, R.string.biblioteca_error,
+                                code, message), EjerciciosActivity.this::cargarEjercicios);
                     }
                 });
     }
 
     private void actualizarEstadoVacio() {
-        tvEmpty.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        if (adapter.getItemCount() == 0) estado.vacio(R.drawable.ic_ms_search, R.string.biblioteca_vacio);
+        else estado.oculto();
     }
 
     // «Los que más haces»: los ids que da la API, cada ejercicio del catálogo y la marca de

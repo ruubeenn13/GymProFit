@@ -650,6 +650,8 @@ public class InicioFragment extends BaseFragment {
     private void cargarVolumenSemana() {
         int uid = prefsManager.getUsuarioId();
         if (uid == -1) { pintarZonas(null); return; }
+        // La carga, en el bloque, si no hay cuerpo pintado; al volver, se queda el de antes (GP-064).
+        if (findViewById(R.id.cardMusculos).getVisibility() != View.VISIBLE) estadoMusculos.cargando();
         sesionApi.getVolumenMuscularDesde(uid, lunesIso()).enqueue(new ApiCallback<List<VolumenMuscular>>() {
             @Override
             public void onOk(List<VolumenMuscular> volumen) {

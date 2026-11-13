@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_estado — cargando, error con reintentar o vacío, dentro del contenido (lote 1.2.1).
-  Lo maneja VistaEstado. El error no es solo un toast: se queda en la pantalla con su
-  botón, que es donde se busca cuando algo no aparece.
+  view_estado — el único bloque de estado de la app: cargando, error con «Reintentar» o vacío,
+  dentro del contenido (lote 1.2.1; GP-064 le pone icono, título y acción). Lo maneja
+  VistaEstado y lo decide EstadoContenido. El error no es solo un toast: se queda en la
+  pantalla con su botón, que es donde se busca cuando algo no aparece. Región viva educada:
+  TalkBack lee el estado al cambiar («Cargando», el error o el vacío).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:paddingTop="24dp"
-    android:paddingBottom="24dp"
+    android:paddingTop="@dimen/espacio_24"
+    android:paddingBottom="@dimen/espacio_24"
+    android:accessibilityLiveRegion="polite"
     android:visibility="gone">
 
     <ProgressBar
@@ -20,20 +24,50 @@
         android:indeterminateTint="?attr/colorPrimary"
         android:contentDescription="@string/feedback_cargando" />
 
+    <!-- El icono acompaña al texto, que es el que se lee: TalkBack no lo anuncia -->
+    <ImageView
+        android:id="@+id/ivEstado"
+        android:layout_width="@dimen/estado_icono"
+        android:layout_height="@dimen/estado_icono"
+        android:layout_marginBottom="@dimen/espacio_12"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorOnSurfaceVariant" />
+
+    <TextView
+        android:id="@+id/tvEstadoTitulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/espacio_4"
+        android:gravity="center"
+        android:paddingStart="@dimen/espacio_8"
+        android:paddingEnd="@dimen/espacio_8"
+        android:accessibilityHeading="true"
+        android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila" />
+
     <TextView
         android:id="@+id/tvEstado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="@dimen/espacio_8"
+        android:paddingEnd="@dimen/espacio_8"
         android:textSize="@dimen/text_body"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
+    <!-- «Reintentar», de contorno: solo en el error -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEstadoReintentar"
         style="@style/Widget.GymProFit.BotonPildora.Contorno"
         android:layout_width="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/espacio_12"
         android:text="@string/btn_reintentar" />
+
+    <!-- La acción del vacío, rellena (apuntar la primera medida, crear una rutina…): el texto
+         lo pone la pantalla. Otro botón que el de reintentar: no se confunden. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEstadoAccion"
+        style="@style/Widget.GymProFit.BotonPildora"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/espacio_16"
+        android:visibility="gone" />
 </LinearLayout>
