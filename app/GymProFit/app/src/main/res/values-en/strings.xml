@@ -2878,7 +2878,7 @@
     <string name="perfil_objetivo_elegir_a11y">Choose your goal</string>
     <string name="perfil_objetivo_fichas_a11y">Your goal, %1$s. %2$s kcal a day and %3$d grams of protein a day.</string>
     <string name="perfil_objetivo_solo_a11y">Your goal, %1$s.</string>
-    <string name="perfil_dato_anios_rotulo">Years</string>
+    <string name="perfil_dato_anios_rotulo">Age</string>
     <string name="perfil_dato_sin">Not set</string>
     <string name="perfil_dato_raya">—</string>
 </resources>

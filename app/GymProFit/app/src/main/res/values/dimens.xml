@@ -238,4 +238,7 @@
     <dimen name="text_cifra_codigo">34sp</dimen>
     <!-- GP-045: alto de cada caja del código. -->
     <dimen name="codigo_caja_alto">64dp</dimen>
+    <!-- GP-265: alto fijo de la cifra de «Tus datos»: el autoajuste necesita una caja con medida,
+         y así las cuatro columnas quedan alineadas aunque la actividad encoja. -->
+    <dimen name="dato_perfil_alto">36dp</dimen>
 </resources>
