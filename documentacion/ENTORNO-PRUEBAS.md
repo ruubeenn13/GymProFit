@@ -25,10 +25,28 @@ Hay estas cuentas locales, cada una para una cosa:
 |---|---|---|
 | `prueba` | `Prueba1234.` | Recorrido normal, **con datos**: sesiones, comidas con alimentos, mediciones y rutinas propias |
 | `vacia` | `Vacia1234.` | **Estados vacíos**: no tiene ni un dato, y es donde se ven los huecos que el caso feliz tapa |
-| `admin` | `AdminDev1234.` | Panel de administración |
+| `admin` | en `docs/credenciales-locales.txt` | Panel de administración |
+| `dani.entrena` | en `docs/credenciales-locales.txt` | **Cuenta demo** de las capturas (GP-248), sembrada con `scripts/sembrar_demo.py` |
 | `gp111a` / `gp111b` | `Gp1111234.` | **Dos cuentas en el mismo móvil** (GP-111, GP-129): `gp111a` con el perfil entero en la API; `gp111b` solo con nivel, objetivo, sexo y actividad |
 
-Estas claves son solo de la base local de pruebas y se quedan escritas aquí por decisión del propietario (07-11-2026): no dan acceso a producción, así que no se marcan como fallo.
+Las claves que sí están en la tabla son solo de la base local de pruebas y se quedan escritas aquí por decisión del propietario (07-11-2026): no dan acceso a producción, así que no se marcan como fallo.
+
+Las de `admin` y `dani.entrena` no se escriben en el repositorio. Viven en
+`docs/credenciales-locales.txt`, una línea `usuario=clave` por cuenta; `.gitignore`
+excluye la carpeta `docs/` entera (`git check-ignore -v docs/credenciales-locales.txt`
+lo confirma). Si el fichero falta o una clave da 401, se regenera con la API local
+arrancada o no, porque solo toca la BD del 3308:
+
+```bash
+GYMPROFIT_DB_PASSWORD=<la de la BD local> python scripts/clave_local.py admin
+```
+
+Pone una clave aleatoria nueva, guarda su hash en `usuarios`, cierra las sesiones
+abiertas de esa cuenta y reescribe su línea del fichero sin imprimirla. Vale igual
+para `dani.entrena`; si la demo no existe, se siembra antes (`scripts/README.md`).
+Tras `reset-datos-pruebas.sh`, `admin` vuelve a la clave del volcado base y
+`dani.entrena` desaparece (el volcado no la tiene): se regenera la de `admin` y se
+siembra otra vez la demo.
 
 El punto final de las contraseñas no es un capricho: `adb shell input text` no
 teclea `!`, así que una contraseña con admiración rompe cualquier prueba en

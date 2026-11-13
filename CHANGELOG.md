@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `c563232c` | fix(scripts,documentacion): las claves locales de `admin` y de la demo `@dani.entrena` salen de `ENTORNO-PRUEBAS.md` (la de `admin` ya no valía) y viven en `docs/credenciales-locales.txt`, ignorado por git; `scripts/clave_local.py` las regenera tocando solo la BD local. |
 | `d763bbd6` | fix(android): en inglés, la sección de logros y su cifra en Progreso dicen «Achievements» (antes «Badges»), y el vacío de «Mis rutinas» traduce el español; la etiqueta de las cifras de Progreso parte con guion en vez de cortarse con letra grande; fuera `feedback_lista_vacia` y `bottom_nav_color.xml`, sin uso tras GP-064. |
 | `69b378c5` | fix(scripts): `entorno-pruebas.sh` rellena desde `fed_id` las fotos de ejercicio que falten en la BD local, con la regla de producción, y no arranca si a una plantilla le sigue faltando; `sembrar_demo.py` no siembra en ese caso (GP-248). |
 | `42d45e3a` | fix(android): sin red, Entrenar enseña un solo error (el de «Tu programa», que recarga también «Mis rutinas»); el vacío de «Mis rutinas» no repite «Crear una rutina»; las tarjetas de «Por tu cuenta» ya no se estiran con poco contenido; el error de Récords y Logros dice qué falló (GP-064). |
