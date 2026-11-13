@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- view_cifra_progreso — una cifra de Progreso (GP-105): el número y, debajo, qué es. -->
+<!-- view_cifra_progreso — una cifra de Progreso (GP-105): el número y, debajo, qué es. La etiqueta
+     parte con guion en dos líneas antes que cortarse: «achievements», con la letra a 1,3, no cabe en una. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="0dp"
@@ -20,10 +21,11 @@
 
     <TextView
         android:id="@+id/tvCifraEtiqueta"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:maxLines="1"
+        android:maxLines="2"
+        android:hyphenationFrequency="full"
         android:importantForAccessibility="no"
         android:textSize="@dimen/text_eyebrow"
         android:textColor="?attr/colorOnSurfaceVariant" />
