@@ -81,9 +81,12 @@ final class PlantillaCorreo {
 
     /**
      * El logo de la cabecera: la G de la marca, la misma de la app y de la web (GP-231),
-     * alojada en gymprofit.app. 180 px que se pintan a 28: de sobra para pantallas de 2x y 3x.
+     * alojada en gymprofit.app. La G sola sobre fondo transparente (GP-266): el
+     * apple-touch-icon que se usaba antes es opaco y salía como un cuadrado negro sobre el
+     * blanco de Gmail. 84 px que se pintan a 28, 3x; lo genera
+     * {@code scripts/trazar-g-arranque.py correo}.
      */
-    static final String URL_LOGO = "https://gymprofit.app/img/apple-touch-icon.png";
+    static final String URL_LOGO = "https://gymprofit.app/img/logo-correo.png";
 
     /** Idioma del correo: el del atributo lang y el del pie (lote 24). */
     enum Idioma {
@@ -104,7 +107,7 @@ final class PlantillaCorreo {
     // ========================================================================
 
     /**
-     * Pie del correo, fuera de la tarjeta. Hay dos variantes y la diferencia no es estética:
+     * Pie del correo, dentro de la tarjeta. Hay dos variantes y la diferencia no es estética:
      * <ul>
      *   <li><b>Transaccional</b> — sin enlace de baja. Es el correo que el usuario ha
      *       provocado con una acción suya: recuperación, verificación, borrado de cuenta,
@@ -329,7 +332,7 @@ final class PlantillaCorreo {
         return StringUtils.hasText(html) ? render(FRANJA, Map.of("TEXTO", html)) : "";
     }
 
-    /** Pie, ya fuera de la tarjeta. El enlace de baja solo aparece en la variante comercial. */
+    /** Pie, la última fila de la tarjeta. El enlace de baja solo aparece en la variante comercial. */
     // El pie: aviso de envío automático y, desde el lote 24, a quién escribir con dudas.
     private static String pieHtml(Pie pie, Idioma idioma) {
         boolean en = idioma == Idioma.EN;
@@ -369,11 +372,17 @@ final class PlantillaCorreo {
 
     /**
      * La envoltura: barra de acento, cabecera con la marca, zona de contenido, franja de
-     * cierre y pie. Tres tablas encajadas —fondo a todo el ancho, columna de 600 px,
+     * cierre y pie, todo dentro de la tarjeta. Tres tablas encajadas —fondo a todo el ancho, columna de 600 px,
      * tarjeta de 520 px— porque centrar con márgenes automáticos no funciona en Outlook.
      * <p>
      * La cabecera lleva el logo real, la G (lote 24), con alt «GymProFit» para quien no
      * cargue imágenes; el nombre sigue al lado en texto.
+     * <p>
+     * El pie va DENTRO de la tarjeta blanca, tras una línea de 1 px (GP-266). Fuera, el gris
+     * quedaba sobre el fondo exterior, y Gmail en modo oscuro sustituye ese fondo por
+     * #1F1F1F: el gris del pie se quedaba en 2,8:1 y el enlace en 2,9:1. Sobre el blanco de
+     * la tarjeta, que Gmail no oscurece, #6B6259 da 6,0:1 y el naranja del enlace 5,6:1, AA
+     * a 13 px los dos. Es la última fila, así que lleva las esquinas inferiores.
      */
     private static final String ENVOLTURA = """
             <!DOCTYPE html>
@@ -399,7 +408,7 @@ final class PlantillaCorreo {
             <tr><td style="padding:30px 40px 26px;border-bottom:1px solid #F0EBE4;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
             <td width="28" style="width:28px;padding:0;">
-            <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;border-radius:6px;">
+            <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;">
             </td>
             <td style="padding-left:10px;font-family:{{FUENTE}};font-size:15px;line-height:22px;font-weight:700;letter-spacing:1.4px;color:#1A1512;">GYMPROFIT</td>
             </tr></table>
@@ -409,10 +418,10 @@ final class PlantillaCorreo {
             {{CONTENIDO}}
             </td></tr>
             {{FRANJA}}
+            <tr><td align="center" style="padding:20px 40px 24px;background-color:#FFFFFF;border-top:1px solid #F0EBE4;border-radius:0 0 6px 6px;font-family:{{FUENTE}};font-size:13px;line-height:20px;color:#6B6259;text-align:center;">{{PIE}}</td></tr>
             </table>
             <!--[if mso]></td></tr></table><![endif]-->
             </td></tr>
-            <tr><td align="center" style="padding:24px 16px 0;font-family:{{FUENTE}};font-size:13px;line-height:20px;color:#6B6259;text-align:center;">{{PIE}}</td></tr>
             </table>
             <!--[if mso]></td></tr></table><![endif]-->
             </td></tr>
@@ -457,8 +466,8 @@ final class PlantillaCorreo {
             </table>
             """.replace("FUENTE_", FUENTE);
 
-    /** Franja de cierre, con su línea de 1 px y las esquinas inferiores de la tarjeta. */
+    /** Franja de cierre, con su línea de 1 px. Las esquinas inferiores son del pie, que va debajo. */
     private static final String FRANJA = """
-            <tr><td style="padding:22px 40px;background-color:#FAF7F3;border-top:1px solid #F0EBE4;border-radius:0 0 6px 6px;font-family:FUENTE_;font-size:14px;line-height:22px;color:#6E655D;">{{TEXTO}}</td></tr>
+            <tr><td style="padding:22px 40px;background-color:#FAF7F3;border-top:1px solid #F0EBE4;font-family:FUENTE_;font-size:14px;line-height:22px;color:#6E655D;">{{TEXTO}}</td></tr>
             """.replace("FUENTE_", FUENTE);
 }

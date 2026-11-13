@@ -31,6 +31,14 @@ Tres órdenes, desde la raíz del repo:
         · web/img/apple-touch-icon.png — el icono a sangre, opaco, 180 px.
       Necesita Pillow y numpy.
 
+  python scripts/trazar-g-arranque.py correo app/GymProFit/app/src/main/res web/img
+      El logo de los correos (GP-266): web/img/logo-correo.png, 84 x 84 (3x los 28 px a
+      los que lo pinta PlantillaCorreo), la G sola sobre fondo transparente. Los mismos
+      trazados de g_arranque.xml; la G, sin baldosa, ocupa la caja con MARGEN_CORREO de
+      aire para que el borde suavizado no se corte. El color de cada píxel del borde es
+      el de la pieza, sin premultiplicar por ningún fondo: así no hay halo ni sobre blanco
+      ni sobre gris oscuro. Necesita Pillow y numpy.
+
 Necesita Pillow, numpy y scikit-image; «trazar», además, potracer (port de potrace en
 Python). Se instalaron en un entorno virtual temporal, fuera del repo:
   python -m venv <tmp> && <tmp>/Scripts/python -m pip install potracer pillow numpy scikit-image
@@ -422,12 +430,50 @@ def logo(ruta_png, res, web_img, admin_public):
           % (cx, cy, r, num(k), num(tx), num(ty)))
 
 
+LADO_CORREO = 84            # px: 3x los 28 px del <img> del correo
+MARGEN_CORREO = 2           # px de aire a cada lado, a 84
+
+
+def correo(res, web_img):
+    """La G sola, transparente, a LADO_CORREO px: web/img/logo-correo.png (GP-266)."""
+    trozos = piezas(res + '/drawable/g_arranque.xml')
+    polis = [(hexa, aplanar(d)) for _, _, hexa, d in trozos]
+    xs = [x for _, ps in polis for p in ps for x, _ in p]
+    ys = [y for _, ps in polis for p in ps for _, y in p]
+    ancho, alto = max(xs) - min(xs), max(ys) - min(ys)
+    util = LADO_CORREO - 2 * MARGEN_CORREO
+    k = util / max(ancho, alto)
+    tx = (LADO_CORREO - ancho * k) / 2 - min(xs) * k
+    ty = (LADO_CORREO - alto * k) / 2 - min(ys) * k
+    n = LADO_CORREO * SS
+    suma = np.zeros((LADO_CORREO, LADO_CORREO, 3))
+    alfa = np.zeros((LADO_CORREO, LADO_CORREO))
+    for hexa, ps in polis:
+        acc = np.zeros((n, n), dtype=bool)
+        for poli in ps:
+            capa = Image.new('1', (n, n), 0)
+            ImageDraw.Draw(capa).polygon([((x * k + tx) * SS, (y * k + ty) * SS) for x, y in poli], fill=1)
+            acc ^= np.array(capa, dtype=bool)
+        cob = acc.reshape(LADO_CORREO, SS, LADO_CORREO, SS).mean(axis=(1, 3))
+        rgb = np.array([int(hexa[i:i + 2], 16) for i in (1, 3, 5)], dtype=float)
+        suma += cob[..., None] * rgb
+        alfa += cob
+    alfa = np.clip(alfa, 0, 1)
+    # Color sin premultiplicar: la media de las piezas que cubren el píxel, pesada por su
+    # cobertura. Donde no cubre ninguna, alfa 0 y el color da igual (negro).
+    rgb = np.where(alfa[..., None] > 0, suma / np.maximum(alfa, 1e-9)[..., None], 0)
+    img = Image.fromarray(np.round(np.dstack([np.clip(rgb, 0, 255), alfa * 255])).astype(np.uint8), 'RGBA')
+    img.save(web_img + '/logo-correo.png', optimize=True)
+    print('logo-correo.png: %d px, G de %.1f x %.1f px' % (LADO_CORREO, ancho * k, alto * k))
+
 
 def main():
     if len(sys.argv) >= 4 and sys.argv[1] == 'trazar':
         escribir_vectores(trazar_logo(sys.argv[2]), sys.argv[3])
     elif len(sys.argv) >= 6 and sys.argv[1] == 'logo':
         logo(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    elif len(sys.argv) >= 4 and sys.argv[1] == 'correo':
+        correo(sys.argv[2], sys.argv[3])
     elif len(sys.argv) >= 4 and sys.argv[1] == 'comparar':
         comparar(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
     else:

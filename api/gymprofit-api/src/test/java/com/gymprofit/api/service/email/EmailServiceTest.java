@@ -452,9 +452,12 @@ class EmailServiceTest {
     void laCabeceraLlevaElLogoRealYElPieElCorreoDeSoporte(@TempDir Path buzon) throws Exception {
         String html = enviado(s -> s.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS), buzon)
                 .path("htmlContent").asText();
-        assertThat(html).contains("src=\"https://gymprofit.app/img/apple-touch-icon.png\"")
+        assertThat(html).contains("src=\"https://gymprofit.app/img/logo-correo.png\"")
                 .contains("alt=\"GymProFit\"")
                 .contains("soporte@gymprofit.app");
+        // GP-266: el logo es la G sola, transparente; sin esquinas redondeadas que recortar.
+        String img = html.substring(html.indexOf("<img src=\"https://gymprofit.app/img/logo-correo.png\""));
+        assertThat(img.substring(0, img.indexOf('>'))).doesNotContain("border-radius");
         // El código, un único texto: ni un span por cifra ni espacios entre ellas.
         assertThat(html).contains(">" + CODIGO + "</div>");
     }
