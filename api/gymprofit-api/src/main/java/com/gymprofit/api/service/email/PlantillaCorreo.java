@@ -31,10 +31,11 @@ import java.util.regex.Pattern;
 // sin ellas. Las "ghost tables" entre comentarios condicionales [if mso] fijan el ancho
 // en Outlook, que ignora max-width y si no estiraría la tarjeta a toda la ventana.
 //
-// Sin imágenes y sin fuentes cargadas: Gmail pasa las imágenes remotas por su proxy y
-// muchos clientes las bloquean hasta que el usuario acepta, así que un diseño que
-// dependa de ellas llega roto; las fuentes web solo las aplican Apple Mail y poco más.
-// La marca es un cuadrado de color y texto, y se ve igual en todas partes.
+// Sin fuentes cargadas y con una sola imagen, el logo: Gmail pasa las imágenes remotas
+// por su proxy y muchos clientes las bloquean hasta que el usuario acepta, así que el
+// diseño no puede depender de ellas; las fuentes web solo las aplican Apple Mail y poco más.
+// La marca es el logo real, la G, alojado en gymprofit.app (lote 24), con el nombre en
+// texto al lado: si un cliente no carga imágenes, queda el alt y el nombre.
 //
 // Ver DEC-026 en documentacion/PRODUCT-DECISIONS.md.
 //
@@ -74,6 +75,26 @@ final class PlantillaCorreo {
 
     /** Marcadores {{...}} que sustituye render(). */
     private static final Pattern MARCADOR = Pattern.compile("\\{\\{(\\w+)}}");
+
+    /** Dirección de soporte que sale en el pie (lote 24). */
+    static final String CORREO_SOPORTE = "soporte@gymprofit.app";
+
+    /**
+     * El logo de la cabecera: la G de la marca, la misma de la app y de la web (GP-231),
+     * alojada en gymprofit.app. 180 px que se pintan a 28: de sobra para pantallas de 2x y 3x.
+     */
+    static final String URL_LOGO = "https://gymprofit.app/img/apple-touch-icon.png";
+
+    /** Idioma del correo: el del atributo lang y el del pie (lote 24). */
+    enum Idioma {
+        ES("es"), EN("en");
+
+        private final String lang;
+
+        Idioma(String lang) {
+            this.lang = lang;
+        }
+    }
 
     private PlantillaCorreo() {
     }
@@ -219,13 +240,24 @@ final class PlantillaCorreo {
      */
     static String renderizar(String preheader, String titular, Contenido contenido,
                              String franjaCierre, Pie pie) {
+        return renderizar(Idioma.ES, preheader, titular, contenido, franjaCierre, pie);
+    }
+
+    /**
+     * Como el otro, en el idioma indicado: cambia el atributo lang y el pie; el resto de
+     * los textos los trae quien llama ya en ese idioma.
+     */
+    static String renderizar(Idioma idioma, String preheader, String titular, Contenido contenido,
+                             String franjaCierre, Pie pie) {
         Map<String, String> valores = new LinkedHashMap<>();
+        valores.put("IDIOMA", idioma.lang);
+        valores.put("LOGO", URL_LOGO);
         valores.put("FUENTE", FUENTE);
         valores.put("PREHEADER", escapar(preheader));
         valores.put("TITULAR", escapar(titular));
         valores.put("CONTENIDO", contenido.html());
         valores.put("FRANJA", franja(franjaCierre));
-        valores.put("PIE", pieHtml(pie));
+        valores.put("PIE", pieHtml(pie, idioma));
         return render(ENVOLTURA, valores);
     }
 
@@ -298,13 +330,20 @@ final class PlantillaCorreo {
     }
 
     /** Pie, ya fuera de la tarjeta. El enlace de baja solo aparece en la variante comercial. */
-    private static String pieHtml(Pie pie) {
-        String base = "GymProFit · Este correo se ha enviado automáticamente. No respondas a este mensaje.";
+    // El pie: aviso de envío automático y, desde el lote 24, a quién escribir con dudas.
+    private static String pieHtml(Pie pie, Idioma idioma) {
+        boolean en = idioma == Idioma.EN;
+        String soporte = "<a href=\"mailto:" + CORREO_SOPORTE + "\" style=\"color:" + ACENTO
+                + ";text-decoration:underline;\">" + CORREO_SOPORTE + "</a>";
+        String base = (en ? "GymProFit · This email was sent automatically. Please do not reply to it."
+                          : "GymProFit · Este correo se ha enviado automáticamente. No respondas a este mensaje.")
+                + "<br>" + (en ? "Questions? Write to us at " : "¿Dudas? Escríbenos a ") + soporte;
         if (!pie.conBaja()) {
             return base;
         }
         return base + "<br><a href=\"" + escapar(pie.urlBaja()) + "\" style=\"color:" + ACENTO
-               + ";text-decoration:underline;\">Darse de baja de estos correos</a>";
+               + ";text-decoration:underline;\">" + (en ? "Unsubscribe from these emails" : "Darse de baja de estos correos")
+               + "</a>";
     }
 
     /**
@@ -333,12 +372,12 @@ final class PlantillaCorreo {
      * cierre y pie. Tres tablas encajadas —fondo a todo el ancho, columna de 600 px,
      * tarjeta de 520 px— porque centrar con márgenes automáticos no funciona en Outlook.
      * <p>
-     * El cuadrado naranja de la cabecera es el hueco reservado al logotipo real: cuando lo
-     * haya, sustituye a esa celda sin mover nada más.
+     * La cabecera lleva el logo real, la G (lote 24), con alt «GymProFit» para quien no
+     * cargue imágenes; el nombre sigue al lado en texto.
      */
     private static final String ENVOLTURA = """
             <!DOCTYPE html>
-            <html lang="es" xmlns:o="urn:schemas-microsoft-com:office:office">
+            <html lang="{{IDIOMA}}" xmlns:o="urn:schemas-microsoft-com:office:office">
             <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -359,10 +398,8 @@ final class PlantillaCorreo {
             <tr><td height="4" bgcolor="#B83E00" style="height:4px;line-height:4px;font-size:0;background-color:#B83E00;border-radius:6px 6px 0 0;">&nbsp;</td></tr>
             <tr><td style="padding:30px 40px 26px;border-bottom:1px solid #F0EBE4;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td width="22" style="width:22px;padding:0;">
-            <table role="presentation" width="22" cellpadding="0" cellspacing="0" border="0" style="width:22px;"><tr>
-            <td height="22" bgcolor="#B83E00" style="width:22px;height:22px;line-height:22px;font-size:0;background-color:#B83E00;border-radius:5px;">&nbsp;</td>
-            </tr></table>
+            <td width="28" style="width:28px;padding:0;">
+            <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;border-radius:6px;">
             </td>
             <td style="padding-left:10px;font-family:{{FUENTE}};font-size:15px;line-height:22px;font-weight:700;letter-spacing:1.4px;color:#1A1512;">GYMPROFIT</td>
             </tr></table>

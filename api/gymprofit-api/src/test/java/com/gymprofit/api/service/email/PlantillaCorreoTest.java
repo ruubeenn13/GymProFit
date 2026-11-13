@@ -141,8 +141,10 @@ class PlantillaCorreoTest {
             assertThat(html).contains("GYMPROFIT").contains("Un titular").contains("Franja de cierre.");
             // Envoltura intacta: la etiqueta de apertura del cuerpo y su cierre, una vez cada una.
             assertThat(html).containsOnlyOnce("</body>").containsOnlyOnce("</html>");
-            // El diseño no depende de que cargue nada: ni imágenes ni fuentes remotas.
-            assertThat(html).doesNotContain("<img").doesNotContain("@import").doesNotContain("fonts.googleapis");
+            // El diseño no depende de que cargue nada: ni fuentes remotas, y la única imagen es
+            // el logo (lote 24), con su alt y el nombre en texto al lado por si no carga.
+            assertThat(html).containsOnlyOnce("<img").contains("alt=\"GymProFit\"")
+                    .doesNotContain("@import").doesNotContain("fonts.googleapis");
             // Maquetación con tablas, no con flex ni grid, porque Outlook usa el motor de Word.
             assertThat(html).doesNotContain("display:flex").doesNotContain("display:grid");
         }
@@ -171,7 +173,8 @@ class PlantillaCorreoTest {
                 "Si no reconoces este cambio, responde a este correo.",
                 PlantillaCorreo.Pie.transaccional());
 
-        assertThat(html).doesNotContain("<a ");
+        // El único enlace es el de soporte del pie (lote 24); en el aviso, ninguno.
+        assertThat(html.replace("<a href=\"mailto:" + PlantillaCorreo.CORREO_SOPORTE, "")).doesNotContain("<a ");
         assertThat(html).contains("Acabas de cambiar tu contraseña.").contains("Si no has sido tú, escríbenos.");
     }
 }

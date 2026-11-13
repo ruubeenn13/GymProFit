@@ -72,6 +72,20 @@ public class CorreoAsyncConfig {
                                 + "Alguien no va a recibir su correo. Revisar si el proveedor está respondiendo.",
                         pool.getQueue().size(), pool.getActiveCount()));
 
+        // El idioma de la petición viaja con la tarea (lote 24): el correo se escribe en el
+        // idioma de la app que lo pidió (Accept-Language), y en el hilo del pool el
+        // LocaleContextHolder de la petición no existe.
+        executor.setTaskDecorator(tarea -> {
+            java.util.Locale idioma = org.springframework.context.i18n.LocaleContextHolder.getLocale();
+            return () -> {
+                org.springframework.context.i18n.LocaleContextHolder.setLocale(idioma);
+                try {
+                    tarea.run();
+                } finally {
+                    org.springframework.context.i18n.LocaleContextHolder.resetLocaleContext();
+                }
+            };
+        });
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setAwaitTerminationSeconds(SEGUNDOS_DE_CIERRE);
         executor.initialize();

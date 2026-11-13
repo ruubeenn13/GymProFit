@@ -125,6 +125,27 @@ class CorreoAsyncConfigTest {
     }
 
     @Test
+    @DisplayName("el idioma de la petición llega al hilo que manda el correo (lote 24)")
+    void el_idioma_de_la_peticion_llega_al_hilo_del_correo() throws Exception {
+        org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor executor =
+                (org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor) new CorreoAsyncConfig().correoExecutor();
+        java.util.concurrent.atomic.AtomicReference<java.util.Locale> visto = new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.CountDownLatch hecho = new java.util.concurrent.CountDownLatch(1);
+        org.springframework.context.i18n.LocaleContextHolder.setLocale(java.util.Locale.ENGLISH);
+        try {
+            executor.execute(() -> {
+                visto.set(org.springframework.context.i18n.LocaleContextHolder.getLocale());
+                hecho.countDown();
+            });
+            assertThat(hecho.await(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+            assertThat(visto.get()).isEqualTo(java.util.Locale.ENGLISH);
+        } finally {
+            org.springframework.context.i18n.LocaleContextHolder.resetLocaleContext();
+            executor.shutdown();
+        }
+    }
+
+    @Test
     @DisplayName("el envío del código sigue marcado como asíncrono y en el pool de correo")
     void el_envio_del_codigo_esta_marcado_como_asincrono() throws Exception {
         // Los dos códigos: el de recuperación y el de verificación del correo (GP-045).
