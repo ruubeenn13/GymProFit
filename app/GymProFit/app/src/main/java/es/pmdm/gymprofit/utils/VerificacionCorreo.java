@@ -67,6 +67,34 @@ public final class VerificacionCorreo {
         return Reenvio.FALLO;
     }
 
+    /** Cómo abre la pantalla tras el reenvío que se pide al entrar desde Perfil (GP-267). */
+    public enum Apertura {
+        /** Código emitido: el estado normal. */
+        ENVIADO,
+        /** El correo ya estaba verificado. */
+        YA_VERIFICADO,
+        /** Límite de peticiones: el estado normal, con la cuenta atrás del reenvío. */
+        ESPERA,
+        /** Red o servidor: el estado normal, y el fallo se dice. */
+        FALLO
+    }
+
+    /**
+     * Traduce la respuesta del reenvío de la entrada desde Perfil. A diferencia de
+     * {@link #reenvio(int)}, el 429 no es un fallo: es la cuenta atrás con la que se abre.
+     *
+     * @param code estado HTTP, o un negativo sin respuesta.
+     */
+    @NonNull
+    public static Apertura apertura(int code) {
+        if (code == 429) return Apertura.ESPERA;
+        switch (reenvio(code)) {
+            case ENVIADO: return Apertura.ENVIADO;
+            case YA_VERIFICADO: return Apertura.YA_VERIFICADO;
+            default: return Apertura.FALLO;
+        }
+    }
+
     /**
      * Traduce la respuesta de {@code POST /usuarios/me/email/verificar}.
      *

@@ -19,6 +19,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.AbstractSavedStateViewModelFactory;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -30,8 +34,10 @@ import es.pmdm.gymprofit.model.usuario.Usuario;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.UsuarioApi;
+import es.pmdm.gymprofit.ui.viewmodels.VerificarCorreoViewModel;
 import es.pmdm.gymprofit.ui.widget.CampoCodigo;
 import es.pmdm.gymprofit.utils.Movimiento;
+import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.UIHelper;
 import es.pmdm.gymprofit.utils.UiFeedback;
 import es.pmdm.gymprofit.utils.VerificacionCorreo;
@@ -48,9 +54,10 @@ import es.pmdm.gymprofit.utils.VistaEstado;
 //     Si no es, las cajas en rojo, el aviso con los intentos que quedan (región viva) y un
 //     temblor; al tocar, se vacían. «Abrir el correo» solo si hay app de correo; «Pegar
 //     código» solo si hay texto copiado, y al pegar se queda con sus cifras.
-//   · «Ese código ya no vale»: pasaron 15 minutos, se gastaron los cinco intentos, o no se
-//     sabe cuándo se mandó (desde Perfil, días después). La API da el mismo 400 a todo, así
-//     que esto lo cuenta el móvil (PreferencesManager); si se desvía, manda el 400.
+//   · «Ese código ya no vale»: pasaron 15 minutos o se gastaron los cinco intentos. La API
+//     da el mismo 400 a todo, así que esto lo cuenta el móvil (PreferencesManager); si se
+//     desvía, manda el 400. Nunca se ABRE así desde Perfil (GP-267): al entrar se pide un
+//     código nuevo (VerificarCorreoViewModel, una vez por entrada) y se abre en el normal.
 //   · «Correo confirmado»: el círculo dorado y, al segundo, se sigue (a los avisos tras el
 //     alta, de vuelta a Perfil desde allí).
 //
@@ -93,6 +100,7 @@ public class VerificarCorreoActivity extends BaseActivity {
     private final Runnable alCaducar = this::mostrarCaducado;
 
     private boolean delAlta;
+    private VerificarCorreoViewModel vm;
     @Nullable private String correo;
     private CampoCodigo campo;
     private TextView aviso;
@@ -147,12 +155,25 @@ public class VerificarCorreoActivity extends BaseActivity {
         if (correo == null) releerCorreo();
         prepararAbrirCorreo();
 
-        if (VerificacionCorreo.caducado(prefsManager.getCodigoCorreoEn(), prefsManager.getCodigoCorreoFallos(),
+        vm = new ViewModelProvider(this, new AbstractSavedStateViewModelFactory(this, null) {
+            @NonNull
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <T extends ViewModel> T create(@NonNull String key, @NonNull Class<T> modelClass,
+                                                     @NonNull SavedStateHandle handle) {
+                return (T) new VerificarCorreoViewModel(handle, new PuertoApi(usuarioApi, prefsManager),
+                        System::currentTimeMillis);
+            }
+        }).get(VerificarCorreoViewModel.class);
+        vm.entrar(!delAlta);
+
+        if (vm.abrirCaducado(prefsManager.getCodigoCorreoEn(), prefsManager.getCodigoCorreoFallos(),
                 System.currentTimeMillis())) {
             mostrarCaducado();
         } else {
             mostrarCodigo();
         }
+        vm.estado().observe(this, this::pintarEntrada);
         // Momento 3 (DEC-039): las piezas suben y aparecen; con «Quitar animaciones», nada.
         if (!Movimiento.quieto(this)) {
             Movimiento.entrar(0, findViewById(R.id.tvTitulo), findViewById(R.id.tvExplicacion),
@@ -190,10 +211,94 @@ public class VerificarCorreoActivity extends BaseActivity {
         aviso.setVisibility(View.GONE);
         campo.limpiar();
         campo.enfocar();
-        // Al acabarse los 15 minutos con la pantalla abierta, pasa sola a «ya no vale».
+        programarCaducidad();
+    }
+
+    // Al acabarse los 15 minutos con la pantalla abierta, pasa sola a «ya no vale». Solo si
+    // lo apuntado es un código vivo: con uno viejo, o ninguno (desde Perfil mientras llega
+    // el nuevo), no hay nada que contar y pasaría a «ya no vale» al instante.
+    private void programarCaducidad() {
         reloj.removeCallbacks(alCaducar);
-        reloj.postDelayed(alCaducar, VerificacionCorreo.msHastaCaducar(
-                prefsManager.getCodigoCorreoEn(), System.currentTimeMillis()));
+        long emitido = prefsManager.getCodigoCorreoEn();
+        long ahora = System.currentTimeMillis();
+        if (VerificacionCorreo.caducado(emitido, prefsManager.getCodigoCorreoFallos(), ahora)) return;
+        reloj.postDelayed(alCaducar, VerificacionCorreo.msHastaCaducar(emitido, ahora));
+    }
+
+    // ── La entrada desde Perfil (GP-267) ─────────────────────────────────────
+
+    // La red y las preferencias del ViewModel. Estática para no retener la Activity: el
+    // ViewModel sobrevive al giro y la llamada puede seguir en vuelo. PreferencesManager no
+    // guarda el Context. El ApiCallback no mira isFinishing: la respuesta va al ViewModel,
+    // y de él a la pantalla que haya entonces.
+    private static final class PuertoApi implements VerificarCorreoViewModel.Puerto {
+        private final UsuarioApi api;
+        private final PreferencesManager prefs;
+
+        PuertoApi(@NonNull UsuarioApi api, @NonNull PreferencesManager prefs) {
+            this.api = api;
+            this.prefs = prefs;
+        }
+
+        @Override
+        public void pedirCodigo(@NonNull Respuesta respuesta) {
+            api.reenviarCodigoCorreo().enqueue(new ApiCallback<Void>() {
+                @Override
+                public void onOk(Void ignorado) {
+                    respuesta.ok();
+                }
+
+                @Override
+                public void onFail(int code, String message) {
+                    // El ViewModel lo guarda y la pantalla lo dice (pintarEntrada).
+                    respuesta.fallo(code, message);
+                }
+            });
+        }
+
+        @Override
+        public void apuntarCodigo(long ahora) {
+            prefs.apuntarCodigoCorreo(ahora);
+        }
+    }
+
+    // Siempre en el estado del código: lo que cambia es el reenvío y lo que se dice. Lo que
+    // se dice (TalkBack, toast) va una vez por respuesta, no en cada giro.
+    private void pintarEntrada(@Nullable VerificarCorreoViewModel.Estado estado) {
+        if (estado == null) return;
+        boolean avisar = vm.tocaAvisar();
+        switch (estado) {
+            case ENVIANDO:
+                btnReenviar.setEnabled(false);
+                return;
+            case ENVIADO:
+                btnReenviar.setEnabled(true);
+                programarCaducidad();
+                if (avisar) campo.announceForAccessibility(getString(R.string.verificar_correo_reenviado));
+                break;
+            case ESPERA:
+                int s = vm.segundosDeEspera(System.currentTimeMillis());
+                if (s > 0) {
+                    empezarCuentaAtras(s);
+                    // El texto del botón lo pone el primer tic, que aún no ha llegado.
+                    if (avisar) btnReenviar.announceForAccessibility(getString(
+                            R.string.verificar_correo_reenviar_en, VerificacionCorreo.cuentaAtras(s)));
+                } else {
+                    btnReenviar.setEnabled(true);
+                }
+                break;
+            case YA_VERIFICADO:
+                if (avisar) mostrarConfirmado();
+                break;
+            case FALLO:
+                btnReenviar.setEnabled(true);
+                if (avisar) UiFeedback.toastError(this, vm.codigoFallo(), vm.mensajeFallo());
+                break;
+            case INTERRUMPIDO:
+            default:
+                btnReenviar.setEnabled(true);
+        }
+        if (avisar) vm.avisado();
     }
 
     private void mostrarCaducado() {
