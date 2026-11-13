@@ -115,6 +115,53 @@ class PlantillaCorreoTest {
         assertThat(html).contains("Darse de baja").contains("href=\"" + BAJA + "\"");
     }
 
+    /**
+     * El pie va dentro de la tarjeta blanca (GP-266). Fuera de ella quedaba sobre el fondo
+     * exterior, que Gmail en modo oscuro cambia por #1F1F1F, y ahí el gris del pie no se
+     * leía. Se comprueba la estructura —el pie es la última fila de la tarjeta, la tercera
+     * tabla anidada— y que su gris y el naranja del enlace dan AA sobre blanco.
+     */
+    @Test
+    void elPie_vaDentroDeLaTarjetaConContrasteAA() {
+        String html = PlantillaCorreo.renderizar(
+                "Hola", "Verifica tu correo",
+                PlantillaCorreo.Aviso.de("Texto."), "Franja.",
+                PlantillaCorreo.Pie.comercial(BAJA))
+                // Las ghost tables de Outlook no cuentan para el anidamiento real.
+                .replaceAll("(?s)<!--\\[if mso].*?<!\\[endif]-->", "");
+
+        int pie = html.indexOf(PlantillaCorreo.CORREO_SOPORTE);
+        String antes = html.substring(0, pie);
+        int abiertas = antes.split("<table", -1).length - 1;
+        int cerradas = antes.split("</table>", -1).length - 1;
+        assertThat(abiertas - cerradas).as("tablas abiertas alrededor del pie").isEqualTo(3);
+        // Y después del pie la tarjeta se cierra sin más filas.
+        String despues = html.substring(pie);
+        assertThat(despues.substring(0, despues.indexOf("</table>"))).doesNotContain("<tr");
+
+        String celda = antes.substring(antes.lastIndexOf("<td"));
+        assertThat(celda).contains("background-color:#FFFFFF").contains("border-top:1px solid");
+        String gris = celda.replaceAll("(?s).*;color:(#[0-9A-Fa-f]{6}).*", "$1");
+        assertThat(contraste(gris, "#FFFFFF")).as("gris del pie sobre blanco").isGreaterThanOrEqualTo(4.5);
+        assertThat(contraste("#B83E00", "#FFFFFF")).as("enlace del pie sobre blanco").isGreaterThanOrEqualTo(4.5);
+    }
+
+    /** Contraste WCAG 2 entre dos colores #RRGGBB. */
+    private static double contraste(String a, String b) {
+        double la = luminancia(a);
+        double lb = luminancia(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    }
+
+    private static double luminancia(String hex) {
+        double[] c = new double[3];
+        for (int i = 0; i < 3; i++) {
+            double v = Integer.parseInt(hex.substring(1 + 2 * i, 3 + 2 * i), 16) / 255.0;
+            c[i] = v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        }
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    }
+
     // --- Las tres formas sobre la misma envoltura ---------------------------
 
     /**
