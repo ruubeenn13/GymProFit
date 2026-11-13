@@ -95,6 +95,7 @@ Reglas fijas: no hace falta repetirlas en cada encargo.
 - **Web.** Si cambia `web/`, el zip va al escritorio con el formato de `web/README.md`, y el informe lo dice.
 - **Revisor de UI.** Tras arreglar lo que encuentre el revisor de UI, se vuelve a pasar en las mismas pantallas y combinaciones, como mucho tres veces más. Si la última solo deja medios, se arreglan y cada uno se comprueba a mano con una medida (píxel, dp, contraste o captura) que va en el informe. Un alto obliga siempre a otra pasada, y un cambio de diseño posterior pasa el revisor en las pantallas que toca.
 - **Informe.** El largo, en `documentacion/estado/AAAA-MM-DD-<lote>.md`. Al propietario, un resumen de unas 15 líneas: commits, tests (cuántos y cuáles se vieron en rojo), comprobación en producción, decisiones tomadas, tareas manuales suyas y dudas o bloqueos. El detalle de un fallo de seguridad aún no contado va aparte, después del resumen.
+- **Hashes.** Todo hash que aparezca en un informe (el breve o el largo), en el `CHANGELOG.md` o en la documentación se copia de la salida de git (`git log`, `git rev-parse`). Nunca se escribe de memoria ni se reconstruye: un hash mal copiado apunta a otro commit, o a ninguno, y nadie lo nota hasta que hace falta.
 
 ## Dónde vive cada cosa
 
