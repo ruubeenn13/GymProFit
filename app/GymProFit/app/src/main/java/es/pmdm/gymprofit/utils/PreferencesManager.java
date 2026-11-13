@@ -453,6 +453,17 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
         editor.apply();
     }
 
+    /**
+     * Como {@link #leer}, pero solo si el perfil guardado es de la cuenta que ha entrado
+     * (GP-265): lo de otra cuenta del mismo móvil es como si no hubiera nada.
+     *
+     * @return el valor guardado de esta cuenta, o null.
+     */
+    @Nullable
+    public String leerPropio(@NonNull PerfilCuenta.Campo campo) {
+        return perfilUsable() ? leer(campo) : null;
+    }
+
     @Override
     public void borrar(@NonNull PerfilCuenta.Campo campo) { editor.remove(clave(campo)); editor.apply(); }
 

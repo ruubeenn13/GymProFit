@@ -232,6 +232,8 @@
     <dimen name="chip_zona_alto">44dp</dimen>
     <!-- GP-265 y GP-045: el rótulo en condensada de 15 sp y los titulares en 800. -->
     <dimen name="text_rotulo_destacado">15sp</dimen>
+    <dimen name="text_titular_objetivo">36sp</dimen>
+    <dimen name="text_titular_vacio">28sp</dimen>
     <dimen name="text_titular_correo">40sp</dimen>
     <dimen name="text_cifra_codigo">34sp</dimen>
     <!-- GP-045: alto de cada caja del código. -->

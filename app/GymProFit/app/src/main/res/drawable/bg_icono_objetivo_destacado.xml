@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GP-265: el cuadro naranja del icono del objetivo en la tarjeta destacada (52 dp, radio 14). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/gp_objetivo_icono_fondo" />
+    <corners android:radius="14dp" />
+</shape>

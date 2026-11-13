@@ -222,6 +222,17 @@
          botón era de contorno; relleno y con este rojo se lee en los dos. -->
     <color name="gp_eliminar_fondo">#C62828</color>
     <color name="gp_eliminar_texto">#FFFFFF</color>
+    <!-- GP-265: la tarjeta destacada de «Tu objetivo» en Perfil. En claro, casi negra con
+         texto claro; en oscuro, superficie elevada con borde fino (values-night). -->
+    <color name="gp_objetivo_fondo">#17181C</color>
+    <color name="gp_objetivo_borde">#17181C</color>
+    <color name="gp_objetivo_texto">#F2F2F3</color>
+    <color name="gp_objetivo_texto_2">#B9BEC8</color>
+    <color name="gp_objetivo_ficha">#2A2C32</color>
+    <color name="gp_objetivo_contorno">#8A909B</color>
+    <!-- El cuadro del icono: el naranja vivo en los dos temas, porque va sobre fondo oscuro. -->
+    <color name="gp_objetivo_icono_fondo">#FF6A00</color>
+    <color name="gp_objetivo_icono">#1A0E00</color>
     <!-- GP-045: el halo de la caja activa del código (naranja al 20 %). -->
     <color name="gp_codigo_halo">#33B83E00</color>
     <!-- GP-045: el check sobre el círculo dorado, casi negro en los dos temas. -->

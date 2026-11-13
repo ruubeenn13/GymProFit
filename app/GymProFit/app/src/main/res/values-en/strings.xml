@@ -2869,4 +2869,16 @@
     <string name="crear_pauta_aplicar">Apply</string>
     <string name="crear_pauta_con_descanso">%1$s, %2$d\u00A0s rest</string>
     <string name="rutina_sin_ejercicios">No exercises yet</string>
+    <!-- GP-265: highlighted goal card and «Your details» in one row. -->
+    <string name="perfil_ficha_kcal">kcal a day</string>
+    <string name="perfil_ficha_proteina">protein a day</string>
+    <string name="perfil_objetivo_vacio_titulo">No goal yet</string>
+    <string name="perfil_objetivo_vacio_texto">Pick one and we will work out your daily calories and protein.</string>
+    <string name="perfil_objetivo_elegir">Choose</string>
+    <string name="perfil_objetivo_elegir_a11y">Choose your goal</string>
+    <string name="perfil_objetivo_fichas_a11y">Your goal, %1$s. %2$s kcal a day and %3$d grams of protein a day.</string>
+    <string name="perfil_objetivo_solo_a11y">Your goal, %1$s.</string>
+    <string name="perfil_dato_anios_rotulo">Years</string>
+    <string name="perfil_dato_sin">Not set</string>
+    <string name="perfil_dato_raya">—</string>
 </resources>

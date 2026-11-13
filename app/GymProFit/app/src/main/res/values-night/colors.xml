@@ -97,6 +97,13 @@
     <color name="gp_accion_inversa">#B83E00</color>
     <!-- Sobre oscuro el logo va sin baldosa (GP-231, DEC-057): la G sola, en el mismo sitio. -->
     <color name="logo_baldosa">#000B0C0E</color>
+    <!-- GP-265: la tarjeta de «Tu objetivo», superficie elevada con borde fino. -->
+    <color name="gp_objetivo_fondo">@color/gp_surface_2</color>
+    <color name="gp_objetivo_borde">@color/gp_divider</color>
+    <color name="gp_objetivo_texto">@color/gp_on_surface</color>
+    <color name="gp_objetivo_texto_2">@color/gp_text_secondary</color>
+    <color name="gp_objetivo_ficha">@color/gp_surface</color>
+    <color name="gp_objetivo_contorno">#808897</color>
     <!-- GP-045: el halo de la caja activa del código (naranja al 25 %). -->
     <color name="gp_codigo_halo">#40FF6A00</color>
 </resources>

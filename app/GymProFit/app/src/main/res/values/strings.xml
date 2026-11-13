@@ -2915,4 +2915,16 @@
     <string name="crear_pauta_aplicar">Aplicar</string>
     <string name="crear_pauta_con_descanso">%1$s, %2$d\u00A0s de descanso</string>
     <string name="rutina_sin_ejercicios">Sin ejercicios todavía</string>
+    <!-- GP-265: «Tu objetivo» destacado y «Tus datos» en una fila. -->
+    <string name="perfil_ficha_kcal">kcal al día</string>
+    <string name="perfil_ficha_proteina">proteína al día</string>
+    <string name="perfil_objetivo_vacio_titulo">Aún no tienes objetivo</string>
+    <string name="perfil_objetivo_vacio_texto">Elígelo y te calculamos las calorías y la proteína del día.</string>
+    <string name="perfil_objetivo_elegir">Elegir</string>
+    <string name="perfil_objetivo_elegir_a11y">Elegir tu objetivo</string>
+    <string name="perfil_objetivo_fichas_a11y">Tu objetivo, %1$s. %2$s kcal al día y %3$d gramos de proteína al día.</string>
+    <string name="perfil_objetivo_solo_a11y">Tu objetivo, %1$s.</string>
+    <string name="perfil_dato_anios_rotulo">Años</string>
+    <string name="perfil_dato_sin">Sin dato</string>
+    <string name="perfil_dato_raya">—</string>
 </resources>
