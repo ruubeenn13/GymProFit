@@ -55,6 +55,16 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    // Si quien abrió la cuenta ha demostrado que controla el correo (GP-045, DEC-066).
+    // Solo lo pone a true VerificacionCorreoService, y vuelve a false si el correo cambia.
+    // La cuenta se usa entera sin verificar: esto solo lo mira lo que depende del correo.
+    @Column(name = "email_verificado", nullable = false)
+    private boolean emailVerificado;
+
+    // Cuándo se verificó; null mientras no lo esté. Reloj del servidor.
+    @Column(name = "email_verificado_en")
+    private LocalDateTime emailVerificadoEn;
+
     // Peso corporal en kg.
     @Column(precision = 5, scale = 2)
     private BigDecimal peso;

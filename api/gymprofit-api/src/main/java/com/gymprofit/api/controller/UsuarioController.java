@@ -10,6 +10,9 @@ import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.Response;
 import com.gymprofit.api.dto.usuario.CambiarEmailDTO;
 import com.gymprofit.api.dto.usuario.EliminarCuentaDTO;
+import com.gymprofit.api.dto.usuario.EstadoCorreoDTO;
+import com.gymprofit.api.dto.usuario.VerificarCorreoDTO;
+import com.gymprofit.api.service.usuario.IVerificacionCorreoService;
 import com.gymprofit.api.service.usuario.ICambioEmailService;
 import com.gymprofit.api.service.usuario.IBorradoCuentaService;
 import com.gymprofit.api.service.usuario.IUsuarioService;
@@ -52,6 +55,9 @@ public class UsuarioController {
 
     // Cambio del correo propio con reautenticación (GP-083).
     private final ICambioEmailService cambioEmailService;
+
+    // Verificación del correo (GP-045, DEC-066).
+    private final IVerificacionCorreoService verificacionCorreoService;
 
     @Operation(summary = "La cuenta de quien llama (solo ADMIN; las demás, en /admin)")
     @ApiResponses(value = {
@@ -325,8 +331,9 @@ public class UsuarioController {
     @Operation(summary = "Cambia el correo de la cuenta propia",
             description = "El usuario sale del token, nunca del cuerpo ni de la ruta. Exige la " +
                     "contraseña actual, porque el correo es la llave de la recuperación de contraseña. " +
-                    "Pedir el correo que ya se tiene devuelve el perfil sin cambios. El correo nuevo " +
-                    "no se verifica todavía (GP-045).")
+                    "Pedir el correo que ya se tiene devuelve el perfil sin cambios. Un correo nuevo " +
+                    "deja la cuenta sin verificar y recibe un código para verificarlo (GP-045); la " +
+                    "sesión sigue abierta.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Correo cambiado; devuelve el perfil"),
             @ApiResponse(responseCode = "400", description = "Correo vacío o sin formato de correo",
@@ -339,5 +346,39 @@ public class UsuarioController {
     @PutMapping("/usuarios/me/email")
     public ResponseEntity<UsuarioDTO> cambiarEmailPropio(@Valid @RequestBody CambiarEmailDTO cambiarEmailDTO) {
         return ResponseEntity.ok(cambioEmailService.cambiarEmailPropio(cambiarEmailDTO));
+    }
+
+    @Operation(summary = "Verifica el correo de la cuenta propia con el código recibido",
+            description = "GP-045 (DEC-066). La cuenta sale del token. El código es de seis dígitos, " +
+                    "caduca a los 15 minutos, sirve una vez y se quema a los cinco fallos. Todos los " +
+                    "fallos dan el mismo 400. Si la cuenta ya está verificada, devuelve su estado sin " +
+                    "mirar el código. En el cupo estricto del rate limit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Correo verificado; devuelve su estado"),
+            @ApiResponse(responseCode = "400", description = "El código no es válido, ha caducado o se ha agotado",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "429", description = "Demasiados intentos desde esta IP",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/usuarios/me/email/verificar")
+    public ResponseEntity<EstadoCorreoDTO> verificarCorreo(@Valid @RequestBody VerificarCorreoDTO dto) {
+        return ResponseEntity.ok(verificacionCorreoService.verificar(dto.getCodigo()));
+    }
+
+    @Operation(summary = "Manda otro código para verificar el correo de la cuenta propia",
+            description = "GP-045 (DEC-066). La cuenta sale del token. El código nuevo mata al anterior. " +
+                    "Vuelve antes de enviar: el correo sale en segundo plano. En el cupo estricto del " +
+                    "rate limit.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Código emitido y envío encolado"),
+            @ApiResponse(responseCode = "409", description = "El correo ya está verificado",
+                    content = @Content(schema = @Schema(implementation = Response.class))),
+            @ApiResponse(responseCode = "429", description = "Demasiadas peticiones desde esta IP",
+                    content = @Content(schema = @Schema(implementation = Response.class)))
+    })
+    @PostMapping("/usuarios/me/email/reenviar")
+    public ResponseEntity<Void> reenviarCodigoCorreo() {
+        verificacionCorreoService.reenviar();
+        return ResponseEntity.noContent().build();
     }
 }

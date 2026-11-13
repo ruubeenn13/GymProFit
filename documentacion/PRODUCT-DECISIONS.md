@@ -356,7 +356,7 @@ Queda anotado aquí, y no solo en la auditoría, porque «la paridad está al 10
 ---
 
 ### DEC-028 · La enumeración de cuentas por el registro es una limitación aceptada, no un descuido
-**Estado:** Aceptada · **Fecha:** 2026-09-19 · **Se revisa con:** GP-045 (verificación de correo en el registro)
+**Estado:** Aceptada · **Fecha:** 2026-09-19 · **Se revisa con:** el cambio de correo con confirmación (GP-083) · *Revisada el 2026-11-13 con GP-045: se mantiene, ver DEC-066.*
 
 **Contexto.** `POST /auth/forgot-password` se diseñó para no revelar qué cuentas existen: el cuerpo de la respuesta es el mismo exista la cuenta o no. Al escribir sus tests apareció que esa propiedad no se sostiene por dos sitios distintos.
 
@@ -1200,6 +1200,29 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 **Consecuencias.** Una cuenta con objetivo anterior sigue viendo sus litros de antes hasta que edite el perfil. No hay ajuste por calor, entreno ni embarazo o lactancia: la nota lo cubre con «bebe más», y un ajuste cuantificado sería otra decisión.
 
 **Qué la invalidaría.** Que la EFSA revise los valores de referencia, o que la app pase a saber cuánto entrena o qué tiempo hace (entonces se mide antes un ajuste con fuente).
+
+---
+
+### DEC-066 · El correo se verifica con un código, pero una cuenta sin verificar se usa entera
+**Estado:** Aceptada · **Fecha:** 2026-11-13 · **Tarea:** GP-045 · **Revisa:** DEC-028
+
+**Contexto.** `POST /auth/register` creaba la cuenta sin comprobar que quien la abre controla el correo que escribe. El correo es la llave de la recuperación de contraseña y lo será de lo que venga detrás: el cambio de correo con confirmación (GP-083) y unir una cuenta con Google (GP-086). Pero exigir el código para entrar en la app castiga justo el momento que mide el embudo (DEC-064): quien acaba el alta quiere ver su plan, no ir a la bandeja de entrada.
+
+**Decisión.**
+
+- **Una cuenta sin verificar se puede usar entera.** Entrena, apunta, cambia sus datos y recupera la contraseña como cualquier otra. La verificación **solo se exige para lo que depende del correo**: por ahora, el futuro cambio de correo con confirmación (GP-083) y unir la cuenta con Google (GP-086). Lo que no esté en esa lista no la pide; añadir algo a la lista es una decisión, no un detalle de implementación.
+- **Las cuentas de Google entran ya verificadas**: Google ya ha comprobado la dirección. Hoy no existe el acceso con Google, así que la regla se aplica cuando llegue GP-086.
+- **Las cuentas que ya existen quedan sin verificar** (no hay ninguna de Google que exceptuar). Ven el aviso de Perfil y verifican cuando quieran.
+- **El mecanismo es el de la recuperación de contraseña** (GP-007, GP-044), no uno nuevo: seis dígitos de `SecureRandom`, guardados como hash BCrypt, 15 minutos de vida, un solo uso, cinco intentos y el código nuevo mata al anterior. Las reglas viven en un solo sitio (`CodigoUnSoloUso`) para que las dos cadenas no se separen. El correo usa la misma plantilla con el código de protagonista (`PlantillaCorreo.Accion.conCodigo`) y el mismo pool asíncrono. Además, **el código queda atado a la dirección a la que se mandó**: si el correo cambia, el código viejo no verifica el nuevo.
+- **El alta manda el código, y si el correo falla el alta no falla.** El envío es asíncrono y cualquier fallo al emitir el código se registra y se traga: la cuenta ya existe y «Reenviar» está a un toque.
+- **Reenviar y verificar van en el cupo estricto de autenticación**, como pedir y canjear el código de recuperación: lo primero es spam a una bandeja, lo segundo fuerza bruta sobre seis dígitos.
+- **Cambiar el correo deja la cuenta sin verificar y manda un código a la dirección nueva.** Es la misma ruta de siempre, `PUT /usuarios/me/email`, con la contraseña (GP-083), y vale tanto sin verificar como verificada: la dirección nueva no la ha comprobado nadie. La cuenta no se pierde ni se cierra la sesión.
+- **El estado viaja en el perfil** (`emailVerificado`), solo de lectura: ni `PUT` ni `PATCH` del perfil lo pueden poner a `true`.
+- **En la app**: tras el alta, una pantalla con el código, «Reenviar», «Cambiar correo» y «Más tarde», y un aviso discreto en Perfil mientras el correo esté sin verificar. Nada bloquea.
+
+**Consecuencias.** Habrá cuentas con un correo que nadie controla, y lo único que se resiente es lo que depende del correo, que es lo que queda detrás de la verificación. **DEC-028 se mantiene**: la enumeración por el alta sigue abierta, porque el alta se tiene que resolver en la misma petición para que la cuenta se use al momento; con la cuenta usable sin verificar, no hay respuesta uniforme posible sin crear la cuenta a ciegas. El momento de revisarla pasa a ser el cambio de correo con confirmación (GP-083).
+
+**Qué la invalidaría.** Que una función que no depende del correo empiece a necesitar una dirección comprobada (un aviso legal por correo, un pago), que aparezca abuso real de altas con correos ajenos, o que el embudo muestre que el aviso no basta y casi nadie verifica.
 
 ---
 

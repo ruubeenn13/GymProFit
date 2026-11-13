@@ -337,6 +337,68 @@ class EmailServiceTest {
         assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
     }
 
+    // --- Verificación del correo (GP-045) ----------------------------------
+
+    /**
+     * El correo de verificación sale por la misma vía que el de recuperación, a la dirección
+     * de la cuenta, con el código en el asunto y en el cuerpo, y dice para qué es: un correo
+     * que dijera «restablece tu contraseña» a quien acaba de darse de alta asustaría.
+     */
+    @Test
+    void verificacion_conClaveDeApi_seMandaALaDireccionDeLaCuentaYDiceParaQueEs(@TempDir Path buzon) throws Exception {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        EmailService servicio = servicio("prod", buzon, builder.build(), CLAVE_API);
+        StringBuilder enviado = new StringBuilder();
+
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header("api-key", CLAVE_API))
+                .andExpect(peticion -> enviado.append(((MockClientHttpRequest) peticion).getBodyAsString()))
+                .andRespond(withStatus(HttpStatus.CREATED)
+                        .contentType(MediaType.APPLICATION_JSON).body(RESPUESTA_OK));
+
+        servicio.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS);
+
+        brevo.verify();
+        JsonNode cuerpo = json.readTree(enviado.toString());
+        assertThat(cuerpo.path("to").get(0).path("email").asText()).isEqualTo("ruben@example.com");
+        assertThat(cuerpo.path("subject").asText()).contains(CODIGO).containsIgnoringCase("verifica");
+        assertThat(cuerpo.path("textContent").asText())
+                .contains(CODIGO).contains("15 minutos").containsIgnoringCase("verifica")
+                .doesNotContainIgnoringCase("contraseña nueva");
+        assertThat(cuerpo.path("htmlContent").asText()).contains(CODIGO).containsIgnoringCase("verifica");
+    }
+
+    // Un rechazo del proveedor deja ERROR en el log, sin el código, y no lanza.
+    @Test
+    void verificacion_siBrevoRechaza_quedaUnErrorSinElCodigo(@TempDir Path buzon) {
+        RestClient.Builder builder = builderDeBrevo();
+        MockRestServiceServer brevo = MockRestServiceServer.bindTo(builder).build();
+        EmailService servicio = servicio("prod", buzon, builder.build(), CLAVE_API);
+        brevo.expect(requestTo(BrevoClientConfig.URL_ENVIO))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON)
+                        .body("{\"code\":\"invalid_parameter\",\"message\":\"" + CODIGO + "\"}"));
+
+        servicio.enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS);
+
+        assertThat(registro.list).anyMatch(evento -> evento.getLevel() == Level.ERROR);
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+    }
+
+    // Fuera de prod, al buzón local con un nombre propio, para no confundirlo con el de recuperación.
+    @Test
+    void verificacion_fueraDeProduccion_vaAlBuzonLocalConSuNombre(@TempDir Path buzon) throws IOException {
+        servicio("dev", buzon, builderDeBrevo().build(), "")
+                .enviarCodigoVerificacion(usuario(), CODIGO, MINUTOS);
+
+        List<Path> entregas = ficherosDe(buzon);
+        assertThat(entregas).hasSize(1);
+        assertThat(entregas.get(0).getFileName().toString()).startsWith("verificacion-");
+        assertThat(Files.readString(entregas.get(0), StandardCharsets.UTF_8)).contains(CODIGO);
+        assertThat(mensajesRegistrados()).noneMatch(mensaje -> mensaje.contains(CODIGO));
+    }
+
     // --- Ayudas -------------------------------------------------------------
 
     private ApplicationContextRunner runner(String perfil) {

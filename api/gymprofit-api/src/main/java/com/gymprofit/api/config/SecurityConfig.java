@@ -185,6 +185,10 @@ public class SecurityConfig {
                                 // Cambio del correo propio (GP-083): el usuario sale del token. Va ANTES
                                 // de la regla general de /usuarios/**, que es solo de ADMIN. GUEST fuera.
                                 .requestMatchers(HttpMethod.PUT, "/usuarios/me/email").hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
+                                // Verificar el correo y pedir otro código (GP-045): mismo caso, la
+                                // cuenta sale del token. El invitado no tiene correo que verificar.
+                                .requestMatchers(HttpMethod.POST, "/usuarios/me/email/verificar", "/usuarios/me/email/reenviar")
+                                    .hasAnyRole(RoleType.USER.name(), RoleType.ADMIN.name())
 
                                 // USER: puede consultar y actualizar su propio perfil
                                 // IMPORTANTE: estas reglas van ANTES de la regla general de /usuarios/**

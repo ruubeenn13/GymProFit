@@ -15,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -46,14 +45,10 @@ public class PasswordResetService implements IPasswordResetService {
 
     private static final Logger logger = LoggerFactory.getLogger(PasswordResetService.class);
 
-    // Vida del código. Corta a propósito: lo suficiente para ir al correo y volver.
-    private static final int MINUTOS_VALIDEZ = 15;
-
-    // Intentos fallidos antes de quemar el código y obligar a pedir otro.
-    private static final int MAX_INTENTOS = 5;
-
-    // SecureRandom y no Random: de esto depende el acceso a una cuenta.
-    private static final SecureRandom ALEATORIO = new SecureRandom();
+    // Vida, intentos y generación del código: las mismas que en la verificación del
+    // correo (GP-045), y por eso viven en CodigoUnSoloUso.
+    private static final int MINUTOS_VALIDEZ = CodigoUnSoloUso.MINUTOS_VALIDEZ;
+    private static final int MAX_INTENTOS = CodigoUnSoloUso.MAX_INTENTOS;
 
     private final IUsuarioRepository usuarioRepository;
     private final IPasswordResetCodigoRepository codigoRepository;
@@ -113,7 +108,7 @@ public class PasswordResetService implements IPasswordResetService {
         // llave viva y el usuario acabaría con varias válidas a la vez.
         codigoRepository.invalidarTodosDeUsuario(usuario.getId());
 
-        String codigo = generarCodigo();
+        String codigo = CodigoUnSoloUso.generar();
 
         PasswordResetCodigo registro = new PasswordResetCodigo();
         registro.setUsuario(usuario);
@@ -203,11 +198,6 @@ public class PasswordResetService implements IPasswordResetService {
     private static boolean esInvitado(Usuario usuario) {
         return usuario.getRoles() != null
                 && usuario.getRoles().stream().anyMatch(rol -> rol.getNombre() == RoleType.GUEST);
-    }
-
-    // Seis dígitos con ceros a la izquierda incluidos: 000123 es tan válido como 987654.
-    private String generarCodigo() {
-        return String.format("%06d", ALEATORIO.nextInt(1_000_000));
     }
 
     // Un único mensaje para todos los fallos de canje, a propósito.

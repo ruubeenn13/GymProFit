@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 
 // ============================================================
 // EmailService — envío de los correos transaccionales de GymProFit
-// Ahora mismo solo manda uno: el código de recuperación de contraseña.
+// Manda dos, los dos con un código de seis dígitos: el de recuperación de contraseña y
+// el de verificación del correo (GP-045). Comparten todo menos los textos (ver Correo).
 //
 // El proveedor es Brevo y el transporte su API HTTP, NO su SMTP. Render bloquea los
 // puertos 25, 465 y 587 en los servicios del plan gratuito, así que JavaMailSender no
@@ -171,8 +172,31 @@ public class EmailService implements IEmailService {
     @Async(CorreoAsyncConfig.EXECUTOR)
     @Override
     public void enviarCodigoRecuperacion(Usuario usuario, String codigo, int minutosValidez) {
+        entregar(Correo.RECUPERACION, usuario, codigo, minutosValidez);
+    }
+
+    /**
+     * Envía el código para verificar el correo (GP-045), fuera del hilo que llama.
+     * <p>
+     * Todo como {@link #enviarCodigoRecuperacion}: el mismo pool, la misma plantilla con el
+     * código de protagonista, el código en el asunto y ningún fallo que suba. Solo cambian
+     * los textos, que dicen para qué es el código.
+     *
+     * @param usuario        destinatario, ya cargado; el código va a su correo actual.
+     * @param codigo         los seis dígitos en claro.
+     * @param minutosValidez minutos que el código seguirá sirviendo.
+     */
+    @Async(CorreoAsyncConfig.EXECUTOR)
+    @Override
+    public void enviarCodigoVerificacion(Usuario usuario, String codigo, int minutosValidez) {
+        entregar(Correo.VERIFICACION, usuario, codigo, minutosValidez);
+    }
+
+    // La entrega de cualquiera de los dos correos con código: por la API de Brevo o, sin
+    // clave, al buzón local. Ningún fallo sale de aquí.
+    private void entregar(Correo correo, Usuario usuario, String codigo, int minutosValidez) {
         if (!StringUtils.hasText(apiKey)) {
-            entregarSinApi(usuario, codigo, minutosValidez);
+            entregarSinApi(correo, usuario, codigo, minutosValidez);
             return;
         }
 
@@ -183,9 +207,11 @@ public class EmailService implements IEmailService {
             MensajeBrevo mensaje = new MensajeBrevo(
                     remitenteDeBrevo(),
                     List.of(new MensajeBrevo.Destinatario(usuario.getEmail(), usuario.getUsername())),
-                    codigo + " · Tu código de GymProFit",
-                    cuerpoHtml(usuario, codigo, minutosValidez),
-                    cuerpoTexto(usuario, codigo, minutosValidez));
+                    codigo + correo.finAsunto,
+                    correo == Correo.RECUPERACION
+                            ? cuerpoHtml(usuario, codigo, minutosValidez)
+                            : cuerpoHtmlVerificacion(usuario, codigo, minutosValidez),
+                    cuerpoTexto(correo, usuario, codigo, minutosValidez));
 
             // onStatus con predicado siempre cierto y manejador vacío desactiva el
             // comportamiento por defecto de RestClient, que lanza en 4xx/5xx. Aquí interesa
@@ -200,18 +226,18 @@ public class EmailService implements IEmailService {
                     .toEntity(String.class);
 
             if (respuesta.getStatusCode().is2xxSuccessful()) {
-                logger.info("Código de recuperación enviado al usuario id={} (messageId={})",
-                        usuario.getId(), messageId(respuesta.getBody()));
+                logger.info("Código de {} enviado al usuario id={} (messageId={})",
+                        correo.nombre, usuario.getId(), messageId(respuesta.getBody()));
             } else {
-                logger.error("Brevo rechazó el correo del usuario id={}: HTTP {} · {}",
-                        usuario.getId(), respuesta.getStatusCode().value(),
+                logger.error("Brevo rechazó el correo de {} del usuario id={}: HTTP {} · {}",
+                        correo.nombre, usuario.getId(), respuesta.getStatusCode().value(),
                         cuerpoParaElLog(respuesta.getBody(), codigo));
             }
         } catch (Exception e) {
             // Timeout, DNS, TLS, plantilla ilegible: nada de esto llega al cliente, que ya
             // ha recibido su 200 hace rato. Este ERROR es todo lo que queda para verlo.
-            logger.error("No se pudo entregar a Brevo el código de recuperación del usuario id={}",
-                    usuario.getId(), e);
+            logger.error("No se pudo entregar a Brevo el código de {} del usuario id={}",
+                    correo.nombre, usuario.getId(), e);
         }
     }
 
@@ -226,23 +252,23 @@ public class EmailService implements IEmailService {
      * probar el flujo entero sin cuenta de correo. Tampoco se registran dígitos sueltos del
      * código: dos de seis ya reducen el espacio de búsqueda a cien intentos.
      */
-    private void entregarSinApi(Usuario usuario, String codigo, int minutosValidez) {
+    private void entregarSinApi(Correo correo, Usuario usuario, String codigo, int minutosValidez) {
         if (esProduccion()) {
             // Cinturón y tirantes: verificarConfiguracionDeCorreo impide llegar hasta aquí en
             // prod, pero si alguna vez se llegara, el código NO acaba escrito en ningún sitio.
             logger.error("Clave de API de Brevo no disponible con el perfil prod activo: no se ha "
-                    + "enviado el código de recuperación al usuario id={}", usuario.getId());
+                    + "enviado el código de {} al usuario id={}", correo.nombre, usuario.getId());
             return;
         }
 
         try {
             Path buzon = Path.of(outboxDir);
             Files.createDirectories(buzon);
-            Path fichero = buzon.resolve("codigo-" + usuario.getId() + "-"
+            Path fichero = buzon.resolve(correo.prefijoBuzon + usuario.getId() + "-"
                     + LocalDateTime.now().format(SELLO_FICHERO) + ".txt");
-            Files.writeString(fichero, cuerpoTexto(usuario, codigo, minutosValidez), StandardCharsets.UTF_8);
-            logger.warn("Correo no configurado; código de recuperación de '{}' (válido {} min) escrito en {}",
-                    usuario.getUsername(), minutosValidez, fichero.toAbsolutePath());
+            Files.writeString(fichero, cuerpoTexto(correo, usuario, codigo, minutosValidez), StandardCharsets.UTF_8);
+            logger.warn("Correo no configurado; código de {} de '{}' (válido {} min) escrito en {}",
+                    correo.nombre, usuario.getUsername(), minutosValidez, fichero.toAbsolutePath());
         } catch (IOException e) {
             logger.error("Correo no configurado y tampoco se pudo escribir el código en el buzón local '{}'. "
                     + "El usuario id={} no ha recibido su código.", outboxDir, usuario.getId(), e);
@@ -307,7 +333,16 @@ public class EmailService implements IEmailService {
 
     // Alternativa en texto plano, para clientes que no pintan HTML. Dice lo mismo que el
     // HTML y en el mismo orden: primero el propósito, luego el código, luego la caducidad.
-    private String cuerpoTexto(Usuario usuario, String codigo, int minutos) {
+    private String cuerpoTexto(Correo correo, Usuario usuario, String codigo, int minutos) {
+        if (correo == Correo.VERIFICACION) {
+            return "Verifica tu correo\n\n"
+                    + "Hola, " + usuario.getUsername() + ". Escribe este código en la aplicación "
+                    + "para verificar tu correo:\n\n"
+                    + codigo + "\n\n"
+                    + "Caduca en " + minutos + " minutos y solo sirve una vez.\n\n"
+                    + "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, "
+                    + "nadie puede verificar esta dirección.\n";
+        }
         return "Restablece tu contraseña\n\n"
                 + "Hola, " + usuario.getUsername() + ". Escribe este código en la aplicación "
                 + "para elegir una contraseña nueva:\n\n"
@@ -351,5 +386,47 @@ public class EmailService implements IEmailService {
                 "¿No has pedido este código? Ignora este correo. Tu contraseña no ha cambiado "
                 + "y nadie ha entrado en tu cuenta.",
                 PlantillaCorreo.Pie.transaccional());
+    }
+
+    /**
+     * Cuerpo HTML del correo de verificación (GP-045): la misma forma ACCIÓN con el código
+     * de protagonista y el mismo pie TRANSACCIONAL que el de recuperación. Lo ha provocado
+     * el alta o un cambio de correo de la propia cuenta, no es comercial.
+     *
+     * @param usuario destinatario, del que sale el nombre que se saluda.
+     * @param codigo  los seis dígitos.
+     * @param minutos minutos de validez.
+     * @return el documento HTML completo.
+     */
+    private String cuerpoHtmlVerificacion(Usuario usuario, String codigo, int minutos) {
+        String parrafo = "Hola, " + PlantillaCorreo.escapar(usuario.getUsername())
+                + ", escribe este código en la aplicación para verificar tu correo.";
+        String nota = "Caduca en " + PlantillaCorreo.destacar(minutos + " minutos")
+                + " y solo sirve una vez.";
+
+        return PlantillaCorreo.renderizar(
+                "Código " + codigo + ", válido " + minutos + " minutos.",
+                "Verifica tu correo",
+                PlantillaCorreo.Accion.conCodigo(parrafo, "TU CÓDIGO", codigo, nota),
+                "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, nadie "
+                + "puede verificar esta dirección.",
+                PlantillaCorreo.Pie.transaccional());
+    }
+
+    // Los dos correos con código. Lo que los distingue fuera del cuerpo: el final del
+    // asunto, el nombre que sale en el log y el prefijo del fichero del buzón local.
+    private enum Correo {
+        RECUPERACION(" · Tu código de GymProFit", "recuperación", "codigo-"),
+        VERIFICACION(" · Verifica tu correo en GymProFit", "verificación del correo", "verificacion-");
+
+        private final String finAsunto;
+        private final String nombre;
+        private final String prefijoBuzon;
+
+        Correo(String finAsunto, String nombre, String prefijoBuzon) {
+            this.finAsunto = finAsunto;
+            this.nombre = nombre;
+            this.prefijoBuzon = prefijoBuzon;
+        }
     }
 }

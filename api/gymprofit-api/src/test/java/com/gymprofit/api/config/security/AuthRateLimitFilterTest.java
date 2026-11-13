@@ -176,6 +176,19 @@ class AuthRateLimitFilterTest {
     }
 
     @Test
+    @DisplayName("verificar el correo y reenviar el código comparten el cupo estricto (GP-045)")
+    void verificacion_de_correo_va_al_cupo_estricto() throws Exception {
+        // Reenviar en cadena es spam a una bandeja; verificar en cadena, fuerza bruta sobre
+        // seis dígitos. Igual que pedir y canjear el código de recuperación.
+        AuthRateLimitFilter f = nuevoFiltro(2, 60);
+
+        assertEquals(200, dispararEstricta(f, "/usuarios/me/email/reenviar"), "la 1ª pasa");
+        assertEquals(200, dispararEstricta(f, "/usuarios/me/email/verificar"), "la 2ª agota el cupo");
+        assertEquals(429, dispararEstricta(f, "/usuarios/me/email/reenviar"), "la 3ª supera el cupo estricto");
+        assertEquals(429, dispararEstricta(f, "/usuarios/me/email/verificar"), "y verificar comparte ese contador");
+    }
+
+    @Test
     @DisplayName("no se limitan preflight OPTIONS ni el health-check de la PaaS")
     void excluye_options_y_actuator() {
         AuthRateLimitFilter f = nuevoFiltro(1, 60);
