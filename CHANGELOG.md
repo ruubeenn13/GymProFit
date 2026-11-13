@@ -8,6 +8,11 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `45c7d8e6` | fix(android): las cifras de «Tus datos» de Perfil salen a 26 sp y alineadas con la actividad, también con letra 1,3; en inglés la edad se rotula «Age» (GP-265). |
+| `fd095695` | fix(api): un correo con código pedido sin idioma en la petición va en español, no en el de la JVM. |
+| `c34cb887` | feat(api): los correos con código llevan la G real en la cabecera, «{código} es tu código de GymProFit» en el asunto y el preheader, «Hola, {nombre}:», la dirección de soporte en el pie y van en español o en inglés según el idioma de la app que los pide. |
+| `cd79d5bd` | feat(android): Perfil con «Tu objetivo» destacado (las kcal y la proteína del día) y un estado para elegirlo si falta; «Tus datos» en una fila ya no enseña 70 kg, 170 cm y «Moderada» a quien no los dio (GP-265). |
+| `a44ede1f` | feat(android): «Mira tu correo» tras el alta y desde un aviso en Perfil: seis cajas que se comprueban solas, «Ahora no», «Pegar código», «Abrir el correo», reenvío con la espera de la API y «Correo confirmado»; nada bloquea (GP-045, DEC-066). |
 | `86c60a63` | feat(api): el alta manda un código de seis dígitos para verificar el correo, con las reglas de la recuperación (15 minutos, un solo uso, cinco intentos) y atado a la dirección; si el correo falla, el alta no falla. `POST /usuarios/me/email/verificar` y `/reenviar` en el cupo estricto; cambiar el correo deja la cuenta sin verificar y manda otro código; el perfil lleva `emailVerificado`. Las cuentas existentes quedan sin verificar (migración `V202611131000`, GP-045, DEC-066). |
 | `7301300f` | docs(decisiones): DEC-066, la cuenta sin verificar se usa entera y la verificación solo se pide para lo que depende del correo; DEC-028 revisada y se mantiene (GP-045). |
 | `c563232c` | fix(scripts,documentacion): las claves locales de `admin` y de la demo `@dani.entrena` salen de `ENTORNO-PRUEBAS.md` (la de `admin` ya no valía) y viven en `docs/credenciales-locales.txt`, ignorado por git; `scripts/clave_local.py` las regenera tocando solo la BD local. |
