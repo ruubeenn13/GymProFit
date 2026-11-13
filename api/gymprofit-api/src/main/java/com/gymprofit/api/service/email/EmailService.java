@@ -335,9 +335,13 @@ public class EmailService implements IEmailService {
     // provocó (Accept-Language de la app; CorreoAsyncConfig lo trae hasta este hilo). La
     // cuenta no guarda idioma: el de la app al pedir el código es el mejor que hay.
 
-    // Si el correo va en inglés. Cualquier otro idioma, en español, el de la casa.
+    // Si el correo va en inglés. Cualquier otro idioma, en español, el de la casa. Sin
+    // contexto de idioma (fuera de una petición) también en español: getLocale() caería al
+    // de la JVM, que en el CI y en Render es inglés.
     private static boolean ingles() {
-        return "en".equals(LocaleContextHolder.getLocale().getLanguage());
+        org.springframework.context.i18n.LocaleContext contexto = LocaleContextHolder.getLocaleContext();
+        java.util.Locale idioma = contexto == null ? null : contexto.getLocale();
+        return idioma != null && "en".equals(idioma.getLanguage());
     }
 
     /**

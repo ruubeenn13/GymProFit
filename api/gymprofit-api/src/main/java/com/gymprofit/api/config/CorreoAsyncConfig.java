@@ -75,10 +75,12 @@ public class CorreoAsyncConfig {
         // El idioma de la petición viaja con la tarea (lote 24): el correo se escribe en el
         // idioma de la app que lo pidió (Accept-Language), y en el hilo del pool el
         // LocaleContextHolder de la petición no existe.
+        // Se pasa el contexto y no getLocale(): sin petición, getLocale() daría el de la JVM.
         executor.setTaskDecorator(tarea -> {
-            java.util.Locale idioma = org.springframework.context.i18n.LocaleContextHolder.getLocale();
+            org.springframework.context.i18n.LocaleContext idioma =
+                    org.springframework.context.i18n.LocaleContextHolder.getLocaleContext();
             return () -> {
-                org.springframework.context.i18n.LocaleContextHolder.setLocale(idioma);
+                org.springframework.context.i18n.LocaleContextHolder.setLocaleContext(idioma);
                 try {
                     tarea.run();
                 } finally {
