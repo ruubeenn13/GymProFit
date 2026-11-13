@@ -187,6 +187,8 @@ public class BorradoCuentaService implements IBorradoCuentaService {
                 "DELETE FROM DeviceToken dt WHERE dt.usuario.id = :id", usuarioId);
         borrar("Códigos de recuperación",
                 "DELETE FROM PasswordResetCodigo prc WHERE prc.usuario.id = :id", usuarioId);
+        borrar("Códigos de verificación del correo",
+                "DELETE FROM VerificacionCorreoCodigo vcc WHERE vcc.usuario.id = :id", usuarioId);
 
         // --- La cuenta -----------------------------------------------------
         // usuario_roles es tabla de unión sin entidad propia: se borra en nativo.

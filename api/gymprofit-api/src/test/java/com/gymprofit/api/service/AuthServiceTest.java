@@ -64,6 +64,10 @@ class AuthServiceTest {
     @Mock
     private com.gymprofit.api.service.auth.PoliticaContrasena politicaContrasena;
 
+    // GP-045: el alta manda el código de verificación del correo.
+    @Mock
+    private com.gymprofit.api.service.usuario.IVerificacionCorreoService verificacionCorreoService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -151,6 +155,29 @@ class AuthServiceTest {
 
         assertDoesNotThrow(() -> authService.register(registerDTO));
 
+        verify(usuarioRepository).saveAndFlush(any(Usuario.class));
+    }
+
+    // GP-045: la cuenta nueva recibe su código de verificación, a su correo.
+    @Test
+    @DisplayName("Register manda el código de verificación al correo de la cuenta nueva")
+    void register_manda_el_codigo_de_verificacion() {
+        when(roleRepository.findByNombreIn(List.of(RoleType.USER.getValue()))).thenReturn(List.of(roleUser));
+
+        authService.register(registerDTO);
+
+        verify(verificacionCorreoService).emitirCodigo(
+                argThat(u -> "newuser@gymprofit.com".equals(u.getEmail()) && "newuser".equals(u.getUsername())));
+    }
+
+    // GP-045 (DEC-066): si emitir el código falla, la cuenta ya existe y el alta responde bien.
+    @Test
+    @DisplayName("Register no falla si no se puede emitir el código de verificación")
+    void register_no_falla_si_falla_el_codigo() {
+        when(roleRepository.findByNombreIn(List.of(RoleType.USER.getValue()))).thenReturn(List.of(roleUser));
+        doThrow(new RuntimeException("base caída")).when(verificacionCorreoService).emitirCodigo(any());
+
+        assertEquals("newuser", authService.register(registerDTO));
         verify(usuarioRepository).saveAndFlush(any(Usuario.class));
     }
 

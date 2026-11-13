@@ -21,4 +21,17 @@ public interface IEmailService {
      * @param minutosValidez minutos que el código seguirá sirviendo.
      */
     void enviarCodigoRecuperacion(Usuario usuario, String codigo, int minutosValidez);
+
+    /**
+     * Envía al usuario el código de un solo uso para verificar su correo (GP-045).
+     * <p>
+     * Mismas reglas que {@link #enviarCodigoRecuperacion}: vuelve antes de haber enviado
+     * nada, un fallo se registra en el otro hilo y no llega aquí, y el código viaja en los
+     * parámetros. Se manda a {@code usuario.getEmail()}, que es la dirección que verifica.
+     *
+     * @param usuario        destinatario, ya cargado.
+     * @param codigo         los seis dígitos en claro.
+     * @param minutosValidez minutos que el código seguirá sirviendo.
+     */
+    void enviarCodigoVerificacion(Usuario usuario, String codigo, int minutosValidez);
 }

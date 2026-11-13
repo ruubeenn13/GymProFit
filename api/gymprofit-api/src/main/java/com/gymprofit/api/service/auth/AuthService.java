@@ -16,6 +16,7 @@ import com.gymprofit.api.exceptions.InvalidDataException;
 import com.gymprofit.api.exceptions.NotFoundEntityException;
 import com.gymprofit.api.repository.jpa.IRoleRepository;
 import com.gymprofit.api.repository.jpa.IUsuarioRepository;
+import com.gymprofit.api.service.usuario.IVerificacionCorreoService;
 import com.gymprofit.api.service.usuario.ReglasPerfil;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -53,6 +54,8 @@ public class AuthService implements IAuthService {
     private final RefreshTokenService refreshTokenService;
     private final PoliticaContrasena politicaContrasena;
     private final NombreUsuario nombreUsuario;
+    // El código de verificación del correo que manda el alta (GP-045).
+    private final IVerificacionCorreoService verificacionCorreoService;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Autentica usuario/contraseña con el AuthenticationManager, establece el
@@ -160,13 +163,25 @@ public class AuthService implements IAuthService {
         }
 
         String hash = passwordEncoder.encode(registerDTO.getPassword());
+        Usuario creado;
         for (int intento = 1; ; intento++) {
             try {
-                usuarioRepository.saveAndFlush(nuevoUsuario(registerDTO, username, hash, nombre, nivelExperiencia, roles));
+                creado = nuevoUsuario(registerDTO, username, hash, nombre, nivelExperiencia, roles);
+                usuarioRepository.saveAndFlush(creado);
                 break;
             } catch (DataIntegrityViolationException e) {
                 username = otroIntento(registerDTO, propuesto, nombre, username, intento, e);
             }
+        }
+
+        // El código para verificar el correo (GP-045). La cuenta ya existe y se usa sin
+        // verificar (DEC-066), así que nada de lo que falle aquí tumba el alta: se
+        // registra, y en la app «Reenviar» pide otro.
+        try {
+            verificacionCorreoService.emitirCodigo(creado);
+        } catch (RuntimeException e) {
+            logger.error("Alta de '{}' hecha, pero no se pudo emitir su código de verificación del correo",
+                    username, e);
         }
 
         logger.info("Usuario '{}' registrado correctamente con roles: {}", username,

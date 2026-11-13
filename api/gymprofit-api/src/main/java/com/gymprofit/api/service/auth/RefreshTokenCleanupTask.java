@@ -2,6 +2,7 @@ package com.gymprofit.api.service.auth;
 
 import com.gymprofit.api.config.ShedLockConfig;
 import com.gymprofit.api.repository.jpa.IPasswordResetCodigoRepository;
+import com.gymprofit.api.repository.jpa.IVerificacionCorreoCodigoRepository;
 import com.gymprofit.api.repository.jpa.IRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -30,6 +31,8 @@ public class RefreshTokenCleanupTask {
     // Los códigos de recuperación tienen el mismo problema: se marcan como usados o
     // caducan, pero nadie los borraba. Se purgan en la misma pasada.
     private final IPasswordResetCodigoRepository passwordResetCodigoRepository;
+    // Y los de verificación del correo (GP-045), por lo mismo.
+    private final IVerificacionCorreoCodigoRepository verificacionCorreoCodigoRepository;
 
     // Se ejecuta cada día a las 04:00 (hora del servidor). Borra los refresh tokens
     // ya revocados o cuya fecha de expiración es anterior a ahora. Loguea el nº borrado.
@@ -53,6 +56,11 @@ public class RefreshTokenCleanupTask {
         int codigos = passwordResetCodigoRepository.borrarUsadosOExpirados(ahora);
         if (codigos > 0) {
             logger.info("Purga de password_reset_codigos: {} códigos usados/expirados eliminados", codigos);
+        }
+
+        int verificaciones = verificacionCorreoCodigoRepository.borrarUsadosOExpirados(ahora);
+        if (verificaciones > 0) {
+            logger.info("Purga de verificacion_correo_codigos: {} códigos usados/expirados eliminados", verificaciones);
         }
     }
 }

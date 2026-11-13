@@ -158,7 +158,9 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 | GET | `/usuarios/{id}/estadisticas` | USER/ADMIN | Estadísticas jOOQ |
 | PUT | `/usuarios` | ADMIN | Actualizar completo (id en body) — SecurityConfig: solo ADMIN vía catch-all `/usuarios/**` |
 | PATCH | `/usuarios/{id}` | USER/ADMIN | Actualización parcial del perfil: un campo `null` o ausente no se toca. `sexo` y `nivelActividad` opcionales (GP-111), 400 si no están en su lista. `nombre` opcional (GP-116): se recorta, en blanco se borra y con más de 40 caracteres da 400. `edad` menor de 14 da 400 con `EDAD_MINIMA` en `cause`, como en el alta. `avisosEntrenar`, `avisosComidas` y `avisosProgreso` (GP-112) encienden o apagan cada tipo de recordatorio; de serie, sí, no y sí (ver `documentacion/NOTIFICACIONES.md`). **No** cambia `activo` (lo ignora) ni el correo: un `email` distinto del actual da 400 |
-| PUT | `/usuarios/me/email` | USER/ADMIN | Cambia el correo propio. Body: `{email, password}` — reautentica. 400 formato, 403 contraseña, 409 en uso. El usuario sale del token. En el cupo estricto del rate limit. El correo nuevo aún no se verifica (GP-045) |
+| PUT | `/usuarios/me/email` | USER/ADMIN | Cambia el correo propio. Body: `{email, password}` — reautentica. 400 formato, 403 contraseña, 409 en uso. El usuario sale del token. En el cupo estricto del rate limit. Un correo nuevo deja la cuenta sin verificar y recibe un código (GP-045) |
+| POST | `/usuarios/me/email/verificar` | USER/ADMIN | Verifica el correo con el código. Body: `{codigo}` (6 dígitos). 200 `{email, verificado, verificadoEn}` (también si ya lo estaba), 400 si no vale. El usuario sale del token. Cupo estricto (GP-045, DEC-066) |
+| POST | `/usuarios/me/email/reenviar` | USER/ADMIN | Otro código al correo de la cuenta; mata el anterior. 204, 409 si ya está verificado. Cupo estricto (GP-045) |
 | GET | `/usuarios` | ADMIN | Todos los usuarios |
 | DELETE | `/usuarios/{id}` | ADMIN | Soft delete |
 | DELETE | `/usuarios/{id}/permanente` | ADMIN | Eliminar permanentemente |

@@ -51,7 +51,10 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             "/usuarios/me",
             // Cambio de correo (GP-083): también reautentica con la contraseña, y acertar
             // entrega la llave de la recuperación de contraseña.
-            "/usuarios/me/email");
+            "/usuarios/me/email",
+            // Verificación del correo (GP-045): reenviar en cadena es spam a una bandeja y
+            // verificar en cadena, fuerza bruta sobre seis dígitos. Como la recuperación.
+            "/usuarios/me/email/verificar", "/usuarios/me/email/reenviar");
 
     // Las rutas del nivel del programa: /programas/recomendado y /programas/{codigo}/vista-previa.
     private static final Pattern RUTAS_PROGRAMA =

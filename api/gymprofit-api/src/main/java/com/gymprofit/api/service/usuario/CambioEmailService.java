@@ -29,8 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 // UsuarioService es el UserDetailsService de SecurityConfig, que define el
 // PasswordEncoder, y pedírselo desde ahí cerraría un ciclo de dependencias.
 //
-// PENDIENTE (GP-045): el correo nuevo no se verifica. Se guarda tal cual; confirmar
-// que quien lo pide lo controla es trabajo de GP-045 y no se hace aquí.
+// GP-045 (DEC-066): un correo nuevo deja la cuenta SIN verificar y recibe su código,
+// valga la cuenta verificada o no, porque la dirección nueva no la ha comprobado nadie.
+// La sesión sigue abierta y la cuenta se sigue usando entera.
 // ============================================================
 @Service
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class CambioEmailService implements ICambioEmailService {
     private final UsuarioMapper usuarioMapper;
     private final SecurityUtils securityUtils;
     private final PasswordEncoder passwordEncoder;
+    private final IVerificacionCorreoService verificacionCorreoService;
 
     /**
      * Cambia el correo del usuario autenticado.
@@ -76,6 +78,8 @@ public class CambioEmailService implements ICambioEmailService {
         }
 
         usuario.setEmail(nuevo);
+        usuario.setEmailVerificado(false);
+        usuario.setEmailVerificadoEn(null);
         try {
             // saveAndFlush para que el choque con la restricción única, si otra petición se
             // lleva el correo entre la comprobación y aquí, salte dentro de este método y
@@ -87,6 +91,10 @@ public class CambioEmailService implements ICambioEmailService {
         } catch (DataIntegrityViolationException e) {
             throw new ConflictEntityException("error.correo.enUso");
         }
+
+        // El código a la dirección nueva. emitirCodigo mata los vivos, así que el de la
+        // dirección vieja deja de valer aquí mismo.
+        verificacionCorreoService.emitirCodigo(usuario);
 
         logger.info("Correo cambiado para el usuario id={}", usuarioId);
         return usuarioMapper.toDTO(usuario);

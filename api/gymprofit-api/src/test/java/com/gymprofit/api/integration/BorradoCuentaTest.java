@@ -58,13 +58,14 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
             "objetivos_personales",
             "password_reset_codigos",
             "programas_usuario",
-            "propuestas_favorito",
             "progreso_ejercicios",
+            "propuestas_favorito",
             "refresh_tokens",
             "rutinas",
             "sesiones_entrenamiento",
             "usuario_logros",
-            "usuario_roles");
+            "usuario_roles",
+            "verificacion_correo_codigos");
 
     @PersistenceContext
     private EntityManager em;
@@ -173,6 +174,9 @@ class BorradoCuentaTest extends AbstractOwnershipTest {
         ejecutar("""
                 INSERT INTO password_reset_codigos (usuario_id, codigo_hash, fecha_creacion, fecha_expiracion, usado, intentos)
                 VALUES (%d, 'hash', NOW(), NOW(), false, 0)""".formatted(owner.getId()));
+        ejecutar("""
+                INSERT INTO verificacion_correo_codigos (usuario_id, email, codigo_hash, fecha_creacion, fecha_expiracion, usado, intentos)
+                VALUES (%d, 'owner@test.local', 'hash', NOW(), NOW(), false, 0)""".formatted(owner.getId()));
 
         // --- Plantilla del sistema: no es de nadie y tiene que sobrevivir ----
         plantillaId = insertar("""

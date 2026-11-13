@@ -38,6 +38,9 @@ public interface UsuarioMapper {
     @Mapping(target = "avisosEntrenar", ignore = true)
     @Mapping(target = "avisosComidas", ignore = true)
     @Mapping(target = "avisosProgreso", ignore = true)
+    // La verificación del correo (GP-045) la pone solo VerificacionCorreoService.
+    @Mapping(target = "emailVerificado", ignore = true)
+    @Mapping(target = "emailVerificadoEn", ignore = true)
     Usuario toEntity(UsuarioCreateDTO usuarioCreateDTO);
 
     // Actualiza en el sitio (@MappingTarget) los campos editables de una
@@ -55,5 +58,8 @@ public interface UsuarioMapper {
     @Mapping(target = "avisosEntrenar", ignore = true)
     @Mapping(target = "avisosComidas", ignore = true)
     @Mapping(target = "avisosProgreso", ignore = true)
+    // La verificación del correo (GP-045) la pone solo VerificacionCorreoService.
+    @Mapping(target = "emailVerificado", ignore = true)
+    @Mapping(target = "emailVerificadoEn", ignore = true)
     void updateEntityFromDTO(UsuarioUpdateDTO usuarioUpdateDTO, @MappingTarget Usuario usuario);
 }

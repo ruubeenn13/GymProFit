@@ -25,6 +25,9 @@ public class UsuarioDTO implements Serializable {
     // Nombre para mostrar (GP-116); null si no tiene, y la app usa el username.
     private String nombre;
     private String email;
+    // GP-045: si el correo está verificado. Solo de salida: el PATCH y el PUT del perfil
+    // usan otros DTO y no lo pueden poner; lo cambia solo POST /usuarios/me/email/verificar.
+    private Boolean emailVerificado;
     private String peso;
     private Double altura;
     private Integer edad;

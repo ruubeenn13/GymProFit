@@ -127,14 +127,16 @@ class CorreoAsyncConfigTest {
     @Test
     @DisplayName("el envío del código sigue marcado como asíncrono y en el pool de correo")
     void el_envio_del_codigo_esta_marcado_como_asincrono() throws Exception {
-        Method envio = EmailService.class.getMethod(
-                "enviarCodigoRecuperacion", Usuario.class, String.class, int.class);
+        // Los dos códigos: el de recuperación y el de verificación del correo (GP-045).
+        for (String nombre : new String[] {"enviarCodigoRecuperacion", "enviarCodigoVerificacion"}) {
+            Method envio = EmailService.class.getMethod(nombre, Usuario.class, String.class, int.class);
 
-        Async async = envio.getAnnotation(Async.class);
-        assertThat(async).as("sin @Async el envío vuelve al hilo de la petición").isNotNull();
-        assertThat(async.value())
-                .as("y tiene que ir al pool de correo, no al executor general")
-                .isEqualTo(CorreoAsyncConfig.EXECUTOR);
+            Async async = envio.getAnnotation(Async.class);
+            assertThat(async).as("sin @Async %s vuelve al hilo de la petición", nombre).isNotNull();
+            assertThat(async.value())
+                    .as("y tiene que ir al pool de correo, no al executor general")
+                    .isEqualTo(CorreoAsyncConfig.EXECUTOR);
+        }
 
         // El código viaja como parámetro y no se relee: EmailService no tiene por dónde
         // hacerlo. Es la salvaguarda contra la trampa de @Async + @Transactional, donde la
