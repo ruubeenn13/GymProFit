@@ -230,4 +230,10 @@
     <!-- Las píldoras de zona de «Elige ejercicios» (GP-244, tablero Mezcla-2): 44 dp, y 48 de zona
          táctil con setEnsureMinTouchTargetSize. -->
     <dimen name="chip_zona_alto">44dp</dimen>
+    <!-- GP-265 y GP-045: el rótulo en condensada de 15 sp y los titulares en 800. -->
+    <dimen name="text_rotulo_destacado">15sp</dimen>
+    <dimen name="text_titular_correo">40sp</dimen>
+    <dimen name="text_cifra_codigo">34sp</dimen>
+    <!-- GP-045: alto de cada caja del código. -->
+    <dimen name="codigo_caja_alto">64dp</dimen>
 </resources>

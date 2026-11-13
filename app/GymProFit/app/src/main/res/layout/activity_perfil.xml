@@ -412,6 +412,9 @@
             <LinearLayout style="@style/Widget.GymProFit.GrupoAjustes.Pantalla">
 
                 <include android:id="@+id/filaCorreo" layout="@layout/view_fila_ajuste" />
+                <!-- GP-045: solo mientras el correo esté sin verificar. -->
+                <include android:id="@+id/filaVerificarCorreo" layout="@layout/view_fila_ajuste"
+                    android:visibility="gone" />
                 <include android:id="@+id/filaContrasena" layout="@layout/view_fila_ajuste" />
             </LinearLayout>
 

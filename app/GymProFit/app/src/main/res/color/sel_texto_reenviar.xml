@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- GP-045: «¿No te llega?…» en naranja; mientras corre la cuenta atrás, en el gris del texto
+     secundario (4,5:1 en los dos temas), porque no se puede pulsar. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/gp_text_secondary" android:state_enabled="false" />
+    <item android:color="@color/gp_primary" />
+</selector>

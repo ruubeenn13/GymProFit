@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  activity_verificar_correo — «Mira tu correo» (GP-045, DEC-066). Sale tras el alta, entre
+  «Todo listo» y «¿Te avisamos?», y desde el aviso de Perfil. Nada bloquea: arriba siempre
+  está «Ahora no». Tres estados en la misma pantalla: el código (seis cajas que se comprueban
+  solas), «Ese código ya no vale» (caducado o sin intentos) y «Correo confirmado».
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/android:colorBackground"
+    android:orientation="vertical">
+
+    <!-- Barra: el paso a la izquierda y «Ahora no» a la derecha. Sin flecha atrás. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/cabecera_alto"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/espacio_24"
+        android:paddingEnd="@dimen/espacio_8">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/verificar_correo_paso"
+            android:textAppearance="@style/TextAppearance.GymProFit.Label"
+            android:textColor="@color/gp_text_secondary"
+            android:textSize="@dimen/text_rotulo_destacado" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAhoraNo"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/zona_tactil"
+            android:minWidth="@dimen/zona_tactil"
+            android:text="@string/verificar_correo_ahora_no"
+            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+            android:textColor="?attr/colorPrimary"
+            app:rippleColor="@color/tarjeta_capa" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/espacio_24"
+            android:paddingEnd="@dimen/espacio_24"
+            android:paddingBottom="@dimen/espacio_24">
+
+            <!-- ── El código ──────────────────────────────────────────── -->
+            <LinearLayout
+                android:id="@+id/grupoCodigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:accessibilityHeading="true"
+                    android:fontFamily="@font/barlow_condensed_extrabold"
+                    android:text="@string/verificar_correo_titulo"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_titular_correo" />
+
+                <TextView
+                    android:id="@+id/tvExplicacion"
+                    style="@style/Widget.GymProFit.Alta.Texto"
+                    android:text="@string/verificar_correo_explicacion" />
+
+                <!-- El correo, en una línea, y «Cambiar». -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardCorreo"
+                    style="@style/Widget.GymProFit.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_20">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/fila_alto_min"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/espacio_16"
+                        android:paddingEnd="@dimen/espacio_4">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_ms_mail"
+                            app:tint="?attr/colorOnSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tvCorreo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_12"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_body" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCambiarCorreo"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/verificar_correo_cambiar_a11y"
+                            android:minHeight="@dimen/zona_tactil"
+                            android:minWidth="@dimen/zona_tactil"
+                            android:text="@string/verificar_correo_cambiar"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Enlace"
+                            android:textColor="?attr/colorPrimary"
+                            app:rippleColor="@color/tarjeta_capa" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Mientras se lee el correo (tras cambiarlo o si no llegó), y su fallo con
+                     «Reintentar» (GP-064). El código se puede escribir igual. -->
+                <include
+                    android:id="@+id/estadoCorreo"
+                    layout="@layout/view_estado" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_24"
+                    android:importantForAccessibility="no"
+                    android:text="@string/verificar_correo_codigo_rotulo"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Label" />
+
+                <es.pmdm.gymprofit.ui.widget.CampoCodigo
+                    android:id="@+id/campoCodigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8" />
+
+                <!-- El error: se anuncia al salir (región viva y rol de alerta). -->
+                <TextView
+                    android:id="@+id/tvAvisoCodigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:accessibilityLiveRegion="assertive"
+                    android:textColor="@color/gp_error"
+                    android:textSize="@dimen/text_caption"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvAyuda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:text="@string/verificar_correo_ayuda"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_caption" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_20"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAbrirCorreo"
+                        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="@dimen/zona_tactil"
+                        android:text="@string/verificar_correo_abrir"
+                        android:visibility="gone" />
+
+                    <Space
+                        android:id="@+id/huecoBotones"
+                        android:layout_width="@dimen/espacio_8"
+                        android:layout_height="1dp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnPegar"
+                        style="@style/Widget.GymProFit.BotonPildora.Contorno"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="@dimen/zona_tactil"
+                        android:text="@string/verificar_correo_pegar"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReenviar"
+                    style="@style/Widget.GymProFit.Alta.BotonTexto"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:text="@string/verificar_correo_reenviar"
+                    android:textColor="@color/sel_texto_reenviar" />
+            </LinearLayout>
+
+            <!-- ── Ese código ya no vale ─────────────────────────────── -->
+            <LinearLayout
+                android:id="@+id/grupoCaducado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvTituloCaducado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_8"
+                    android:accessibilityHeading="true"
+                    android:fontFamily="@font/barlow_condensed_extrabold"
+                    android:text="@string/verificar_correo_caducado_titulo"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_titular_correo" />
+
+                <TextView
+                    style="@style/Widget.GymProFit.Alta.Texto"
+                    android:text="@string/verificar_correo_caducado_texto" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEnviarOtro"
+                    style="@style/Widget.GymProFit.Alta.Boton"
+                    android:layout_marginTop="@dimen/espacio_24"
+                    android:text="@string/verificar_correo_enviar_otro" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAhoraNoCaducado"
+                    style="@style/Widget.GymProFit.Alta.BotonTexto"
+                    android:layout_marginTop="@dimen/espacio_4"
+                    android:text="@string/verificar_correo_ahora_no" />
+            </LinearLayout>
+
+            <!-- ── Correo confirmado ─────────────────────────────────── -->
+            <LinearLayout
+                android:id="@+id/grupoConfirmado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/separacion_subpantalla"
+                android:accessibilityLiveRegion="polite"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:id="@+id/circuloOro"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:background="@drawable/bg_circulo_oro"
+                    android:importantForAccessibility="no">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ms_check"
+                        app:tint="@color/gp_sobre_oro" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvConfirmado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/espacio_20"
+                    android:accessibilityHeading="true"
+                    android:fontFamily="@font/barlow_condensed_extrabold"
+                    android:text="@string/verificar_correo_confirmado"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_titular_correo" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

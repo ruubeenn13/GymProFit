@@ -222,4 +222,8 @@
          botón era de contorno; relleno y con este rojo se lee en los dos. -->
     <color name="gp_eliminar_fondo">#C62828</color>
     <color name="gp_eliminar_texto">#FFFFFF</color>
+    <!-- GP-045: el halo de la caja activa del código (naranja al 20 %). -->
+    <color name="gp_codigo_halo">#33B83E00</color>
+    <!-- GP-045: el check sobre el círculo dorado, casi negro en los dos temas. -->
+    <color name="gp_sobre_oro">#17181C</color>
 </resources>

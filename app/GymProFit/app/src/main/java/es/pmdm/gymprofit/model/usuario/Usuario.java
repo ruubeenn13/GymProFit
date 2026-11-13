@@ -18,6 +18,8 @@ public class Usuario {
     // Nombre para mostrar (GP-116); null si no tiene. Ver NombreVisible.
     private String nombre;
     private String email;
+    // GP-045: si el correo está verificado. Null con una API anterior; solo de lectura.
+    private Boolean emailVerificado;
     private String peso;
     private double altura;
     private int edad;
@@ -51,6 +53,7 @@ public class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public Boolean getEmailVerificado() { return emailVerificado; }
 
     public String getPeso() { return peso; }
     public void setPeso(String peso) { this.peso = peso; }

@@ -155,6 +155,8 @@ public class CambiarCorreoActivity extends AppCompatActivity {
             public void onOk(Void ignorado) {
                 LoadingDialog.hide(CambiarCorreoActivity.this);
                 UIHelper.mostrarToastExito(CambiarCorreoActivity.this, getString(R.string.cambiar_correo_ok));
+                // La API ha mandado un código a la dirección nueva (GP-045).
+                new PreferencesManager(CambiarCorreoActivity.this).apuntarCodigoCorreo(System.currentTimeMillis());
                 setResult(RESULT_OK);
                 finish();
             }

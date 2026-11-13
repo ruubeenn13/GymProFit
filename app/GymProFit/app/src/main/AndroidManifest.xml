@@ -33,6 +33,14 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
+    <!-- GP-045: «Abrir el correo» solo sale si hay una app de correo que lo abra. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.APP_EMAIL" />
+        </intent>
+    </queries>
+
     <application
         android:name=".GymProFitApp"
         android:allowBackup="true"
@@ -216,6 +224,9 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.activities.CambiarPasswordActivity" android:exported="false" />
         <activity android:name=".ui.activities.CambiarCorreoActivity" android:exported="false" />
+        <!-- El código para verificar el correo, tras el alta y desde Perfil (GP-045). -->
+        <activity android:name=".ui.activities.VerificarCorreoActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.activities.LicenciasActivity" android:exported="false" />
         <activity android:name=".ui.activities.SeccionProgresoActivity" android:exported="false" />
         <activity android:name=".ui.activities.EjerciciosActivity" android:exported="false" />

@@ -52,6 +52,7 @@ import es.pmdm.gymprofit.utils.NombreVisible;
 import es.pmdm.gymprofit.utils.PreferencesManager;
 import es.pmdm.gymprofit.utils.ResultadoNutricional;
 import es.pmdm.gymprofit.utils.UIHelper;
+import es.pmdm.gymprofit.utils.VerificacionCorreo;
 
 // ============================================================
 // PerfilActivity — Perfil y ajustes (GP-216, tablero 17). Sustituye a Ajustes: se abre con el
@@ -103,6 +104,10 @@ public class PerfilActivity extends BaseActivity {
         // Cuenta
         fila(R.id.filaCorreo, R.drawable.ic_ms_mail, R.string.ajustes_correo,
                 () -> startActivity(new Intent(this, CambiarCorreoActivity.class)));
+        // El aviso discreto del correo sin verificar (GP-045): una fila más de Cuenta, que
+        // solo sale cuando la API dice que no lo está (pintarVerificacion).
+        fila(R.id.filaVerificarCorreo, R.drawable.ic_ms_mail, R.string.perfil_verificar_correo,
+                () -> startActivity(VerificarCorreoActivity.desdePerfil(this, usuario == null ? null : usuario.getEmail())));
         fila(R.id.filaContrasena, R.drawable.ic_ms_lock, R.string.ajustes_contrasena,
                 () -> startActivity(new Intent(this, CambiarPasswordActivity.class)));
 
@@ -342,6 +347,7 @@ public class PerfilActivity extends BaseActivity {
                 if (u == null || isFinishing()) return;
                 usuario = u;
                 valor(R.id.filaCorreo, R.string.ajustes_correo, Correo.enmascarar(u.getEmail()));
+                pintarVerificacion(u);
                 pintarNotificaciones(AvisosCuenta.Estado.de(u.getAvisosEntrenar(), u.getAvisosComidas(), u.getAvisosProgreso()));
                 pintarResumen();
             }
@@ -522,6 +528,21 @@ public class PerfilActivity extends BaseActivity {
         tv.setVisibility(hay ? View.VISIBLE : View.GONE);
         f.setContentDescription(hay ? getString(R.string.ajustes_fila_valor_a11y, getString(titulo), valor)
                 : getString(titulo));
+    }
+
+    // GP-045: la fila «Verifica tu correo» sale solo cuando la API dice que no lo está
+    // (con una API anterior, que no lo dice, no sale). Lleva la dirección enmascarada.
+    private void pintarVerificacion(@NonNull Usuario u) {
+        View f = findViewById(R.id.filaVerificarCorreo);
+        boolean mostrar = VerificacionCorreo.mostrarAviso(u.getEmailVerificado());
+        f.setVisibility(mostrar ? View.VISIBLE : View.GONE);
+        if (!mostrar) return;
+        String texto = getString(R.string.perfil_verificar_correo_sub, Correo.enmascarar(u.getEmail()));
+        TextView sub = f.findViewById(R.id.tvSub);
+        sub.setText(texto);
+        sub.setVisibility(View.VISIBLE);
+        f.setContentDescription(getString(R.string.ajustes_fila_sub_a11y,
+                getString(R.string.perfil_verificar_correo), texto));
     }
 
     // Las que salen de la app llevan la flecha de «abre fuera» y lo dicen a TalkBack.

@@ -58,7 +58,8 @@ import es.pmdm.gymprofit.utils.UiFeedback;
 //   1. POST /auth/register con el perfil entero: la cuenta nace con lo contestado.
 //   2. POST /auth/login con el correo (DEC-036), y el usuario para saber su id.
 //   3. POST /programas/{codigo}/seguir con los minutos elegidos.
-// Y acaba en «Todo listo», con vibración de éxito, y de ahí a los avisos.
+// Y acaba en «Todo listo», con vibración de éxito, y de ahí al código del correo
+// (GP-045, se puede dejar para más tarde) y a los avisos.
 //
 // Los errores van bajo su campo (tablero 10): correo en uso con «Entrar con él», las
 // reglas de la contraseña, y sin red un reintento que no pierde el plan; si la cuenta ya
@@ -341,6 +342,8 @@ public class GuardaPlanActivity extends BaseActivity {
         String programa = prefsManager.getBorradorProgramaNombre();
         boolean conPrograma = !programa.isEmpty() && prefsManager.getProgramaPendienteCodigo().isEmpty();
         PerfilAlta.terminar(prefsManager, usuario);
+        // El alta acaba de mandar el código del correo (GP-045): desde aquí cuentan sus 15 minutos.
+        prefsManager.apuntarCodigoCorreo(System.currentTimeMillis());
         EmbudoAlta.avisar(this, EmbudoAlta.Paso.CUENTA);
         creando = false;
         ancho.quedarseEnCirculo();
@@ -360,8 +363,11 @@ public class GuardaPlanActivity extends BaseActivity {
         Movimiento.entrar(450, findViewById(R.id.tvTituloListo), findViewById(R.id.tvTextoListo));
         View seguir = findViewById(R.id.btnSeguirListo);
         Movimiento.entrarUna(seguir, 700, Movimiento.ENTRA, 16);
+        // Antes de los avisos, el código del correo (GP-045). No bloquea: tiene «Más tarde»
+        // y, verificado o no, sigue a «¿Te avisamos?».
+        String correo = etCorreo.getText() == null ? null : etCorreo.getText().toString().trim();
         seguir.setOnClickListener(v -> {
-            startActivity(AvisosActivity.delAlta(this)
+            startActivity(VerificarCorreoActivity.delAlta(this, correo)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
             finish();
         });

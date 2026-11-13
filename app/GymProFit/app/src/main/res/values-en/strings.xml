@@ -895,7 +895,34 @@
     <string name="cambiar_correo_error_leer">Your current email couldn\'t be read. You can still change it.</string>
     <string name="cambiar_correo_nuevo">New email</string>
     <string name="cambiar_correo_boton">Change email</string>
-    <string name="cambiar_correo_ok">Email changed</string>
+    <string name="cambiar_correo_ok">Email changed. We sent you a code to verify it.</string>
+    <!-- GP-045: «Check your email» (DEC-066). The account works fully without it. -->
+    <string name="verificar_correo_paso">Step 1 of 1 · Optional</string>
+    <string name="verificar_correo_ahora_no">Not now</string>
+    <string name="verificar_correo_titulo">Check your email</string>
+    <string name="verificar_correo_explicacion">We sent you a 6-digit code. Type it in and you are done.</string>
+    <string name="verificar_correo_cambiar">Change</string>
+    <string name="verificar_correo_cambiar_a11y">Change email</string>
+    <string name="verificar_correo_codigo_rotulo">Code</string>
+    <string name="verificar_correo_cifras_a11y">%1$d of %2$d digits</string>
+    <string name="verificar_correo_ayuda">It is checked as soon as you enter the sixth digit. Expires in 15\u00A0min.</string>
+    <string name="verificar_correo_abrir">Open email app</string>
+    <string name="verificar_correo_pegar">Paste code</string>
+    <string name="verificar_correo_pegar_nada">There is no 6-digit code copied</string>
+    <string name="verificar_correo_reenviar">Not arriving? Check spam or resend it</string>
+    <string name="verificar_correo_reenviar_en">Not arriving? Check spam or resend it in %1$s</string>
+    <string name="verificar_correo_reenviado">We sent you another code</string>
+    <plurals name="verificar_correo_error">
+        <item quantity="one">That is not the code. %1$d try left.</item>
+        <item quantity="other">That is not the code. %1$d tries left.</item>
+    </plurals>
+    <string name="verificar_correo_caducado_titulo">That code has expired</string>
+    <string name="verificar_correo_caducado_texto">Ask for another one and it arrives in a few seconds.</string>
+    <string name="verificar_correo_enviar_otro">Send another code</string>
+    <string name="verificar_correo_confirmado">Email confirmed</string>
+    <string name="verificar_correo_ya">Your email is already verified</string>
+    <string name="perfil_verificar_correo">Verify your email</string>
+    <string name="perfil_verificar_correo_sub">Not verified · %1$s</string>
     <string name="cambiar_correo_igual">That\'s the email you already have</string>
 
     <!-- GP-105 · añadir alimento: para qué comida -->
