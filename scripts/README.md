@@ -3,7 +3,7 @@
 | Script | Para qué |
 |---|---|
 | `comprobar-limite-ip.sh` | Comprueba desde fuera que el límite de peticiones del login (o, con `RUTA=embudo`, el de `/alta/pasos`) no se salta cambiando `X-Forwarded-For` (S28, DEC-062). Hay que repetirlo tras cualquier cambio de infraestructura o de plan en Render. Gasta el cupo de tu IP: **espera 61 s después de la ráfaga antes de cualquier login o alta de prueba** (GP-264). |
-| `entorno-pruebas.sh` | Comprueba el aislamiento y la BD local y arranca la API local (`estado`, `parar`). Ver `documentacion/ENTORNO-PRUEBAS.md`. |
+| `entorno-pruebas.sh` | Comprueba el aislamiento y la BD local, rellena las fotos de los ejercicios que falten (GP-248) y arranca la API local (`estado` solo comprueba, `parar`). Ver `documentacion/ENTORNO-PRUEBAS.md`. |
 | `reset-datos-pruebas.sh` | Restaura los datos de pruebas al estado base. Exige la API parada. |
 | `sembrar_demo.py` | Crea la cuenta demo de las capturas, `@dani.entrena`, con tres semanas de datos. Solo en local. |
 | `versionar-hojas-web.py` | Pone en las páginas de `web/` la versión de sus hojas. Ver `web/README.md`. |
@@ -44,6 +44,36 @@ Deja tres semanas que acaban hoy:
 - El agua de cada día.
 - 8 pesos, de 78,6 a 76,9 kg. La API fecha cada medición al guardarla, así que el
   script la lleva después a su día con el cliente de MariaDB.
+
+### Las fotos de los ejercicios, como en producción (GP-248)
+
+En producción, cada ejercicio trae dos fotos de free-exercise-db, en
+`https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/<fed_id>/0.jpg`
+y `/1.jpg`. Es la regla del import (`WgerImportService.mapearFed`), y todos los
+ejercicios activos tienen `fed_id`. Sin esas URL, la Biblioteca, «Los que más haces»
+y la ficha de la rutina sacan la silueta de reserva y las capturas ya no se parecen a
+producción.
+
+No hay ningún paso a mano:
+
+- `entorno-pruebas.sh`, al arrancar, rellena desde `fed_id` las `imagen_url` e
+  `imagen_url_2` que falten y dice cuántas ha puesto. Después comprueba que todos los
+  ejercicios de las plantillas tienen foto, y si alguno sigue sin ella (eso es que no
+  tiene `fed_id`) no arranca la API. `estado` hace la comprobación sin escribir nada.
+- `sembrar_demo.py` no crea la cuenta si algún ejercicio del programa no tiene foto.
+
+No se relanza el import (`POST /admin/catalogo/importar-ejercicios`) porque pisaría los
+nombres en español revisados a mano (GP-217). Tampoco se restaura el volcado base: es
+anterior a los programas.
+
+Comprobado el 13-11-2026: las 50 URL (25 ejercicios, dos fotos cada uno) de las
+rutinas de `GIM-TP` contestan 200, y en la BD local las 873 filas con `fed_id` siguen
+la regla. Para repetirlo sin tocar producción basta con un `curl -I` a cada URL: la
+API de producción no las enseña sin token, y `POST /auth/guest` ya escribe un
+refresh token.
+
+«Hoy toca», en Inicio, no lleva fotos: su carrusel pinta el icono de la zona de cada
+ejercicio, así que esa captura sale igual con fotos o sin ellas.
 
 
 ### Hacer las capturas
