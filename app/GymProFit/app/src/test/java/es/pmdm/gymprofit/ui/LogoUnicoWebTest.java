@@ -32,12 +32,18 @@ import java.util.stream.Stream;
 // Comprueba, en todas las páginas de web/: ningún <picture> ni <source> por tema,
 // toda imagen de marca es /img/logo.svg, un solo favicon sin media y el
 // apple-touch-icon; y que en img/ no queda otro fichero de logo.
+//
+// La única excepción es logo-correo.png (GP-266): la misma G sobre transparente, para
+// la cabecera de los correos, que la cargan de gymprofit.app. Ninguna página la usa
+// —todaImagenDeMarcaEsElLogoUnico falla si alguna la pone en un <img>—.
 // ============================================================
 public class LogoUnicoWebTest {
 
     private static final String LOGO = "/img/logo.svg";
     private static final String FAVICON = "/img/favicon.png";
     private static final String TOQUE = "/img/apple-touch-icon.png";
+    /** El logo de los correos (GP-266): vive en la web solo para que los correos lo enlacen. */
+    private static final String CORREO = "/img/logo-correo.png";
 
     /** Las imágenes de web/img que no son de marca: fondos y capturas. */
     private static final Pattern NO_MARCA = Pattern.compile("/img/(capturas/.*|tela\\.webp|tyvek\\.webp)");
@@ -97,7 +103,7 @@ public class LogoUnicoWebTest {
                     .collect(Collectors.toCollection(TreeSet::new));
         }
         assertEquals("web/img tiene logos o favicons de más",
-                new TreeSet<>(Arrays.asList(TOQUE, FAVICON, LOGO)), marca);
+                new TreeSet<>(Arrays.asList(TOQUE, FAVICON, LOGO, CORREO)), marca);
     }
 
     private static List<Path> paginas() throws IOException {
