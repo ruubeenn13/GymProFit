@@ -9,7 +9,8 @@ de la misma rutina y «Tu semana» de nutrición con datos (GP-210, GP-216).
 
 Solo habla con la API local y con la BD local del 3308: se niega a arrancar si la URL
 no es de localhost o 127.0.0.1. La API pone a cada medición la fecha del momento en que
-se guarda, así que al final se lleva cada una a su día con el cliente de MariaDB.
+se guarda, así que al final se lleva cada una a su día con el cliente de MariaDB. Antes de
+crear nada comprueba que los ejercicios del programa tienen foto, como en producción (GP-248).
 
 Uso, con la API local arrancada (scripts/entorno-pruebas.sh); ver scripts/README.md:
     GYMPROFIT_DEMO_PASSWORD=... GYMPROFIT_DB_PASSWORD=... python scripts/sembrar_demo.py
@@ -133,20 +134,41 @@ def comer(token: str, dia: date, tipo: str, platos: list) -> None:
                                           "alimentoId": aid, "cantidadGramos": gramos}, token)
 
 
-def fechar_mediciones(clave_bd: str, mediciones: list) -> None:
-    """Lleva cada medición a su día, a las 8:00, en la BD local del 3308. Solo toca las de la demo."""
-    sql = "".join(
-        f"UPDATE mediciones_corporales m JOIN usuarios u ON u.id = m.usuario_id "
-        f"SET m.fecha = '{dia.isoformat()} 08:00:00' WHERE m.id = {int(mid)} AND u.username = '{USUARIO}';\n"
-        for mid, dia in mediciones)
+def bd_local(clave_bd: str, sql: str) -> str:
+    """Pasa el SQL al cliente de MariaDB contra la BD local del 3308 y devuelve lo que escribe."""
     cli = os.environ.get("MARIADB_CLI", "mariadb")
     entorno = dict(os.environ, MYSQL_PWD=clave_bd)
-    subprocess.run([cli, "-h", "127.0.0.1", "-P", "3308", "-u", "root", "gymprofit_db"],
-                   input=sql.encode("utf-8"), env=entorno, check=True)
+    hecho = subprocess.run([cli, "-N", "-h", "127.0.0.1", "-P", "3308", "-u", "root", "gymprofit_db"],
+                           input=sql.encode("utf-8"), env=entorno, check=True, capture_output=True)
+    return hecho.stdout.decode("utf-8").strip()
+
+
+def comprobar_fotos(clave_bd: str) -> None:
+    """Para antes de crear nada si algún ejercicio del programa no tiene foto (GP-248).
+
+    En producción todos la tienen, porque vienen de free-exercise-db; si aquí falta, la demo
+    enseñaría siluetas en su lugar. scripts/entorno-pruebas.sh las rellena al arrancar."""
+    faltan = bd_local(clave_bd, (
+        "SELECT e.nombre FROM programas p JOIN programa_rutina pr ON pr.programa_id = p.id "
+        "JOIN rutina_ejercicio re ON re.rutina_id = pr.rutina_id JOIN ejercicios e ON e.id = re.ejercicio_id "
+        f"WHERE p.codigo = '{PROGRAMA}' AND (e.imagen_url IS NULL OR e.imagen_url = '');"))
+    if faltan:
+        sys.exit(f"Ejercicios de {PROGRAMA} sin foto en la BD local: {', '.join(faltan.splitlines())}.\n"
+                 "Arranca con scripts/entorno-pruebas.sh, que las rellena desde fed_id; las que sigan sin foto "
+                 "no tienen fed_id y se miran a mano.")
+
+
+def fechar_mediciones(clave_bd: str, mediciones: list) -> None:
+    """Lleva cada medición a su día, a las 8:00, en la BD local del 3308. Solo toca las de la demo."""
+    bd_local(clave_bd, "".join(
+        f"UPDATE mediciones_corporales m JOIN usuarios u ON u.id = m.usuario_id "
+        f"SET m.fecha = '{dia.isoformat()} 08:00:00' WHERE m.id = {int(mid)} AND u.username = '{USUARIO}';\n"
+        for mid, dia in mediciones))
 
 
 def main() -> None:
     clave_demo, clave_bd = comprobar_entorno()
+    comprobar_fotos(clave_bd)
     random.seed(42)
     token = dar_de_alta(clave_demo)
     rutinas = seguir_programa(token)

@@ -21,6 +21,9 @@ JDK="/c/Users/ruben/.jdks/ms-21.0.11"
 PUERTO_API=8080
 PUERTO_BD=3308
 SALUD="http://localhost:$PUERTO_API/api/actuator/health"
+# Cliente de MariaDB y clave de la BD local de pruebas (la misma que reset-datos-pruebas.sh)
+MARIADB_CLI="${MARIADB_CLI:-/c/Program Files/MariaDB 11.8/bin/mariadb.exe}"
+CLAVE_BD_LOCAL=12345
 
 verde()  { printf '  \033[32m✓\033[0m %s\n' "$1"; }
 rojo()   { printf '  \033[31m✗\033[0m %s\n' "$1"; }
@@ -51,6 +54,52 @@ comprobar_bd() {
   fi
   rojo "No hay base de datos en el puerto $PUERTO_BD. Arranca MariaDB local."
   return 1
+}
+
+# --- Fotos de los ejercicios (GP-248) ----------------------------------------
+# Las fotos de producción salen del import de free-exercise-db, que guarda en cada
+# ejercicio <FED_IMG>/<fed_id>/0.jpg y /1.jpg (WgerImportService.mapearFed). Si a la
+# BD local le falta alguna, se rellena aquí con la misma regla: así la demo de las
+# capturas enseña las mismas fotos que producción y no la silueta de reserva. No se
+# relanza el import porque pisaría los nombres revisados a mano (GP-217).
+FED_IMG="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/"
+
+bd_local() {
+  MYSQL_PWD="$CLAVE_BD_LOCAL" "$MARIADB_CLI" -N -h 127.0.0.1 -P "$PUERTO_BD" -u root gymprofit_db -e "$1" 2>/dev/null | tr -d '\r'
+}
+
+# Solo al arrancar: «estado» no escribe nada.
+rellenar_imagenes() {
+  local rellenadas
+  rellenadas="$(bd_local "
+    UPDATE ejercicios SET imagen_url = CONCAT('$FED_IMG', fed_id, '/0.jpg')
+     WHERE fed_id IS NOT NULL AND (imagen_url IS NULL OR imagen_url = '');
+    SELECT ROW_COUNT() INTO @a;
+    UPDATE ejercicios SET imagen_url_2 = CONCAT('$FED_IMG', fed_id, '/1.jpg')
+     WHERE fed_id IS NOT NULL AND (imagen_url_2 IS NULL OR imagen_url_2 = '');
+    SELECT @a + ROW_COUNT();")"
+  if [ -n "$rellenadas" ] && [ "$rellenadas" != "0" ]; then
+    aviso "Fotos de ejercicios rellenadas desde fed_id, como en producción: $rellenadas"
+  fi
+}
+
+comprobar_imagenes() {
+  local faltan
+  # Tras rellenar, lo que siga sin foto en las plantillas es que no tiene fed_id
+  faltan="$(bd_local "SELECT COUNT(DISTINCT e.id) FROM rutinas r
+     JOIN rutina_ejercicio re ON re.rutina_id = r.id JOIN ejercicios e ON e.id = re.ejercicio_id
+     WHERE r.es_plantilla = 1 AND (e.imagen_url IS NULL OR e.imagen_url = '')")"
+  if [ -z "$faltan" ]; then
+    aviso "No se pudo mirar si los ejercicios tienen foto: ¿está $MARIADB_CLI? (MARIADB_CLI)"
+    return 0
+  fi
+  if [ "$faltan" != "0" ]; then
+    rojo "Ejercicios de las plantillas sin foto: $faltan. La demo no saldrá como producción."
+    rojo "Al arrancar se rellenan desde fed_id; los que no lo tienen se miran a mano."
+    return 1
+  fi
+  verde "Los ejercicios de las plantillas tienen sus fotos, como en producción"
+  return 0
 }
 
 api_viva() {
@@ -99,12 +148,14 @@ case "${1:-arrancar}" in
     ;;
   estado)
     comprobar_aislamiento
-    comprobar_bd
+    comprobar_bd && comprobar_imagenes
     if api_viva; then verde "API local en marcha"; else aviso "API local parada"; fi
     ;;
   *)
     comprobar_aislamiento || exit 1
     comprobar_bd || exit 1
+    rellenar_imagenes
+    comprobar_imagenes || exit 1
     arrancar_api || exit 1
     echo
     echo "  Usuario de pruebas:  prueba / Prueba1234."
