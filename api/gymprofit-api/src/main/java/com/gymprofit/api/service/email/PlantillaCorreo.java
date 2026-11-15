@@ -23,8 +23,9 @@ import java.util.regex.Pattern;
 // ---- Por qué el HTML está maquetado con TABLAS -------------------------------------
 // Outlook de escritorio renderiza el correo con el motor de Word, no con un motor web:
 // no entiende flexbox ni grid, ignora border-radius y box-shadow, y se salta buena parte
-// del posicionamiento CSS. Por eso todo va en tablas anidadas con estilos EN LÍNEA (no
-// hay bloque <style>: Gmail lo conserva, pero otros clientes lo descartan), los anchos
+// del posicionamiento CSS. Por eso todo va en tablas anidadas con estilos EN LÍNEA (el
+// único <style> es la regla del móvil, GP-266: Gmail la conserva, y el cliente que la
+// descarte se queda con el diseño de escritorio, que también funciona), los anchos
 // van además en el atributo width, y la profundidad del diseño se consigue con cambios
 // de tono y líneas de 1 px —que sí sobreviven— y nunca con sombras. Las sombras están
 // declaradas porque en los clientes que las entienden suman, pero el diseño se sostiene
@@ -261,6 +262,7 @@ final class PlantillaCorreo {
         valores.put("CONTENIDO", contenido.html());
         valores.put("FRANJA", franja(franjaCierre));
         valores.put("PIE", pieHtml(pie, idioma));
+        valores.put("MOVIL", MOVIL);
         return render(ENVOLTURA, valores);
     }
 
@@ -371,6 +373,40 @@ final class PlantillaCorreo {
     // ========================================================================
 
     /**
+     * La regla del móvil (GP-266), en el &lt;style&gt; del &lt;head&gt;. Es lo único del correo que no
+     * va en línea: Gmail en Android e iOS respeta las @media del head, y un cliente que las
+     * descarte se queda con el diseño de escritorio, que también se lee.
+     * <p>
+     * Por debajo de 600 px, el fondo beis exterior y su relleno lateral se quedaban como dos
+     * franjas gruesas dentro del margen blanco de Gmail: un marco doble que estrechaba la
+     * tarjeta. Aquí el fondo pasa a blanco sin relleno y la tarjeta ocupa todo el ancho, sin
+     * radio ni sombra; los lados de cada fila bajan de 40 a 24 px y los del panel del código
+     * de 20 a 12, para que las seis cifras quepan holgadas en una línea a 360 px. El nowrap del
+     * código es la red por si un móvil más estrecho no llega.
+     * <p>
+     * El pie baja a 16 px y va DETRÁS de .gp-lado para ganarle: con el margen de Gmail, un
+     * móvil de 360 deja unos 328 px al correo, y con 24 px «Questions? Write to us at
+     * soporte@gymprofit.app» (286 px a 13 px) no cabía y la dirección se quedaba sola en una
+     * línea.
+     * <p>
+     * Sin modo oscuro a propósito: el correo es claro (meta color-scheme «light only»).
+     * El !important hace falta para ganar a los estilos en línea.
+     */
+    private static final String MOVIL = """
+            <style>
+            @media screen and (max-width:599px){
+            .gp-fondo{background-color:#FFFFFF !important;}
+            .gp-marco{padding:0 !important;}
+            .gp-tarjeta{max-width:100% !important;border-radius:0 !important;box-shadow:none !important;}
+            .gp-barra{border-radius:0 !important;}
+            .gp-lado{padding-left:24px !important;padding-right:24px !important;}
+            .gp-pie{border-radius:0 !important;padding-left:16px !important;padding-right:16px !important;}
+            .gp-panel{padding-left:12px !important;padding-right:12px !important;}
+            .gp-codigo{white-space:nowrap !important;}
+            }
+            </style>""";
+
+    /**
      * La envoltura: barra de acento, cabecera con la marca, zona de contenido, franja de
      * cierre y pie, todo dentro de la tarjeta. Tres tablas encajadas —fondo a todo el ancho, columna de 600 px,
      * tarjeta de 520 px— porque centrar con márgenes automáticos no funciona en Outlook.
@@ -394,18 +430,19 @@ final class PlantillaCorreo {
             <meta name="supported-color-schemes" content="light only">
             <title>{{TITULAR}}</title>
             <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
+            {{MOVIL}}
             </head>
-            <body style="margin:0;padding:0;width:100%;background-color:#E4DCD2;">
+            <body class="gp-fondo" style="margin:0;padding:0;width:100%;background-color:#E4DCD2;">
             <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;color:#E4DCD2;">{{PREHEADER}}</div>
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#E4DCD2;">
-            <tr><td align="center" style="padding:36px 12px 40px;">
+            <table role="presentation" class="gp-fondo" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#E4DCD2;">
+            <tr><td align="center" class="gp-marco" style="padding:36px 12px 40px;">
             <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
             <tr><td align="center" style="padding:0;">
             <!--[if mso]><table role="presentation" width="520" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px;background-color:#FFFFFF;border-radius:6px;box-shadow:0 1px 1px rgba(26,21,18,.06),0 6px 18px rgba(26,21,18,.10);">
-            <tr><td height="4" bgcolor="#B83E00" style="height:4px;line-height:4px;font-size:0;background-color:#B83E00;border-radius:6px 6px 0 0;">&nbsp;</td></tr>
-            <tr><td style="padding:30px 40px 26px;border-bottom:1px solid #F0EBE4;">
+            <table role="presentation" class="gp-tarjeta" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px;background-color:#FFFFFF;border-radius:6px;box-shadow:0 1px 1px rgba(26,21,18,.06),0 6px 18px rgba(26,21,18,.10);">
+            <tr><td height="4" bgcolor="#B83E00" class="gp-barra" style="height:4px;line-height:4px;font-size:0;background-color:#B83E00;border-radius:6px 6px 0 0;">&nbsp;</td></tr>
+            <tr><td class="gp-lado" style="padding:30px 40px 26px;border-bottom:1px solid #F0EBE4;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
             <td width="28" style="width:28px;padding:0;">
             <img src="{{LOGO}}" width="28" height="28" alt="GymProFit" style="display:block;width:28px;height:28px;border:0;outline:none;">
@@ -413,12 +450,12 @@ final class PlantillaCorreo {
             <td style="padding-left:10px;font-family:{{FUENTE}};font-size:15px;line-height:22px;font-weight:700;letter-spacing:1.4px;color:#1A1512;">GYMPROFIT</td>
             </tr></table>
             </td></tr>
-            <tr><td style="padding:34px 40px 32px;">
+            <tr><td class="gp-lado" style="padding:34px 40px 32px;">
             <h1 style="margin:0 0 16px;font-family:{{FUENTE}};font-size:30px;line-height:36px;font-weight:700;letter-spacing:-0.4px;color:#1A1512;">{{TITULAR}}</h1>
             {{CONTENIDO}}
             </td></tr>
             {{FRANJA}}
-            <tr><td align="center" style="padding:20px 40px 24px;background-color:#FFFFFF;border-top:1px solid #F0EBE4;border-radius:0 0 6px 6px;font-family:{{FUENTE}};font-size:13px;line-height:20px;color:#6B6259;text-align:center;">{{PIE}}</td></tr>
+            <tr><td align="center" class="gp-lado gp-pie" style="padding:20px 40px 24px;background-color:#FFFFFF;border-top:1px solid #F0EBE4;border-radius:0 0 6px 6px;font-family:{{FUENTE}};font-size:13px;line-height:20px;color:#6B6259;text-align:center;">{{PIE}}</td></tr>
             </table>
             <!--[if mso]></td></tr></table><![endif]-->
             </td></tr>
@@ -439,9 +476,9 @@ final class PlantillaCorreo {
      */
     private static final String PANEL_CODIGO = """
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#FBF5F0;border:1px solid #EDDACB;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9);">
-            <tr><td align="center" style="padding:28px 20px;">
+            <tr><td align="center" class="gp-panel" style="padding:28px 20px;">
             <div style="font-family:FUENTE_;font-size:12px;line-height:16px;font-weight:600;letter-spacing:1.6px;color:#8A7E74;">{{ETIQUETA}}</div>
-            <div style="padding-top:14px;font-family:MONO_;font-size:46px;line-height:50px;mso-line-height-rule:exactly;font-weight:700;letter-spacing:9px;text-indent:9px;color:#B83E00;">{{CODIGO}}</div>
+            <div class="gp-codigo" style="padding-top:14px;font-family:MONO_;font-size:46px;line-height:50px;mso-line-height-rule:exactly;font-weight:700;letter-spacing:9px;text-indent:9px;color:#B83E00;">{{CODIGO}}</div>
             </td></tr>
             </table>
             """.replace("FUENTE_", FUENTE).replace("MONO_", MONO);
@@ -468,6 +505,6 @@ final class PlantillaCorreo {
 
     /** Franja de cierre, con su línea de 1 px. Las esquinas inferiores son del pie, que va debajo. */
     private static final String FRANJA = """
-            <tr><td style="padding:22px 40px;background-color:#FAF7F3;border-top:1px solid #F0EBE4;font-family:FUENTE_;font-size:14px;line-height:22px;color:#6E655D;">{{TEXTO}}</td></tr>
+            <tr><td class="gp-lado" style="padding:22px 40px;background-color:#FAF7F3;border-top:1px solid #F0EBE4;font-family:FUENTE_;font-size:14px;line-height:22px;color:#6E655D;">{{TEXTO}}</td></tr>
             """.replace("FUENTE_", FUENTE);
 }
