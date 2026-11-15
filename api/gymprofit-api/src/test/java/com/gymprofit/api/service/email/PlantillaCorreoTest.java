@@ -146,6 +146,80 @@ class PlantillaCorreoTest {
         assertThat(contraste("#B83E00", "#FFFFFF")).as("enlace del pie sobre blanco").isGreaterThanOrEqualTo(4.5);
     }
 
+    // --- Móvil (GP-266) -----------------------------------------------------
+
+    /** El correo de verificación tal como lo monta EmailService, con textos fijos. */
+    private static String correoDeVerificacion() {
+        return PlantillaCorreo.renderizar(
+                PlantillaCorreo.Idioma.ES,
+                "483920 es tu código de GymProFit",
+                "Verifica tu correo",
+                PlantillaCorreo.Accion.conCodigo(
+                        "Hola, Rubén:<br>Escribe este código en la aplicación para verificar tu correo.",
+                        "TU CÓDIGO", "483920", "Caduca en 15 minutos y solo sirve una vez."),
+                "¿No te has dado de alta en GymProFit? Ignora este correo. Sin el código, nadie puede verificar esta dirección.",
+                PlantillaCorreo.Pie.transaccional());
+    }
+
+    /**
+     * Por debajo de 600 px el fondo exterior se volvía dos franjas beis dentro del margen
+     * blanco de Gmail, un marco doble que estrechaba la tarjeta. Una regla @media en el
+     * &lt;style&gt; del &lt;head&gt; —Gmail en Android e iOS la respeta— pone el fondo en blanco
+     * y la tarjeta a todo el ancho, sin radio ni sombra, con 24 px a cada lado. Sigue clara:
+     * nada de modo oscuro.
+     */
+    @Test
+    void enMovil_unaReglaMediaQuitaElMarcoYEnsanchaLaTarjeta() {
+        String html = correoDeVerificacion();
+
+        int finHead = html.indexOf("</head>");
+        assertThat(finHead).isPositive();
+        String head = html.substring(0, finHead);
+        assertThat(head).contains("<style").contains("@media screen and (max-width:599px)");
+        String regla = head.substring(head.indexOf("@media"), head.indexOf("</style>"));
+        assertThat(regla)
+                .contains(".gp-fondo{background-color:#FFFFFF !important;}")
+                .contains(".gp-marco{padding:0 !important;}")
+                .contains("border-radius:0 !important")
+                .contains("box-shadow:none !important")
+                .contains("padding-left:24px !important;padding-right:24px !important;")
+                .contains("white-space:nowrap");
+        // El pie, más ancho que el resto y después de .gp-lado, para que a 328 px la dirección
+        // de soporte no se quede sola en una línea.
+        assertThat(regla.indexOf(".gp-pie{")).isGreaterThan(regla.indexOf(".gp-lado{"));
+        assertThat(regla).contains("padding-left:16px !important;padding-right:16px !important;");
+        assertThat(html).doesNotContain("prefers-color-scheme");
+
+        // Cada clase de la regla la lleva algún elemento: una clase sin dueño no hace nada.
+        java.util.regex.Matcher clases = java.util.regex.Pattern.compile("\\.(gp-[a-z]+)\\{").matcher(regla);
+        int vistas = 0;
+        while (clases.find()) {
+            vistas++;
+            assertThat(html.substring(finHead)).as("elemento con la clase " + clases.group(1))
+                    .containsPattern("class=\"[^\"]*\\b" + clases.group(1) + "\\b");
+        }
+        assertThat(vistas).isGreaterThanOrEqualTo(6);
+    }
+
+    /**
+     * En escritorio el correo no cambia: quitando el &lt;style&gt; y los atributos class, el HTML
+     * es el mismo que antes de GP-266, byte a byte. La referencia es el volcado de la
+     * plantilla anterior.
+     */
+    @Test
+    void enEscritorio_elHtmlSinLaReglaMovilEsElDeAntes() throws Exception {
+        String referencia;
+        try (var entrada = getClass().getResourceAsStream("/correo/escritorio.html")) {
+            assertThat(entrada).as("referencia de escritorio").isNotNull();
+            referencia = new String(entrada.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+        String html = correoDeVerificacion()
+                .replaceAll("(?s)<style>.*?</style>\n", "")
+                .replaceAll(" class=\"gp-[^\"]*\"", "");
+
+        assertThat(html).isEqualTo(referencia.replace("\r\n", "\n"));
+    }
+
     /** Contraste WCAG 2 entre dos colores #RRGGBB. */
     private static double contraste(String a, String b) {
         double la = luminancia(a);
