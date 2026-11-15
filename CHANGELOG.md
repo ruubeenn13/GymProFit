@@ -8,6 +8,10 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `120d7693` | fix(api): en el móvil el correo ocupa todo el ancho, en blanco y sin el marco beis que dejaba el fondo exterior dentro del margen de Gmail; filas a 24 px por lado, pie a 16 y el código en una línea; en escritorio no cambia (GP-266). |
+| `088fa56d` | fix(api): el pie de los correos va dentro de la tarjeta blanca, tras una línea fina; fuera se perdía sobre el fondo oscuro de Gmail (2,8:1) y dentro da 6,0:1 el gris y 5,6:1 el enlace (GP-266). |
+| `f5eb062a` | fix(android): «Mira tu correo» abierto desde el aviso de Perfil pide un código nuevo al entrar y abre normal, no en «Ese código ya no vale»; con un 429, con la cuenta atrás de la API; girar, volver o que Android mate el proceso no repiten la petición (GP-267). |
+| `8fca4ea7` | fix(api,web): la cabecera de los correos lleva la G sola sobre transparente (`web/img/logo-correo.png`, 84 px), no el apple-touch-icon opaco que salía como un cuadrado negro (GP-266). |
 | `45c7d8e6` | fix(android): las cifras de «Tus datos» de Perfil salen a 26 sp y alineadas con la actividad, también con letra 1,3; en inglés la edad se rotula «Age» (GP-265). |
 | `fd095695` | fix(api): un correo con código pedido sin idioma en la petición va en español, no en el de la JVM. |
 | `c34cb887` | feat(api): los correos con código llevan la G real en la cabecera, «{código} es tu código de GymProFit» en el asunto y el preheader, «Hola, {nombre}:», la dirección de soporte en el pie y van en español o en inglés según el idioma de la app que los pide. |
