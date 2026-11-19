@@ -9,8 +9,9 @@ Este repositorio y todo su contenido (código fuente, recursos, documentación y
 materiales asociados) son propiedad exclusiva de Rubén Juan Candela y están
 protegidos por las leyes de propiedad intelectual.
 
-El código se hace público ÚNICAMENTE con fines de consulta y demostración
-(portfolio y evaluación académica del Trabajo de Fin de Grado).
+El código se puede VER, pero no reutilizar sin permiso: se hace público
+ÚNICAMENTE para que se pueda consultar cómo está hecho GymProFit, un producto
+comercial.
 
 QUEDA PROHIBIDO, sin autorización previa y por escrito del autor:
   - Usar el software o cualquier parte de él, en todo o en parte, con fines
@@ -26,7 +27,7 @@ incluido el de comercializar y publicar la aplicación.
 EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO. EL AUTOR NO
 SERÁ RESPONSABLE DE NINGÚN DAÑO DERIVADO DE SU USO.
 
-Para solicitar permisos o licencias de uso, contactar con el autor.
+Para solicitar permisos o licencias de uso: gymprofit.soporte@gmail.com.
 
 ================================================================================
 ENGLISH
@@ -36,8 +37,9 @@ This repository and all its contents (source code, assets, documentation and
 associated materials) are the exclusive property of Rubén Juan Candela and are
 protected by intellectual property law.
 
-The source code is made public SOLELY for review and demonstration purposes
-(portfolio and academic evaluation of a final degree project).
+The source code may be VIEWED, but not reused without permission: it is made
+public SOLELY so that anyone can see how GymProFit, a commercial product, is
+built.
 
 Without the author's prior written permission, you MAY NOT:
   - Use the software, in whole or in part, for personal, commercial or
@@ -53,4 +55,4 @@ publishing the application.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. THE AUTHOR SHALL
 NOT BE LIABLE FOR ANY DAMAGES ARISING FROM ITS USE.
 
-To request permissions or usage licenses, contact the author.
+To request permissions or usage licenses: gymprofit.soporte@gmail.com.
