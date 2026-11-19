@@ -235,7 +235,7 @@ jobs:
 
       # Caché de Gradle (dependencias y wrapper)
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       # Versionado en ci/ con otro nombre: google-services.json está en el .gitignore.
       # Lo comparte con app-release-r8.
@@ -308,7 +308,7 @@ jobs:
           cache: maven
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       # El emulador necesita KVM: en los runners de Ubuntu hay que abrirlo al usuario.
       - name: Habilitar KVM
