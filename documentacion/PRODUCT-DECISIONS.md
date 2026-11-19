@@ -1226,6 +1226,24 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-067 · El código es público para verlo, no para reutilizarlo, y todavía no se aceptan PR con código
+**Estado:** Aceptada · **Fecha:** 2026-11-19 · **Tarea:** GP-279 · **Revisa:** DEC-001
+
+**Contexto.** El repositorio es público y se va a enseñar en redes cuando abra la beta. Quien llegue verá código de un producto comercial (DEC-001): con una licencia abierta, cualquiera podría publicar una copia en Play con otro nombre, y no hay forma de deshacer una licencia ya concedida sobre lo publicado. Además, aceptar código de fuera sin un acuerdo deja en el producto partes cuyos derechos no son del propietario, lo que complica venderlo, relicenciarlo o cambiar de modelo más adelante.
+
+**Decisión.**
+
+- **Todos los derechos reservados.** `LICENSE` dice «Copyright (c) 2026 Rubén Juan Candela. Todos los derechos reservados.», en español y en inglés: el código se puede ver, pero no usar, copiar, modificar ni redistribuir sin permiso por escrito. Ninguna licencia abierta (MIT, Apache, GPL ni «source available» con permisos), ni para una parte del repositorio.
+- **Las dependencias de terceros que viven en el repositorio** (`web/js/vendor/`, DEC-053) conservan su propia licencia, junto a cada una; los datos de Ciqual, USDA y Open Food Facts, la suya, citada en el README.
+- **Se aporta sin código**: probando la beta, avisando de fallos con las plantillas y proponiendo ideas en Discussions (`CONTRIBUTING.md`). **No se aceptan PR con código** hasta que exista un acuerdo de contribución (CLA) que ceda los derechos; una PR sin incidencia previa se cierra con un mensaje amable que explica por qué.
+- **Los fallos de seguridad van por privado** (`SECURITY.md`, a `gymprofit.soporte@gmail.com`), nunca en una incidencia pública, por la misma regla de CLAUDE.md: nada se describe antes de que el arreglo esté en producción.
+
+**Consecuencias.** Nadie de fuera puede arreglar un fallo con una PR, por pequeño que sea, aunque sí señalarlo. La etiqueta `good first issue` se usa solo para probar en la beta y corregir textos. GitHub muestra la licencia como «Other», porque no es una SPDX.
+
+**Qué la invalidaría.** Que se quiera abrir una parte (una librería suelta, el panel), que haga falta ayuda de código y exista un CLA firmado, o que el modelo de negocio deje de depender de que el código no se copie.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

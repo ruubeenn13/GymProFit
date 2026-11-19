@@ -8,6 +8,9 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `720ae129` | docs(repositorio): el README abre con un GIF real de la app, una línea, insignias de CI y licencia y «Probarlo» (la beta y los comandos para desarrollar); cifras y estado puestos al día; `CONTRIBUTING.md` (se ayuda sin código hasta un CLA), `SECURITY.md`, plantillas de fallo, idea y PR, e imagen para redes en `documentacion/marca/` (GP-279). |
+| `a7a9c411` | docs(decisiones): DEC-067, el código se ve pero no se reutiliza y aún no se aceptan PR con código; `LICENSE` deja de presentarlo como trabajo académico (GP-279). |
+| `1b1094e5` | ci: job `secretos` con gitleaks sobre el árbol y los commits nuevos de cada push y PR, con el binario fijado por SHA-256 (GP-279). |
 | `120d7693` | fix(api): en el móvil el correo ocupa todo el ancho, en blanco y sin el marco beis que dejaba el fondo exterior dentro del margen de Gmail; filas a 24 px por lado, pie a 16 y el código en una línea; en escritorio no cambia (GP-266). |
 | `088fa56d` | fix(api): el pie de los correos va dentro de la tarjeta blanca, tras una línea fina; fuera se perdía sobre el fondo oscuro de Gmail (2,8:1) y dentro da 6,0:1 el gris y 5,6:1 el enlace (GP-266). |
 | `f5eb062a` | fix(android): «Mira tu correo» abierto desde el aviso de Perfil pide un código nuevo al entrar y abre normal, no en «Ese código ya no vale»; con un 429, con la cuenta atrás de la API; girar, volver o que Android mate el proceso no repiten la petición (GP-267). |

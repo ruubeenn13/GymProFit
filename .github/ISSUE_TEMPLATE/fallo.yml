@@ -1,0 +1,63 @@
+name: Algo no funciona
+description: Avisa de un fallo de la app, de la web o de la beta.
+title: "[Fallo] "
+labels: ["bug", "beta"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por avisar. Si es un fallo de **seguridad**, no lo cuentes aquí: escribe a gymprofit.soporte@gmail.com (ver SECURITY.md).
+        No pegues contraseñas, códigos de verificación ni datos de otras personas.
+  - type: textarea
+    id: que_pasa
+    attributes:
+      label: Qué pasa
+      description: Lo que ves, en una o dos frases.
+      placeholder: Al guardar la sesión, la app se cierra.
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Cómo llegar
+      description: Los pasos, uno por línea, desde que abres la app.
+      placeholder: |
+        1. Entrenar → Torso A
+        2. Marcar la primera serie
+        3. Tocar «Terminar»
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión de la app
+      description: En Perfil, en la fila «Acerca de GymProFit».
+      placeholder: "1.8.0"
+    validations:
+      required: true
+  - type: input
+    id: movil
+    attributes:
+      label: Móvil y versión de Android
+      placeholder: Pixel 8, Android 15
+  - type: dropdown
+    id: frecuencia
+    attributes:
+      label: ¿Pasa siempre?
+      options:
+        - Siempre
+        - A veces
+        - Solo una vez
+    validations:
+      required: true
+  - type: textarea
+    id: capturas
+    attributes:
+      label: Capturas o vídeo
+      description: Si las tienes, arrástralas aquí. Tapa antes cualquier dato personal.

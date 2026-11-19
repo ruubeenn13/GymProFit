@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Fallo de seguridad
+    url: https://github.com/ruubeenn13/GymProFit/blob/main/SECURITY.md
+    about: En privado, por correo. Nunca en una incidencia pública.
+  - name: Preguntas
+    url: https://github.com/ruubeenn13/GymProFit/discussions/categories/q-a
+    about: Dudas sobre la app o la beta, en Discussions.
+  - name: Ideas para hablar
+    url: https://github.com/ruubeenn13/GymProFit/discussions/categories/ideas
+    about: Las ideas que aún no son concretas, en Discussions.
+  - name: Apuntarse a la beta
+    url: https://gymprofit.app/beta
+    about: Para probar la app antes de que llegue a Google Play.
