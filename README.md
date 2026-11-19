@@ -1,26 +1,45 @@
 <div align="center">
 
-<a href="https://gymprofit.app">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="documentacion/img/readme/portada-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="documentacion/img/readme/portada-light.svg">
-  <img src="documentacion/img/readme/portada-light.svg" width="100%" alt="GymProFit: entrena, come bien y mide tu progreso en una sola app. App Android, API REST en Spring Boot y panel web en React. Versión 1.6.5, en desarrollo activo.">
-</picture>
-</a>
+<a href="https://gymprofit.app"><img src="documentacion/img/readme/demo.gif" width="320" alt="Recorrido de 11 segundos por la app en modo oscuro: Inicio con «Hoy toca Torso B» y los ejercicios del día, Nutrición con las calorías y los macros que quedan, Progreso con los kilos movidos por semana y los récords recientes, y Entrenar con el programa «Torso y pierna»."></a>
+
+# GymProFit
+
+**Tu programa de entreno, tus comidas y tus récords en una sola app Android.**
 
 [![CI](https://github.com/ruubeenn13/GymProFit/actions/workflows/ci.yml/badge.svg)](https://github.com/ruubeenn13/GymProFit/actions/workflows/ci.yml)
-[![Último commit](https://img.shields.io/github/last-commit/ruubeenn13/GymProFit?label=%C3%BAltimo%20commit&color=ff6a00)](https://github.com/ruubeenn13/GymProFit/commits/main)
+[![Licencia: todos los derechos reservados](https://img.shields.io/badge/licencia-todos%20los%20derechos%20reservados-lightgrey)](LICENSE)
 [![Versión](https://img.shields.io/github/v/tag/ruubeenn13/GymProFit?label=versi%C3%B3n&color=ff6a00)](CHANGELOG.md)
 [![API](https://img.shields.io/website?url=https%3A%2F%2Fapi.gymprofit.app%2Fapi%2Factuator%2Fhealth&label=api.gymprofit.app&up_message=en%20l%C3%ADnea&down_message=dormida)](https://api.gymprofit.app/api/actuator/health)
 
-**[gymprofit.app](https://gymprofit.app)** &nbsp;·&nbsp; [Novedades](CHANGELOG.md) &nbsp;·&nbsp; [Decisiones de producto](documentacion/PRODUCT-DECISIONS.md) &nbsp;·&nbsp; [Despliegue](documentacion/DESPLIEGUE.md)
+**[gymprofit.app](https://gymprofit.app)** &nbsp;·&nbsp; **[Apúntate a la beta](https://gymprofit.app/beta)** &nbsp;·&nbsp; [Novedades](CHANGELOG.md) &nbsp;·&nbsp; [Decisiones de producto](documentacion/PRODUCT-DECISIONS.md)
 
 </div>
 
 <br>
 
 > [!NOTE]
-> GymProFit nació como mi proyecto final de DAM y lo estoy convirtiendo en un producto de verdad, camino de Google Play. Todavía no está publicado: se reparte en APK a un grupo de prueba mientras se rehace la nutrición.
+> GymProFit es un producto comercial camino de Google Play. Todavía no está publicado: se reparte en APK a un grupo de prueba, y la beta se abre por [gymprofit.app/beta](https://gymprofit.app/beta).
+
+## Probarlo
+
+**Como usuario.** Apúntate en **[gymprofit.app/beta](https://gymprofit.app/beta)**: cuando se abra la beta te llega un correo con los pasos para instalarla. Todavía no está en Google Play.
+
+**Como desarrollador.** Con JDK 21, una MariaDB local y Android Studio:
+
+```bash
+git clone https://github.com/ruubeenn13/GymProFit.git && cd GymProFit
+
+# La API: build y tests (MariaDB local o perfil ci), y arrancarla
+cd api/gymprofit-api && sh ./mvnw -B verify && sh ./mvnw spring-boot:run
+
+# La app: build de depuración, tests unitarios y lint
+cd app/GymProFit && sh ./gradlew assembleDebug && sh ./gradlew test && sh ./gradlew lintDebug
+```
+
+Antes de arrancar la API hay que crear la base y su configuración local; los pasos están más abajo, en «Arrancarlo en local».
+
+> [!IMPORTANT]
+> El código se puede ver, pero no reutilizar sin permiso: **todos los derechos reservados** ([`LICENSE`](LICENSE)). Por ahora se ayuda probando la beta, avisando de fallos y proponiendo ideas, no con PR de código: ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Lo que hace
 
@@ -37,7 +56,7 @@ Empiezas respondiendo cinco preguntas (objetivo, nivel, tu cuerpo, dónde entren
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="documentacion/img/readme/cifras-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="documentacion/img/readme/cifras-light.svg">
-  <img src="documentacion/img/readme/cifras-light.svg" width="100%" alt="1.147 tests de la API, 518 tests de la app, más de 250 endpoints REST, 30 tablas y 51 migraciones, 198.000 productos en el buscador, y español e inglés de punta a punta.">
+  <img src="documentacion/img/readme/cifras-light.svg" width="100%" alt="más de 1.100 tests de la API, más de 1.300 tests de la app, más de 270 endpoints REST, 36 tablas y 64 migraciones, 198.000 productos en el buscador, y español e inglés de punta a punta.">
 </picture>
 
 ## Cómo encaja todo
@@ -68,7 +87,7 @@ flowchart LR
 | **API** | [Render](https://render.com), en `api.gymprofit.app` | Spring Boot 3.5, Spring Security, JPA + jOOQ, Flyway, MapStruct |
 | **Base de datos** | Aiven for MySQL, con TLS verificado | 30 tablas, todo el esquema en migraciones |
 | **Panel** | Cloudflare Workers, en `admin.gymprofit.app`, detrás de Cloudflare Access | React, Vite, TypeScript y Vitest, sin librerías de componentes |
-| **Web** | Cloudflare Pages, en `gymprofit.app` | HTML y CSS: privacidad, términos y borrado de cuenta |
+| **Web** | Cloudflare Pages, en `gymprofit.app` | HTML y CSS a mano: portada, beta, privacidad, términos y borrado de cuenta |
 
 ## Por dentro
 
@@ -79,7 +98,7 @@ flowchart LR
 
 - **Navegación**: Inicio, Entrenar, Nutrición y Progreso sobre una barra flotante, y una pantalla propia para todo lo que se crea o se edita.
 - **La sesión en vivo** vive en un repositorio que se escribe en disco a cada cambio: si Android mata la app a mitad del entreno, no se pierde ni una serie. El descanso suena con una alarma exacta aunque la pantalla esté apagada.
-- **La nutrición** se está rehaciendo por lotes desde un lienzo de diseño aprobado: buscar «lo tuyo» primero, el «+» que añade sin preguntar, el escáner con su propia cámara, favoritos, copiar comidas, Mis platos, los platos propios que se apuntan de un toque, y «Lo que te encaja», lo tuyo que cabe en lo que te queda del día. Viene detrás el diario nuevo.
+- **La nutrición** se rehízo por lotes desde un lienzo de diseño aprobado: buscar «lo tuyo» primero, el «+» que añade sin preguntar, el escáner con su propia cámara, favoritos, copiar comidas, Mis platos, «Lo que te encaja» (lo tuyo que cabe en lo que te queda del día) y el diario, con el agua y el día completo.
 - **Todo en español e inglés, claro y oscuro**, accesible con TalkBack y con letra grande. Cada animación tiene su momento numerado y respeta «Quitar animaciones».
 - **Sesión segura**: tokens cifrados en el dispositivo y renovación transparente cuando caducan.
 
@@ -133,7 +152,7 @@ Código y detalles en [`admin`](admin).
 - [x] Favoritos, comidas recientes y «¿Copiar la de ayer?»
 - [x] Mis platos: tus recetas, por raciones o por peso
 - [x] «Lo que te encaja»: sugerencias con lo que te queda del día
-- [ ] El diario nuevo: agua, día completo y resumen semanal
+- [x] El diario nuevo: agua, día completo y resumen semanal
 - [ ] Publicación en Google Play
 
 <details>

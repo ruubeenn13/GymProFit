@@ -1,0 +1,43 @@
+name: Tengo una idea
+description: Propón algo concreto que le falte a GymProFit.
+title: "[Idea] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Si la idea aún está verde, mejor en Discussions → Ideas, donde se puede hablar. Aquí, las que ya son concretas.
+        Antes, busca si ya está propuesta: una reacción en la que ya exista cuenta más que una repetida.
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué te falta
+      description: El problema o la situación, no la solución. ¿Qué intentabas hacer?
+      placeholder: Entreno en casa con mancuernas y casi todas las rutinas son de gimnasio.
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Qué propones
+      description: Cómo te imaginas que funcionaría.
+    validations:
+      required: true
+  - type: dropdown
+    id: parte
+    attributes:
+      label: Parte de la app
+      options:
+        - Entrenar
+        - Nutrición
+        - Progreso
+        - Inicio y avisos
+        - Cuenta y ajustes
+        - Otra
+    validations:
+      required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Cómo lo resuelves ahora
+      description: Otra app, una hoja de cálculo, de memoria…
