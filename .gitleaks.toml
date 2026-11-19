@@ -1,0 +1,29 @@
+# Configuración de gitleaks para el job «secretos» del CI (GP-279).
+# Parte de las reglas por defecto y solo deja pasar lo que se ha mirado una a una
+# y no es un secreto. Cada excepción dice por qué; una nueva necesita el mismo porqué.
+
+title = "GymProFit"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Clave JWT del perfil ci: pública a propósito, solo firma tokens de la base efímera de los tests"
+condition = "AND"
+regexTarget = "line"
+paths = ['''^api/gymprofit-api/src/main/resources/application-ci\.properties$''']
+regexes = ['''^jwt\.secret=''']
+
+[[allowlists]]
+description = "Comentario del pom que explica dónde pedir la clave de la NVD: no lleva ninguna"
+condition = "AND"
+regexTarget = "line"
+paths = ['''^api/gymprofit-api/pom\.xml$''']
+regexes = ['''NVD API key:''']
+
+[[allowlists]]
+description = "Orden de ejemplo para firmar con marcadores entre <>, sin valores"
+condition = "AND"
+regexTarget = "line"
+paths = ['''^documentacion/PUBLICAR-EN-PLAY\.md$''']
+regexes = ['''--keystore=<ruta a ''']
