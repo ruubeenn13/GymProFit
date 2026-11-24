@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,7 +90,7 @@ class MigracionesCompatiblesTidbTest {
     }
 
     /** Versión de la migración → columnas que la hacen infractora. */
-    private static Map<String, List<String>> infractorasPorVersion() throws IOException, URISyntaxException {
+    private static Map<String, List<String>> infractorasPorVersion() throws IOException {
         Map<String, List<String>> resultado = new TreeMap<>();
         try (Stream<Path> ficheros = Files.list(directorioMigraciones())) {
             for (Path fichero : ficheros.filter(f -> f.getFileName().toString().endsWith(".sql")).toList()) {
@@ -108,10 +106,14 @@ class MigracionesCompatiblesTidbTest {
         return resultado;
     }
 
-    private static Path directorioMigraciones() throws URISyntaxException {
-        URL url = MigracionesCompatiblesTidbTest.class.getClassLoader().getResource("db/migration");
-        assertThat(url).as("db/migration en el classpath").isNotNull();
-        return Path.of(url.toURI());
+    // Lee las fuentes, no la copia de target/classes: lo que se vigila es lo que se
+    // commitea, y la copia puede haberla retocado una herramienta (para crear una
+    // base desde cero en TiDB se parten ahí las cuatro de la lista blanca).
+    // Surefire corre con el directorio del módulo como directorio de trabajo.
+    private static Path directorioMigraciones() {
+        Path dir = Path.of("src", "main", "resources", "db", "migration");
+        assertThat(dir).as("migraciones en " + dir.toAbsolutePath()).isDirectory();
+        return dir;
     }
 
     /**
