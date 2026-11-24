@@ -1244,6 +1244,24 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-068 · La base no guarda rangos: la API valida siempre
+**Estado:** Aceptada · **Fecha:** 2026-11-24 · **Tarea:** GP-273
+
+**Contexto.** Producción pasa de Aiven (MySQL 8) a TiDB Cloud Starter porque Aiven apaga la base gratuita el 21-12-2026. TiDB acepta la sintaxis de `CHECK` pero la descarta en silencio (`tidb_enable_check_constraint = OFF`): al restaurar la copia, `chk_sesion_valoracion` no existe. Se podría activar la variable y reponer el `CHECK` con una migración nueva, pero entonces el rango viviría en dos sitios que pueden separarse, y el día que la base vuelva a ignorarlo nadie lo nota, porque una restricción que falta no da ningún error.
+
+**Decisión.**
+
+- **Ninguna regla de rango o de formato depende de la base.** No se reponen los `CHECK` que TiDB descarta ni se añaden nuevos como guarda: la base guarda tipos, nulos, unicidad y claves ajenas, y nada más.
+- **La API valida siempre, en el DTO de cada ruta que escribe el campo**, con Bean Validation y `@Valid` en el controlador. Hoy, la valoración de la sesión: `@Min(1) @Max(5)` en `SesionEntrenamientoCreateDTO`, `SesionCompletaCreateDTO` y `SesionEntrenamientoPatchDTO`.
+- **Cada rango lleva su test de rechazo por la API**, con el contexto levantado y en cada ruta que escribe el campo, comprobando los dos bordes de fuera con 400 (para la valoración, 0 y 6: `ValoracionSesionTest`). Un test que pruebe la base no vale, porque en TiDB pasaría cualquier valor.
+- **El `CHECK` que ya está en las migraciones publicadas se queda**: una migración publicada no se edita, y en MySQL (el CI, desarrollo) sigue aplicándose. Solo deja de contar como guarda.
+
+**Consecuencias.** Un valor fuera de rango que entre por un camino que no sea la API (una consulta a mano, un script) no lo para nadie. Por eso los scripts que escriben en la base pasan por la API o validan ellos mismos, y una ruta nueva que escriba un campo con rango no se fusiona sin su test de rechazo.
+
+**Qué la invalidaría.** Volver a un motor que aplique los `CHECK` siempre y sin variable que los apague, o que aparezca un camino de escritura legítimo que no pase por la API.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
