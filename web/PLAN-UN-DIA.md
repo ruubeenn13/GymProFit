@@ -635,6 +635,10 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 
 ### Fase 4 · Páginas secundarias y 404 en el mundo nuevo
 
+- Con la portada del dorsal se retiran sus capturas (`img/capturas/`) y el brief de impeccable
+  `web/.impeccable/surfaces/index-html.md`, que apunta a un `index.html` que ya no está en `web/`.
+  Hasta entonces se quedan como están (decisión del propietario, 25-11-2026).
+
 - Privacidad, términos, eliminar cuenta, la beta y sus tres páginas, y la 404, pasadas a `.astro` con el
   mundo nuevo (sin escenas ni GSAP: solo la tipografía, la luz quieta y el reloj como marca). La beta
   conserva su formulario sin JS y su paleta.
