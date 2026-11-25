@@ -5,7 +5,8 @@
 // la cabecera y pide con import() lo demás. La entrada ya corre en CSS desde el primer
 // pintado; lo diferido espera al load y a que acabe esa entrada (para no competir con el
 // LCP), o al primer gesto de scroll, lo que llegue antes:
-// · escena-dia.js (la entrada al bajar y la transición de 7:00 a 19:00), en cuanto se puede;
+// · por cargar.js, GSAP pieza a pieza y escena-dia.js (la entrada al bajar y la transición de
+//   7:00 a 19:00), en cuanto se puede;
 // · escena-entreno.js, justo después, en una tarea aparte cuando el navegador está ocioso;
 // · con ratón, Lenis y escritorio.js (el cursor y el botón magnético).
 // GSAP, ScrollTrigger, SplitText y DrawSVG van en el trozo de motor.js, que comparten.
@@ -53,17 +54,18 @@ function arrancar() {
   const lenis = permiso.then(() => (raton ? import('./lenis.js').then((m) => new m.default({ autoRaf: false })) : null));
 
   if (raton) permiso.then(() => import('./escritorio.js')).then((m) => m.iniciar());
-  // La transición va primero: la de Torso A espera a que esté puesta (comparten el móvil).
-  const dia = permiso.then(() => Promise.all([import('./escena-dia.js'), lenis]))
-    .then(([m, l]) => m.iniciar({ ...api, lenis: l }));
-
-  // Torso A se monta en su propia tarea, cuando el navegador está ocioso tras la transición, y
-  // no al acercarse en pleno scroll: montarla (SplitText, la línea de tiempo y su refresh) es la
-  // tarea más larga de la página y no puede caer mientras se desplaza (≤ 100 ms).
+  // GSAP y las escenas llegan por cargar.js, una pieza por tarea. La transición se monta
+  // primero (comparte el móvil con la sesión); Torso A, después, en trozos y en tiempo libre,
+  // antes de que llegue al viewport: nada de montarla en pleno scroll.
   const escena = document.querySelector('[data-escena="entreno"]');
-  const ocioso = (fn) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 60));
-  Promise.all([dia, import('./escena-entreno.js'), lenis])
-    .then(([d, m, l]) => ocioso(() => m.iniciar(escena, { ...api, lenis: l }, d)));
+  const ocioso = () => new Promise((r) => ('requestIdleCallback' in window ? requestIdleCallback(r, { timeout: 1500 }) : setTimeout(r, 60)));
+  permiso
+    .then(() => Promise.all([import('./cargar.js').then((m) => m.cargar()), lenis]))
+    .then(async ([{ dia, entreno }, l]) => {
+      const d = await dia.iniciar({ ...api, lenis: l });
+      await ocioso();
+      await entreno.iniciar(escena, { ...api, lenis: l }, d);
+    });
 }
 
 // El reloj de la cabecera rueda a la hora nueva: cada cifra que cambia sube un 100 % y

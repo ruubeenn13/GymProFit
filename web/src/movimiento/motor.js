@@ -25,6 +25,13 @@ export const RECORRIDO = bezier(0.77, 0, 0.175, 1);
 export const ENFATIZADA = bezier(0.05, 0.7, 0.1, 1);
 export const ESTANDAR = bezier(0.2, 0, 0, 1);
 
+/**
+ * Devuelve el hilo principal al navegador entre dos trozos de trabajo: el montaje de una escena
+ * se reparte en tareas cortas (≤ 50 ms con la CPU a ×4) en vez de una larga que tape un
+ * fotograma o un toque. scheduler.yield donde existe; si no, una tarea nueva.
+ */
+export const ceder = () => (globalThis.scheduler?.yield ? globalThis.scheduler.yield() : new Promise((r) => setTimeout(r, 0)));
+
 let conectado = false;
 /** Lenis (solo con ratón) mueve el scroll: ScrollTrigger tiene que enterarse de cada paso. */
 export function conectarLenis(lenis) {

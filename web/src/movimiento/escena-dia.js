@@ -11,12 +11,12 @@
 //   cruza al centro y se enciende en «Hoy toca». La frase de la transición entra por
 //   caracteres y se queda quieta mientras se lee.
 // ============================================================
-import { gsap, SplitText, conectarLenis, cuentakilometros, hastaSesion, esEscritorio, RECORRIDO, SALIDA } from './motor.js';
+import { gsap, SplitText, ceder, conectarLenis, cuentakilometros, hastaSesion, esEscritorio, RECORRIDO, SALIDA } from './motor.js';
 
 /**
  * @param {{lenis: object|null}} api
  */
-export function iniciar(api) {
+export async function iniciar(api) {
   conectarLenis(api.lenis);
   const $ = (s) => document.querySelector(s);
   const reloj = $('.reloj-dia');
@@ -58,12 +58,16 @@ export function iniciar(api) {
   maestra.to({}, { duration: 0.001 }, fin - 0.001);
   const colocar = (sub, [desde, largo]) => { maestra.add(sub, desde); sub.timeScale(sub.duration() / largo); };
 
+  await ceder();
+
   // ── Al bajar de la entrada ──────────────────────────────────────────────
   const entrada = gsap.timeline({ defaults: { ease: 'none' } })
     .to(pos, { y: () => (esEscritorio() ? -0.12 : -0.22) * innerHeight, rotation: 1, duration: 1 }, 0)
     .to(reloj, { y: () => (esEscritorio() ? 0 : innerHeight * 0.19), scale: 1.04, duration: 1 }, 0)
     .to(lamasAmanecer, { xPercent: -12, duration: 1 }, 0);
   colocar(entrada, tramo.entrada);
+
+  await ceder();
 
   // ── La transición: el día pasa bajo el pulgar ───────────────────────────
   const reloj07 = 7 * 60, reloj19 = 19 * 60;
@@ -72,6 +76,7 @@ export function iniciar(api) {
   gsap.set(frase, { opacity: 1 });
   gsap.set(partida.chars, { yPercent: 110 });
 
+  await ceder();
   const tl = gsap.timeline({ defaults: { ease: 'none' } });
   tl.to(hora, { min: reloj19, duration: 1, ease: 'power1.inOut', onUpdate: () => ponerReloj(hora.min) }, 0)
     // Las lamas giran, se alargan y cambian de color con la hora (las dos capas, a la vez).
@@ -95,6 +100,9 @@ export function iniciar(api) {
 
   return {
     /** Coloca la línea de tiempo de la sesión (duración cualquiera) en su tramo. */
-    enSesion: (sub) => { colocar(sub, tramo.sesion); maestra.scrollTrigger.refresh(); },
+    // Sin refresh: la duración de la maestra ya cuenta con el tramo de la sesión, y un refresh
+    // la pintaba entera de una vez (84–127 ms con la CPU a ×4). Así cada tween se prepara
+    // cuando el scroll llega a él, repartido entre fotogramas.
+    enSesion: (sub) => colocar(sub, tramo.sesion),
   };
 }

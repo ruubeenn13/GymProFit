@@ -13,7 +13,7 @@
 // cruzar su punto, con los tiempos de Movimiento.java, y se deshace al volver hacia arriba.
 // ============================================================
 import {
-  gsap, SplitText, conectarLenis, cuentakilometros, escalaMovil, hastaSesion,
+  gsap, SplitText, ceder, conectarLenis, cuentakilometros, escalaMovil, hastaSesion,
   centroSesion, rectEnEscenario, rectFinal, encima, esEscritorio, ENFATIZADA, ESTANDAR, RECORRIDO, SALIDA,
 } from './motor.js';
 
@@ -27,7 +27,7 @@ const CHISPAS = 16;
  * @param {{ponerHora: Function, oro: Function, estado: object, lenis: object|null}} api
  * @param {{enSesion: Function}} dia  lo que devuelve escena-dia.js
  */
-export function iniciar(escena, api, dia) {
+export async function iniciar(escena, api, dia) {
   conectarLenis(api.lenis);
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
   const $$ = (sel, raiz = document) => [...raiz.querySelectorAll(sel)];
@@ -96,6 +96,8 @@ export function iniciar(escena, api, dia) {
 
   let cursorActivo = null, cursorLleno = -1; // lo último que se le dijo al cursor (avisarCursor)
 
+  await ceder();
+
   // ── Estado inicial ──────────────────────────────────────────────────────
   gsap.set(capaSesion, { y: 40 });
   gsap.set($('.capa-descanso', pantalla), { opacity: 1 });
@@ -119,12 +121,19 @@ export function iniciar(escena, api, dia) {
   ponerCabecera(-1);
 
   // Las frases, partidas en caracteres con máscara: entran desde abajo y salen por arriba.
-  const partidas = frases.map((li) => SplitText.create(li.querySelector('.letras'),
-    { type: 'chars,words', mask: 'chars', wordsClass: 'pal', aria: 'none' }));
+  // Una frase por tarea: trocear mide el texto, y las siete juntas eran lo más largo del montaje.
+  await ceder();
+  const partidas = [];
+  for (const li of frases) {
+    const p = SplitText.create(li.querySelector('.letras'), { type: 'chars,words', mask: 'chars', wordsClass: 'pal', aria: 'none' });
+    gsap.set(p.chars, { yPercent: 115 });
+    partidas.push(p);
+    await ceder();
+  }
   frases.forEach((li) => gsap.set(li, { opacity: 1 }));
-  partidas.forEach((p) => gsap.set(p.chars, { yPercent: 115 }));
   const marcaPartida = SplitText.create(recordCifra.querySelector('.letras'), { type: 'chars', mask: 'chars', aria: 'none' });
   gsap.set(marcaPartida.chars, { yPercent: 115 });
+  await ceder();
 
   // ── Lo que es un toque en la app: se aplica al cruzar y se deshace al volver ──
   function ponerCabecera(n) {
@@ -309,6 +318,7 @@ export function iniciar(escena, api, dia) {
     .to(fin, { autoAlpha: 0, y: 20, duration: 1.5, ease: ESTANDAR }, 63.5);
 
   // 61–70 · Serie 2, igual que la 1, sin salir del móvil.
+  await ceder();
   frase(4);
   teclear(1, 0, 62.5, 1.5);
   teclear(1, 1, 64.2, 1.5);
@@ -335,6 +345,7 @@ export function iniciar(escena, api, dia) {
     api.estado.escena = 'entreno';
     api.estado.progreso = Math.round(p * 100);
   });
+  await ceder();
   dia.enSesion(tl);
 
   // El cursor (escritorio.js) se vuelve el aro durante el descanso.
