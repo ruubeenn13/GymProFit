@@ -246,6 +246,20 @@ jobs:
       - name: google-services.json de mentira
         run: cp ci/google-services-ci.json app/google-services.json
 
+      # Los *WebTest van dentro de «test» y leen web/dist: se construye como en web-test.
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.14.1"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Construir la web
+        working-directory: web
+        env:
+          ASTRO_TELEMETRY_DISABLED: "1"
+        run: npm ci && npm run build
+
       # sh ./ y no ./: el wrapper está versionado sin bit de ejecución
       - name: Build & test
         run: sh ./gradlew --no-daemon assembleDebug test
@@ -285,6 +299,22 @@ jobs:
       # Para compilar el módulo de los tests hace falta, como en android-build-test.
       - name: google-services.json de mentira
         run: cp ci/google-services-ci.json app/google-services.json
+
+      # La web se construye con Astro (DEC-069, propuesta) y los tests leen web/dist.
+      # Node fijado por versión, npm ci con el lockfile y la telemetría de Astro apagada
+      # (la apaga también el lanzador de package.json).
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.14.1"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Construir la web
+        working-directory: web
+        env:
+          ASTRO_TELEMETRY_DISABLED: "1"
+        run: npm ci && npm run build
 
       - name: Tests de la web
         run: sh ./gradlew --no-daemon :app:testDebugUnitTest --tests '*WebTest'

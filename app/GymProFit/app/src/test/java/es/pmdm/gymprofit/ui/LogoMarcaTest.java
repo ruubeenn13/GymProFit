@@ -43,7 +43,7 @@ public class LogoMarcaTest {
     @Test
     public void elLogoDeLaWebLlevaLosMismosTrazados() throws IOException {
         String arranque = leer(res("drawable/g_arranque.xml"));
-        String svg = leer(raiz().resolve("web/img/logo.svg"));
+        String svg = leer(raiz().resolve("web/public/img/logo.svg"));
         assertTrue("logo.svg no lleva el cuerpo de g_arranque", svg.contains("d=\"" + trazado(arranque, "cuerpo") + "\""));
         assertTrue("logo.svg no lleva el trazo de g_arranque", svg.contains("d=\"" + trazado(arranque, "trazo") + "\""));
         assertTrue("logo.svg no pinta el cuerpo en su dorado", svg.contains("fill=\"" + color("values", "logo_g_cuerpo") + "\""));

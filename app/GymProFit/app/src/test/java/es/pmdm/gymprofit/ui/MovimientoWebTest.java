@@ -83,6 +83,6 @@ public class MovimientoWebTest {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull("no se encuentra la carpeta web", raiz);
-        return new String(Files.readAllBytes(raiz.resolve("web").resolve(nombre)), StandardCharsets.UTF_8);
+        return new String(Files.readAllBytes(WebDist.dist().resolve(nombre)), StandardCharsets.UTF_8);
     }
 }

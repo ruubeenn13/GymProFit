@@ -71,7 +71,7 @@ public class LicenciasDatosTest {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull(raiz);
-        String terminos = new String(Files.readAllBytes(raiz.resolve("web").resolve("terminos.html")),
+        String terminos = new String(Files.readAllBytes(WebDist.dist().resolve("terminos.html")),
                 StandardCharsets.UTF_8);
         for (String s : new String[]{"free-exercise-db", "wger", "Creative Commons", "Open Food Facts", "ODbL"}) {
             assertTrue("los términos no nombran " + s, terminos.contains(s));
