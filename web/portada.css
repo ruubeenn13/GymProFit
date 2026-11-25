@@ -255,7 +255,7 @@ h1, h2, h3 { font-family: var(--cond); font-weight: 700; margin: 0; text-wrap: b
 .titular > span {
   display: block;
   font-size: clamp(30px, calc(var(--ancho-titular) * 0.96 / var(--k)), 168px);
-  font-size: calc(96cqi / var(--k));
+  font-size: clamp(30px, calc(96cqi / var(--k)), 168px);
   white-space: nowrap;
   /* Recorta la línea al entrar sin cortar la coma ni el trazo de las letras */
   clip-path: inset(-0.1em -0.2em -0.14em -0.2em);
