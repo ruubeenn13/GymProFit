@@ -149,7 +149,62 @@ public class UnDiaImpactoWebTest {
         assertTrue("no hay ningún trozo con DrawSVG (el check y el tachado)", draw);
     }
 
+    @Test
+    public void elTitularSeLeeEnteroYUnaSolaVez() throws IOException {
+        String html = pagina();
+        Matcher h1 = Pattern.compile("<h1[^>]*>(.*?)</h1>", Pattern.DOTALL).matcher(html);
+        assertTrue("no hay h1", h1.find());
+        assertFalse("el h1 no lleva aria-label: se leería dos veces",
+                h1.group(0).substring(0, h1.group(0).indexOf('>')).contains("aria-label"));
+        String leido = normal(paraLector(h1.group(1)));
+        assertEquals("el lector tiene que leer el titular entero y una sola vez",
+                "Tu entreno y tu dieta, por fin juntos.", leido);
+        // Lo que se ve (las letras troceadas) dice lo mismo que lo que se lee.
+        String todo = normal(sinEtiquetas(h1.group(1)));
+        String visto = todo.replaceFirst(Pattern.quote(leido), "");
+        assertEquals("las letras del titular no dicen lo mismo que su texto", leido.replace(" ", ""), visto.replace(" ", ""));
+    }
+
+    @Test
+    public void todoLoTroceadoVaOcultoAlLectorConSuTextoEnteroAlLado() throws IOException {
+        String html = pagina();
+        Matcher m = Pattern.compile("<span class=\"(letras|tit-letras)\"([^>]*)>").matcher(html);
+        int n = 0;
+        while (m.find()) {
+            n++;
+            assertTrue("un texto troceado no va oculto al lector: " + m.group(0), m.group(2).contains("aria-hidden=\"true\""));
+            int antes = html.lastIndexOf("<span class=\"solo-lector\">", m.start());
+            assertTrue("un texto troceado no tiene su texto entero para el lector delante", antes >= 0 && m.start() - antes < 400);
+        }
+        assertTrue("faltan textos troceados (titular, transición, frases y récord): " + n, n >= 10);
+    }
+
     // ── Ayudantes ──────────────────────────────────────────────────────────
+
+    /** El texto que llega al lector de pantalla: sin lo que cuelga de un aria-hidden="true". */
+    private static String paraLector(String html) {
+        StringBuilder sb = new StringBuilder();
+        java.util.ArrayDeque<Boolean> oculto = new java.util.ArrayDeque<>();
+        Matcher t = Pattern.compile("<(/?)([a-zA-Z0-9]+)([^>]*?)(/?)>|([^<]+)").matcher(html);
+        while (t.find()) {
+            if (t.group(5) != null) {
+                if (!oculto.contains(true)) sb.append(t.group(5));
+            } else if (t.group(1).isEmpty() && t.group(4).isEmpty()) {
+                oculto.push(t.group(3).contains("aria-hidden=\"true\""));
+            } else if (!t.group(1).isEmpty() && !oculto.isEmpty()) {
+                oculto.pop();
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String sinEtiquetas(String html) {
+        return html.replaceAll("<[^>]+>", "");
+    }
+
+    private static String normal(String s) {
+        return s.replace("&nbsp;", " ").replace(" ", " ").replaceAll("\\s+", " ").trim();
+    }
 
     private static String pagina() throws IOException {
         return leer(WebDist.dist().resolve("un-dia.html"));
