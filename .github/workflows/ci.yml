@@ -32,8 +32,9 @@ jobs:
   # ----------------------------------------------------------
   # Qué se ha tocado: la API corre salvo que todo lo cambiado esté en admin/;
   # la web, si algo de admin/ ha cambiado; la app, si algo de app/ o este mismo
-  # workflow ha cambiado (GP-126). Ante la duda (primer push de una rama, historia
-  # reescrita), corren las tres.
+  # workflow ha cambiado (GP-126); los tests de la web pública, si algo de web/ o
+  # este workflow ha cambiado. Ante la duda (primer push de una rama, historia
+  # reescrita), corre todo.
   # ----------------------------------------------------------
   cambios:
     name: cambios
@@ -42,6 +43,7 @@ jobs:
       api: ${{ steps.ver.outputs.api }}
       admin: ${{ steps.ver.outputs.admin }}
       app: ${{ steps.ver.outputs.app }}
+      web: ${{ steps.ver.outputs.web }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -58,6 +60,7 @@ jobs:
             echo "api=true" >> "$GITHUB_OUTPUT"
             echo "admin=true" >> "$GITHUB_OUTPUT"
             echo "app=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           FICHEROS=$(git diff --name-only "$BASE" HEAD)
@@ -65,6 +68,7 @@ jobs:
           if printf '%s\n' "$FICHEROS" | grep -qv '^admin/'; then echo "api=true" >> "$GITHUB_OUTPUT"; else echo "api=false" >> "$GITHUB_OUTPUT"; fi
           if printf '%s\n' "$FICHEROS" | grep -q '^admin/'; then echo "admin=true" >> "$GITHUB_OUTPUT"; else echo "admin=false" >> "$GITHUB_OUTPUT"; fi
           if printf '%s\n' "$FICHEROS" | grep -qE '^(app/|\.github/workflows/ci\.yml$)'; then echo "app=true" >> "$GITHUB_OUTPUT"; else echo "app=false" >> "$GITHUB_OUTPUT"; fi
+          if printf '%s\n' "$FICHEROS" | grep -qE '^(web/|\.github/workflows/ci\.yml$)'; then echo "web=true" >> "$GITHUB_OUTPUT"; else echo "web=false" >> "$GITHUB_OUTPUT"; fi
 
   # ----------------------------------------------------------
   # Secretos (GP-279): el repositorio es público, así que una clave que entra en
@@ -249,6 +253,41 @@ jobs:
       # Lint de Android en verde (GP-155): un error de lint para el CI, como un test.
       - name: Lint
         run: sh ./gradlew --no-daemon lintDebug
+
+  # ----------------------------------------------------------
+  # Los tests de la web pública (web/). Viven en el módulo Android (los *WebTest de
+  # app/src/test/.../ui), así que android-build-test solo los pasaba si cambiaba app/:
+  # una PR que solo tocaba la web pasaba el CI sin ellos. Aquí corren solos cuando
+  # cambia web/ o este workflow, sin el assembleDebug ni el lint. Saltado cuenta como
+  # superado, igual que los demás.
+  # ----------------------------------------------------------
+  web-test:
+    name: web-test
+    needs: cambios
+    if: needs.cambios.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app/GymProFit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      # Para compilar el módulo de los tests hace falta, como en android-build-test.
+      - name: google-services.json de mentira
+        run: cp ci/google-services-ci.json app/google-services.json
+
+      - name: Tests de la web
+        run: sh ./gradlew --no-daemon :app:testDebugUnitTest --tests '*WebTest'
 
   # ----------------------------------------------------------
   # La release con R8 en un emulador (GP-247). R8 quita lo que solo se nombra por reflexión
