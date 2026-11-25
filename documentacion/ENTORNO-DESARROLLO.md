@@ -111,9 +111,47 @@ jooq.codegen.skip=true   (por defecto NO regenera; usa target/generated-sources/
 ```
 - **Compilar** (normal, no regenera jOOQ): `mvn compile` (con JDK 17+). No requiere BD.
 - **Regenerar clases jOOQ** contra la BD local: `mvn org.jooq:jooq-codegen-maven:generate -Djooq.codegen.skip=false` (MariaDB en 3308 encendida).
-- **Regenerar contra AWS u otra BD** sin tocar el pom: añadir `-Djooq.db.url=... -Djooq.db.user=... -Djooq.db.password=...` (o definir esas props en un perfil de `~/.m2/settings.xml`).
+- **Regenerar contra otra BD local** sin tocar el pom: añadir `-Djooq.db.url=... -Djooq.db.user=... -Djooq.db.password=...`. **Nunca contra la base de producción** (GP-282): el esquema es el mismo que crea Flyway en local.
 
 > Nota: `application-dev.properties` / `application-prod.properties` siguen fuera de git (contienen `jwt.secret` y credenciales de BD).
+
+### Los tests, solo contra la base local (GP-282)
+Ningún test ni herramienta se conecta a la base de producción (TiDB) ni a la anterior (Aiven).
+Los tests van contra la MariaDB local (`localhost:3308`, perfil `dev`) o contra la del CI
+(`127.0.0.1:3306`, perfil `ci`). Durante GP-273 corrieron contra el clúster por tener
+`SPRING_DATASOURCE_URL` apuntando fuera, y se gastaron unas 858.000 RU en una tarde.
+
+`BarreraBaseLocal` (en `src/test/java/.../pruebas`, registrada en
+`src/test/resources/META-INF/spring.factories`) lo impide: antes de crear el pool mira
+`spring.datasource.url`, `spring.flyway.url` y la URL del Hikari, y si algún host no es
+`localhost`, `127.0.0.1` o `::1` el contexto no arranca y el error empieza por
+`BarreraBaseLocal (GP-282)`. No hay forma de saltársela.
+
+### Procesos de Maven huérfanos
+La JVM de los tests lleva techo de memoria (`-Xmx1g` en el `argLine` de surefire) y Maven el
+suyo (`-Xmx512m` en `.mvn/jvm.config`), para que un `verify` no deje el equipo sin memoria. Con
+`enableProcessChecker=all` la JVM bifurcada se cierra sola si su Maven muere. Aun así, antes y
+después de un `verify` largo:
+
+```powershell
+# Windows (PowerShell): java y mvn vivos, con su línea de órdenes
+Get-CimInstance Win32_Process -Filter "Name='java.exe'" |
+  Select-Object ProcessId, ParentProcessId, CreationDate,
+    @{n='orden'; e={ $_.CommandLine.Substring(0, [Math]::Min(160, $_.CommandLine.Length)) }}
+# Los de Maven llevan surefire o plexus-classworlds en la orden. Matar uno:
+Stop-Process -Id <pid> -Force
+```
+
+```bash
+# Git Bash
+tasklist //FI "IMAGENAME eq java.exe" //V
+wmic process where "name='java.exe'" get ProcessId,ParentProcessId,CommandLine | grep -E "surefire|classworlds"
+taskkill //PID <pid> //F
+```
+
+No mates los que no son de Maven: el servidor de lenguaje (`org.eclipse.jdt.ls`), Gradle o
+Android Studio también son `java.exe`. Un proceso de surefire cuyo padre ya no existe es un
+huérfano seguro.
 
 ---
 

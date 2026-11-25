@@ -1,0 +1,7 @@
+# GP-282: ningún contexto de test se conecta a una base que no sea local (ver BarreraBaseLocal).
+# La fábrica cubre los contextos del framework de test; el inicializador, cualquier
+# SpringApplication que un test arranque a mano.
+org.springframework.test.context.ContextCustomizerFactory=\
+com.gymprofit.api.pruebas.BarreraBaseLocal$Fabrica
+org.springframework.context.ApplicationContextInitializer=\
+com.gymprofit.api.pruebas.BarreraBaseLocal$Inicializador
