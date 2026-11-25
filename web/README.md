@@ -15,6 +15,7 @@ beta/entrar.html   los pasos para entrar, enlace de los correos de «beta abiert
 js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licencia (DEC-053)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
+PLAN-UN-DIA.md   el plan del rediseño «Un día» (DEC-069, propuesta): no va en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057), logo-correo.png
           (la G sola y transparente de los correos, GP-266) + las texturas
@@ -34,8 +35,8 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
    `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
    falla si una hoja cambia y su versión no.
 2. Comprimir el **contenido** de `web/`, no la carpeta, **sin** `README.md`,
-   `DISENO.md`, `PRODUCT.md` ni `.impeccable/`: son documentación del diseño, no
-   páginas. `_headers` y `404.html` van dentro.
+   `DISENO.md`, `PRODUCT.md`, `PLAN-UN-DIA.md` ni `.impeccable/`: son documentación
+   del diseño, no páginas. `_headers` y `404.html` van dentro.
 3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 

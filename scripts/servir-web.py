@@ -13,7 +13,7 @@ comprueban las grabaciones:
 - Una ruta que no existe responde 404 con 404.html, si existe.
 - Las cabeceras de web/_headers, regla a regla (con * como comodín).
 - Compresión gzip de HTML, CSS, JS, SVG y JSON cuando el navegador la acepta.
-- No sirve lo que no va en el zip: README.md, DISENO.md, PRODUCT.md y .impeccable/.
+- No sirve lo que no va en el zip: README.md, DISENO.md, PRODUCT.md, PLAN-UN-DIA.md y .impeccable/.
 - Responde a HEAD con las mismas cabeceras que GET, para mirarlas con curl -I.
 """
 
@@ -26,7 +26,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 WEB = Path(__file__).resolve().parent.parent / "web"
-FUERA_DEL_ZIP = {"README.md", "DISENO.md", "PRODUCT.md"}
+FUERA_DEL_ZIP = {"README.md", "DISENO.md", "PRODUCT.md", "PLAN-UN-DIA.md"}
 COMPRIMIBLE = ("text/", "application/javascript", "application/json", "image/svg+xml")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("image/webp", ".webp")

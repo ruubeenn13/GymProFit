@@ -2,11 +2,12 @@
 
 Plan, no código. Sustituye a la portada de GP-205 («el dorsal») cuando el propietario acepte la
 propuesta de decisión DEC-069 (`documentacion/PRODUCT-DECISIONS.md`, en «Pendientes de decidir»).
-No va en el zip, como `DISENO.md` y `PRODUCT.md`: en la fase 1 se añade a la lista de lo que se queda
-fuera, en `README.md` y en `scripts/servir-web.py` (`FUERA_DEL_ZIP`).
+No va en el zip, como `DISENO.md` y `PRODUCT.md`: está en la lista de lo que se queda fuera, en
+`README.md` y en `scripts/servir-web.py` (`FUERA_DEL_ZIP`).
 
 Escrito el 25-11-2026 contra `main` en `4451a0c0`. Donde el código y la documentación no coinciden,
-manda el código y aquí se dice.
+manda el código y aquí se dice. Puesto al día el mismo día con las respuestas del propietario a las
+dudas del §8 y sus correcciones (la luz, el récord, las transiciones entre páginas y el cursor).
 
 ---
 
@@ -18,7 +19,8 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
    básicos del catálogo propio (café con leche, tostada con tomate y aceite, avena con plátano, pan con
    jamón). El escáner (`EscanerActivity`, `activity_escaner.xml`) lee productos envasados de
    `productos_off` (DEC-040, DEC-041): su hoja dice «Producto envasado · <marca>». Una escena de
-   escaneo necesita un producto envasado que la demo no tiene. Ver la duda 1.
+   escaneo necesita un producto envasado que la demo no tiene. Resuelto (§8, 1): a las 8:00 se busca el
+   desayuno, y el escáner pasa a las 17:00 con un yogur envasado.
 2. **Las series no se rellenan solas con lo de la última vez.** En la sesión en vivo
    (`SesionEnVivoAdapter`, `LogicaSesion.pistaPeso`/`pistaReps`) la última vez sale en la columna
    «Anterior» (`60 × 8`) y como **pista gris** dentro de los campos de kg y repeticiones; quien entrena
@@ -43,7 +45,8 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
    lunes**: así «Hoy toca» dice Torso A sin forzar nada.
 7. **Profi ya está en la app** (`filaProfi` en Inicio, `view_profi_copiar.xml` con
    `profi_senala_base.webp`), aunque `app/GymProFit/PRODUCT.md` diga «Todavía no está en la app». Esa
-   frase está desfasada. Su material vive en el repositorio de marketing. Ver la duda 4.
+   frase está desfasada. Su material vive en el repositorio de marketing. Resuelto (§8, 4): Profi no
+   sale en la web.
 8. **Las cifras de la demo animadas contradicen `DISENO.md`** («Lo que se valoró y no entra»: animarlas
    las convierte en afirmaciones del producto). El encargo lo resuelve presentándolas como «un día de
    ejemplo»; DEC-069 lo deja escrito y `DISENO.md` se reescribe en la fase 2.
@@ -54,7 +57,18 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
 10. **Los correos piden `/img/logo-correo.png`** a `gymprofit.app` (`PlantillaCorreo`, GP-266). Esa ruta
     no puede cambiar con el nuevo build.
 11. **La portada actual tiene tema claro** (`portada.css`, `prefers-color-scheme: light`). «Un día» se
-    piensa sobre carbón. Ver la duda 2.
+    piensa sobre carbón. Resuelto (§8, 2): la portada nueva va siempre en carbón; las páginas legales y
+    la beta conservan claro y oscuro.
+12. **El récord sale de `LogicaRecordVivo.supera`**
+    (`app/GymProFit/app/src/main/java/es/pmdm/gymprofit/envivo/LogicaRecordVivo.java`), la misma regla que
+    `CalculadoraRecords` en la API (`api/gymprofit-api/src/main/java/com/gymprofit/api/service/record/CalculadoraRecords.java`,
+    GP-088): con peso, la marca es la serie **más pesada** y, a igual peso, la de **más repeticiones**;
+    igualar no es récord; con peso, sin peso y por tiempo no compiten. `LogicaRecordVivo.alMarcar` lo
+    celebra **una sola vez por ejercicio y sesión**, en la primera serie que supera la marca. No es un 1RM
+    estimado ni el volumen. La versión anterior de este plan subía las series 1 y 2 a +2,5 kg: con esa
+    regla el récord saltaba ya en la serie 1, no en la 3. Se corrige en las 19:00 y las 19:40 (§1).
+13. **El descanso no dice «Después:»**: el texto de la app es «Siguiente: …» (`envivo_descanso_siguiente_*`
+    de `values/strings.xml`). La web usa el de la app.
 
 ---
 
@@ -85,6 +99,25 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
   Tableta, 600–1199 px: versión larga, marco de móvil centrado a 360 px de pantalla, texto encima.
   Escritorio, 1200 px o más: versión larga, texto a la izquierda y móvil fijo a la derecha, pantalla de
   390 × 844. Desde 1600 px el contenido se queda en su ancho máximo y solo crece el reloj.
+- **La luz tiene que notarse.** Las opacidades de la primera versión (4–10 %) no se veían en un móvil.
+  Ahora cada hora usa casi todo el margen hasta el tope de luminancia relativa **0,045** que fija
+  `LuzDelDiaWebTest` (§5), medido en el punto más claro de su capa sobre el carbón `#0B0C0E`
+  (luminancia 0,0037). Opacidad máxima que deja cada color sin pasar del tope, y la que se usa (con
+  un margen de 0,01–0,02 para el redondeo del navegador):
+
+  | Hora | Color | Opacidad límite | Se usa | Forma |
+  |---|---|---|---|---|
+  | 7:00 amanecer | `#FFB27A` | 0,26 | **0,24** | baja, desde la izquierda |
+  | 14:00 mediodía | `#F2F2F3` | 0,205 | **0,18** | cenital, la más blanca |
+  | 19:00 gimnasio | `#FF6A00` | 0,355 | **0,33** | lateral derecha, la más cálida |
+  | 19:40 récord | `#E8B84B` | 0,27 | **0,25** | la de las 19:00 funde a esta |
+  | 23:00 noche | `#56C2D6` | 0,285 | **0,14** | la más oscura, a propósito |
+
+  Lo que distingue una hora de otra es el color, la forma y la posición de la capa, no solo la opacidad.
+  **Criterio de aceptación.** Fase 1: en el vídeo del Xiaomi 17T se distingue a simple vista la luz de
+  las 7:00 de la de las 19:00, y el paso al dorado del récord. Fase 3: las cuatro horas (7:00, mediodía,
+  19:00 y 23:00) distinguibles entre sí en el mismo vídeo. Si no se ven, se cambia el color o la forma
+  dentro del tope; el tope no se sube.
 - **Alturas.** Se miden en `svh` (nunca `100vh`, que en el navegador de TikTok salta con la barra).
   Cada escena tiene una altura de scroll fija decidida en CSS (ver §5, «La versión sin JavaScript»).
 
@@ -96,7 +129,7 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
   debajo el titular (el único `h1`) y una línea. La acción «Entra en la beta», visible desde el primer
   pantallazo. La etiqueta «Un día de ejemplo».
 - **Luz.** Amanecer: una luz baja desde la izquierda, en `#FFB27A` (`on-primary-container-dark`), que
-  sube del 0 al 6 % de opacidad.
+  sube del 0 al 24 % de opacidad en su punto más claro (tabla de la luz, arriba).
 - **Movimiento (CSS, sin esperar al JavaScript).** Cada cifra del reloj sube desde el 100 % de su alto
   dentro de su máscara, 650 ms con `--salida`, escalonadas 70 ms (la gramática de los titulares de
   GP-205). La luz entra en 1200 ms. El titular **no** parte de opacidad 0: entra con `clip-path` desde
@@ -116,23 +149,19 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
 - La luz **funde** de la de una hora a la de la siguiente a lo largo de 60 svh (ver §5, contrastes).
 - El título de la escena (`h2`, «8:00 · Desayuno») entra por líneas, 650 ms con `--salida`.
 
-### 8:00 · Desayuno, con el escáner
+### 8:00 · Desayuno, buscándolo (solo E)
 
-*Sujeto a la duda 1 (qué se escanea).*
+*Respuesta del propietario a la duda 1: a las 8:00 se **busca** el desayuno básico de la demo, solo en
+escritorio; el escáner pasa a una escena nueva a las 17:00.*
 
-- **Pantallas.** El escáner (`activity_escaner.xml`): el marco de lectura (`MarcoEscaner`), el aviso
-  «Apunta al código de barras» y, al leer, la hoja con la píldora «Leído», el nombre del producto,
-  «Producto envasado · …» y sus cuatro cifras (kcal, proteína, hidratos, grasa).
-- **Dato.** El producto y sus valores, de `productos_off` en el entorno local; la ración, la del envase o
-  la del producto (DEC-042).
-- **Luz.** Mañana: blanca cálida, alta, 8 %.
-- **Movimiento.** Un código de barras dibujado en SVG (sin foto, sin marca) entra en el marco; la línea
-  de lectura lo barre una vez (`BARRIDO`, 2400 ms en la app; aquí atado al scroll en 30 svh). Al cruzar el
-  punto, el marco se pone en `success` (`VERDE`, 120 ms) y la hoja sube desde abajo el 100 % de su alto,
-  450 ms con `ENFATIZADA` (`HOJA`). Las cifras **no cuentan**: aparecen con la hoja.
-- **M.** Pantalla del escáner a todo el ancho, alto 70 svh, y la hoja encima. Escena de 120 svh.
-- **E.** En el móvil fijo. A la izquierda, el texto: buscar o escanear, en el mismo sitio. Escena de
-  160 vh.
+- **Pantallas.** Añadir de Nutrición con la búsqueda (`activity_anadir_alimento.xml`): se escribe
+  «café con leche» y sale el básico del catálogo propio, sin marca, con su ración; luego la tostada.
+- **Dato.** El desayuno del lunes de ejemplo de la demo (`scripts/sembrar_demo.py`, `DESAYUNOS`), con
+  sus kcal y macros de la API local.
+- **Luz.** Mañana: la del amanecer, más alta y más blanca, camino de la del mediodía.
+- **Movimiento.** Las letras entran en el campo como en `RELLENO` (150 ms cada una, sin teclado
+  dibujado); la fila del resultado entra con `CASCADA`; al cruzar el punto, se pulsa y se apunta.
+- **M.** No sale: en móvil la comida sale a las 14:00 y el escáner a las 17:00.
 
 ### 11:00 · El agua (solo E)
 
@@ -145,12 +174,12 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
 
 ### 14:00 · La comida, copiando la de ayer
 
-- **Pantallas.** La comida del lunes vacía con «¿Copiar la de ayer?» (`view_profi_copiar.xml`, o el botón
-  «Copiar ayer» de Nutrición, `btnCopiarAyerDiario`; ver la duda 4), y después el anillo del día
+- **Pantallas.** La comida del lunes vacía y el botón «Copiar ayer» de Nutrición
+  (`btnCopiarAyerDiario`; sin Profi, respuesta a la duda 4), y después el anillo del día
   (`AnilloDia`, «quedan <n> kcal») con las tres barras de macros (`view_macro_barra.xml`).
 - **Dato.** La comida del domingo de la demo (en el plan de la demo, por ejemplo, merluza con patata y
   judías) y sus kcal, proteína, hidratos y grasa de verdad, calculadas por la API local.
-- **Luz.** Mediodía: cenital y neutra, `#F2F2F3` al 7 %, la más clara del día.
+- **Luz.** Mediodía: cenital y neutra, `#F2F2F3` al 18 %, la más blanca del día.
 - **Movimiento.** Al cruzar el punto, «Copiar la de ayer» se pulsa (`scale(0.97)`, 140 ms); la propuesta
   sale (momento 18, `ESTANDAR`, 250 ms) y los alimentos entran en cascada (`CASCADA`, 350 ms y 40 ms por
   fila, 12 px de recorrido). El anillo avanza de lo del desayuno a lo de desayuno y comida (`BARRA`,
@@ -158,6 +187,25 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
   contar número a número: contar dice «mira qué cifra», y la cifra es de ejemplo.
 - **M.** Primero la comida vacía (60 svh), luego el anillo (60 svh). Escena de 140 svh.
 - **E.** En el móvil fijo, la comida y el anillo en la misma pantalla, como en la app. 180 vh.
+
+### 17:00 · La merienda, con el escáner (M y E)
+
+- **Pantallas.** El escáner (`activity_escaner.xml`): el marco de lectura (`MarcoEscaner`), el aviso
+  «Apunta al código de barras» y, al leer, la hoja con la píldora «Leído», el nombre del producto,
+  «Producto envasado · …» y sus cuatro cifras (kcal, proteína, hidratos, grasa).
+- **Dato.** Un **yogur envasado real** de `productos_off` en el entorno local, con sus valores y la
+  ración del envase o la del producto (DEC-042). **Sin enseñar la marca**: la hoja lleva un nombre
+  genérico («Yogur natural») y «Producto envasado» sin la marca, y el código de barras va dibujado en
+  SVG (no la foto del envase). Si la demo no lo tiene, se añade a `scripts/sembrar_demo.py` como
+  merienda del lunes de ejemplo.
+- **Luz.** Tarde: el blanco del mediodía empieza a calentarse hacia el naranja de las 19:00.
+- **Movimiento.** Un código de barras dibujado en SVG (sin foto, sin marca) entra en el marco; la línea
+  de lectura lo barre una vez (`BARRIDO`, 2400 ms en la app; aquí atado al scroll en 30 svh). Al cruzar el
+  punto, el marco se pone en `success` (`VERDE`, 120 ms) y la hoja sube desde abajo el 100 % de su alto,
+  450 ms con `ENFATIZADA` (`HOJA`). Las cifras **no cuentan**: aparecen con la hoja.
+- **M.** Pantalla del escáner a todo el ancho, alto 70 svh, y la hoja encima. Escena de 120 svh.
+- **E.** En el móvil fijo. A la izquierda, el texto: buscar o escanear, en el mismo sitio. Escena de
+  160 vh.
 
 ### 19:00 · Torso A (la escena estrella, fijada también en móvil)
 
@@ -170,12 +218,23 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
      el primer ejercicio, press de banca (`item_envivo_ejercicio.xml`), con su pauta «3 × 6–10 ·
      Descanso 2 min», «Tu récord: …» en dorado y «La última vez, <cuándo>»; y sus tres filas de serie
      (`item_envivo_serie.xml`) con la columna «Anterior» y las pistas grises.
-  3. El descanso (`view_descanso.xml`): el aro, `2:00` en cuenta atrás, «Después: Press de banca, serie
-     2» y −15 s, +15 s, Saltar.
+  3. El descanso (`view_descanso.xml`): el aro, `2:00` en cuenta atrás, el «Siguiente: …» de la app
+     (§0, 13) y −15 s, +15 s, Saltar.
 - **Dato.** Los kilos y repeticiones de la última sesión de Torso A de la demo (la del lunes anterior),
-  que son la columna «Anterior» y las pistas; los de hoy suben 2,5 kg, que es lo que sube la demo cada
-  semana en los básicos. Duración, pauta y descanso, los de la plantilla.
-- **Luz.** Gimnasio por la tarde: naranja `#FF6A00`, lateral, 10 %, la más cálida del día.
+  que son la columna «Anterior» y las pistas. En la demo local, sembrada el 23-11-2026 (un lunes, que es
+  el día de ejemplo), esa sesión es la del 16-11: press de banca 80 × 10, 80 × 10 y 80 × 9, y esa es
+  también su mejor marca (80 kg × 10: la demo sube los kilos cada semana, así que la última es la más
+  pesada). Las series de hoy se fijan con la regla del récord (§0, 12) para que el récord caiga en la 3
+  y no antes:
+  - **Series 1 y 2: 80 × 10.** Igualan la mejor marca: con `supera`, igualar no es récord.
+  - **Serie 3: 82,5 × 8.** Más pesada que 80 kg: es récord aunque tenga menos repeticiones, porque la
+    marca con peso se mide primero por los kilos. 82,5 es el escalón de los básicos de la demo
+    (`KILOS["BASICO"]`, +2,5 kg) y 8, el centro de la pauta 6–10. «Tu mejor marca era 80 kg × 10».
+  - Antes: «Tu récord: 80 kg × 10». Después: «Tu récord: 82,5 kg × 8, de hoy» (`envivo_record_tu_hoy`).
+  Las cifras viven en `src/datos/dia-ejemplo.json`, con el comando y la fecha con que se sacaron, y la
+  regla aplicada; un test comprueba que la serie 3 supera la marca y que la 1 y la 2 no. Duración,
+  pauta y descanso, los de la plantilla.
+- **Luz.** Gimnasio por la tarde: naranja `#FF6A00`, lateral, 33 %, la más cálida del día.
 - **Fijado (pin).** La pantalla del móvil se queda fija y el scroll recorre la sesión. En M es la única
   escena fijada: la interfaz ocupa el ancho y el texto aparece en una sola línea encima, que cambia
   con cada paso (sin tapar la interfaz).
@@ -196,11 +255,12 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
 ### 19:40 · El récord
 
 - **Pantalla.** La misma sesión, serie 3 del press de banca.
-- **Dato.** La marca que la supera es la de la última serie de hoy del día de ejemplo (una repetición más
-  que la vez anterior con los mismos kilos); «Tu mejor marca era …», la que la demo tenga guardada. Si la demo no
-  da un récord creíble con sus datos, se busca otro ejercicio de Torso A que sí lo dé, nunca una cifra
-  inventada.
-- **Luz.** Funde del naranja al dorado `#E8B84B`, 8 %, solo mientras dura el récord.
+- **Dato.** La serie 3 de hoy, **82,5 kg × 8**, que supera la mejor marca guardada de la demo,
+  **80 kg × 10**, por los kilos (`LogicaRecordVivo.supera`: con peso manda el peso; a igual peso, las
+  repeticiones). Es la primera serie de hoy que la supera, así que es la que celebra
+  `LogicaRecordVivo.alMarcar` (una vez por ejercicio y sesión). Si la demo cambia y deja de dar este
+  récord, se recalcula con la misma regla, nunca con una cifra a mano.
+- **Luz.** Funde del naranja al dorado `#E8B84B`, 25 %, solo mientras dura el récord.
 - **Movimiento.** Al marcar la serie 3: la fila pasa a `gold-row` (`ORO`, 900 ms); el aviso de récord
   entra (`TROFEO`, 450 ms, `ENFATIZADA`) con el trofeo de 0,5 a 1; seis chispas de 6 px en `gold` salen
   del trofeo y se apagan (`CHISPAS`, 700 ms; solo E). «Tu récord: …» cambia a «Tu récord: …, de hoy».
@@ -221,7 +281,7 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
   la semana).
 - **Dato.** Las mediciones de la demo (una cada 3 días: 78,6 → 76,9 kg en 22 días) y las series por zona
   de la semana del lunes de ejemplo, de la API local.
-- **Luz.** Noche: la más oscura; un azul `#56C2D6` (`agua-dark`) al 4 %.
+- **Luz.** Noche: la más oscura; un azul `#56C2D6` (`agua-dark`) al 14 %.
 - **Movimiento.** La línea de la gráfica se dibuja de izquierda a derecha (`stroke-dashoffset`, atada al
   scroll en 50 svh); los puntos aparecen al pasar la línea por ellos (`PUNTO`, 450 ms). Luego las zonas:
   la silueta se colorea zona a zona y cada barra crece (`BARRA`, 500 ms, 100 ms de escalón, `FILA`).
@@ -244,9 +304,10 @@ Abreviaturas: **M** = versión móvil, **E** = escritorio (vale para tableta sal
 | Hora | M (320–599) | E (≥ 600) |
 |---|---|---|
 | 7:00 entrada | sí | sí |
-| 8:00 escáner | sí | sí |
+| 8:00 buscar el desayuno | no | sí |
 | 11:00 agua | no | sí |
 | 14:00 copiar la comida | sí | sí |
+| 17:00 escanear el yogur | sí | sí |
 | 19:00 Torso A + 19:40 récord | sí, fijada | sí, fijada |
 | 20:10 resumen | no | sí |
 | 23:00 peso y zonas | sí | sí |
@@ -309,7 +370,8 @@ Notas del inventario:
   fijada en `package-lock.json`. Aporta componentes para la interfaz de la app (cada pieza del
   inventario, una vez, usada en varias escenas y en la 404), HTML sin JavaScript por defecto y los
   recursos con el hash en el nombre. No aporta ni se usa: islas de React u otro framework, adaptador de
-  servidor, `prefetch`, transiciones de vista, la barra de herramientas de desarrollo.
+  servidor, `prefetch`, el `ClientRouter` de Astro (sus transiciones de vista con JavaScript), la barra
+  de herramientas de desarrollo.
 - **`build.format: 'file'` y `trailingSlash: 'never'`**: `src/pages/privacidad.astro` sale como
   `privacidad.html`, que es lo que hay hoy, y Pages sigue sirviendo `/privacidad`. Con el formato por
   defecto (`directory`) saldría `privacidad/index.html` y Pages redirigiría a `/privacidad/`: cambiaría
@@ -329,6 +391,21 @@ Notas del inventario:
 - **Las librerías llegan por npm**, no copiadas a mano en `js/vendor/`: Vite las mete en trozos propios
   dentro de `/_astro/`, con el hash en el nombre, servidos desde nuestro dominio. Su licencia va con
   ellas: los comentarios legales (`/*!`) se conservan en los trozos, y un test lo comprueba (abajo).
+
+### Para fases posteriores (no en la fase 1)
+
+- **Transición entre páginas con View Transitions entre documentos.** Solo CSS: `@view-transition {
+  navigation: auto; }` en las hojas de las páginas del mundo nuevo, sin JavaScript y sin el
+  `ClientRouter` de Astro. El elemento compartido es el **reloj** (`view-transition-name: reloj` en el
+  reloj de cabecera de cada página), así que al ir de la portada a `/beta` o a una legal el reloj se
+  queda y el resto funde. Con `prefers-reduced-motion: reduce` no hay animación: la regla va dentro de
+  `@media (prefers-reduced-motion: no-preference)`. Un navegador que no la entiende navega como
+  siempre. Fase 4, con las páginas secundarias.
+- **Cursor propio en escritorio**, como capa extra: solo con `(hover: hover) and (pointer: fine)` y
+  movimiento permitido, un punto que sigue al ratón por encima de la página (`pointer-events: none`,
+  `transform` y nada más). El cursor del sistema **se queda** en los enlaces, los botones y los campos
+  (en ellos el propio no se pinta), y nunca se oculta el del sistema en el resto si el propio no ha
+  cargado. Fase 3 o 5; entra en el presupuesto de JS de escritorio.
 
 ### Estructura propuesta de `web/`
 
@@ -418,8 +495,9 @@ móvil. Si no caben, se quita movimiento, no se sube el tope (DEC-053).
 ### Procedimiento
 
 1. **Mismo servidor para las dos portadas**: `scripts/servir-web.py` con brotli, sirviendo la portada
-   actual (un `git worktree` de `main` en `web/`) y la nueva (`web/dist/`), en el mismo equipo y
-   puerto, una después de otra.
+   actual (un **clon aparte** de `main`, no un worktree, en una carpeta fuera del repositorio) y la
+   nueva (`web/dist/`), en el mismo equipo y puerto, una después de otra. **Solo en local hasta la
+   fase 6** (respuesta a la duda 5): nada se crea en Cloudflare para medir.
 2. **Lighthouse por línea de órdenes**, preajuste móvil (4G lento simulado, CPU ×4), caché vacía, 5
    pasadas por portada, se apunta la **mediana** de cada cifra y las 5 en el informe.
 3. **Xiaomi 17T** con Chrome y con el navegador integrado de TikTok y de Instagram: abrir la URL de la
@@ -466,8 +544,9 @@ móvil. Si no caben, se quita movimiento, no se sube el tope (DEC-053).
   `locale=es` a Brevo). Ninguna decisión vigente obliga a ponerla en inglés: DEC-020 («ES y EN siempre»)
   habla de las cadenas de la app, que van en recursos, y la web no tiene recursos. Lo que sí sale de
   DEC-020 es que **las pantallas de la app que se rehacen enseñan sus textos en español**, los de
-  `values/strings.xml`, tal cual. Ver la duda 3 por si se quiere la web en inglés; Astro lo permitiría
-  sin cambiar de stack.
+  `values/strings.xml`, tal cual. Respuesta a la duda 3: sin inglés por ahora, con la estructura de
+  Astro preparada para añadirlo (los textos de la página en un solo sitio por página, nada de rutas que
+  impidan un `/en/` después).
 
 ---
 
@@ -478,12 +557,21 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 ### Fase 1 · Prueba de concepto: la entrada y las 19:00, medidas en el móvil
 
 - Antes de nada: el job `web` del CI y el ayudante de los tests sobre `dist` (con los tests de hoy aún en
-  verde contra las páginas copiadas a `public/`).
-- Astro en `web/`, las páginas actuales copiadas tal cual a `public/` (cero riesgo para lo que hay).
-- La entrada (7:00) y la escena de Torso A con el récord, en M y en E, con los componentes 1, 6, 7, 8 y 9
-  hechos lo justo para medir.
-- `dia-ejemplo.json` sacado de la demo local.
-- El panel `?debug=motion`.
+  verde contra las páginas copiadas a `public/`). Los `*WebTest` ya corren en el CI cuando una PR solo
+  toca `web/` desde la rama `ci-tests-web` (job `web-test`); aquí ese job pasa a construir `dist` antes.
+- Astro en `web/` (`build.format: 'file'`, `trailingSlash: 'never'`, telemetría apagada), las páginas
+  actuales copiadas tal cual a `public/` (cero riesgo para lo que hay). `RutasWebTest` sobre `dist`.
+- **La prueba vive en `/un-dia`** (`noindex`), no en `/`: la portada de hoy se queda en `public/` sin
+  tocar hasta que se acepten la prueba y DEC-069, y entonces `index.astro` la sustituye (fase 3).
+- La entrada (7:00: el reloj, el titular como LCP, la acción visible en el primer pantallazo y la
+  etiqueta «Un día de ejemplo») y la escena fijada de Torso A con el récord, en M y en E, con los
+  componentes 1, 6, 7, 8 y 9.
+- `dia-ejemplo.json` sacado de la demo local con el comando y la fecha; ninguna cifra a mano en los
+  componentes.
+- Módulo inicial ≤ 6 KB gzip como objetivo; GSAP y ScrollTrigger con `import()` al acercarse la escena;
+  ScrollTrigger con `ignoreMobileResize`; `sticky` antes que `pin` donde se pueda.
+- El panel `?debug=motion`, con el botón de copiar.
+- La versión con movimiento reducido y la versión sin JS de las dos escenas, completas.
 - **Parada:** Lighthouse (mediana de 5, frente a la portada actual en el mismo servidor) y el panel en
   el Xiaomi 17T, en Chrome, TikTok e Instagram. Si no se llega a 50 fps o a 90 de rendimiento, se cambia
   la dirección aquí, no en la fase 5.
@@ -515,8 +603,8 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 
 - Accesibilidad (teclado, lector de pantalla con TalkBack, contraste medido, 200 % de zoom, `forced-colors`),
   rendimiento (las cifras de §4, la mediana de 5) y la versión quieta y sin JS revisadas de arriba abajo.
-- Revisor de UI en las combinaciones que apliquen: claro y oscuro si se decide mantener el claro (duda
-  2), y los anchos 320, 360, 768, 1280 y 1920. Tras arreglar, se vuelve a pasar como dice CLAUDE.md.
+- Revisor de UI en las combinaciones que apliquen: la portada solo en carbón; las legales y la beta en
+  claro y oscuro (duda 2); y los anchos 320, 360, 768, 1280 y 1920. Tras arreglar, se vuelve a pasar como dice CLAUDE.md.
 - **Parada:** informe con todas las medidas.
 
 ### Fase 6 · Despliegue
@@ -529,27 +617,15 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 
 ---
 
-## 8. Dudas para el propietario (antes de la fase 1)
+## 8. Dudas del propietario, respondidas el 25-11-2026
 
-1. **Las 8:00: ¿qué se escanea?** (a) Un producto envasado real de `productos_off` sin enseñar su marca
-   (nombre genérico, código de barras dibujado), sembrado en la demo para la ocasión. (b) Cambiar la
-   escena a **buscar** el desayuno de la demo (café con leche y tostada, básicos), que es lo que la demo
-   hace de verdad, y dejar el escáner para la merienda (un yogur envasado). (c) Las dos: buscar a las 8:00
-   y escanear a las 17:00 (solo E). Recomendada: (b).
-2. **¿La portada nueva tiene tema claro?** (a) No: «Un día» es siempre carbón (la luz de cada hora es el
-   «tema»), y las páginas legales y la beta mantienen claro y oscuro. (b) Sí: una versión clara con luz de
-   día sobre `#F1F1EE`, el doble de trabajo de contraste y de revisión. Recomendada: (a).
-3. **¿La web en inglés?** (a) No por ahora: ninguna decisión lo pide y la beta es de una lista en español.
-   (b) Sí, con `/en/` y `hreflang`, y entonces hay que decidir el idioma del formulario de Brevo y de los
-   correos de la beta. Recomendada: (a), con la estructura de Astro preparada para (b).
-4. **¿Sale Profi en la web?** (a) No: la comida de las 14:00 usa el botón «Copiar ayer» de Nutrición, sin
-   mascota. (b) Sí, solo en la propuesta «¿Copiar la de ayer?», como en la app, con su imagen del
-   repositorio de marketing. Recomendada: (a) en la fase 1; (b) solo si el propietario quiere a Profi en
-   la web en general.
-5. **Medir en Cloudflare antes de la fase 6.** (a) Solo en local con `servir-web.py` + brotli hasta la
-   fase 6. (b) Subir una implementación de vista previa (no de producción) al proyecto `gymprofit` en la
-   fase 1 para medir con el borde de verdad. Recomendada: (a); (b) solo si el propietario la sube o lo
-   autoriza, porque es crear algo en Cloudflare.
-6. **Presupuesto de JS diferido.** (a) El de §4: 60 KB en móvil (lo de DEC-053) y 70 KB en escritorio por
-   Lenis. (b) 60 KB en los dos, y Lenis fuera también en escritorio. Recomendada: (b) si en la fase 1 no
-   se nota la diferencia con ratón.
+1. **Qué se escanea.** A las 8:00 se **busca** el desayuno básico de la demo, solo en escritorio. Escena
+   nueva a las 17:00: se **escanea un yogur envasado real** de `productos_off`, sin enseñar la marca
+   (nombre genérico, código dibujado en SVG), en móvil y en escritorio. Si hay que sembrarlo en la demo,
+   se añade a `scripts/sembrar_demo.py`.
+2. **Tema.** La portada, siempre en carbón. Las páginas legales y la beta conservan claro y oscuro.
+3. **Inglés.** No por ahora; la estructura de Astro, preparada para añadirlo.
+4. **Profi.** No sale en la web: a las 14:00, el botón «Copiar ayer» de Nutrición.
+5. **Medición.** Solo en local con `servir-web.py` y brotli hasta la fase 6. No se crea nada en
+   Cloudflare.
+6. **JS diferido.** ≤ 60 KB gzip en móvil y ≤ 70 KB en escritorio, con Lenis solo con ratón.
