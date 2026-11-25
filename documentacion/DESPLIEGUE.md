@@ -9,7 +9,7 @@
 | **Base de datos** | **Aiven for MySQL** (always-free) | Gestionada, 1 GB almacenamiento / 1 GB RAM, backups automáticos, **sin tarjeta** y **sin caducidad**. MySQL es compatible con el stack actual (driver MariaDB, Flyway, jOOQ). |
 | **API (compute)** | **Koyeb** free *o* **Render** free | Despliegan Spring Boot desde Git sin servidor propio. |
 | **CI** | **GitHub Actions** | Build + tests en cada push (no requiere infra). |
-| **Health check** | **Spring Boot Actuator** | Endpoint `/actuator/health` para que la PaaS sepa si la app está viva. |
+| **Health check** | **Spring Boot Actuator** | `/actuator/health/liveness` para Render, UptimeRobot y el keep-alive: no toca la base (GP-283). `/actuator/health/readiness` y `/actuator/health` sí la incluyen. |
 
 ## Opciones de base de datos (el punto crítico)
 

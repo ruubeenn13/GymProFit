@@ -133,7 +133,9 @@ Todos van bajo el context-path `/api`. Los `@RequestMapping` de los controllers 
 
 | Método | URL | Auth | Descripción |
 |---|---|---|---|
-| GET | `/actuator/health` | No | Salud para el health check de Render. No dice qué versión corre |
+| GET | `/actuator/health` | No | Salud completa, con la base. No dice qué versión corre |
+| GET | `/actuator/health/liveness` | No | El proceso responde; no toca la base. Lo llaman Render, UptimeRobot y el keep-alive (GP-283) |
+| GET | `/actuator/health/readiness` | No | Puede atender: incluye la base |
 | GET | `/actuator/info` | No | Solo `{"commit": "<hash>"}`: el que Render deja en `RENDER_GIT_COMMIT`, o `local` fuera de Render (GP-100). **Así se comprueba un despliegue**, nunca con una cuenta |
 
 ### AUTH — `/auth`

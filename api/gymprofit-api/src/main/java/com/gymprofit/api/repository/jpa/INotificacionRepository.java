@@ -3,6 +3,7 @@ package com.gymprofit.api.repository.jpa;
 import com.gymprofit.api.entity.Notificacion;
 import com.gymprofit.api.enums.TipoNotificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -44,6 +45,11 @@ public interface INotificacionRepository extends JpaRepository<Notificacion, Int
 
     // Notificaciones programadas vencidas y con push aún pendiente (las procesa el job).
     List<Notificacion> findByPushEnviadaFalseAndFechaProgramadaLessThanEqual(LocalDateTime ahora);
+
+    // La más temprana con push pendiente (GP-283): de aquí sale cuándo toca el próximo
+    // barrido, para no ir a la base cada minuto cuando no hay ninguna.
+    @Query("SELECT MIN(n.fechaProgramada) FROM Notificacion n WHERE n.pushEnviada = false")
+    LocalDateTime proximaProgramadaPendiente();
 
     // Anti-spam de los recordatorios recurrentes: comprueba si ya se envió al usuario
     // una notificación con el mismo título desde una fecha dada (el título actúa de clave).

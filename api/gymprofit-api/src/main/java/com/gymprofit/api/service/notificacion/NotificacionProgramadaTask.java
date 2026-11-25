@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,7 @@ import java.util.List;
 
 // ============================================================
 // NotificacionProgramadaTask — job que envía las notificaciones push programadas.
-// Cada minuto busca notificaciones con fecha_programada vencida y push_enviada=false,
+// Cuando VigiaProgramadas ve que alguna ha vencido, busca las de fecha_programada vencida y push_enviada=false,
 // les envía la push (PushNotificationService, tolerante a fallos) y las marca como
 // enviadas para no duplicar. Requiere @EnableScheduling (ya activo por la tarea de
 // purga de refresh tokens). En Render free el keep-alive mantiene el proceso despierto,
@@ -30,7 +29,8 @@ public class NotificacionProgramadaTask {
     private final PushNotificationService pushNotificationService;
     private final Logger logger = LoggerFactory.getLogger(NotificacionProgramadaTask.class);
 
-    // Barrido cada 60s (arranca a los 30s del boot para no competir con el arranque).
+    // Ya no lleva @Scheduled (GP-283): lo llama VigiaProgramadas, que lo mira cada 60 s
+    // y solo entra cuando sabe que alguna ha vencido.
     //
     // Bloqueada con ShedLock (GP-221): con dos instancias, un solo barrido por minuto; sin el
     // bloqueo las dos leerían las mismas pendientes y cada push saldría dos veces.
@@ -39,7 +39,6 @@ public class NotificacionProgramadaTask {
     // 5 min dan para unas mil vencidas en el mismo minuto, y un minuto normal tiene muy pocas.
     // Es también lo más que se retrasarían las programadas si una instancia muere con el
     // bloqueo cogido: por eso no es más largo.
-    @Scheduled(fixedDelay = 60000, initialDelay = 30000)
     @SchedulerLock(name = "notificaciones-programadas", lockAtMostFor = "PT5M",
             lockAtLeastFor = ShedLockConfig.BLOQUEO_MINIMO_PROPIEDAD)
     @Transactional

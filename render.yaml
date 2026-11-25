@@ -12,7 +12,10 @@ services:
     region: frankfurt                      # más cerca de España; cambia si prefieres
     rootDir: api/gymprofit-api             # monorepo: construye desde el módulo de la API
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/actuator/health  # context-path /api + actuator health
+    # Liveness y no el health completo (GP-283): Render pregunta cada pocos segundos, y el
+    # completo hace un ping a la base en cada pregunta. Liveness no toca la base. El
+    # servicio NO sigue este Blueprint (se creó a mano): este valor se cambia en el panel.
+    healthCheckPath: /api/actuator/health/liveness
     # Despliega solo cuando el CI de GitHub pasa en verde para ese commit (GP-094).
     # autoDeploy está obsoleto en Render; y si el servicio va por Blueprint, lo que
     # diga este fichero manda sobre el panel. Un push solo de documentación (*.md,
