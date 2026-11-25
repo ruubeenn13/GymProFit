@@ -1,0 +1,133 @@
+{
+  "_origen": {
+    "orden": "GYMPROFIT_DB_PASSWORD=… python scripts/dia-ejemplo-web.py",
+    "sacado": "2026-11-25",
+    "base": "MariaDB local 127.0.0.1:3308 (GP-282)",
+    "cuenta": "@dani.entrena, sembrada el 2026-11-23 con scripts/sembrar_demo.py",
+    "reglas": [
+      "Series de hoy: 1 y 2 igualan la mejor marca (igualar no es récord); la 3 sube el escalón de los básicos de sembrar_demo.py con las repeticiones del centro de la pauta, y supera la marca por los kilos (LogicaRecordVivo.supera).",
+      "Reloj: 3,5 s por repetición (DuracionRutina) más el descanso de la pauta entre series."
+    ]
+  },
+  "dia": {
+    "fecha": "2026-11-23",
+    "nombre": "lunes"
+  },
+  "horas": {
+    "entrada": "07:00",
+    "entreno": "19:00",
+    "record": "19:40"
+  },
+  "hoyToca": {
+    "rotulo": "Hoy toca",
+    "rutina": "Torso A",
+    "subtitulo": "7 ejercicios · unos 55 min · Espalda, Hombros y Brazos",
+    "ultimaVez": "La última vez, hace 1 semana",
+    "ejercicios": [
+      {
+        "nombre": "Press de banca con barra",
+        "pauta": "3 × 6–10",
+        "ultima": "Última: 80 kg"
+      },
+      {
+        "nombre": "Remo con barra",
+        "pauta": "3 × 6–10",
+        "ultima": "Última: 85 kg"
+      },
+      {
+        "nombre": "Press militar de pie, con barra",
+        "pauta": "3 × 6–10",
+        "ultima": "Última: 70 kg"
+      },
+      {
+        "nombre": "Jalón al pecho",
+        "pauta": "3 × 10–12",
+        "ultima": "Última: 32,5 kg"
+      },
+      {
+        "nombre": "Elevaciones laterales",
+        "pauta": "3 × 12–15",
+        "ultima": "Última: 42,5 kg"
+      },
+      {
+        "nombre": "Curl de bíceps con barra",
+        "pauta": "3 × 10–12",
+        "ultima": "Última: 42,5 kg"
+      },
+      {
+        "nombre": "Extensión de tríceps en polea",
+        "pauta": "3 × 10–12",
+        "ultima": "Última: 42,5 kg"
+      }
+    ]
+  },
+  "sesion": {
+    "totalSeries": 21,
+    "ejercicio": "Press de banca con barra",
+    "pauta": "3 × 6–10",
+    "descanso": "Descanso 2 min",
+    "descansoSegundos": 120,
+    "descansoTexto": "2:00",
+    "recordAntes": "Tu récord: 80 kg × 10",
+    "recordDespues": "Tu récord: 82,5 kg × 8, de hoy",
+    "ultimaVez": "La última vez, hace 1 semana",
+    "aviso": "¡Récord! 82,5 kg × 8",
+    "avisoAntes": "Tu mejor marca era 80 kg × 10",
+    "tipo": "BASICO",
+    "marcaGuardada": {
+      "peso": "80",
+      "repeticiones": 10
+    },
+    "botones": {
+      "descanso": "Descanso",
+      "menos": "−15 s",
+      "mas": "+15 s",
+      "saltar": "Saltar"
+    },
+    "series": [
+      {
+        "numero": 1,
+        "anterior": "80 × 10",
+        "pistaKg": "80",
+        "pistaReps": "10",
+        "kg": "80",
+        "pesoExacto": "80",
+        "reps": "10",
+        "volumen": "800",
+        "tiempo": "0:35",
+        "record": false,
+        "siguiente": "Siguiente: serie 2 · 80 kg × 10",
+        "aviso": "¡A por la serie 2!"
+      },
+      {
+        "numero": 2,
+        "anterior": "80 × 10",
+        "pistaKg": "80",
+        "pistaReps": "10",
+        "kg": "80",
+        "pesoExacto": "80",
+        "reps": "10",
+        "volumen": "1.600",
+        "tiempo": "3:10",
+        "record": false,
+        "siguiente": "Siguiente: serie 3 · 80 kg × 9",
+        "aviso": "¡A por la serie 3!"
+      },
+      {
+        "numero": 3,
+        "anterior": "80 × 9",
+        "pistaKg": "80",
+        "pistaReps": "9",
+        "kg": "82,5",
+        "pesoExacto": "82.5",
+        "reps": "8",
+        "volumen": "2.260",
+        "tiempo": "5:38",
+        "record": true,
+        "siguiente": null,
+        "aviso": null
+      }
+    ],
+    "finTexto": "Press de banca con barra · se acabó el descanso"
+  }
+}
