@@ -7,6 +7,7 @@
 | `reset-datos-pruebas.sh` | Restaura los datos de pruebas al estado base. Exige la API parada. |
 | `sembrar_demo.py` | Crea la cuenta demo de las capturas, `@dani.entrena`, con tres semanas de datos. Solo en local. |
 | `clave_local.py` | Regenera la clave de una cuenta de la BD local (`admin`, `dani.entrena`) y la guarda en `docs/credenciales-locales.txt`, ignorado por git. Ver `documentacion/ENTORNO-PRUEBAS.md`. |
+| `medir-un-dia.py` | Mide `/un-dia` en Chromium contra la web servida en local (nunca producción): el primer layout con la CPU a ×4, por escena y con la contención propuesta para la fase 3, y el CLS nodo a nodo a 417 y a 1920. Escribe Markdown para el informe. Uso en su cabecera. |
 | `versionar-hojas-web.py` | Pone en las páginas de `web/` la versión de sus hojas. Ver `web/README.md`. |
 | `sesion-arranque/` | Pruebas de la renovación de sesión y del arranque (GP-237, GP-235, GP-234). `proxy-refresh.py` se pone en el 8080 delante de la API local (en el 8081, con el access de 60 s) y decide qué contesta `/auth/refresh`; `tanda.sh <modo>` cuenta las llamadas al volver a Inicio y en la siguiente acción; `matar_y_volver.sh` cuenta cuántas veces se crea cada pantalla al volver tras matar el proceso. Cómo arrancar cada pieza, en la cabecera de cada script. Al acabar, se paran el proxy y la API para dejar libre el 8080. |
 | `extraer-musculos.py`, `generar-icono-app.py` | Utilidades sueltas de la app; cada una explica su uso en la cabecera. |
