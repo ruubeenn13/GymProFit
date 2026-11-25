@@ -23,4 +23,13 @@ export default defineConfig({
   prefetch: false,
   devToolbar: { enabled: false },
   compressHTML: true,
+  vite: {
+    build: {
+      rolldownOptions: {
+        // La licencia de GSAP y la de Lenis viajan en el trozo que las sirve (DEC-069):
+        // el minificador quita los comentarios /*! por defecto.
+        output: { comments: { legal: true, annotation: false, jsdoc: false } },
+      },
+    },
+  },
 });

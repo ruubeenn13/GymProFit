@@ -50,6 +50,7 @@ public class HojasVersionadasWebTest {
             while (m.find()) {
                 hojas++;
                 String href = m.group(1);
+                if (deAstro(web, pagina, href)) continue;
                 Matcher v = Pattern.compile("^(/[a-z-]+\\.css)\\?v=([0-9a-f]{8})$").matcher(href);
                 assertTrue(web.relativize(pagina) + " pide una hoja sin versión: " + href, v.matches());
                 String esperada = version(web.resolve(v.group(1).substring(1)));
@@ -69,6 +70,7 @@ public class HojasVersionadasWebTest {
             while (lista.find()) {
                 for (String ruta : lista.group(1).trim().split("\\s+")) {
                     scripts++;
+                    if (deAstro(web, pagina, ruta)) continue;
                     Matcher v = Pattern.compile("^(/js/[A-Za-z0-9/_.-]+\\.js)\\?v=([0-9a-f]{8})$").matcher(ruta);
                     assertTrue(web.relativize(pagina) + " pide un script sin versión: " + ruta, v.matches());
                     assertEquals(web.relativize(pagina) + ": " + v.group(1) + " ha cambiado y su versión no; "
@@ -85,7 +87,7 @@ public class HojasVersionadasWebTest {
         String cabeceras = leer(web().resolve("_headers"));
         // Cada página, con una regla que la cubra y sin caché
         for (String ruta : new String[]{"/", "/beta", "/beta/*", "/privacidad", "/terminos", "/eliminar-cuenta",
-                "/*.html"}) {
+                "/*.html", "/un-dia"}) {
             assertEquals("la regla de " + ruta + " no pide revalidar", "no-cache", regla(cabeceras, ruta));
         }
         for (String hoja : new String[]{"/estilo.css", "/beta.css", "/portada.css"}) {
@@ -93,14 +95,31 @@ public class HojasVersionadasWebTest {
         }
         assertEquals("los scripts no llevan caché larga", "public, max-age=31536000, immutable",
                 regla(cabeceras, "/js/*"));
+        assertEquals("lo que construye Astro no lleva caché larga", "public, max-age=31536000, immutable",
+                regla(cabeceras, "/_astro/*"));
         // Las fuentes y las imágenes no van versionadas: no pueden ser immutable
         assertFalse("hay algo immutable que no va versionado",
-                cabeceras.replaceAll("(?m)^/((estilo|beta|portada)\\.css|js/\\*)\\R[^\\n]*\\R?", "").contains("immutable"));
+                cabeceras.replaceAll("(?m)^/((estilo|beta|portada)\\.css|js/\\*|_astro/\\*)\\R[^\\n]*\\R?", "")
+                        .contains("immutable"));
         // Ninguna regla con comodín para todo: Pages uniría su Cache-Control con el de las demás
         assertFalse("una regla /* se sumaría a las demás", Pattern.compile("(?m)^/\\*\\s*$").matcher(cabeceras).find());
     }
 
     // El Cache-Control de la regla de esa ruta exacta en _headers.
+    /**
+     * Lo que construye Astro (DEC-069, propuesta) va en /_astro/ con el hash de su contenido en
+     * el nombre, no con ?v=: basta con que el nombre lo lleve y el fichero exista en dist.
+     * Devuelve false si la ruta no es de Astro, y entonces se comprueba su ?v=.
+     */
+    private static boolean deAstro(Path web, Path pagina, String ruta) {
+        if (!ruta.startsWith("/_astro/")) return false;
+        assertTrue(web.relativize(pagina) + " pide de /_astro/ algo sin hash en el nombre: " + ruta,
+                ruta.matches("^/_astro/[A-Za-z0-9_.-]+\\.[A-Za-z0-9_-]{8}\\.(css|js)$"));
+        assertTrue(web.relativize(pagina) + " pide " + ruta + ", que no está en dist",
+                Files.isRegularFile(web.resolve(ruta.substring(1))));
+        return true;
+    }
+
     private static String regla(String cabeceras, String ruta) {
         Matcher m = Pattern.compile("(?m)^" + Pattern.quote(ruta) + "\\s*\\R\\s+Cache-Control:\\s*(.+?)\\s*$")
                 .matcher(cabeceras);

@@ -1,0 +1,17 @@
+---
+/**
+ * El reloj de «Un día»: la hora en cuatro cifras, cada una en su máscara para que pueda
+ * rodar (subir y entrar la nueva desde abajo). Decorativo: la hora de cada escena se lee
+ * en su h2, así que el reloj va oculto al lector de pantalla.
+ *
+ * @prop {string} hora   «07:00»
+ * @prop {string} clase  reloj-grande o reloj-cabecera
+ */
+const { hora, clase } = Astro.props;
+const piezas = [...hora];
+---
+<span class:list={['reloj', clase]} aria-hidden="true" data-reloj>
+  {piezas.map((c, i) => c === ':'
+    ? <span class="reloj-dos">:</span>
+    : <span class="reloj-cifra" style={`--i: ${i}`}><span>{c}</span></span>)}
+</span>

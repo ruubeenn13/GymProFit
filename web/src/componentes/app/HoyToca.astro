@@ -1,0 +1,68 @@
+---
+/**
+ * «Hoy toca» de Inicio (componente 1 del inventario): fragment_inicio.xml (cardHoyToca) y
+ * las piezas del carrusel de item_hoy_ejercicio.xml. Tarjeta protagonista #3A2110, radio 28,
+ * con tema propio. Textos y cifras, de dia-ejemplo.json.
+ *
+ * @prop {object} hoy  dia-ejemplo.json → hoyToca
+ */
+import Icono from './Icono.astro';
+const { hoy } = Astro.props;
+---
+<div class="hoy" data-pieza="hoy">
+  <p class="hoy-rotulo"><Icono nombre="hoy" />{hoy.rotulo}</p>
+  <p class="hoy-titulo display">{hoy.rutina}</p>
+  <p class="hoy-sub">{hoy.subtitulo}</p>
+  <p class="hoy-ultima">{hoy.ultimaVez}</p>
+  <ul class="hoy-carrusel">
+    {hoy.ejercicios.map((e) => (
+      <li class="hoy-pieza">
+        <span class="hoy-icono"><Icono nombre="pesa" /></span>
+        <span class="hoy-nombre">{e.nombre}</span>
+        <span class="hoy-pauta">{e.pauta}{e.ultima && <><br />{e.ultima}</>}</span>
+      </li>
+    ))}
+  </ul>
+  <p class="hoy-botones">
+    <span class="hoy-empezar" data-pieza="empezar"><Icono nombre="empezar" />Empezar</span>
+    <span class="hoy-cambiar">Cambiar</span>
+  </p>
+</div>
+
+<style>
+  .hoy {
+    background: var(--a-primary-container); border-radius: 28px; padding: 20px 0;
+    color: var(--a-hero-on); overflow: hidden;
+  }
+  .hoy > p { margin: 0; padding: 0 20px; }
+  .hoy-rotulo {
+    display: flex; align-items: center; gap: 8px; color: var(--a-hero-variante);
+    font: 700 13px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .hoy-rotulo :global(.ico) { width: 18px; height: 18px; }
+  .hoy .hoy-titulo { font-size: 34px; margin-top: 8px; }
+  .hoy-sub { font-size: 16px; line-height: 1.35; color: var(--a-hero-variante); margin-top: 4px !important; }
+  .hoy-ultima { font-size: 14px; color: var(--a-hero-variante); margin-top: 4px !important; }
+  .hoy-carrusel {
+    list-style: none; margin: 16px 0 0; padding: 0 20px; display: flex; gap: 12px; overflow: hidden;
+  }
+  .hoy-pieza { flex: 0 0 118px; display: flex; flex-direction: column; }
+  .hoy-icono {
+    height: 84px; border-radius: 16px; background: var(--a-on-primary); color: var(--a-primary);
+    display: grid; place-items: center;
+  }
+  .hoy-icono :global(.ico) { width: 40px; height: 40px; }
+  .hoy-nombre {
+    margin-top: 8px; font-size: 14px; font-weight: 600; line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .hoy-pauta { margin-top: 4px; font-size: 13px; line-height: 1.3; color: var(--a-hero-variante); }
+  .hoy-botones { display: flex; gap: 8px; margin-top: 16px !important; }
+  .hoy-empezar, .hoy-cambiar {
+    min-height: 48px; border-radius: 26px; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 600; padding: 0 18px;
+  }
+  .hoy-empezar { flex: 1; gap: 6px; background: var(--a-primary); color: var(--a-on-primary); }
+  .hoy-empezar :global(.ico) { width: 24px; height: 24px; }
+  .hoy-cambiar { border: 1px solid var(--a-hero-variante); color: var(--a-hero-variante); }
+</style>

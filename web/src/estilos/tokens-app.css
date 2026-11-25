@@ -1,0 +1,52 @@
+/* ============================================================
+   tokens-app.css — los tokens de la app en oscuro, para la interfaz rehecha en HTML
+   (DEC-069, propuesta; web/PLAN-UN-DIA.md §2).
+
+   Copiados de app/GymProFit/app/src/main/res/values-night/colors.xml, de los estilos de
+   texto de themes.xml y estilos_sistema.xml y de las medidas de los layouts, con el
+   mismo valor. 1 dp = 1 px CSS a 360 px de pantalla. En la fase 2, TokensAppWebTest
+   cruza este fichero con colors.xml y dimens.xml; hasta entonces es la subcolección que
+   usan la cabecera de la sesión, el ejercicio, la serie, el descanso y «Hoy toca».
+   ============================================================ */
+.app {
+  /* Fondos y texto (values-night/colors.xml) */
+  --a-bg: #0B0C0E;
+  --a-surface: #1B1E24;
+  --a-surface-2: #252A31;
+  --a-stroke: #676F7E;
+  --a-divider: #4A505B;
+  --a-on-surface: #F2F2F3;
+  --a-secundario: #A1A9B6;
+  /* Naranja */
+  --a-primary: #FF6A00;
+  --a-on-primary: #1A0E00;
+  --a-primary-container: #3A2110;
+  --a-on-primary-container: #FFB27A;
+  /* Oro: solo cuando algo se ha conseguido */
+  --a-gold: #E8B84B;
+  --a-gold-container: #3A2E12;
+  --a-gold-fila: #2A2414;
+  /* Éxito */
+  --a-success: #4ADE80;
+  --a-success-container: #143323;
+  /* La tarjeta protagonista lleva tema propio (estilos_sistema.xml, Card.Protagonista) */
+  --a-hero-on: #FFF4E8;
+  --a-hero-variante: #FFD3B0;
+
+  /* Curvas de Movimiento.java (REBOTE no se usa en la web: ENFATIZADA en su lugar) */
+  --a-enfatizada: cubic-bezier(.05, .7, .1, 1);
+  --a-estandar: cubic-bezier(.2, 0, 0, 1);
+
+  font-family: "Barlow", system-ui, sans-serif;
+  color: var(--a-on-surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Roles de texto (themes.xml): Number y Display son Condensed 700 */
+.app .number { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: 0; line-height: 1; }
+.app .display { font-family: "Barlow Condensed", sans-serif; font-weight: 700; letter-spacing: .01em; line-height: 1.05; }
+.app .label {
+  font-family: "Barlow Condensed", sans-serif; font-weight: 600; text-transform: uppercase;
+  font-size: 13px; letter-spacing: .12em; color: var(--a-secundario);
+}
+.app .ico { width: 1em; height: 1em; flex: none; }

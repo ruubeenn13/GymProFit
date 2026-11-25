@@ -1,0 +1,76 @@
+---
+/**
+ * El descanso entre series (componente 9): view_descanso.xml. Panel surface con radio 24
+ * arriba, el aro (72 px, grosor 7, indicador naranja, pista divider) que se vacía en
+ * lineal, «Descanso», la cuenta atrás en Number 46, «Siguiente: …» y −15 s, +15 s, Saltar.
+ * Y el aviso de fin, naranja con la campana.
+ *
+ * Se pinta como al empezar el descanso tras la serie 1 (2:00, el aro lleno).
+ *
+ * @prop {object} sesion  dia-ejemplo.json → sesion
+ */
+import Icono from './Icono.astro';
+const { sesion } = Astro.props;
+const primera = sesion.series[0];
+// El aro: un círculo de 72 px con trazo de 7; su perímetro, para vaciarlo con dashoffset.
+const R = (72 - 7) / 2;
+const PERIMETRO = 2 * Math.PI * R;
+---
+<div class="desc" data-pieza="descanso">
+  <svg class="desc-aro" viewBox="0 0 72 72" aria-hidden="true">
+    <circle class="desc-pista" cx="36" cy="36" r={R} />
+    <circle class="desc-lleno" data-pieza="aro" cx="36" cy="36" r={R}
+      style={`--perimetro: ${PERIMETRO.toFixed(2)}`} />
+  </svg>
+  <div class="desc-textos">
+    <span class="label">{sesion.botones.descanso}</span>
+    <span class="number desc-cuenta" data-cifra="cuenta" data-segundos={sesion.descansoSegundos}>{sesion.descansoTexto}</span>
+    <span class="desc-siguiente">{primera.siguiente}</span>
+  </div>
+  <div class="desc-botones">
+    <span class="desc-boton">{sesion.botones.menos}</span>
+    <span class="desc-boton" data-pieza="mas15">{sesion.botones.mas}</span>
+    <span class="desc-boton desc-saltar">{sesion.botones.saltar}</span>
+  </div>
+</div>
+<div class="fin" data-pieza="fin">
+  <Icono nombre="campana" />
+  <span class="fin-textos">
+    <span class="fin-titulo">{primera.aviso}</span>
+    <span class="fin-texto">{sesion.finTexto}</span>
+  </span>
+  <Icono nombre="cerrar" clase="ico fin-cerrar" />
+</div>
+
+<style>
+  .desc {
+    display: grid; grid-template-columns: 72px 1fr; gap: 0 16px; align-items: center;
+    padding: 14px 17px 16px; background: var(--a-surface); border: 1px solid var(--a-stroke);
+    border-bottom: 0; border-radius: 24px 24px 0 0;
+  }
+  .desc-aro { width: 72px; height: 72px; transform: rotate(-90deg); }
+  .desc-aro circle { fill: none; stroke-width: 7; }
+  .desc-pista { stroke: var(--a-divider); }
+  .desc-lleno {
+    stroke: var(--a-primary); stroke-linecap: round;
+    stroke-dasharray: var(--perimetro); stroke-dashoffset: 0;
+  }
+  .desc-textos { display: flex; flex-direction: column; }
+  .desc-cuenta { font-size: 46px; }
+  .desc-siguiente { font-size: 14px; color: var(--a-secundario); }
+  .desc-botones { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 12px; }
+  .desc-boton {
+    flex: 1; min-height: 48px; border-radius: 24px; display: grid; place-items: center;
+    background: var(--a-surface-2); color: var(--a-on-surface); font-size: 16px; font-weight: 600;
+  }
+  .desc-saltar { background: var(--a-primary); color: var(--a-on-primary); }
+  .fin {
+    margin: 12px; min-height: 72px; padding: 12px 4px 12px 18px; border-radius: 24px;
+    background: var(--a-primary); color: var(--a-on-primary); display: flex; align-items: center; gap: 12px;
+  }
+  .fin > :global(.ico) { width: 28px; height: 28px; }
+  .fin-textos { flex: 1; display: flex; flex-direction: column; }
+  .fin-titulo { font: 600 20px/1.1 "Barlow Condensed", sans-serif; }
+  .fin-texto { font-size: 16px; font-weight: 600; }
+  .fin :global(.fin-cerrar) { width: 24px; height: 24px; margin: 0 12px; }
+</style>
