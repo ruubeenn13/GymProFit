@@ -6,25 +6,21 @@
 // tareas largas (todas y las que caen durante el scroll), LCP, CLS, INP aproximado, la
 // escena y la hora activas, los bytes de JS transferidos, el movimiento reducido y el
 // navegador. «Copiar» deja el texto en el portapapeles. No envía nada a ningún sitio.
+//
+// Qué fotogramas cuentan lo decide fotogramas.js: solo los que tienen scroll a los dos lados.
 // ============================================================
+import { contador } from './fotogramas.js';
 
 /** @param {{escena: string, hora: string, progreso?: number}} estado  el de inicio.js */
 export function iniciar(estado) {
-  const m = {
-    intervalos: [], largas: 0, largaMax: 0, largasScroll: 0, lcp: 0, cls: 0, inp: 0,
-  };
+  const m = { largas: 0, largaMax: 0, largasScroll: 0, lcp: 0, cls: 0, inp: 0 };
+  const fotogramas = contador();
   let ultimoScroll = -1e9;
-  addEventListener('scroll', () => { ultimoScroll = performance.now(); }, { passive: true });
-  const desplazando = (t) => t - ultimoScroll < 250;
+  addEventListener('scroll', () => { ultimoScroll = performance.now(); fotogramas.scroll(); }, { passive: true });
 
-  // Fotogramas: el intervalo entre dos requestAnimationFrame, solo mientras se desplaza.
-  let previo = 0;
+  // Fotogramas: el intervalo entre dos requestAnimationFrame (fotogramas.js decide cuáles).
   const cuadro = (t) => {
-    if (previo && desplazando(t) && !document.hidden) {
-      m.intervalos.push(t - previo);
-      if (m.intervalos.length > 20000) m.intervalos.splice(0, 10000);
-    }
-    previo = t;
+    fotogramas.cuadro(t, document.hidden);
     requestAnimationFrame(cuadro);
   };
   requestAnimationFrame(cuadro);
@@ -63,10 +59,8 @@ export function iniciar(estado) {
   document.body.append(caja);
 
   const informe = () => {
-    const ord = [...m.intervalos].sort((a, b) => a - b);
-    const pc = (p) => ord.length ? ord[Math.min(ord.length - 1, Math.floor(p * ord.length))] : 0;
-    const fps = (ms) => (ms ? (1000 / ms).toFixed(1) : '—');
-    const lentos = ord.length ? (100 * ord.filter((x) => x > 20).length / ord.length).toFixed(1) : '—';
+    const f = fotogramas.resumen();
+    const fps = (v) => (f.n ? v.toFixed(1) : '—');
     const js = performance.getEntriesByType('resource').filter((r) => /\.m?js(\?|$)/.test(r.name));
     const kb = (b) => (b / 1024).toFixed(1);
     const transferido = js.reduce((a, r) => a + (r.transferSize || 0), 0);
@@ -76,8 +70,8 @@ export function iniciar(estado) {
       : /FBAN|FBAV/i.test(ua) ? 'Facebook' : chrome ? 'Chrome ' + chrome[1] : 'otro';
     const webview = /; wv\)/.test(ua) ? ' (WebView)' : '';
     return [
-      `fps (al desplazar): mediana ${fps(pc(0.5))} · p5 ${fps(pc(0.95))}`,
-      `fotogramas > 20 ms: ${lentos} % de ${ord.length}`,
+      `fps (al desplazar): mediana ${fps(f.mediana)} · p5 ${fps(f.p5)}`,
+      `fotogramas > 20 ms: ${f.n ? f.lentos.toFixed(1) : '—'} % de ${f.n} · rAF a ${f.hz || '—'} Hz · pausas ${f.pausas}`,
       hayLargas ? `tareas largas: ${m.largas} (máx ${Math.round(m.largaMax)} ms) · al desplazar: ${m.largasScroll}`
         : 'tareas largas: no disponible',
       `LCP ${Math.round(m.lcp)} ms · CLS ${m.cls.toFixed(3)} · INP ~${hayInp ? Math.round(m.inp) + ' ms' : 'no disponible'}`,
