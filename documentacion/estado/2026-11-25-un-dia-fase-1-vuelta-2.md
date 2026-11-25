@@ -67,12 +67,10 @@ serie, check, descanso, récord; y la página entera con movimiento reducido).
 
 ## Respuestas del propietario y cierre (25-11-2026)
 
--` `3d14b102 perf(web): el montaje de «Un día» en tareas cortas
--` `01ec81f1 docs(web): el brief de impeccable de la portada se retira en la fase 4
--` `846e0ce0 fix(web): frases del descanso y de la serie 2 de «Un día»
--` `66557eda test(web): el titular de «Un día» se lee entero y una sola vez
--` `4c8310fb docs(documentacion): informe de la segunda vuelta de «Un día»
--` `6cbc5f4c docs(web): política de impacto de «Un día» y presupuesto de DEC-069
+- `3d14b102` perf(web): el montaje de «Un día» en tareas cortas
+- `01ec81f1` docs(web): el brief de impeccable de la portada se retira en la fase 4
+- `846e0ce0` fix(web): frases del descanso y de la serie 2 de «Un día»
+- `66557eda` test(web): el titular de «Un día» se lee entero y una sola vez
 
 - **LCP**: se queda en el subtítulo; el titular sigue por letras. `UnDiaImpactoWebTest`
   comprueba que el lector lee el h1 entero y una sola vez, y que todo lo troceado va oculto con su
