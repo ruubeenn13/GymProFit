@@ -173,6 +173,21 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- GP-282: la JVM de los tests con techo de memoria, y que muera si muere Maven.
+			     Sin techo, la JVM bifurcada toma por defecto un cuarto de la RAM, y con la caché
+			     de contextos de Spring creciendo el equipo se quedó sin memoria a media prueba en
+			     GP-273: el shell murió y la JVM de los tests siguió viva y conectada a la base.
+			     enableProcessChecker=all hace que la JVM bifurcada compruebe cada pocos segundos
+			     que su Maven sigue vivo y se cierre si no. Cómo buscar y matar huérfanos:
+			     documentacion/ENTORNO-DESARROLLO.md, «Procesos de Maven huérfanos». -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-Xmx1g -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${project.build.directory}</argLine>
+					<enableProcessChecker>all</enableProcessChecker>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
