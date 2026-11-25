@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `ed796c65` | perf(api): la API en reposo pasa de 768 sentencias y 1.608 pings por hora a 8 y 84 (medido en local, perfil prod, 15 min): el barrido de programadas solo va a la base cuando algo vence (la push sale en el mismo minuto), `/actuator/health/liveness` sin base para Render, UptimeRobot y el keep-alive, y Hikari con una conexión ociosa (GP-283). |
+| `1c91804b` | test(api): ningún test arranca contra una base que no sea `localhost`, `127.0.0.1` o `::1` (`BarreraBaseLocal`); la JVM de los tests con `-Xmx1g` y que muere si muere Maven (GP-282). |
 | `720ae129` | docs(repositorio): el README abre con un GIF real de la app, una línea, insignias de CI y licencia y «Probarlo» (la beta y los comandos para desarrollar); cifras y estado puestos al día; `CONTRIBUTING.md` (se ayuda sin código hasta un CLA), `SECURITY.md`, plantillas de fallo, idea y PR, e imagen para redes en `documentacion/marca/` (GP-279). |
 | `a7a9c411` | docs(decisiones): DEC-067, el código se ve pero no se reutiliza y aún no se aceptan PR con código; `LICENSE` deja de presentarlo como trabajo académico (GP-279). |
 | `1b1094e5` | ci: job `secretos` con gitleaks sobre el árbol y los commits nuevos de cada push y PR, con el binario fijado por SHA-256 (GP-279). |
