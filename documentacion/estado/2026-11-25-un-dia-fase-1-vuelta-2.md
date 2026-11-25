@@ -64,3 +64,30 @@ serie, check, descanso, récord; y la página entera con movimiento reducido).
 
 - La prueba en el Xiaomi 17T (Chrome, TikTok, Instagram) con `?debug=motion`. No se encendió el
   servidor de red: la wifi del equipo («Xiaomi 17T 20») está como red pública.
+
+## Respuestas del propietario y cierre (25-11-2026)
+
+-` `3d14b102 perf(web): el montaje de «Un día» en tareas cortas
+-` `01ec81f1 docs(web): el brief de impeccable de la portada se retira en la fase 4
+-` `846e0ce0 fix(web): frases del descanso y de la serie 2 de «Un día»
+-` `66557eda test(web): el titular de «Un día» se lee entero y una sola vez
+-` `4c8310fb docs(documentacion): informe de la segunda vuelta de «Un día»
+-` `6cbc5f4c docs(web): política de impacto de «Un día» y presupuesto de DEC-069
+
+- **LCP**: se queda en el subtítulo; el titular sigue por letras. `UnDiaImpactoWebTest`
+  comprueba que el lector lee el h1 entero y una sola vez, y que todo lo troceado va oculto con su
+  texto entero al lado. Vistos en rojo quitando el `aria-hidden` de las letras en `dist`.
+- **Frases**: la 4 pasa a «¿Necesitas más? +15 s.» y la 5 a «Igualar no es récord.».
+- **Montaje en tareas cortas.** Perfil: 393 × 760, CPU ×4, caché vacía, bajando nada más cargar,
+  tres pasadas, tareas largas desde la navegación.
+  - Antes: la mayor, 238, 261 y 248 ms (el montaje de Torso A); 5 tareas de más de 50 ms por
+    pasada. Atribución por traza: montaje 231 ms, GSAP y plugins evaluados de una vez 94 ms,
+    fotograma de GSAP 70 ms, más el primer pintado.
+  - Después: ninguna tarea de montaje pasa de 50 ms. Por pasada quedan 212 ms, ninguna y 57 ms,
+    todas del primer pintado de la carga. Cambios: GSAP pieza a pieza (`cargar.js`), cada escena
+    cede el hilo entre trozos (`ceder()`), Torso A se monta en tiempo libre antes del viewport y
+    sin el `refresh` que pintaba la sesión entera (84–127 ms).
+  - El primer layout no es montaje y no baja de 50 ms con ×4 en ninguna página: `/un-dia`
+    180–221 ms, la portada actual 113–123, `/privacidad` 83–101, una página vacía 13–16.
+- **CHANGELOG** al fusionar; capturas de la portada y brief de impeccable, fuera en la fase 4.
+- Tests: `testDebugUnitTest` completo, 1378, 0 fallos.
