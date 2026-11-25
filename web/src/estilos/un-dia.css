@@ -256,152 +256,157 @@ a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px
 
 /* ── Viaje: con movimiento y con scripts ────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  /* El escalado del móvil: lo que quepa (tan(atan2()) da el cociente de dos longitudes). */
-  :root { --ps: .5; }
-  @supports (scale: tan(atan2(1px, 1px))) {
-    :root { --ps: min(tan(atan2(100vw - 96px, 414px)), tan(atan2(72svh - 40px, 868px))); }
-    @media (min-width: 1200px) { :root { --ps: min(1, tan(atan2(100svh - 112px, 868px))); } }
+  /* ?debug=motion&control (depurar.js): la misma página quieta, como con movimiento reducido,
+     para medir solo el scroll del documento. :where() no suma especificidad. */
+  :where(html:not(.control)) {
+    /* El escalado del móvil: lo que quepa (tan(atan2()) da el cociente de dos longitudes). */
+    & { --ps: .5; }
+    @supports (scale: tan(atan2(1px, 1px))) {
+      & { --ps: min(tan(atan2(100vw - 96px, 414px)), tan(atan2(72svh - 40px, 868px))); }
+      @media (min-width: 1200px) { & { --ps: min(1, tan(atan2(100svh - 112px, 868px))); } }
+    }
+
+    .luz { position: fixed; height: auto; inset: 0; }
+    .lamas-escena, .reloj-escena { display: none; }
+    .luz-amanecer { animation: luz-barre 1200ms var(--salida) backwards; }
+    .luz-amanecer .lamas { animation: lamas-barre 1200ms var(--salida) backwards; }
+
+    .reloj-dia { position: fixed; }
+    .reloj-dia .odo-tira { animation: rueda 900ms var(--salida) backwards; }
+    .reloj-dia [data-col="0"] .odo-tira { --desde: 3; animation-delay: 0ms; }
+    .reloj-dia [data-col="1"] .odo-tira { --desde: 3; animation-delay: 60ms; }
+    .reloj-dia [data-col="2"] .odo-tira { --desde: 5; animation-delay: 120ms; }
+    .reloj-dia [data-col="3"] .odo-tira { --desde: 8; animation-delay: 180ms; }
+
+    /* El titular: cada letra sube desde el 62 % (no desde el 100 %, para que el titular se pinte
+       ya en el primer fotograma y siga siendo el LCP). */
+    .tit-car > span { animation: car-sube 640ms var(--salida) backwards; animation-delay: calc(80ms + var(--i) * 11ms); }
+    .entrada-linea, .entrada-accion, .etiqueta { animation: aparece 600ms var(--salida) 380ms backwards; }
+
+    /* La rejilla: el escenario se queda fijo de la entrada al final de la sesión. */
+    .dia { grid-template-columns: minmax(0, 1fr); max-width: none; }
+    .escenario {
+      grid-row: 1 / 4; grid-column: 1; position: sticky; top: 0; height: 100svh; align-self: start;
+      padding: 0; overflow: visible;
+    }
+    .entrada-movil { display: none; }
+    .entrada, .transicion, .entreno, .cierre { grid-column: 1; }
+
+    .escenario .movil-pos {
+      position: absolute; left: 50%; top: 50%; width: 414px; height: 868px; margin: -434px 0 0 -207px; padding: 0;
+      display: block;
+      /* La pose de la entrada; lo demás lo suma el movimiento con transform. */
+      translate: 0 calc(24svh + 434px * var(--ps));
+    }
+    .movil-escala { scale: var(--ps); zoom: 1 !important; }
+    .movil-entra { animation: movil-sube 1100ms var(--salida) 120ms backwards; rotate: -2deg; }
+    .pantalla { height: 844px; }
+    .capa { position: absolute; inset: 0; }
+    .capa-arranque { display: grid; place-items: center; background: var(--carbon); z-index: 3; }
+    .capa-hoy, .capa-descanso { opacity: 0; }
+    .capa-hoy { background: var(--a-bg); z-index: 2; }
+    .capa-descanso { top: auto; padding: 0; z-index: 1; overflow: hidden; }
+    .capa-descanso .fin { position: absolute; inset: auto 0 0; }
+    /* Como en la app: la cabecera se queda y la lista pasa por debajo. */
+    .capa-sesion { display: flex; flex-direction: column; overflow: hidden; }
+    .capa-sesion > * { flex: none; }
+    .capa-sesion [data-pieza="cabecera"] { position: relative; z-index: 1; background: var(--a-bg); }
+
+    /* Las piezas que se escapan: dibujadas a su tamaño grande, en su sitio final; el
+       movimiento las encoge sobre la pieza del móvil y las trae hasta aquí. */
+    .fugas { display: block; position: absolute; inset: 0; pointer-events: none; }
+    .fuga { position: absolute; opacity: 0; transform-origin: 0 0; }
+    .fuga-fila {
+      left: 16px; right: 16px; top: 38svh; padding: 6px 0; border-radius: 20px;
+      background: var(--a-surface); border: 1px solid var(--a-stroke);
+      box-shadow: 0 30px 60px -20px rgb(0 0 0 / .7);
+    }
+    .fuga-check { width: 30vw; max-width: 180px; left: auto; right: 6vw; top: calc(38svh + 64px); overflow: visible; }
+    .fuga-check path { fill: none; stroke: var(--a-success, #4ADE80); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
+    .fuga-aro { left: 50%; top: 50%; width: min(92vw, 64svh); aspect-ratio: 1; margin: calc(min(92vw, 64svh) / -2) 0 0 calc(min(92vw, 64svh) / -2); }
+    .fuga-aro-svg { width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
+    .fuga-aro circle { fill: none; stroke-width: 2.4; }
+    .fuga-aro-pista { stroke: rgb(74 80 91 / .7); }
+    .fuga-aro-lleno { stroke: var(--naranja); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+    .fuga-cuenta {
+      left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; align-items: center;
+      transform-origin: 50% 50%;
+    }
+    .fuga-cuenta-num { font: 700 min(30vw, 22svh)/.9 "Barlow Condensed", sans-serif; font-variant-numeric: tabular-nums; }
+    .fuga-mas {
+      margin-top: 2svh; min-height: 56px; padding: 0 28px; border-radius: 28px; display: grid; place-items: center;
+      background: #252A31; color: var(--texto); font: 600 22px/1 "Barlow", sans-serif;
+    }
+    .chispas { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .chispa { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--oro); }
+
+    /* Entrada */
+    .entrada { align-content: start; padding-top: 96px; min-height: 100svh; }
+    .entrada-texto { max-width: 26em; }
+    .etiqueta { align-self: start; }
+
+    /* Transición: 120 svh de scroll con la frase fija. */
+    .transicion-pista { height: 220svh; }
+    .transicion-fijo { position: sticky; top: 0; height: 100svh; min-height: 0; padding: 88px 20px 0; place-items: start center; }
+    .frase-transicion { opacity: 0; }
+
+    /* Torso A: las frases y el récord, fijos mientras el scroll recorre la sesión. */
+    .entreno { padding: 0; overflow: visible; margin-top: -100svh; }
+    .entreno-pista { height: 640svh; }
+    .entreno-fijo { position: sticky; top: 0; height: 100svh; padding: 76px 20px 0; }
+    .entreno-titulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
+    .frases { display: block; position: relative; height: 26svh; }
+    .frases .frase-display { position: absolute; inset: 0 0 auto; opacity: 0; font-size: clamp(28px, 7.6vw, 52px); }
+    .frases .frase-display:first-child { opacity: 1; }
+    .record {
+      position: absolute; left: 20px; right: 20px; top: 40svh; margin: 0; opacity: 0;
+      grid-template-columns: 1fr; justify-items: center; text-align: center;
+    }
+    .record-trofeo { grid-row: auto; width: 96px; height: 96px; }
+    .record-trofeo .ico { width: 64px; height: 64px; }
+    .record-marca { align-items: center; }
+    .record-cifra { font-size: min(19vw, 15svh); }
+    .record-antes s { text-decoration: none; }
+    .record-tachon { display: block; position: absolute; left: -4%; top: 50%; width: 108%; height: 18px; translate: 0 -50%; overflow: visible; }
+    .record-tachon path { fill: none; stroke: var(--oro); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+    /* Tableta: la fila escapada crece de verdad (zoom), no solo se estira. */
+    @media (min-width: 600px) and (max-width: 1199px) {
+      .fuga-fila { left: 6vw; right: 6vw; }
+      .fuga-fila .ej-fuga { zoom: 1.75; }
+      .fuga-check { top: calc(38svh + 130px); }
+    }
+
+    /* Escritorio: el móvil a la derecha en la entrada y en el centro en la sesión; las frases a
+       la izquierda; la fila crece a la derecha, encima del móvil. */
+    @media (min-width: 1200px) {
+      .escenario .movil-pos { translate: 25vw 0; }
+      .reloj-dia { top: 50svh; }
+      .entrada { grid-template-columns: minmax(0, 1fr); align-content: center; padding: 96px 64px 64px; max-width: 1600px; }
+      .entrada-texto { max-width: min(46vw, 760px); }
+      .etiqueta { position: absolute; left: 64px; bottom: 40px; }
+      .transicion-fijo { padding: 0 64px; place-items: center start; }
+      .frase-transicion { text-align: left; max-width: min(30vw, 520px); }
+      .entreno-fijo { padding: 0 64px; }
+      .frases { position: absolute; left: 64px; top: 50%; translate: 0 -50%; width: min(30vw, 500px); height: 50svh; }
+      .frases .frase-display { top: 50%; translate: 0 -50%; bottom: auto; font-size: clamp(40px, 3.9vw, 64px); }
+      .record { left: auto; right: 5vw; top: 50%; translate: 0 -50%; width: min(38vw, 620px); }
+      .record-cifra { font-size: min(8.6vw, 150px); }
+      .fuga-fila { left: 44vw; right: 4vw; top: calc(50% - 150px); }
+      .fuga-fila .ej-fuga { zoom: 2.2; }
+      .fuga-check { width: 13vw; max-width: 220px; right: 2.5vw; top: calc(50% + 90px); }
+      .fuga-aro { width: 88svh; margin: -44svh 0 0 -44svh; }
+      .fuga-cuenta-num { font-size: 26svh; }
+      .fuga-mas { font-size: 26px; min-height: 64px; padding: 0 34px; border-radius: 32px; }
+    }
+
+    /* Cursor propio (escritorio, solo con su clase): el del sistema vuelve en enlaces, botones y
+       campos, y el anillo se aparta. */
+    &.cursor-propio, &.cursor-propio body { cursor: none; }
+    &.cursor-propio a, &.cursor-propio button, &.cursor-propio input, &.cursor-propio [role="button"] { cursor: pointer; }
+    &.cursor-propio input[type="text"], &.cursor-propio input[type="email"], &.cursor-propio textarea { cursor: text; }
+
   }
-
-  .luz { position: fixed; height: auto; inset: 0; }
-  .lamas-escena, .reloj-escena { display: none; }
-  .luz-amanecer { animation: luz-barre 1200ms var(--salida) backwards; }
-  .luz-amanecer .lamas { animation: lamas-barre 1200ms var(--salida) backwards; }
-
-  .reloj-dia { position: fixed; }
-  .reloj-dia .odo-tira { animation: rueda 900ms var(--salida) backwards; }
-  .reloj-dia [data-col="0"] .odo-tira { --desde: 3; animation-delay: 0ms; }
-  .reloj-dia [data-col="1"] .odo-tira { --desde: 3; animation-delay: 60ms; }
-  .reloj-dia [data-col="2"] .odo-tira { --desde: 5; animation-delay: 120ms; }
-  .reloj-dia [data-col="3"] .odo-tira { --desde: 8; animation-delay: 180ms; }
-
-  /* El titular: cada letra sube desde el 62 % (no desde el 100 %, para que el titular se pinte
-     ya en el primer fotograma y siga siendo el LCP). */
-  .tit-car > span { animation: car-sube 640ms var(--salida) backwards; animation-delay: calc(80ms + var(--i) * 11ms); }
-  .entrada-linea, .entrada-accion, .etiqueta { animation: aparece 600ms var(--salida) 380ms backwards; }
-
-  /* La rejilla: el escenario se queda fijo de la entrada al final de la sesión. */
-  .dia { grid-template-columns: minmax(0, 1fr); max-width: none; }
-  .escenario {
-    grid-row: 1 / 4; grid-column: 1; position: sticky; top: 0; height: 100svh; align-self: start;
-    padding: 0; overflow: visible;
-  }
-  .entrada-movil { display: none; }
-  .entrada, .transicion, .entreno, .cierre { grid-column: 1; }
-
-  .escenario .movil-pos {
-    position: absolute; left: 50%; top: 50%; width: 414px; height: 868px; margin: -434px 0 0 -207px; padding: 0;
-    display: block;
-    /* La pose de la entrada; lo demás lo suma el movimiento con transform. */
-    translate: 0 calc(24svh + 434px * var(--ps));
-  }
-  .movil-escala { scale: var(--ps); zoom: 1 !important; }
-  .movil-entra { animation: movil-sube 1100ms var(--salida) 120ms backwards; rotate: -2deg; }
-  .pantalla { height: 844px; }
-  .capa { position: absolute; inset: 0; }
-  .capa-arranque { display: grid; place-items: center; background: var(--carbon); z-index: 3; }
-  .capa-hoy, .capa-descanso { opacity: 0; }
-  .capa-hoy { background: var(--a-bg); z-index: 2; }
-  .capa-descanso { top: auto; padding: 0; z-index: 1; overflow: hidden; }
-  .capa-descanso .fin { position: absolute; inset: auto 0 0; }
-  /* Como en la app: la cabecera se queda y la lista pasa por debajo. */
-  .capa-sesion { display: flex; flex-direction: column; overflow: hidden; }
-  .capa-sesion > * { flex: none; }
-  .capa-sesion [data-pieza="cabecera"] { position: relative; z-index: 1; background: var(--a-bg); }
-
-  /* Las piezas que se escapan: dibujadas a su tamaño grande, en su sitio final; el
-     movimiento las encoge sobre la pieza del móvil y las trae hasta aquí. */
-  .fugas { display: block; position: absolute; inset: 0; pointer-events: none; }
-  .fuga { position: absolute; opacity: 0; transform-origin: 0 0; }
-  .fuga-fila {
-    left: 16px; right: 16px; top: 38svh; padding: 6px 0; border-radius: 20px;
-    background: var(--a-surface); border: 1px solid var(--a-stroke);
-    box-shadow: 0 30px 60px -20px rgb(0 0 0 / .7);
-  }
-  .fuga-check { width: 30vw; max-width: 180px; left: auto; right: 6vw; top: calc(38svh + 64px); overflow: visible; }
-  .fuga-check path { fill: none; stroke: var(--a-success, #4ADE80); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
-  .fuga-aro { left: 50%; top: 50%; width: min(92vw, 64svh); aspect-ratio: 1; margin: calc(min(92vw, 64svh) / -2) 0 0 calc(min(92vw, 64svh) / -2); }
-  .fuga-aro-svg { width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
-  .fuga-aro circle { fill: none; stroke-width: 2.4; }
-  .fuga-aro-pista { stroke: rgb(74 80 91 / .7); }
-  .fuga-aro-lleno { stroke: var(--naranja); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-  .fuga-cuenta {
-    left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; align-items: center;
-    transform-origin: 50% 50%;
-  }
-  .fuga-cuenta-num { font: 700 min(30vw, 22svh)/.9 "Barlow Condensed", sans-serif; font-variant-numeric: tabular-nums; }
-  .fuga-mas {
-    margin-top: 2svh; min-height: 56px; padding: 0 28px; border-radius: 28px; display: grid; place-items: center;
-    background: #252A31; color: var(--texto); font: 600 22px/1 "Barlow", sans-serif;
-  }
-  .chispas { position: absolute; left: 0; top: 0; width: 0; height: 0; }
-  .chispa { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--oro); }
-
-  /* Entrada */
-  .entrada { align-content: start; padding-top: 96px; min-height: 100svh; }
-  .entrada-texto { max-width: 26em; }
-  .etiqueta { align-self: start; }
-
-  /* Transición: 120 svh de scroll con la frase fija. */
-  .transicion-pista { height: 220svh; }
-  .transicion-fijo { position: sticky; top: 0; height: 100svh; min-height: 0; padding: 88px 20px 0; place-items: start center; }
-  .frase-transicion { opacity: 0; }
-
-  /* Torso A: las frases y el récord, fijos mientras el scroll recorre la sesión. */
-  .entreno { padding: 0; overflow: visible; margin-top: -100svh; }
-  .entreno-pista { height: 640svh; }
-  .entreno-fijo { position: sticky; top: 0; height: 100svh; padding: 76px 20px 0; }
-  .entreno-titulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
-  .frases { display: block; position: relative; height: 26svh; }
-  .frases .frase-display { position: absolute; inset: 0 0 auto; opacity: 0; font-size: clamp(28px, 7.6vw, 52px); }
-  .frases .frase-display:first-child { opacity: 1; }
-  .record {
-    position: absolute; left: 20px; right: 20px; top: 40svh; margin: 0; opacity: 0;
-    grid-template-columns: 1fr; justify-items: center; text-align: center;
-  }
-  .record-trofeo { grid-row: auto; width: 96px; height: 96px; }
-  .record-trofeo .ico { width: 64px; height: 64px; }
-  .record-marca { align-items: center; }
-  .record-cifra { font-size: min(19vw, 15svh); }
-  .record-antes s { text-decoration: none; }
-  .record-tachon { display: block; position: absolute; left: -4%; top: 50%; width: 108%; height: 18px; translate: 0 -50%; overflow: visible; }
-  .record-tachon path { fill: none; stroke: var(--oro); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-
-  /* Tableta: la fila escapada crece de verdad (zoom), no solo se estira. */
-  @media (min-width: 600px) and (max-width: 1199px) {
-    .fuga-fila { left: 6vw; right: 6vw; }
-    .fuga-fila .ej-fuga { zoom: 1.75; }
-    .fuga-check { top: calc(38svh + 130px); }
-  }
-
-  /* Escritorio: el móvil a la derecha en la entrada y en el centro en la sesión; las frases a
-     la izquierda; la fila crece a la derecha, encima del móvil. */
-  @media (min-width: 1200px) {
-    .escenario .movil-pos { translate: 25vw 0; }
-    .reloj-dia { top: 50svh; }
-    .entrada { grid-template-columns: minmax(0, 1fr); align-content: center; padding: 96px 64px 64px; max-width: 1600px; }
-    .entrada-texto { max-width: min(46vw, 760px); }
-    .etiqueta { position: absolute; left: 64px; bottom: 40px; }
-    .transicion-fijo { padding: 0 64px; place-items: center start; }
-    .frase-transicion { text-align: left; max-width: min(30vw, 520px); }
-    .entreno-fijo { padding: 0 64px; }
-    .frases { position: absolute; left: 64px; top: 50%; translate: 0 -50%; width: min(30vw, 500px); height: 50svh; }
-    .frases .frase-display { top: 50%; translate: 0 -50%; bottom: auto; font-size: clamp(40px, 3.9vw, 64px); }
-    .record { left: auto; right: 5vw; top: 50%; translate: 0 -50%; width: min(38vw, 620px); }
-    .record-cifra { font-size: min(8.6vw, 150px); }
-    .fuga-fila { left: 44vw; right: 4vw; top: calc(50% - 150px); }
-    .fuga-fila .ej-fuga { zoom: 2.2; }
-    .fuga-check { width: 13vw; max-width: 220px; right: 2.5vw; top: calc(50% + 90px); }
-    .fuga-aro { width: 88svh; margin: -44svh 0 0 -44svh; }
-    .fuga-cuenta-num { font-size: 26svh; }
-    .fuga-mas { font-size: 26px; min-height: 64px; padding: 0 34px; border-radius: 32px; }
-  }
-
-  /* Cursor propio (escritorio, solo con su clase): el del sistema vuelve en enlaces, botones y
-     campos, y el anillo se aparta. */
-  html.cursor-propio, html.cursor-propio body { cursor: none; }
-  html.cursor-propio a, html.cursor-propio button, html.cursor-propio input, html.cursor-propio [role="button"] { cursor: pointer; }
-  html.cursor-propio input[type="text"], html.cursor-propio input[type="email"], html.cursor-propio textarea { cursor: text; }
 
   @keyframes luz-barre { from { opacity: 0; } }
   @keyframes lamas-barre { from { translate: -40% 0; } }

@@ -11,16 +11,22 @@
 // · con ratón, Lenis y escritorio.js (el cursor y el botón magnético).
 // GSAP, ScrollTrigger, SplitText y DrawSVG van en el trozo de motor.js, que comparten.
 //
-// · ?debug=motion carga el panel de medida (depurar.js), también con movimiento reducido.
+// · ?debug=motion carga el panel de medida (depurar.js), también con movimiento reducido;
+//   con &control, además, la página se queda quieta y no se pide nada más (modo de control).
 // · Con prefers-reduced-motion: reduce sale aquí: ni GSAP ni Lenis se descargan.
 // ============================================================
 
-const depurar = new URLSearchParams(location.search).get('debug') === 'motion';
+const parametros = new URLSearchParams(location.search);
+const depurar = parametros.get('debug') === 'motion';
+// ?debug=motion&control: la página quieta, como con movimiento reducido (el CSS del viaje
+// exige html:not(.control)), para medir con el mismo panel solo el scroll del documento.
+const control = depurar && parametros.has('control');
+if (control) document.documentElement.classList.add('control');
 const estado = { escena: 'entrada', hora: '07:00' };
-if (depurar) import('./depurar.js').then((m) => m.iniciar(estado));
+if (depurar) import('./depurar.js').then((m) => m.iniciar(estado, control));
 
 const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!reducido) arrancar();
+if (!reducido && !control) arrancar();
 
 function arrancar() {
   const cabecera = document.querySelector('.reloj-cabecera');

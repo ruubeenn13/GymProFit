@@ -8,11 +8,16 @@
 // navegador. «Copiar» deja el texto en el portapapeles. No envía nada a ningún sitio.
 //
 // Qué fotogramas cuentan lo decide fotogramas.js: solo los que tienen scroll a los dos lados.
+// Con ?debug=motion&control la página sale quieta (como con movimiento reducido, sin GSAP ni
+// Lenis): el mismo panel mide entonces solo el scroll del documento, para comparar.
 // ============================================================
 import { contador } from './fotogramas.js';
 
-/** @param {{escena: string, hora: string, progreso?: number}} estado  el de inicio.js */
-export function iniciar(estado) {
+/**
+ * @param {{escena: string, hora: string, progreso?: number}} estado  el de inicio.js
+ * @param {boolean} control  ?debug=motion&control: la página quieta
+ */
+export function iniciar(estado, control = false) {
   const m = { largas: 0, largaMax: 0, largasScroll: 0, lcp: 0, cls: 0, inp: 0 };
   const fotogramas = contador();
   let ultimoScroll = -1e9;
@@ -70,8 +75,9 @@ export function iniciar(estado) {
       : /FBAN|FBAV/i.test(ua) ? 'Facebook' : chrome ? 'Chrome ' + chrome[1] : 'otro';
     const webview = /; wv\)/.test(ua) ? ' (WebView)' : '';
     return [
-      `fps (al desplazar): mediana ${fps(f.mediana)} · p5 ${fps(f.p5)}`,
+      `${control ? 'CONTROL · ' : ''}fps (al desplazar): mediana ${fps(f.mediana)} · p5 ${fps(f.p5)}`,
       `fotogramas > 20 ms: ${f.n ? f.lentos.toFixed(1) : '—'} % de ${f.n} · rAF a ${f.hz || '—'} Hz · pausas ${f.pausas}`,
+      `modo: ${control ? 'control (sin GSAP ni Lenis, página quieta)' : 'normal'}`,
       hayLargas ? `tareas largas: ${m.largas} (máx ${Math.round(m.largaMax)} ms) · al desplazar: ${m.largasScroll}`
         : 'tareas largas: no disponible',
       `LCP ${Math.round(m.lcp)} ms · CLS ${m.cls.toFixed(3)} · INP ~${hayInp ? Math.round(m.inp) + ' ms' : 'no disponible'}`,
