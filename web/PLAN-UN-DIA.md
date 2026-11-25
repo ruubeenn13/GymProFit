@@ -74,6 +74,49 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
 
 ## 1. Guion hora a hora
 
+### Política de impacto (25-11-2026, segunda vuelta de la fase 1)
+
+Sustituye a «Ritmo» y a «Sistema de movimiento» de `DISENO.md` para «Un día», y a la regla de «una
+cosa se mueve cada vez». La primera prueba salió vacía y quieta (texto pequeño a un lado, móvil al
+otro y un hueco en medio, el reloj en una esquina y la luz casi invisible) por seguir esa regla.
+
+- **Coreografía de capas.** Varias cosas se mueven a la vez en planos distintos (fondo, reloj,
+  interfaz, texto), cada una a su ritmo. Única excepción: la frase que se está leyendo no se mueve.
+- **El reloj es el protagonista.** Cifras de Barlow Condensed 700 gigantes (`--reloj-ancho`: 62 %
+  del ancho en escritorio, 90 % en móvil y tableta), fijas detrás de la interfaz y cruzándose con
+  ella. Cada cifra es una columna de cuentakilómetros que rueda (`Odometro.astro`,
+  `motor.js → cuentakilometros`). Lleno en la entrada (un poco más claro que el carbón: tapa la luz
+  como una silueta), en contorno desde las 19:00, dorado en el récord.
+- **La interfaz se sale del móvil.** La fila de la serie, el aro del descanso y el check escapan del
+  teléfono, crecen a escala de página, hacen su momento y vuelven a su sitio exacto (se calculan con
+  la pose del móvil, `rectEnEscenario`). El móvil es un plano más: se aparta y se apaga mientras.
+- **La luz es un motivo.** Luz de ventana por las lamas de una persiana: bandas proyectadas sobre el
+  carbón (`Luz.astro`) que giran, se alargan y cambian de color con la hora: baja y dorada a las
+  7:00, lateral y naranja a las 19:00, dorada en el récord. Capas con transform y opacity; el
+  degradado se pinta una vez. Tope de luminancia 0,045 (`LuzDelDiaWebTest`): las bandas de una capa
+  no se pisan.
+- **Titulares con ritmo.** Por caracteres con máscara, a tamaño de display. El `h1` se trocea al
+  construir (entra en CSS desde el primer pintado); las frases de las escenas, con SplitText. Lo
+  troceado va oculto al lector de pantalla, con su texto entero al lado.
+- **Escritorio**: cursor propio (anillo que se vuelve el aro del descanso; el del sistema en
+  enlaces, botones y campos), botón de la beta magnético y Lenis con rueda. **Móvil**: la misma
+  coreografía en vertical, nada se recorta, scroll nativo.
+- **Ninguna composición con más de un tercio de pantalla vacío y sin función.**
+- **Una sola línea de tiempo** para la entrada, la transición y la sesión (`escena-dia.js`,
+  medida en svh de scroll): las tres tocan el móvil y el reloj, y con un ScrollTrigger cada una la
+  inercia decidía cuál pintaba la última.
+- **Movimiento reducido y sin JS**: cada escena en su estado final y completa, sin descargar GSAP
+  ni Lenis. Nada pulsable en bucle.
+
+Escenas de esta vuelta: 7:00 (la luz barre 1200 ms, «07:00» rueda columna a columna 900 ms con
+escalón de 60 ms, el titular por caracteres, el móvil sube 120 px y gira de −8° a −2°); 7:00 → 19:00
+(120 svh atados al scroll: las horas ruedan, las lamas giran y se alargan, el color pasa al naranja,
+el móvil cruza al centro y se enciende en «Hoy toca»); 19:00, Torso A (fijada: la fila de la serie 1
+sale y crece, la pista deja sitio a los números cifra a cifra, un check gigante de un trazo; el aro
+del descanso enmarca la pantalla con la cuenta atrás gigante atada al scroll y «+15 s» a mitad); y
+19:40, el récord (luz dorada en toda la escena, la marca nueva enorme, la de antes tachada con un
+trazo, el trofeo, 16 chispas DOM solo donde el equipo da la talla, y los dos relojes en oro).
+
 ### Reglas comunes a todas las escenas
 
 - **El día es un lunes de ejemplo de la cuenta demo** (`@dani.entrena`, sembrada con
@@ -93,7 +136,7 @@ Lo que se ha comprobado en `main` y obliga a ajustar el guion que venía en el e
   el trazo de la gráfica) va **atado al scroll** (`scrub`). Lo que en la app es un toque (marcar una serie,
   el código leído, copiar) se **dispara** al cruzar un punto, dura lo que dura en la app y se deshace al
   volver hacia arriba.
-- **Una cosa se mueve cada vez, y lo que se lee no se mueve mientras se lee** (`DISENO.md`).
+- ~~Una cosa se mueve cada vez~~: sustituida el 25-11-2026 por la **Política de impacto** (abajo). Sigue en pie la otra mitad: lo que se lee no se mueve mientras se lee.
 - **Rangos de ancho.** Móvil, 320–599 px: versión corta, una columna, la interfaz a todo el ancho menos
   20 px por lado y **sin marco de móvil** (a 360 px un marco dejaría la interfaz a 300 y no se leería).
   Tableta, 600–1199 px: versión larga, marco de móvil centrado a 360 px de pantalla, texto encima.
@@ -469,8 +512,8 @@ leer **`web/dist/`** a través de un ayudante común que falla con un mensaje cl
 | CLS | < 0,05 | Lighthouse y panel |
 | LCP en 4G | ≤ 2,5 s | Lighthouse (4G lento simulado) y Xiaomi 17T con 4G real |
 | JS inicial | ≤ 50 KB gzip (objetivo ≤ 6 KB) | `PortadaWebTest`, sobre `dist` |
-| JS diferido, móvil | ≤ 60 KB gzip (lo que hoy permite DEC-053) | `PortadaWebTest` |
-| JS diferido, escritorio | ≤ 70 KB gzip (con Lenis) | `PortadaWebTest` |
+| JS diferido, móvil | ≤ 80 KB gzip (SplitText y DrawSVG; DEC-069) | `UnDiaWebTest` |
+| JS diferido, escritorio | ≤ 90 KB gzip (con Lenis y el cursor) | `UnDiaWebTest` |
 | Fotogramas en las escenas | ≥ 50 fps (mediana) en un Xiaomi 17T | panel y DevTools remotas |
 | INP | < 200 ms | panel (la página casi no tiene interacción: enlaces y preguntas) |
 | Tareas largas durante el scroll | ninguna > 100 ms | panel y DevTools |
