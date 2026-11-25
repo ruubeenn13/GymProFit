@@ -509,12 +509,13 @@ leer **`web/dist/`** a través de un ayudante común que falla con un mensaje cl
 |---|---|---|
 | Lighthouse móvil, rendimiento | ≥ 90 | mediana de 5 |
 | Lighthouse móvil, accesibilidad | 100 | mediana de 5 |
-| CLS | < 0,05 | Lighthouse y panel |
+| CLS | < 0,05 (objetivo ~0; 0,00000 en Chromium el 25-11-2026) | Lighthouse, panel y `scripts/medir-un-dia.py` |
 | LCP en 4G | ≤ 2,5 s | Lighthouse (4G lento simulado) y Xiaomi 17T con 4G real |
 | JS inicial | ≤ 50 KB gzip (objetivo ≤ 6 KB) | `PortadaWebTest`, sobre `dist` |
 | JS diferido, móvil | ≤ 80 KB gzip (SplitText y DrawSVG; DEC-069) | `UnDiaWebTest` |
 | JS diferido, escritorio | ≤ 90 KB gzip (con Lenis y el cursor) | `UnDiaWebTest` |
-| Fotogramas en las escenas | ≥ 50 fps (mediana) en un Xiaomi 17T | panel y DevTools remotas |
+| Fotogramas en las escenas | p5 ≥ 50 fps y ≤ 5 % de fotogramas > 20 ms en el Xiaomi 17T, en las dos pasadas (caché vacía y con caché), comparado con el modo de control | panel (`?debug=motion` y `?debug=motion&control`) y DevTools remotas |
+| Primer layout, CPU ×4 | ≤ 130 ms la página entera (fase 3) | `scripts/medir-un-dia.py` |
 | INP | < 200 ms | panel (la página casi no tiene interacción: enlaces y preguntas) |
 | Tareas largas durante el scroll | ninguna > 100 ms | panel y DevTools |
 
@@ -532,6 +533,15 @@ móvil. Si no caben, se quita movimiento, no se sube el tope (DEC-053).
   disponible»); LCP, CLS e INP aproximado (`event` timing); la escena y la hora activas; los bytes de JS
   transferidos (`transferSize` del Resource Timing); si hay movimiento reducido; y el agente de usuario
   abreviado (para saber si es el navegador de TikTok o de Instagram).
+- Qué fotogramas cuentan (`fotogramas.js`, `FotogramasWebTest`): el intervalo entre dos rAF solo si
+  hubo evento de scroll en los dos fotogramas que lo cierran. Fuera quedan la cola de reposo tras
+  parar, el primer fotograma de cada gesto (mide la pausa entre gestos) y lo que pasa con la pestaña
+  oculta; un hueco de más de 1 s sin rAF es el navegador en pausa y sale aparte como «pausas». Dice
+  también a cuántos hercios llegan los fotogramas (60 o 120). Si «de N» es pequeño, el gesto fue
+  demasiado lento para medir.
+- **Modo de control**, `?debug=motion&control`: la misma página y el mismo panel, con la página
+  quieta (el estado final de movimiento reducido, sin GSAP ni Lenis). Mide solo el scroll del
+  documento: es la referencia con la que se compara el modo normal.
 - Botón «Copiar» que deja los números en el portapapeles para pegarlos en el informe.
 - No envía nada a ningún sitio.
 
@@ -540,11 +550,16 @@ móvil. Si no caben, se quita movimiento, no se sube el tope (DEC-053).
 1. **Mismo servidor para las dos portadas**: `scripts/servir-web.py` con brotli, sirviendo la portada
    actual (un **clon aparte** de `main`, no un worktree, en una carpeta fuera del repositorio) y la
    nueva (`web/dist/`), en el mismo equipo y puerto, una después de otra. **Solo en local hasta la
-   fase 6** (respuesta a la duda 5): nada se crea en Cloudflare para medir.
+   fase 6** (respuesta a la duda 5): nada se crea en Cloudflare para medir. Excepción (25-11-2026, a
+   petición del propietario): una vista previa de Pages en la rama `un-dia-prueba`, nunca producción,
+   para TikTok e Instagram, que necesitan https. La sube el propietario (`web/README.md`).
 2. **Lighthouse por línea de órdenes**, preajuste móvil (4G lento simulado, CPU ×4), caché vacía, 5
    pasadas por portada, se apunta la **mediana** de cada cifra y las 5 en el informe.
 3. **Xiaomi 17T** con Chrome y con el navegador integrado de TikTok y de Instagram: abrir la URL de la
-   red local (`servir-web.py --red`), recorrer el día dos veces con `?debug=motion` y copiar el panel.
+   red local (`servir-web.py --red`), recorrer el día dos veces con `?debug=motion` y copiar el panel,
+   y lo mismo con `?debug=motion&control`. TikTok no abre http ni IP locales: allí, la vista previa de
+   Pages por https (`web/README.md`). Si el normal queda lejos del control, se busca el coste de
+   pintado; antes, no.
    En Chrome, además, DevTools remotas por `adb` con una grabación de Rendimiento de cada escena, para
    localizar lo que baje de 50 fps.
 4. **Producción, después del despliegue** (fase 6): las mismas 5 pasadas contra `https://gymprofit.app`,

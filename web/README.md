@@ -65,6 +65,28 @@ si dentro va una carpeta `web/`, todo queda colgando de `/web/...` y las rutas
 absolutas del HTML —`/estilo.css`, `/fuentes/...`, `/img/...`— apuntan a ficheros
 que no existen. El sitio se ve sin estilos y sin tipografía.
 
+## Vista previa para el móvil (nunca producción)
+
+TikTok no abre `http://` ni IP de la red local, así que para medir «Un día» en su navegador hace
+falta https. Se sube una **vista previa** al mismo proyecto, en una rama que no es la de producción.
+La sube el propietario con su cuenta; nadie más inicia sesión ni sube nada.
+
+Sin instalar nada global: `npx wrangler@4.168.0` (comprobado el 25-11-2026 con `--help`).
+
+1. Construir: `cd web && npm ci && npm run build`.
+2. **Comprobar la rama de producción**: Pages publica en producción lo que se sube a la rama de
+   producción del proyecto, y en vista previa lo de cualquier otra. En un proyecto de subida directa
+   esa rama se fija al crearlo. `npx wrangler@4.168.0 pages deployment list --project-name=gymprofit --environment=production`
+   enseña la rama de cada despliegue de producción: si alguno fuera `un-dia-prueba`, **no se sigue**.
+3. Subir: `npx wrangler@4.168.0 pages deploy dist --project-name=gymprofit --branch=un-dia-prueba --commit-dirty=true`
+   (desde `web/`; pide `npx wrangler@4.168.0 login` la primera vez).
+4. Queda en `https://un-dia-prueba.gymprofit.pages.dev` (alias de la rama, siempre el último
+   despliegue) y en una URL con hash por despliegue. Comprobar que es vista previa y no se indexa:
+   `curl -sI https://un-dia-prueba.gymprofit.pages.dev/un-dia | grep -i x-robots-tag` → `noindex`
+   (Pages lo pone en toda vista previa, y `_headers` y la etiqueta `robots` de la página, también).
+5. `gymprofit.app` no cambia: compruébalo con `curl -sI https://gymprofit.app/un-dia` (404 mientras
+   «Un día» no esté en producción).
+
 ## Caché y versiones
 
 Un navegador que ya había visitado `/beta` mezcló la página nueva con el
