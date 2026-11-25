@@ -1,0 +1,33 @@
+{
+  "etiqueta": "antes",
+  "minutos": 15.0,
+  "rutas": {
+    "render_5s": "/api/actuator/health",
+    "uptime_5min": "/api/actuator/health",
+    "keepalive_10min": "/api/actuator/health"
+  },
+  "llamadas_http": {
+    "/api/actuator/health 200": 186
+  },
+  "total": 192,
+  "total_por_hora": 768.0,
+  "por_tipo_por_hora": {
+    "Query": 760.0,
+    "Connect": 4.0,
+    "Quit": 4.0
+  },
+  "por_sentencia": {
+    "Query: set autocommit=?": 94,
+    "Query: COMMIT": 47,
+    "Query: UPDATE shedlock SET lock_until = IF (TIMESTAMPADD(MICROSECOND, ?, locked_at) > UTC_TIMESTAMP(?) , TIMESTAMPADD(MICROSECOND, ?, locked_at), U": 16,
+    "Query: UPDATE shedlock SET lock_until = TIMESTAMPADD(MICROSECOND, ?, UTC_TIMESTAMP(?)), locked_at = UTC_TIMESTAMP(?), locked_by = ? WHERE name = ? ": 15,
+    "Query: select n1_0.id,n1_0.fecha_creacion,n1_0.fecha_programada,n1_0.leida,n1_0.mensaje,n1_0.push_enviada,n1_0.tipo,n1_0.titulo,n1_0.usuario_id fro": 15,
+    "Connect: root@localhost on gymprofit_reposo using TCP/IP": 1,
+    "Query: set sql_mode=CONCAT(@@sql_mode,?),session_track_system_variables = CONCAT(@@global.session_track_system_variables,?)": 1,
+    "Quit: ": 1,
+    "Query: INSERT IGNORE INTO shedlock(name, lock_until, locked_at, locked_by) VALUES(?, TIMESTAMPADD(MICROSECOND, ?, UTC_TIMESTAMP(?)), UTC_TIMESTAMP(": 1,
+    "Query: select distinct dt1_0.usuario_id from device_tokens dt1_0 join usuarios u1_0 on u1_0.id=dt1_0.usuario_id where u1_0.avisos_comidas=?": 1
+  },
+  "pings_por_hora": 1608.0,
+  "conexiones_nuevas_por_hora": 4.0
+}

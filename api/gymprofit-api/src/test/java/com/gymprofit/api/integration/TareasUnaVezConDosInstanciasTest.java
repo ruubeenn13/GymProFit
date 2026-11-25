@@ -21,6 +21,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.TaskScheduler;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.lang.reflect.InvocationHandler;
@@ -121,7 +122,9 @@ class TareasUnaVezConDosInstanciasTest {
         return Stream.of(NotificacionProgramadaTask.class, RecordatorioNotificacionesTask.class,
                         RefreshTokenCleanupTask.class)
                 .flatMap(clase -> Arrays.stream(clase.getDeclaredMethods())
-                        .filter(m -> m.isAnnotationPresent(Scheduled.class))
+                        // El barrido de programadas ya no lleva @Scheduled (lo llama
+                        // VigiaProgramadas, GP-283), pero sigue bloqueado: entra por @SchedulerLock.
+                        .filter(m -> m.isAnnotationPresent(Scheduled.class) || m.isAnnotationPresent(SchedulerLock.class))
                         .map(m -> Arguments.of(clase.getSimpleName() + "." + m.getName(), clase, m)));
     }
 

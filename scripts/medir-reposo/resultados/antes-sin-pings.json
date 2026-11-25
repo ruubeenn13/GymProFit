@@ -1,0 +1,26 @@
+{
+  "etiqueta": "antes",
+  "minutos": 15.0,
+  "rutas": {
+    "render_5s": "/api/actuator/health",
+    "uptime_5min": "/api/actuator/health",
+    "keepalive_10min": "/api/actuator/health"
+  },
+  "llamadas_http": {
+    "/api/actuator/health 200": 184
+  },
+  "total": 181,
+  "total_por_hora": 724.0,
+  "por_tipo_por_hora": {
+    "Query": 720.0,
+    "Quit": 4.0
+  },
+  "por_sentencia": {
+    "Query: set autocommit=?": 90,
+    "Query: COMMIT": 45,
+    "Query: UPDATE shedlock SET lock_until = TIMESTAMPADD(MICROSECOND, ?, UTC_TIMESTAMP(?)), locked_at = UTC_TIMESTAMP(?), locked_by = ? WHERE name = ? ": 15,
+    "Query: select n1_0.id,n1_0.fecha_creacion,n1_0.fecha_programada,n1_0.leida,n1_0.mensaje,n1_0.push_enviada,n1_0.tipo,n1_0.titulo,n1_0.usuario_id fro": 15,
+    "Query: UPDATE shedlock SET lock_until = IF (TIMESTAMPADD(MICROSECOND, ?, locked_at) > UTC_TIMESTAMP(?) , TIMESTAMPADD(MICROSECOND, ?, locked_at), U": 15,
+    "Quit: ": 1
+  }
+}

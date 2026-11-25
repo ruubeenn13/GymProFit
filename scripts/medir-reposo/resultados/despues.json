@@ -1,0 +1,24 @@
+{
+  "etiqueta": "despues",
+  "minutos": 15.0,
+  "rutas": {
+    "render_5s": "/api/actuator/health/liveness",
+    "uptime_5min": "/api/actuator/health/liveness",
+    "keepalive_10min": "/api/actuator/health/liveness"
+  },
+  "llamadas_http": {
+    "/api/actuator/health/liveness 200": 186
+  },
+  "total": 2,
+  "total_por_hora": 8.0,
+  "por_tipo_por_hora": {
+    "Quit": 4.0,
+    "Query": 4.0
+  },
+  "por_sentencia": {
+    "Quit: ": 1,
+    "Query: select min(n1_0.fecha_programada) from notificaciones n1_0 where n1_0.push_enviada=?": 1
+  },
+  "pings_por_hora": 84.0,
+  "conexiones_nuevas_por_hora": 0.0
+}

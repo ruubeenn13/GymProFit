@@ -30,7 +30,8 @@ App Android         │                                                         
 | `DeviceTokenController` + `DeviceTokenService` | `POST /notificaciones/token` (registro, **upsert idempotente** por token; el usuario sale del JWT, nunca del body) y `DELETE /notificaciones/token` (logout). Guarda también el **idioma** del dispositivo. |
 | `NotificacionService.save` | CRUD normal (usuario autenticado). Inmediata → push al momento (`push_enviada=true`); con `fechaProgramada` → queda pendiente (`push_enviada=false`). |
 | `NotificacionService.crearSistema` | Variante **sin SecurityUtils** para los jobs `@Scheduled` (no tienen SecurityContext). Persiste in-app + push inmediata. |
-| `NotificacionProgramadaTask` | Cada 60 s: envía las notificaciones con `fecha_programada` vencida y `push_enviada=false`, y las marca enviadas (sin duplicados; la BD es la cola — sobrevive reinicios). |
+| `NotificacionProgramadaTask` | Envía las notificaciones con `fecha_programada` vencida y `push_enviada=false`, y las marca enviadas (sin duplicados; la BD es la cola — sobrevive reinicios). Desde GP-283 no lleva `@Scheduled`: la llama `VigiaProgramadas`. |
+| `VigiaProgramadas` + `ProximaProgramada` | Cada 60 s mira **en memoria** cuándo vence la próxima programada y solo entonces barre. Crear o reprogramar por la API avisa al confirmar, así que la push sale en el mismo minuto que antes; además relee de la base al arrancar, tras cada barrido y cada 15 min (lo escrito por otro camino tarda como mucho eso). En reposo, 4 sentencias por hora en vez de 720 (GP-283). |
 | `RecordatorioNotificacionesTask` | Los 10 generadores automáticos (tabla abajo). |
 
 ## Los 10 recordatorios automáticos

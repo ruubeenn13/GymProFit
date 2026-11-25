@@ -36,6 +36,7 @@ public class NotificacionService implements INotificacionService {
     private final NotificacionMapper notificacionMapper;
     private final SecurityUtils securityUtils;
     private final PushNotificationService pushNotificationService;
+    private final ProximaProgramada proximaProgramada;
     private final Logger logger = LoggerFactory.getLogger(NotificacionService.class);
 
 
@@ -100,6 +101,8 @@ public class NotificacionService implements INotificacionService {
             notificacion.setPushEnviada(notificacionCreateDTO.getFechaProgramada() == null);
 
             Notificacion notificacionGuardada = notificacionRepository.save(notificacion);
+            // Para que el barrido de programadas sepa que esta vence (GP-283).
+            proximaProgramada.avisar(notificacionGuardada.getFechaProgramada());
 
             Notificacion notificacionRecargada = notificacionRepository.findById(notificacionGuardada.getId())
                     .orElseThrow(() -> new NotFoundEntityException("error.notificacion.noRecuperada"));
@@ -340,7 +343,10 @@ public class NotificacionService implements INotificacionService {
             if (patchDTO.getMensaje() != null) notificacion.setMensaje(patchDTO.getMensaje());
             if (patchDTO.getTipo() != null)
                 notificacion.setTipo(TipoNotificacion.valueOf(patchDTO.getTipo().toUpperCase()));
-            if (patchDTO.getFechaProgramada() != null) notificacion.setFechaProgramada(patchDTO.getFechaProgramada());
+            if (patchDTO.getFechaProgramada() != null) {
+                notificacion.setFechaProgramada(patchDTO.getFechaProgramada());
+                proximaProgramada.avisar(patchDTO.getFechaProgramada());
+            }
             if (patchDTO.getLeida() != null) notificacion.setLeida(patchDTO.getLeida());
 
             return notificacionMapper.toDTO(notificacionRepository.save(notificacion));

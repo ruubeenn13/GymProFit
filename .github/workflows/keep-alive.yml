@@ -31,7 +31,10 @@ jobs:
       # mismo sitio: lo que hay que vigilar es el camino por el que entran los
       # usuarios, con su DNS y su certificado. Un keep-alive contra un host que
       # ya nadie usa puede estar verde mientras el real está caído.
-      - name: Ping /actuator/health
+      #
+      # A liveness y no al health completo (GP-283): despierta igual y no le hace un
+      # ping a la base de producción, que cobra en RU aunque no haya usuarios.
+      - name: Ping /actuator/health/liveness
         run: |
           curl -sS --max-time 180 -o /dev/null -w "HTTP %{http_code} en %{time_total}s\n" \
-            https://api.gymprofit.app/api/actuator/health || true
+            https://api.gymprofit.app/api/actuator/health/liveness || true
