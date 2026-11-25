@@ -39,6 +39,8 @@ import es.pmdm.gymprofit.model.record.Record;
 //   en dia-ejemplo.json.
 // · El récord con la regla de la app, no con una suposición: las series se pasan por
 //   LogicaRecordVivo.supera y alMarcar, y el récord tiene que caer en la serie 3.
+// · Las cargas de «Hoy toca» son creíbles: cada ejercicio con la suya, y las elevaciones
+//   laterales (mancuernas, aislamiento) muy por debajo de un básico con barra.
 // · El presupuesto de JS, medido en gzip sobre dist: inicial ≤ 6 KB (el objetivo), diferido
 //   ≤ 60 KB en móvil y ≤ 70 KB en escritorio (con Lenis). El panel de medida no cuenta.
 // · Las licencias de GSAP y de Lenis viajan en sus trozos.
@@ -102,6 +104,30 @@ public class UnDiaWebTest {
             if (celebra) record = n;
         }
         assertEquals("el récord tiene que caer en la serie 3", 3, record);
+    }
+
+    @Test
+    public void lasCargasDeHoyTocaSonCreibles() throws IOException {
+        Set<String> cargas = new HashSet<>();
+        double laterales = -1, banca = -1;
+        int n = 0;
+        for (JsonElement el : datos().getAsJsonObject("hoyToca").getAsJsonArray("ejercicios")) {
+            JsonObject e = el.getAsJsonObject();
+            if (e.get("ultima") == null || e.get("ultima").isJsonNull()) continue;
+            n++;
+            String ultima = e.get("ultima").getAsString();
+            assertTrue("«" + e.get("nombre").getAsString() + "» repite la carga " + ultima + " de otro ejercicio",
+                    cargas.add(ultima));
+            Matcher k = Pattern.compile("([0-9]+(?:,[0-9]+)?)").matcher(ultima);
+            assertTrue("«" + ultima + "» no lleva kilos", k.find());
+            double kg = Double.parseDouble(k.group(1).replace(',', '.'));
+            if (e.get("nombre").getAsString().startsWith("Elevaciones laterales")) laterales = kg;
+            if (e.get("nombre").getAsString().startsWith("Press de banca")) banca = kg;
+        }
+        assertTrue("«Hoy toca» tiene que enseñar la última carga de sus ejercicios", n >= 5);
+        assertTrue("faltan las elevaciones laterales o el press de banca en Torso A", laterales > 0 && banca > 0);
+        assertTrue("elevaciones laterales a " + laterales + " kg con la banca a " + banca + ": no es creíble",
+                laterales <= banca / 4);
     }
 
     @Test

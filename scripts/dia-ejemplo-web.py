@@ -5,7 +5,7 @@ de aquí, o la escena no la enseña (web/PLAN-UN-DIA.md, «Reglas comunes»).
 
 Solo lee, y solo de la MariaDB local del 3308 (GP-282): ni producción ni la base anterior de
 Aiven, ni para leer. Para si el host no es 127.0.0.1 o localhost. La cuenta es @dani.entrena,
-sembrada con scripts/sembrar_demo.py; el día de ejemplo es el lunes en que se sembró, que en la
+sembrada con scripts/sembrar_demo.py --hoy <un lunes>; el día de ejemplo es el lunes en que se sembró, que en la
 demo es «hoy»: Torso A sin hacer, la última Torso A una semana antes.
 
 Uso, desde la raíz del repositorio:
@@ -34,7 +34,7 @@ HOSTS_LOCALES = {"127.0.0.1", "localhost"}
 NBSP = " "
 # DuracionRutina (app) y ReglasPrograma (API): 3,5 s de trabajo por repetición.
 SEGUNDOS_POR_REP = Decimal("3.5")
-# sembrar_demo.py, KILOS["BASICO"]: lo que suben los básicos cada semana.
+# sembrar_demo.py, KILOS["Press de banca con barra"]: lo que sube el press de banca cada semana.
 ESCALON_BASICO = Decimal("2.5")
 # Zonas.java: músculo (grupo del catálogo) → zona; el título, values/strings.xml (zona_titulo_*).
 ZONAS = {"PIERNA": "Pierna", "ESPALDA": "Espalda", "PECHO": "Pecho", "HOMBROS": "Hombros",
@@ -149,7 +149,8 @@ def main() -> None:
     # «Última: <kilos>» del carrusel (InicioHoyDetalle.mejorPeso): el mayor peso de esa vez.
     ultimos = dict(consulta(
         "SELECT er.ejercicio_id, MAX(sr.peso) FROM series_realizadas sr JOIN ejercicios_realizados er "
-        f"ON er.id = sr.ejercicio_realizado_id WHERE er.sesion_id = {sid} GROUP BY er.ejercicio_id;"))
+        f"ON er.id = sr.ejercicio_realizado_id WHERE er.sesion_id = {sid} AND sr.peso IS NOT NULL "
+        "GROUP BY er.ejercicio_id;"))
 
     # Zonas (ZonasDelDia): series por zona, de más a menos, estable; las tres primeras.
     por_zona: dict[str, int] = {}
@@ -178,7 +179,7 @@ def main() -> None:
             "cuenta": "@" + USUARIO + ", sembrada el " + dia.isoformat() + " con scripts/sembrar_demo.py",
             "reglas": [
                 "Series de hoy: 1 y 2 igualan la mejor marca (igualar no es récord); la 3 sube el escalón "
-                "de los básicos de sembrar_demo.py con las repeticiones del centro de la pauta, y supera la "
+                "semanal del press de banca de sembrar_demo.py con las repeticiones del centro de la pauta, y supera la "
                 "marca por los kilos (LogicaRecordVivo.supera).",
                 "Reloj: 3,5 s por repetición (DuracionRutina) más el descanso de la pauta entre series.",
             ],

@@ -14,6 +14,7 @@ crear nada comprueba que los ejercicios del programa tienen foto, como en produc
 
 Uso, con la API local arrancada (scripts/entorno-pruebas.sh); ver scripts/README.md:
     GYMPROFIT_DEMO_PASSWORD=... GYMPROFIT_DB_PASSWORD=... python scripts/sembrar_demo.py
+Con --hoy AAAA-MM-DD siembra como si hoy fuera ese día (la web de «Un día» pide un lunes).
 Variables opcionales: GYMPROFIT_API_URL (por defecto http://localhost:8080/api) y
 MARIADB_CLI (por defecto «mariadb» en el PATH).
 """
@@ -37,8 +38,46 @@ DIAS = 21
 PROGRAMA, MINUTOS = "GIM-TP", 60
 # Lunes torso A, martes pierna A, jueves torso B y viernes pierna B: las del programa, en su orden
 PLAN = {0: "GIM-TORSO-A", 1: "GIM-PIERNA-A", 3: "GIM-TORSO-B", 4: "GIM-PIERNA-B"}
-# Kilos de partida por tipo de ejercicio de la rutina y lo que sube cada semana
-KILOS = {"BASICO": (60, 2.5), "EXTRA": (20, 1.25)}
+# Cargas de un intermedio (unos 77 kg, dos años entrenando): los kilos de la primera semana y lo
+# que suben cada semana, por ejercicio del programa (nombreEjercicio). Con mancuernas, el peso de
+# cada una, como lo apunta la app. None: peso corporal, la serie va sin kilos. Antes salían del
+# tipo de la pauta y del id del ejercicio, y daban 42,5 kg a las elevaciones laterales, al curl
+# y a la extensión de tríceps a la vez. El press de banca acaba en 80 kg: el récord de
+# «Un día» (scripts/dia-ejemplo-web.py) sube de ahí su escalón, 2,5 kg.
+KILOS = {
+    # Torso A
+    "Press de banca con barra": (75, 2.5),
+    "Remo con barra": (65, 2.5),
+    "Press militar de pie, con barra": (45, 1.25),
+    "Jalón al pecho": (55, 2.5),
+    "Elevaciones laterales": (8, 1),
+    "Curl de bíceps con barra": (30, 1.25),
+    "Extensión de tríceps en polea": (22.5, 1.25),
+    # Torso B
+    "Press inclinado con mancuernas": (26, 2),
+    "Dominadas": None,
+    "Remo en polea sentado": (55, 2.5),
+    "Aperturas en máquina": (40, 2.5),
+    "Curl inclinado con mancuernas": (10, 1),
+    "Extensión de tríceps sobre la cabeza, en polea": (20, 1.25),
+    # Pierna A
+    "Sentadilla con barra": (90, 2.5),
+    "Peso muerto rumano con barra": (80, 2.5),
+    "Prensa de piernas": (140, 5),
+    "Curl femoral tumbado": (35, 2.5),
+    "Elevación de gemelos de pie, en máquina": (60, 5),
+    "Crunch en polea": (35, 2.5),
+    # Pierna B
+    "Sentadilla hack en máquina": (80, 5),
+    "Hip thrust con barra": (90, 5),
+    "Sentadilla búlgara con mancuernas": (14, 2),
+    "Curl femoral sentado": (40, 2.5),
+    "Elevación de gemelos sentado, en máquina": (40, 2.5),
+    "Plancha": None,
+}
+# Las series por tiempo (medida SEGUNDOS, la plancha): los segundos de la primera semana y lo
+# que suben cada semana, dentro del rango de la pauta.
+SEGUNDOS = (40, 5)
 
 # Alimentos del catálogo local: (id, gramos)
 DESAYUNOS = [[(6554, 200), (6405, 60), (6466, 50), (6543, 10)],  # café con leche, tostada con tomate y aceite
@@ -115,12 +154,23 @@ def entrenar(token: str, dia: date, rutina: dict, semana: int) -> None:
         hour=18 + random.choice([0, 1]), minute=random.choice([5, 20, 35]))
     cuerpo = []
     for e in sorted(rutina["ejercicios"], key=lambda x: x["orden"]):
-        base, sube = KILOS.get(e["tipo"], KILOS["EXTRA"])
-        # Cada ejercicio parte de un peso distinto, siempre el mismo (se deduce del id)
-        kilos = round((base + (e["ejercicioId"] % 5) * 5 + sube * semana) / 1.25) * 1.25
+        nombre = e["nombreEjercicio"]
+        if nombre not in KILOS:
+            sys.exit(f"«{nombre}» no tiene carga en KILOS: ¿cambió el programa {PROGRAMA}?")
+        carga = KILOS[nombre]
+        kilos = None if carga is None else carga[0] + carga[1] * semana
         reps, series = e["repeticiones"], e["series"]
-        lista = [{"numero": n, "repeticiones": reps - (1 if n == series and random.random() < 0.5 else 0),
-                  "peso": kilos, "completada": True} for n in range(1, series + 1)]
+        lista = []
+        for n in range(1, series + 1):
+            # La última serie a veces cae una repetición (o 5 s, si va por tiempo)
+            cae = n == series and random.random() < 0.5
+            if e.get("medida") == "SEGUNDOS":
+                segundos = SEGUNDOS[0] + SEGUNDOS[1] * semana - (5 if cae else 0)
+                lista.append({"numero": n, "repeticiones": 0, "segundos": segundos,
+                              "peso": None, "completada": True})
+            else:
+                lista.append({"numero": n, "repeticiones": reps - (1 if cae else 0),
+                              "peso": kilos, "completada": True})
         cuerpo.append({"ejercicioId": e["ejercicioId"], "repeticionesReales": reps, "series": lista})
     pedir("POST", "/sesiones/completa", {
         "claveIdempotencia": str(uuid.uuid4()), "fechaInicio": inicio.isoformat(timespec="seconds"),
@@ -166,13 +216,29 @@ def fechar_mediciones(clave_bd: str, mediciones: list) -> None:
         for mid, dia in mediciones))
 
 
+def dia_de_hoy() -> date:
+    """El «hoy» de la demo: el de la máquina o, con --hoy AAAA-MM-DD, otro anterior.
+
+    «Un día» de la web es un lunes (Torso A sin hacer): con --hoy se siembra ese lunes aunque
+    se siembre otro día de la semana."""
+    if "--hoy" not in sys.argv:
+        return date.today()
+    try:
+        hoy = date.fromisoformat(sys.argv[sys.argv.index("--hoy") + 1])
+    except (IndexError, ValueError):
+        sys.exit("--hoy pide una fecha AAAA-MM-DD.")
+    if hoy > date.today():
+        sys.exit(f"--hoy {hoy} es futuro: los entrenos y las comidas no pueden ir por delante.")
+    return hoy
+
+
 def main() -> None:
     clave_demo, clave_bd = comprobar_entorno()
     comprobar_fotos(clave_bd)
+    hoy = dia_de_hoy()
     random.seed(42)
     token = dar_de_alta(clave_demo)
     rutinas = seguir_programa(token)
-    hoy = date.today()
     inicio = hoy - timedelta(days=DIAS)
     mediciones = []
     entrenos = 0
@@ -195,6 +261,11 @@ def main() -> None:
                                                          "altura": 178, "cintura": round(86 - i * 0.08, 1)}, token)
             mediciones.append((m["id"], dia))
     fechar_mediciones(clave_bd, mediciones)
+    if hoy != date.today():
+        # El alta lleva la fecha del momento: «Un día» (scripts/dia-ejemplo-web.py) toma de ella
+        # el día de ejemplo, así que se lleva al «hoy» elegido.
+        bd_local(clave_bd, f"UPDATE usuarios SET fecha_registro = '{hoy.isoformat()} 07:00:00' "
+                           f"WHERE username = '{USUARIO}';")
     print(f"Cuenta @{USUARIO} sembrada: sigue {PROGRAMA}, {entrenos} entrenos con rutina, "
           f"{DIAS + 1} días de comidas, {len(mediciones)} mediciones.")
 

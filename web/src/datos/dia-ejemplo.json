@@ -5,7 +5,7 @@
     "base": "MariaDB local 127.0.0.1:3308 (GP-282)",
     "cuenta": "@dani.entrena, sembrada el 2026-11-23 con scripts/sembrar_demo.py",
     "reglas": [
-      "Series de hoy: 1 y 2 igualan la mejor marca (igualar no es récord); la 3 sube el escalón de los básicos de sembrar_demo.py con las repeticiones del centro de la pauta, y supera la marca por los kilos (LogicaRecordVivo.supera).",
+      "Series de hoy: 1 y 2 igualan la mejor marca (igualar no es récord); la 3 sube el escalón semanal del press de banca de sembrar_demo.py con las repeticiones del centro de la pauta, y supera la marca por los kilos (LogicaRecordVivo.supera).",
       "Reloj: 3,5 s por repetición (DuracionRutina) más el descanso de la pauta entre series."
     ]
   },
@@ -32,32 +32,32 @@
       {
         "nombre": "Remo con barra",
         "pauta": "3 × 6–10",
-        "ultima": "Última: 85 kg"
+        "ultima": "Última: 70 kg"
       },
       {
         "nombre": "Press militar de pie, con barra",
         "pauta": "3 × 6–10",
-        "ultima": "Última: 70 kg"
+        "ultima": "Última: 47,5 kg"
       },
       {
         "nombre": "Jalón al pecho",
         "pauta": "3 × 10–12",
-        "ultima": "Última: 32,5 kg"
+        "ultima": "Última: 60 kg"
       },
       {
         "nombre": "Elevaciones laterales",
         "pauta": "3 × 12–15",
-        "ultima": "Última: 42,5 kg"
+        "ultima": "Última: 10 kg"
       },
       {
         "nombre": "Curl de bíceps con barra",
         "pauta": "3 × 10–12",
-        "ultima": "Última: 42,5 kg"
+        "ultima": "Última: 32,5 kg"
       },
       {
         "nombre": "Extensión de tríceps en polea",
         "pauta": "3 × 10–12",
-        "ultima": "Última: 42,5 kg"
+        "ultima": "Última: 25 kg"
       }
     ]
   },

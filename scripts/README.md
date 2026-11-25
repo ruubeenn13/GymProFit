@@ -28,6 +28,9 @@ demostración en el entorno **local** de pruebas: ni producción ni datos de nad
      python scripts/sembrar_demo.py
    ```
 
+   - Para «Un día» de la web (`scripts/dia-ejemplo-web.py`), la demo tiene que ser de un
+     lunes: si no se siembra en lunes, añadir `--hoy AAAA-MM-DD` con el último lunes. El
+     script lleva la fecha de alta de la cuenta a ese día en la BD local.
    - La contraseña de la demo no puede contener «gymprofit» ni el nombre de usuario.
      Ninguna de las dos tiene valor fijo en el código.
    - Al acabar, guardar la clave en `docs/credenciales-locales.txt` (línea
