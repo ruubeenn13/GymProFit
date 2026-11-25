@@ -8,6 +8,10 @@
  * Estado final: el récord de hoy ya batido. El texto de antes («Tu récord: 80 kg × 10») va
  * en data-antes para que el movimiento lo enseñe primero.
  *
+ * El aviso ocupa siempre su sitio (sin CLS): antes del récord el movimiento lo apaga, sube las
+ * filas con transform y acorta el fondo de la tarjeta, que es un ::before con su borde, con
+ * --pliegue. Cambiar el borde de abajo de un ::before no desplaza ningún nodo.
+ *
  * @prop {object} sesion  dia-ejemplo.json → sesion
  */
 import Icono from './Icono.astro';
@@ -26,17 +30,25 @@ const { sesion } = Astro.props;
       <span class="ej-aviso-antes">{sesion.avisoAntes}</span>
     </span>
   </div>
-  <div class="ej-columnas label">
-    <span class="c-serie">Serie</span><span class="c-anterior">Anterior</span><span>kg</span><span>Reps</span><span class="c-hueco"></span>
+  <div class="ej-filas" data-pieza="filas">
+    <div class="ej-columnas label">
+      <span class="c-serie">Serie</span><span class="c-anterior">Anterior</span><span>kg</span><span>Reps</span><span class="c-hueco"></span>
+    </div>
+    <slot />
   </div>
-  <slot />
 </div>
 
 <style>
   .ej {
-    margin: 16px 16px 0; padding-top: 12px; background: var(--a-surface);
-    border: 1px solid var(--a-stroke); border-radius: 20px; overflow: hidden;
+    position: relative; z-index: 0; margin: 16px 16px 0; padding-top: 12px;
+    border: 1px solid transparent; border-radius: 20px;
   }
+  .ej::before {
+    content: ""; position: absolute; z-index: -1; inset: -1px -1px calc(var(--pliegue, 0px) - 1px);
+    background: var(--a-surface); border: 1px solid var(--a-stroke); border-radius: 20px;
+  }
+  /* Sin overflow: hidden (cortaría el borde del ::before): la última fila redondea su fondo. */
+  .ej :global(.serie:last-child) { border-radius: 0 0 19px 19px; }
   .ej > p { margin: 0; padding: 0 16px; }
   .ej .ej-nombre { font-size: 20px; }
   .ej-pauta { font-size: 16px; margin-top: 4px !important; }

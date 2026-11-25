@@ -44,6 +44,7 @@ export async function iniciar(escena, api, dia) {
   const ejercicio = $('[data-pieza="ejercicio"]', pantalla);
   const tuRecord = $('[data-pieza="tu-record"] span', pantalla);
   const aviso = $('[data-pieza="aviso-record"]', pantalla);
+  const filasEj = $('[data-pieza="filas"]', pantalla);
   const trofeo = $('[data-pieza="trofeo"]', pantalla);
   const aro = $('[data-pieza="aro"]', pantalla);
   const aroCaja = $('[data-pieza="aro-caja"]', pantalla);
@@ -111,7 +112,13 @@ export async function iniciar(escena, api, dia) {
   fila.forEach((f, i) => f.marca.classList.add(i === 0 ? 'toca' : 'pendiente'));
   copia.marca.classList.add('toca');
   tuRecord.textContent = tuRecord.dataset.antes;
-  gsap.set(aviso, { height: 0, autoAlpha: 0, marginTop: 0, paddingTop: 0, paddingBottom: 0, borderWidth: 0 });
+  // El aviso no se pliega en el layout (era CLS): se apaga, las filas suben lo que mide y el
+  // fondo de la tarjeta se acorta lo mismo (--pliegue, EjercicioEnVivo.astro).
+  const pliegue = aviso.offsetHeight + parseFloat(getComputedStyle(aviso).marginTop);
+  let plegado = true;
+  gsap.set(aviso, { autoAlpha: 0 });
+  gsap.set(filasEj, { y: -pliegue });
+  gsap.set(ejercicio, { '--pliegue': `${pliegue}px` });
   gsap.set(aro, { strokeDashoffset: 0 });
   gsap.set(fugaAroLleno, { strokeDashoffset: 0 });
   gsap.set(fugaCheck.querySelector('path'), { drawSVG: '0%' });
@@ -167,7 +174,11 @@ export async function iniciar(escena, api, dia) {
 
   // Como la lista de la app al marcar: se desplaza lo justo para que la fila n se vea entera.
   function verFila(n) {
-    const fondo = fila[n].el.offsetTop + fila[n].el.offsetHeight;
+    // Desde la capa, sumando cada offsetParent (la tarjeta está posicionada), y menos lo plegado
+    // mientras no hay récord: transform no cuenta en offsetTop.
+    let arriba = 0;
+    for (let e = fila[n].el; e && e !== capaSesion; e = e.offsetParent) arriba += e.offsetTop;
+    const fondo = arriba + fila[n].el.offsetHeight - (plegado ? pliegue : 0);
     const limite = capaSesion.offsetHeight - 16;
     gsap.to(ejercicio, { y: Math.min(0, limite - fondo), duration: s(350), ease: ESTANDAR, overwrite: 'auto' });
   }
@@ -180,14 +191,13 @@ export async function iniciar(escena, api, dia) {
     tuRecord.textContent = si ? recordFinal : tuRecord.dataset.antes;
     api.oro(si);
     reloj.classList.toggle('oro', si);
-    if (si) {
-      gsap.to(aviso, { height: 'auto', autoAlpha: 1, marginTop: 10, paddingTop: 12, paddingBottom: 12, borderWidth: 1,
-        duration: s(350), ease: ENFATIZADA, overwrite: true });
-      gsap.fromTo(trofeo, { scale: 0.5 }, { scale: 1, duration: s(450), ease: ENFATIZADA });
-    } else {
-      gsap.to(aviso, { height: 0, autoAlpha: 0, marginTop: 0, paddingTop: 0, paddingBottom: 0, borderWidth: 0,
-        duration: s(250), ease: ESTANDAR, overwrite: true });
-    }
+    plegado = !si;
+    const t = si ? { duration: s(350), ease: ENFATIZADA } : { duration: s(250), ease: ESTANDAR };
+    gsap.to(aviso, { autoAlpha: si ? 1 : 0, ...t, overwrite: true });
+    gsap.to(filasEj, { y: si ? 0 : -pliegue, ...t, overwrite: true });
+    // overwrite 'auto': verFila mueve la misma tarjeta con y.
+    gsap.to(ejercicio, { '--pliegue': `${si ? 0 : pliegue}px`, ...t, overwrite: 'auto' });
+    if (si) gsap.fromTo(trofeo, { scale: 0.5 }, { scale: 1, duration: s(450), ease: ENFATIZADA });
   }
 
   // Chispas DOM: salen del trofeo y se apagan (CHISPAS, 700 ms). Una vez, al bajar.

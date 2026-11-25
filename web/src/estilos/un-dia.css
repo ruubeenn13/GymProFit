@@ -225,7 +225,11 @@ a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px
 .record-trofeo .ico { width: 56px; height: 56px; }
 .record-marca { margin: 0; display: flex; flex-direction: column; }
 .record-rotulo { font: 600 15px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--oro); }
-.record-cifra { font: 700 clamp(56px, 15vw, 150px)/.9 "Barlow Condensed", sans-serif; color: var(--oro); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+/* Sin el atajo font: el minificador pone font-variant-numeric delante y el atajo la anula. */
+.record-cifra {
+  font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: clamp(56px, 15vw, 150px); line-height: .9;
+  color: var(--oro); letter-spacing: -.01em; font-variant-numeric: tabular-nums;
+}
 .record-antes { position: relative; margin: 0; width: fit-content; color: var(--texto-2); font-size: clamp(17px, 2.4vw, 24px); }
 .record-antes s { text-decoration-thickness: 2px; text-decoration-color: var(--oro); }
 .record-tachon { display: none; }
@@ -332,7 +336,10 @@ a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px
       left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; align-items: center;
       transform-origin: 50% 50%;
     }
-    .fuga-cuenta-num { font: 700 min(30vw, 22svh)/.9 "Barlow Condensed", sans-serif; font-variant-numeric: tabular-nums; }
+    .fuga-cuenta-num {
+      font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: min(30vw, 22svh); line-height: .9;
+      font-variant-numeric: tabular-nums;
+    }
     .fuga-mas {
       margin-top: 2svh; min-height: 56px; padding: 0 28px; border-radius: 28px; display: grid; place-items: center;
       background: #252A31; color: var(--texto); font: 600 22px/1 "Barlow", sans-serif;
