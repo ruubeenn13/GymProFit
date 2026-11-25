@@ -1,15 +1,17 @@
 /* ============================================================
-   un-dia.css — la página de «Un día» (fase 1: la entrada y las 19:00; PLAN-UN-DIA.md).
+   un-dia.css — la página de «Un día» (fase 1, segunda vuelta; PLAN-UN-DIA.md, «Política de
+   impacto»).
 
-   Tres estados, del más simple al más rico:
-   · Sin JavaScript o con movimiento reducido: todo en su estado final y en su sitio, la luz
-     de cada hora como fondo quieto de su sección, nada fijado.
-   · Con movimiento permitido y scripts (el @media de abajo): la escena de las 19:00 mide
-     lo que necesita para recorrerse y se fija con sticky, decidido por el CSS antes de que
-     corra ningún script (sin CLS). Si el script no llega, se ve el estado final fijado.
-   · Con el módulo de la escena cargado: GSAP lleva cada pieza de su estado inicial al final.
+   Dos estados:
+   · Quieto: sin JavaScript o con movimiento reducido. Cada escena en su estado final y
+     completa, en el flujo normal: el reloj de cada hora detrás de su texto, la luz quieta, el
+     móvil con la sesión terminada, todas las frases y el récord con la marca tachada.
+   · Viaje: con movimiento permitido y scripts (el @media del final). La luz y el reloj
+     gigante pasan a capas fijas, el escenario del móvil y las frases se fijan con sticky y
+     las alturas de cada tramo las pone el CSS antes de que corra ningún script (sin CLS).
 
-   Siempre en carbón (respuesta a la duda 2): sin tema claro.
+   Planos, de atrás adelante: luz (lamas) → reloj gigante → escenario (móvil y piezas que se
+   escapan) → texto. Siempre en carbón: sin tema claro.
    ============================================================ */
 
 @font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
@@ -24,14 +26,18 @@
   --naranja: #FF6A00;
   --sobre-naranja: #1A0E00;
   --oro: #E8B84B;
+  /* El reloj gigante: lleno, un poco más claro que el carbón (tapa la luz: se lee como una
+     silueta delante de la ventana); en contorno, el trazo de la hora. */
+  --reloj-lleno: #1F2228;
+  --reloj-trazo: rgb(255 106 0 / .5);
   /* Curvas de la página (web/DISENO.md); las de la interfaz, en tokens-app.css */
   --salida: cubic-bezier(0.23, 1, 0.32, 1);
   --recorrido: cubic-bezier(0.77, 0, 0.175, 1);
 
-  /* La luz de cada hora (PLAN-UN-DIA.md, «La luz tiene que notarse»). Color y opacidad
-     en su punto más claro; LuzDelDiaWebTest comprueba que, sobre el carbón, ningún punto
-     pasa de una luminancia relativa de 0,045 (contraste AA de text-secondary) y que
-     ninguna se queda tan tímida que no se vea (≥ 0,03). */
+  /* La luz de cada hora (PLAN-UN-DIA.md, «La luz tiene que notarse»). Color y opacidad de
+     una banda en su punto más claro; las bandas de una capa no se pisan. LuzDelDiaWebTest
+     comprueba que, sobre el carbón, ningún punto pasa de una luminancia relativa de 0,045
+     (contraste AA de text-secondary) y que ninguna se queda en menos de 0,03. */
   --luz-amanecer: 255 178 122;   /* #FFB27A */
   --luz-amanecer-alfa: 0.24;
   --luz-tarde: 255 106 0;       /* #FF6A00 */
@@ -39,43 +45,82 @@
   --luz-oro: 232 184 75;        /* #E8B84B */
   --luz-oro-alfa: 0.25;
 
+  /* El ancho del reloj gigante («00:00» mide 2,1 em en Barlow Condensed 700). Móvil y
+     tableta, el 90 %; escritorio, el 62 %. UnDiaImpactoWebTest fija los dos rangos. */
+  --reloj-ancho: 90vw;
+  --reloj-em: 2.1;
+
   color-scheme: dark;
+  accent-color: var(--naranja);
 }
+@media (min-width: 1200px) { :root { --reloj-ancho: 62vw; } }
 
 * { box-sizing: border-box; }
 html { background: var(--carbon); -webkit-text-size-adjust: 100%; }
 body {
-  /* Sin fondo propio: el del html basta, y uno aquí taparía la capa fija de la luz. */
-  margin: 0; color: var(--texto);
+  /* Sin fondo propio: el del html basta, y uno aquí taparía las capas fijas. */
+  margin: 0; color: var(--texto); position: relative;
   font: 400 17px/1.5 "Barlow", system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
 }
-a { color: inherit; }
+::selection { background: var(--naranja); color: var(--sobre-naranja); }
+a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px; }
 :focus-visible { outline: 2px solid var(--naranja); outline-offset: 3px; border-radius: 4px; }
 .solo-lector {
   position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
+.hora-num { font-variant-numeric: tabular-nums; }
 
-/* ── La luz ─────────────────────────────────────────────────────────────── */
-/* Cada hora, una capa propia; cambiar de hora es fundir opacidades (compositor). */
-.luz { display: none; }
+/* ── La luz: lamas de persiana ──────────────────────────────────────────── */
+/* Cada capa es un trozo de ventana proyectado: bandas anchas de luz (las lamas abiertas)
+   separadas por la sombra fina de cada lama. El degradado se pinta una vez; la hora lo gira,
+   lo estira, lo desplaza y lo funde. La máscara redondea el trozo, y gira con él. */
+.luz { position: absolute; inset: 0 0 auto; height: 100svh; overflow: hidden; pointer-events: none; z-index: 0; }
 .luz-capa { position: absolute; inset: 0; opacity: 0; }
-.luz-amanecer, .entrada {
-  background: radial-gradient(120% 70% at 0% 92%,
-    rgb(var(--luz-amanecer) / var(--luz-amanecer-alfa)) 0%, transparent 70%);
+.lamas-escena, .lamas {
+  position: absolute; left: -35%; top: -30%; width: 170%; height: 160%;
+  background: repeating-linear-gradient(180deg,
+    rgb(var(--c) / var(--a)) 0 4.4%,
+    rgb(var(--c) / calc(var(--a) * .55)) 5.4%,
+    rgb(var(--c) / 0) 6.2% 7.4%);
+  -webkit-mask-image: radial-gradient(48% 42% at 50% 50%, #000 0 38%, transparent 100%);
+  mask-image: radial-gradient(48% 42% at 50% 50%, #000 0 38%, transparent 100%);
+  transform-origin: 50% 50%;
 }
-.luz-tarde, .entreno {
-  background: radial-gradient(90% 110% at 100% 45%,
-    rgb(var(--luz-tarde) / var(--luz-tarde-alfa)) 0%, transparent 72%);
+.luz-amanecer .lamas { --c: var(--luz-amanecer); --a: var(--luz-amanecer-alfa); transform: translate(-18%, 22%) rotate(-11deg) skewX(-32deg) scale(1.25, .8); }
+.luz-tarde .lamas-escena, .lamas { --c: var(--luz-tarde); --a: var(--luz-tarde-alfa); transform: translate(20%, 4%) rotate(24deg) skewX(18deg) scale(.9, 1.1); }
+.luz-oro .lamas { --c: var(--luz-oro); --a: var(--luz-oro-alfa); transform: translate(6%, 0) rotate(14deg) skewX(10deg) scale(1.15, 1.25); }
+.luz-amanecer { opacity: 1; }
+.lamas-escena { display: block; z-index: 0; pointer-events: none; }
+
+/* ── El reloj gigante ───────────────────────────────────────────────────── */
+.odo {
+  display: inline-flex; font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+  font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -.01em; white-space: nowrap;
 }
-.luz-oro {
-  background: radial-gradient(90% 110% at 100% 45%,
-    rgb(var(--luz-oro) / var(--luz-oro-alfa)) 0%, transparent 72%);
+.odo-col { display: inline-block; height: 1em; overflow: hidden; }
+.odo-tira { display: flex; flex-direction: column; transform: translateY(calc(var(--d) * -1em)); }
+.odo-tira > span, .odo-dos { display: block; height: 1em; }
+.odo-dos { margin: 0 -.02em; }
+
+.reloj-dia {
+  position: absolute; left: 50%; top: 31svh; z-index: 1; pointer-events: none;
+  font-size: calc(var(--reloj-ancho) / var(--reloj-em));
+  translate: -50% -50%;
+}
+.reloj-dia .cara { position: absolute; left: 0; top: 0; }
+.reloj-dia .cara-llena { position: relative; color: var(--reloj-lleno); }
+.reloj-dia .cara-contorno { color: transparent; -webkit-text-stroke: 2px var(--reloj-trazo); opacity: 0; transition: -webkit-text-stroke-color 450ms var(--salida); }
+.reloj-dia.oro .cara-contorno { -webkit-text-stroke-color: rgb(232 184 75 / .8); }
+.reloj-escena {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%; z-index: 0;
+  font-size: calc(var(--reloj-ancho) / var(--reloj-em)); color: transparent;
+  -webkit-text-stroke: 2px var(--reloj-trazo); pointer-events: none;
 }
 
 /* ── Cabecera ───────────────────────────────────────────────────────────── */
 .cabecera {
-  position: fixed; inset: 0 0 auto; z-index: 10; height: 56px; padding: 0 20px;
+  position: fixed; inset: 0 0 auto; z-index: 20; height: 56px; padding: 0 20px;
   display: flex; align-items: center; justify-content: space-between; pointer-events: none;
 }
 .marca {
@@ -83,111 +128,179 @@ a { color: inherit; }
   font: 700 18px/1 "Barlow Condensed", sans-serif; letter-spacing: .02em;
 }
 .logo { background: var(--carbon); border-radius: 18%; }
-
-/* ── El reloj ───────────────────────────────────────────────────────────── */
 .reloj {
   display: inline-flex; font-family: "Barlow Condensed", sans-serif; font-weight: 700;
   font-variant-numeric: tabular-nums; line-height: .9;
 }
 .reloj-cifra { display: inline-block; overflow: hidden; position: relative; }
 .reloj-cifra > span { display: block; }
-.reloj-grande { font-size: clamp(120px, 38vw, 320px); letter-spacing: -.01em; margin-left: -.04em; }
 .reloj-cabecera { font-size: 28px; color: var(--texto); opacity: 0; transition: opacity 250ms var(--salida), color 450ms var(--salida); }
 .reloj-cabecera.visible { opacity: 1; }
 .reloj-cabecera.oro { color: var(--oro); }
 
+/* ── El escenario: el móvil y lo que se escapa de él ───────────────────── */
+.dia { display: grid; grid-template-columns: minmax(0, 1fr); position: relative; z-index: 2; }
+.dia > section { grid-column: 1; position: relative; z-index: 2; }
+.entrada { grid-row: 1; }
+.transicion { grid-row: 2; }
+.entreno { grid-row: 3; }
+.escenario { grid-row: 4; grid-column: 1; position: relative; z-index: 1; }
+.cierre { grid-row: 5; }
+
+.movil { margin: 0; }
+.pantalla { background: var(--a-bg); border: 1px solid #252A31; border-radius: 24px; overflow: hidden; position: relative; }
+.capa-arranque { display: none; }
+.capa-hoy { padding: 16px; }
+.capa-descanso { padding-top: 16px; }
+.fugas { display: none; }
+
+/* El móvil con su canto: pantalla de 390 × 844 dentro de un marco de 414 × 868. */
+.movil {
+  width: 414px; padding: 12px; border-radius: 52px; background: #15171B;
+  box-shadow: inset 0 0 0 1px #2A2E35, 0 40px 80px -30px rgb(0 0 0 / .8);
+}
+.movil .pantalla { border: 0; border-radius: 40px; }
+.escenario .movil-pos { padding: 0 0 48px; display: flex; justify-content: center; }
+@media (max-width: 459px) { .escenario .movil-escala { zoom: .82; } }
+
 /* ── 7:00 · Entrada ─────────────────────────────────────────────────────── */
-.hora { position: relative; }
 .entrada {
-  min-height: 100svh; padding: 76px 20px 40px; display: grid; align-content: center; gap: 24px;
+  min-height: 100svh; padding: 88px 20px 40px; display: grid; align-content: end; gap: 28px;
 }
+.entrada-texto { position: relative; z-index: 2; }
 .entrada-texto > * { margin: 0; }
-.etiqueta {
-  margin-top: 14px !important; font: 600 14px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--texto-2);
-}
 .titular {
-  margin-top: 10px !important; font: 700 clamp(34px, 9.4vw, 76px)/1 "Barlow Condensed", sans-serif;
-  letter-spacing: -.005em; text-wrap: balance;
+  font: 700 clamp(44px, 11.6vw, 96px)/.92 "Barlow Condensed", sans-serif; letter-spacing: -.012em;
+  text-transform: uppercase;
 }
-.titular span { color: var(--naranja); }
-.entrada-linea { margin-top: 14px !important; max-width: 34em; color: var(--texto-2); font-size: 17px; }
+.tit-letras { display: block; }
+.tit-linea { display: block; }
+.tit-linea.naranja { color: var(--naranja); }
+.tit-palabra { display: inline-block; white-space: nowrap; }
+/* Cada letra en su máscara, con hueco abajo para que no se corte nada al subir. */
+.tit-car { display: inline-block; overflow: clip; padding-bottom: .06em; margin-bottom: -.06em; }
+.tit-car > span { display: inline-block; }
+.entrada-linea { margin-top: 20px !important; max-width: 31em; color: var(--texto-2); font-size: 18px; }
+.entrada-accion { margin-top: 26px !important; }
 .accion {
-  display: inline-flex; align-items: center; min-height: 52px; margin-top: 22px; padding: 0 26px;
-  border-radius: 26px; background: var(--naranja); color: var(--sobre-naranja); text-decoration: none;
-  font: 700 18px/1 "Barlow Condensed", sans-serif; letter-spacing: .04em; text-transform: uppercase;
+  position: relative; display: inline-flex; align-items: center; min-height: 56px; padding: 0 30px;
+  border-radius: 28px; background: var(--naranja); color: var(--sobre-naranja); text-decoration: none;
+  font: 700 19px/1 "Barlow Condensed", sans-serif; letter-spacing: .05em; text-transform: uppercase;
+  transition: transform 160ms var(--salida), box-shadow 200ms var(--salida);
+  box-shadow: 0 14px 34px -14px rgb(255 106 0 / .7);
+}
+.accion > span { display: inline-block; }
+.accion:active { transform: scale(.97); }
+.etiqueta {
+  position: relative; z-index: 2; margin: 0; font: 600 14px/1.2 "Barlow Condensed", sans-serif;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--texto-2);
 }
 .entrada-movil { display: none; }
 
+/* ── De 7:00 a 19:00 ────────────────────────────────────────────────────── */
+.transicion-fijo {
+  position: relative; min-height: 70svh; padding: 96px 20px; display: grid; place-items: center; overflow: hidden;
+}
+.frase-display {
+  margin: 0; font: 700 clamp(34px, 8.6vw, 72px)/1 "Barlow Condensed", sans-serif; letter-spacing: -.005em;
+  text-wrap: balance;
+}
+/* Las palabras partidas por SplitText no se cortan por dentro («+15 s» lleva espacio duro). */
+.pal { white-space: nowrap; }
+.frase-transicion { position: relative; z-index: 1; max-width: 12em; text-align: center; }
+
 /* ── 19:00 · Torso A ────────────────────────────────────────────────────── */
-.entreno { padding: 72px 0 40px; }
-.entreno-texto { padding: 0 20px; }
-.entreno h2, .cierre h2 {
-  margin: 0; font: 700 clamp(30px, 8vw, 56px)/1.05 "Barlow Condensed", sans-serif;
+.entreno { padding: 72px 20px 24px; overflow: clip; }
+.lamas-escena { opacity: 1; }
+.entreno-fijo { position: relative; z-index: 1; }
+.entreno-titulo {
+  margin: 0 0 20px; font: 700 clamp(30px, 8vw, 56px)/1.05 "Barlow Condensed", sans-serif;
 }
-.hora-num { font-variant-numeric: tabular-nums; }
-.pasos { margin: 14px 0 22px; padding-left: 1.2em; color: var(--texto-2); }
-.pasos li + li { margin-top: 4px; }
-.pasos li[data-hora] .hora-num { color: var(--oro); font-weight: 600; }
+.frases { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; counter-reset: paso; }
+.frases .frase-display { font-size: clamp(28px, 7vw, 48px); }
 
-.movil { margin: 0 20px; }
-.pantalla { background: var(--a-bg); border: 1px solid #252A31; border-radius: 24px; overflow: hidden; }
-.capa-hoy { padding: 16px; }
-.capa-descanso { padding-top: 16px; }
-
-/* Tableta y escritorio: el móvil con su canto, pantalla de 390 de ancho. */
-@media (min-width: 600px) {
-  .entreno-texto { max-width: 560px; margin: 0 auto; }
-  .movil {
-    width: 414px; margin: 0 auto; padding: 12px; border-radius: 52px; background: #15171B;
-    box-shadow: inset 0 0 0 1px #2A2E35;
-  }
-  .pantalla { border: 0; border-radius: 40px; }
-}
-
-@media (min-width: 1200px) {
-  .entrada { grid-template-columns: minmax(0, 1fr) 414px; padding: 96px 64px 64px; max-width: 1600px; margin: 0 auto; gap: 64px; }
-  .entrada-movil {
-    display: block; width: 414px; height: min(868px, calc(100svh - 140px)); padding: 12px; border-radius: 52px;
-    background: #15171B; box-shadow: inset 0 0 0 1px #2A2E35;
-  }
-  .entrada-pantalla { display: grid; place-items: center; height: 100%; border-radius: 40px; background: #0B0C0E; }
-  .entrada-pantalla img { opacity: .9; }
-  .entreno-fijo { display: grid; grid-template-columns: minmax(0, 1fr) 414px; gap: 64px; max-width: 1600px; margin: 0 auto; padding: 0 64px; align-items: center; }
-  .entreno-texto { padding: 0; margin: 0; }
-  .movil { margin: 0; }
-}
+.record { margin-top: 36px; display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; align-items: center; }
+.record-trofeo { grid-row: 1 / 3; width: 76px; height: 76px; display: grid; place-items: center; color: var(--oro);
+  border-radius: 50%; background: radial-gradient(circle, rgb(232 184 75 / .2), transparent 70%); }
+.record-trofeo .ico { width: 56px; height: 56px; }
+.record-marca { margin: 0; display: flex; flex-direction: column; }
+.record-rotulo { font: 600 15px/1.2 "Barlow Condensed", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--oro); }
+.record-cifra { font: 700 clamp(56px, 15vw, 150px)/.9 "Barlow Condensed", sans-serif; color: var(--oro); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.record-antes { position: relative; margin: 0; width: fit-content; color: var(--texto-2); font-size: clamp(17px, 2.4vw, 24px); }
+.record-antes s { text-decoration-thickness: 2px; text-decoration-color: var(--oro); }
+.record-tachon { display: none; }
 
 /* ── Cierre y pie ───────────────────────────────────────────────────────── */
-.cierre { padding: 96px 20px 48px; text-align: center; }
-.cierre-nota { color: var(--texto-2); font-size: 15px; margin-top: 28px; }
-.pie { padding: 24px 20px 40px; text-align: center; color: var(--texto-2); font-size: 15px; }
+.cierre { padding: 120px 20px 56px; text-align: center; }
+.cierre h2 { margin: 0; font: 700 clamp(48px, 13vw, 120px)/.95 "Barlow Condensed", sans-serif; text-transform: uppercase; }
+.cierre .accion { margin-top: 32px; }
+.cierre-nota { color: var(--texto-2); font-size: 15px; margin-top: 32px; }
+.pie { position: relative; z-index: 2; padding: 24px 20px 40px; text-align: center; color: var(--texto-2); font-size: 15px; }
 
-/* ── Con movimiento y con scripts ───────────────────────────────────────── */
-@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
-  /* La luz pasa a la capa fija; las secciones dejan su fondo quieto. */
-  .luz { display: block; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-  .entrada, .entreno { background: none; }
-  .luz-amanecer { opacity: 1; animation: luz-entra 1200ms var(--salida) both; }
-
-  /* La entrada: cada cifra sube dentro de su máscara; el titular, desde abajo, visible ya
-     en el primer pintado (cuenta como LCP). Todo acaba antes de 900 ms. */
-  .reloj-grande .reloj-cifra > span { animation: cifra-sube 650ms var(--salida) both; animation-delay: calc(var(--i) * 70ms); }
-  .titular { animation: titular-entra 650ms var(--salida) 120ms both; }
-
-  /* La escena fijada: la altura la pone el CSS, no el script. */
-  .entreno { padding: 0; }
-  .entreno-pista { height: 320svh; }
-  .entreno-fijo {
-    position: sticky; top: 0; height: 100svh; padding-top: 64px; padding-bottom: 16px;
-    display: grid; grid-template-rows: auto minmax(0, 1fr);
+/* ── Quieto, escritorio ─────────────────────────────────────────────────── */
+@media (min-width: 1200px) {
+  .dia { grid-template-columns: minmax(0, 1fr) 480px; max-width: 1600px; margin: 0 auto; }
+  .dia > .entrada, .dia > .transicion, .dia > .cierre { grid-column: 1 / -1; }
+  .entrada { grid-template-columns: minmax(0, 1fr) 414px; align-content: center; padding: 104px 64px 64px; gap: 24px 64px; }
+  .entrada-texto { grid-column: 1; grid-row: 1; }
+  .etiqueta { grid-column: 1; grid-row: 2; }
+  .entrada-movil {
+    display: block; grid-column: 2; grid-row: 1 / 3; width: 414px; height: 760px; padding: 12px; border-radius: 52px;
+    background: #15171B; box-shadow: inset 0 0 0 1px #2A2E35; rotate: -2deg;
   }
-  .pasos { list-style: none; padding: 0; margin: 6px 0 12px; position: relative; min-height: 3em; }
-  .pasos li { position: absolute; inset: 0 0 auto; margin: 0 !important; opacity: 0; transition: opacity 250ms var(--salida); }
-  .pasos:not([data-activo]) li:last-child, .pasos li.activo { opacity: 1; }
-  .pantalla { position: relative; height: 100%; }
+  .entrada-pantalla { display: grid; place-items: center; height: 100%; border-radius: 40px; background: var(--carbon); }
+  .entreno { grid-column: 1; grid-row: 3; padding: 96px 64px; }
+  .escenario { grid-column: 2; grid-row: 3; align-self: center; padding-right: 64px; }
+  .reloj-dia { top: 50svh; }
+}
+
+/* ── Viaje: con movimiento y con scripts ────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  /* El escalado del móvil: lo que quepa (tan(atan2()) da el cociente de dos longitudes). */
+  :root { --ps: .5; }
+  @supports (scale: tan(atan2(1px, 1px))) {
+    :root { --ps: min(tan(atan2(100vw - 96px, 414px)), tan(atan2(72svh - 40px, 868px))); }
+    @media (min-width: 1200px) { :root { --ps: min(1, tan(atan2(100svh - 112px, 868px))); } }
+  }
+
+  .luz { position: fixed; height: auto; inset: 0; }
+  .lamas-escena, .reloj-escena { display: none; }
+  .luz-amanecer { animation: luz-barre 1200ms var(--salida) backwards; }
+  .luz-amanecer .lamas { animation: lamas-barre 1200ms var(--salida) backwards; }
+
+  .reloj-dia { position: fixed; }
+  .reloj-dia .odo-tira { animation: rueda 900ms var(--salida) backwards; }
+  .reloj-dia [data-col="0"] .odo-tira { --desde: 3; animation-delay: 0ms; }
+  .reloj-dia [data-col="1"] .odo-tira { --desde: 3; animation-delay: 60ms; }
+  .reloj-dia [data-col="2"] .odo-tira { --desde: 5; animation-delay: 120ms; }
+  .reloj-dia [data-col="3"] .odo-tira { --desde: 8; animation-delay: 180ms; }
+
+  /* El titular: cada letra sube desde el 62 % (no desde el 100 %, para que el titular se pinte
+     ya en el primer fotograma y siga siendo el LCP). */
+  .tit-car > span { animation: car-sube 640ms var(--salida) backwards; animation-delay: calc(80ms + var(--i) * 11ms); }
+  .entrada-linea, .entrada-accion, .etiqueta { animation: aparece 600ms var(--salida) 380ms backwards; }
+
+  /* La rejilla: el escenario se queda fijo de la entrada al final de la sesión. */
+  .dia { grid-template-columns: minmax(0, 1fr); max-width: none; }
+  .escenario {
+    grid-row: 1 / 4; grid-column: 1; position: sticky; top: 0; height: 100svh; align-self: start;
+    padding: 0; overflow: visible;
+  }
+  .entrada-movil { display: none; }
+  .entrada, .transicion, .entreno, .cierre { grid-column: 1; }
+
+  .escenario .movil-pos {
+    position: absolute; left: 50%; top: 50%; width: 414px; height: 868px; margin: -434px 0 0 -207px; padding: 0;
+    display: block;
+    /* La pose de la entrada; lo demás lo suma el movimiento con transform. */
+    translate: 0 calc(24svh + 434px * var(--ps));
+  }
+  .movil-escala { scale: var(--ps); zoom: 1 !important; }
+  .movil-entra { animation: movil-sube 1100ms var(--salida) 120ms backwards; rotate: -2deg; }
+  .pantalla { height: 844px; }
   .capa { position: absolute; inset: 0; }
-  .capa-hoy, .capa-descanso { opacity: 0; visibility: hidden; }
+  .capa-arranque { display: grid; place-items: center; background: var(--carbon); z-index: 3; }
+  .capa-hoy, .capa-descanso { opacity: 0; }
   .capa-hoy { background: var(--a-bg); z-index: 2; }
   .capa-descanso { top: auto; padding: 0; z-index: 1; overflow: hidden; }
   .capa-descanso .fin { position: absolute; inset: auto 0 0; }
@@ -196,23 +309,123 @@ a { color: inherit; }
   .capa-sesion > * { flex: none; }
   .capa-sesion [data-pieza="cabecera"] { position: relative; z-index: 1; background: var(--a-bg); }
 
-  @media (min-width: 600px) {
-    .entreno-pista { height: 420vh; }
-    .movil { height: min(868px, 100%); }
+  /* Las piezas que se escapan: dibujadas a su tamaño grande, en su sitio final; el
+     movimiento las encoge sobre la pieza del móvil y las trae hasta aquí. */
+  .fugas { display: block; position: absolute; inset: 0; pointer-events: none; }
+  .fuga { position: absolute; opacity: 0; transform-origin: 0 0; }
+  .fuga-fila {
+    left: 16px; right: 16px; top: 38svh; padding: 6px 0; border-radius: 20px;
+    background: var(--a-surface); border: 1px solid var(--a-stroke);
+    box-shadow: 0 30px 60px -20px rgb(0 0 0 / .7);
   }
-  @media (min-width: 1200px) {
-    .entreno-fijo { grid-template-rows: none; padding-top: 80px; padding-bottom: 24px; }
-    .pasos { min-height: 3em; font-size: 20px; }
-    .movil { height: min(868px, calc(100svh - 104px)); }
+  .fuga-check { width: 30vw; max-width: 180px; left: auto; right: 6vw; top: calc(38svh + 64px); overflow: visible; }
+  .fuga-check path { fill: none; stroke: var(--a-success, #4ADE80); stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
+  .fuga-aro { left: 50%; top: 50%; width: min(92vw, 64svh); aspect-ratio: 1; margin: calc(min(92vw, 64svh) / -2) 0 0 calc(min(92vw, 64svh) / -2); }
+  .fuga-aro-svg { width: 100%; height: 100%; rotate: -90deg; overflow: visible; }
+  .fuga-aro circle { fill: none; stroke-width: 2.4; }
+  .fuga-aro-pista { stroke: rgb(74 80 91 / .7); }
+  .fuga-aro-lleno { stroke: var(--naranja); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .fuga-cuenta {
+    left: 0; right: 0; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; align-items: center;
+    transform-origin: 50% 50%;
+  }
+  .fuga-cuenta-num { font: 700 min(30vw, 22svh)/.9 "Barlow Condensed", sans-serif; font-variant-numeric: tabular-nums; }
+  .fuga-mas {
+    margin-top: 2svh; min-height: 56px; padding: 0 28px; border-radius: 28px; display: grid; place-items: center;
+    background: #252A31; color: var(--texto); font: 600 22px/1 "Barlow", sans-serif;
+  }
+  .chispas { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  .chispa { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--oro); }
+
+  /* Entrada */
+  .entrada { align-content: start; padding-top: 96px; min-height: 100svh; }
+  .entrada-texto { max-width: 26em; }
+  .etiqueta { align-self: start; }
+
+  /* Transición: 120 svh de scroll con la frase fija. */
+  .transicion-pista { height: 220svh; }
+  .transicion-fijo { position: sticky; top: 0; height: 100svh; min-height: 0; padding: 88px 20px 0; place-items: start center; }
+  .frase-transicion { opacity: 0; }
+
+  /* Torso A: las frases y el récord, fijos mientras el scroll recorre la sesión. */
+  .entreno { padding: 0; overflow: visible; margin-top: -100svh; }
+  .entreno-pista { height: 640svh; }
+  .entreno-fijo { position: sticky; top: 0; height: 100svh; padding: 76px 20px 0; }
+  .entreno-titulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: 0; }
+  .frases { display: block; position: relative; height: 26svh; }
+  .frases .frase-display { position: absolute; inset: 0 0 auto; opacity: 0; font-size: clamp(28px, 7.6vw, 52px); }
+  .frases .frase-display:first-child { opacity: 1; }
+  .record {
+    position: absolute; left: 20px; right: 20px; top: 40svh; margin: 0; opacity: 0;
+    grid-template-columns: 1fr; justify-items: center; text-align: center;
+  }
+  .record-trofeo { grid-row: auto; width: 96px; height: 96px; }
+  .record-trofeo .ico { width: 64px; height: 64px; }
+  .record-marca { align-items: center; }
+  .record-cifra { font-size: min(19vw, 15svh); }
+  .record-antes s { text-decoration: none; }
+  .record-tachon { display: block; position: absolute; left: -4%; top: 50%; width: 108%; height: 18px; translate: 0 -50%; overflow: visible; }
+  .record-tachon path { fill: none; stroke: var(--oro); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+  /* Tableta: la fila escapada crece de verdad (zoom), no solo se estira. */
+  @media (min-width: 600px) and (max-width: 1199px) {
+    .fuga-fila { left: 6vw; right: 6vw; }
+    .fuga-fila .ej-fuga { zoom: 1.75; }
+    .fuga-check { top: calc(38svh + 130px); }
   }
 
-  @keyframes luz-entra { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes cifra-sube { from { transform: translateY(100%); } to { transform: none; } }
-  @keyframes titular-entra {
-    from { clip-path: inset(0 0 35% 0); transform: translateY(10px); }
-    to { clip-path: inset(0 0 -10% 0); transform: none; }
+  /* Escritorio: el móvil a la derecha en la entrada y en el centro en la sesión; las frases a
+     la izquierda; la fila crece a la derecha, encima del móvil. */
+  @media (min-width: 1200px) {
+    .escenario .movil-pos { translate: 25vw 0; }
+    .reloj-dia { top: 50svh; }
+    .entrada { grid-template-columns: minmax(0, 1fr); align-content: center; padding: 96px 64px 64px; max-width: 1600px; }
+    .entrada-texto { max-width: min(46vw, 760px); }
+    .etiqueta { position: absolute; left: 64px; bottom: 40px; }
+    .transicion-fijo { padding: 0 64px; place-items: center start; }
+    .frase-transicion { text-align: left; max-width: min(30vw, 520px); }
+    .entreno-fijo { padding: 0 64px; }
+    .frases { position: absolute; left: 64px; top: 50%; translate: 0 -50%; width: min(30vw, 500px); height: 50svh; }
+    .frases .frase-display { top: 50%; translate: 0 -50%; bottom: auto; font-size: clamp(40px, 3.9vw, 64px); }
+    .record { left: auto; right: 5vw; top: 50%; translate: 0 -50%; width: min(38vw, 620px); }
+    .record-cifra { font-size: min(8.6vw, 150px); }
+    .fuga-fila { left: 44vw; right: 4vw; top: calc(50% - 150px); }
+    .fuga-fila .ej-fuga { zoom: 2.2; }
+    .fuga-check { width: 13vw; max-width: 220px; right: 2.5vw; top: calc(50% + 90px); }
+    .fuga-aro { width: 88svh; margin: -44svh 0 0 -44svh; }
+    .fuga-cuenta-num { font-size: 26svh; }
+    .fuga-mas { font-size: 26px; min-height: 64px; padding: 0 34px; border-radius: 32px; }
   }
+
+  /* Cursor propio (escritorio, solo con su clase): el del sistema vuelve en enlaces, botones y
+     campos, y el anillo se aparta. */
+  html.cursor-propio, html.cursor-propio body { cursor: none; }
+  html.cursor-propio a, html.cursor-propio button, html.cursor-propio input, html.cursor-propio [role="button"] { cursor: pointer; }
+  html.cursor-propio input[type="text"], html.cursor-propio input[type="email"], html.cursor-propio textarea { cursor: text; }
+
+  @keyframes luz-barre { from { opacity: 0; } }
+  @keyframes lamas-barre { from { translate: -40% 0; } }
+  @keyframes rueda { from { transform: translateY(calc((var(--d) + var(--desde, 3)) * -1em)); } }
+  @keyframes car-sube { from { transform: translateY(62%); } }
+  /* Sin opacidad: lo que entra está pintado desde el primer fotograma (cuenta para el LCP). */
+  @keyframes aparece { from { transform: translateY(14px); } }
+  @keyframes movil-sube { from { translate: 0 120px; rotate: -8deg; } }
 }
+
+/* El cursor: un anillo pequeño que, en el descanso, se vuelve el aro. Lo crea escritorio.js. */
+.cursor {
+  position: fixed; left: 0; top: 0; z-index: 30; width: 36px; height: 36px; margin: -18px 0 0 -18px;
+  pointer-events: none; opacity: 0; transition: opacity 200ms var(--salida);
+}
+.cursor.visible { opacity: 1; }
+.cursor svg { width: 100%; height: 100%; rotate: -90deg; overflow: visible; transition: scale 260ms var(--salida); }
+.cursor circle { fill: none; stroke-width: 1.5; }
+.cursor .cursor-pista { stroke: rgb(242 242 243 / .55); transition: stroke 260ms var(--salida); }
+.cursor .cursor-lleno { stroke: var(--naranja); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.cursor.aro svg { scale: 1.6; }
+.cursor.aro .cursor-pista { stroke: rgb(74 80 91 / .9); }
+.cursor.aro .cursor-lleno { stroke-width: 2.5; }
+.cursor.enlace { opacity: 0; }
 
 /* Lenis (solo con ratón): las reglas que pide su documentación. */
 html.lenis, html.lenis body { height: auto; }

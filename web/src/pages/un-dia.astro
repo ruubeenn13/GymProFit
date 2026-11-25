@@ -1,13 +1,17 @@
 ---
 /**
- * «Un día», prueba de concepto de la fase 1 (DEC-069, propuesta; web/PLAN-UN-DIA.md §7).
+ * «Un día», prueba de concepto de la fase 1, segunda vuelta (DEC-069, propuesta;
+ * web/PLAN-UN-DIA.md, «Política de impacto»).
  *
  * Vive en /un-dia, con noindex, mientras no se acepten la prueba y DEC-069: la portada de
- * hoy sigue en public/index.html sin tocar. Dos escenas: la entrada de las 7:00 y la sesión
- * de Torso A de las 19:00 con el récord de las 19:40.
+ * hoy sigue en public/index.html sin tocar. Un solo viaje en tres planos:
+ * · El fondo: la luz de ventana (Luz) y el reloj gigante (Odometro), fijos.
+ * · El escenario: el móvil, que cruza de la entrada al centro, y las piezas que se escapan
+ *   de él (la fila de la serie, el aro del descanso, el check).
+ * · El texto: el titular, las frases de cada paso y el récord.
  *
  * Todo lo que se ve está en el HTML en su estado final: sin JavaScript o con movimiento
- * reducido la página se lee entera, y el movimiento siempre va hacia ese estado. Ninguna
+ * reducido cada escena se lee completa, y el movimiento siempre va hacia ese estado. Ninguna
  * cifra se escribe aquí: salen de src/datos/dia-ejemplo.json (scripts/dia-ejemplo-web.py).
  */
 import '../estilos/tokens-app.css';
@@ -18,15 +22,45 @@ import CabeceraSesion from '../componentes/app/CabeceraSesion.astro';
 import EjercicioEnVivo from '../componentes/app/EjercicioEnVivo.astro';
 import FilaSerie from '../componentes/app/FilaSerie.astro';
 import Descanso from '../componentes/app/Descanso.astro';
+import Icono from '../componentes/app/Icono.astro';
 import Reloj from '../componentes/dia/Reloj.astro';
+import Odometro from '../componentes/dia/Odometro.astro';
+import Luz from '../componentes/dia/Luz.astro';
 
 const s = dia.sesion;
 const [s1, s2, s3] = s.series;
+const marca = s.aviso.replace('¡Récord! ', '');
 const descripcion = `La sesión de ${dia.hoyToca.rutina} en la app. Primero, «${dia.hoyToca.rotulo}»: ` +
   `${dia.hoyToca.rutina}, ${dia.hoyToca.subtitulo}. Después, el ${s.ejercicio.toLowerCase()}, ${s.pauta}, ` +
   `con tres series apuntadas: ${s1.kg} kg × ${s1.reps}, ${s2.kg} kg × ${s2.reps} y ${s3.kg} kg × ${s3.reps}; ` +
-  `entre una y otra, el descanso de ${s.descansoTexto}. La tercera es un récord: ${s.aviso.replace('¡Récord! ', '')}. ` +
+  `entre una y otra, el descanso de ${s.descansoTexto}. La tercera es un récord: ${marca}. ` +
   `${s.avisoAntes}.`;
+
+// El titular, partido en caracteres al construir (no en el navegador): entra en CSS desde el
+// primer pintado y sigue contando como LCP. El lector de pantalla lee la frase entera.
+const TITULAR = [['Tu entreno y tu dieta,', false], ['por fin juntos.', true]];
+let n = 0;
+const lineas = TITULAR.map(([texto, naranja]) => ({
+  naranja,
+  palabras: texto.split(' ').map((p) => [...p].map((c) => ({ c, i: n++ }))),
+}));
+
+// Lo que se trocea en caracteres en el navegador (SplitText) va dos veces: entero para el
+// lector de pantalla y troceado, oculto a él (SplitText sin aria, que no puede poner aria-label
+// en un <p> ni en un <li>).
+const TRANSICION = `Comes y lo apuntas. A las ${dia.horas.entreno}, a entrenar.`;
+
+// Las frases de cada paso de la sesión. Cortas, a tamaño de display, y solo lo que la app
+// hace de verdad. data-en: el punto de la escena (0 a 1) en que pasa a leerse.
+const FRASES = [
+  { en: 0, texto: `Abres la app y ya sabe que hoy toca ${dia.hoyToca.rutina}.` },
+  { en: 0.1, texto: 'Lo de la última vez, en gris. Tú escribes lo de hoy.' },
+  { en: 0.25, texto: 'La marcas y empieza el descanso.' },
+  { en: 0.43, texto: `¿Te falta aire? ${s.botones.mas} y sigue contando.` },
+  { en: 0.61, texto: 'La segunda, igual que la primera.' },
+  { en: 0.705, texto: `${dia.horas.record}. La tercera, con ${s3.kg} kg.`, hora: dia.horas.record },
+  { en: 0.77, texto: 'Récord. Te lo dice al marcarla, no al día siguiente.' },
+];
 ---
 <!doctype html>
 <html lang="es">
@@ -44,10 +78,10 @@ const descripcion = `La sesión de ${dia.hoyToca.rutina} en la app. Primero, «$
 <link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
-<div class="luz" aria-hidden="true">
-  <span class="luz-capa luz-amanecer"></span>
-  <span class="luz-capa luz-tarde"></span>
-  <span class="luz-capa luz-oro"></span>
+<Luz />
+<div class="reloj-dia" aria-hidden="true">
+  <Odometro hora={dia.horas.entrada} clase="cara cara-llena" />
+  <Odometro hora={dia.horas.entrada} clase="cara cara-contorno" />
 </div>
 
 <header class="cabecera">
@@ -55,52 +89,91 @@ const descripcion = `La sesión de ${dia.hoyToca.rutina} en la app. Primero, «$
   <Reloj hora={dia.horas.entrada} clase="reloj-cabecera" />
 </header>
 
-<main>
+<main class="dia">
+  <div class="escenario">
+    <div class="movil-pos"><div class="movil-escala"><div class="movil-entra">
+      <figure class="movil">
+        <div class="pantalla app" aria-hidden="true">
+          <div class="capa capa-arranque"><img class="logo" src="/img/logo.svg" alt="" width="96" height="96"></div>
+          <div class="capa capa-hoy"><HoyToca hoy={dia.hoyToca} /></div>
+          <div class="capa capa-sesion">
+            <CabeceraSesion sesion={s} />
+            <EjercicioEnVivo sesion={s}>
+              {s.series.map((serie) => <FilaSerie serie={serie} />)}
+            </EjercicioEnVivo>
+          </div>
+          <div class="capa capa-descanso"><Descanso sesion={s} /></div>
+        </div>
+        <figcaption class="solo-lector">{descripcion}</figcaption>
+      </figure>
+    </div></div></div>
+
+    <div class="fugas" aria-hidden="true">
+      <div class="fuga fuga-fila app"><div class="ej-fuga"><FilaSerie serie={s1} /></div></div>
+      <svg class="fuga fuga-check" viewBox="0 0 120 100"><path d="M10 54 L42 84 L110 12" /></svg>
+      <div class="fuga fuga-aro">
+        <svg class="fuga-aro-svg" viewBox="0 0 100 100">
+          <circle class="fuga-aro-pista" cx="50" cy="50" r="48" />
+          <circle class="fuga-aro-lleno" cx="50" cy="50" r="48" pathLength="1" />
+        </svg>
+      </div>
+      <div class="fuga fuga-cuenta">
+        <span class="fuga-cuenta-num">{s.descansoTexto}</span>
+        <span class="fuga-mas">{s.botones.mas}</span>
+      </div>
+      <div class="chispas"></div>
+    </div>
+  </div>
+
   <section class="hora entrada" data-hora={dia.horas.entrada} aria-labelledby="titular">
     <div class="entrada-texto">
-      <Reloj hora={dia.horas.entrada} clase="reloj-grande" />
-      <p class="etiqueta">Un día de ejemplo</p>
-      <h1 class="titular" id="titular">Tu entreno y tu dieta, <span>por fin juntos.</span></h1>
+      <h1 class="titular" id="titular">
+        <span class="solo-lector">{TITULAR.map(([t]) => t).join(' ')}</span>
+        <span class="tit-letras" aria-hidden="true">{lineas.map((l) => (
+          <span class:list={['tit-linea', { naranja: l.naranja }]}>{l.palabras.map((p, k) => (
+            <>{k > 0 && ' '}<span class="tit-palabra">{p.map(({ c, i }) => <span class="tit-car" style={`--i: ${i}`}><span>{c}</span></span>)}</span></>
+          ))}</span>
+        ))}</span>
+      </h1>
       <p class="entrada-linea">GymProFit apunta tus series, tus comidas y tu peso, y te dice qué toca hoy. App para Android, en beta.</p>
-      <p><a class="accion" href="/beta">Entra en la beta</a></p>
+      <p class="entrada-accion"><a class="accion" href="/beta"><span>Entra en la beta</span></a></p>
     </div>
+    <p class="etiqueta">Un día de ejemplo · {dia.dia.nombre}</p>
     <div class="entrada-movil" aria-hidden="true"><span class="entrada-pantalla"><img class="logo" src="/img/logo.svg" alt="" width="96" height="96"></span></div>
+  </section>
+
+  <section class="hora transicion" aria-label="De las 7:00 a las 19:00">
+    <div class="transicion-pista">
+      <div class="transicion-fijo">
+        <Odometro hora={dia.horas.entreno} clase="reloj-escena" />
+        <p class="frase-display frase-transicion"><span class="solo-lector">{TRANSICION}</span><span class="letras" aria-hidden="true">{TRANSICION}</span></p>
+      </div>
+    </div>
   </section>
 
   <section class="hora entreno" data-hora={dia.horas.entreno} data-escena="entreno" aria-labelledby="h-entreno"
     data-series={JSON.stringify(s.series.map((x) => ({ tiempo: x.tiempo, volumen: x.volumen })))}>
+    <span class="lamas-escena" aria-hidden="true"></span>
     <div class="entreno-pista">
       <div class="entreno-fijo">
-        <div class="entreno-texto">
-          <h2 id="h-entreno"><span class="hora-num">{dia.horas.entreno}</span> · {dia.hoyToca.rutina}</h2>
-          <ol class="pasos">
-            <li data-paso="0">Abres la app: hoy toca {dia.hoyToca.rutina}.</li>
-            <li data-paso="1">Apuntas la serie. Lo de la vez anterior sale en gris.</li>
-            <li data-paso="2">Al marcarla, empieza el descanso.</li>
-            <li data-paso="3">La segunda, igual.</li>
-            <li data-paso="4" data-hora={dia.horas.record}><span class="hora-num">{dia.horas.record}</span> · Y en la tercera, récord.</li>
-          </ol>
+        <h2 id="h-entreno" class="entreno-titulo"><span class="hora-num">{dia.horas.entreno}</span> · {dia.hoyToca.rutina}</h2>
+        <ol class="frases">
+          {FRASES.map((f, i) => (
+            <li class="frase-display" data-paso={i} data-en={f.en} data-hora={f.hora}><span class="solo-lector">{f.texto}</span><span class="letras" aria-hidden="true">{f.texto}</span></li>
+          ))}
+        </ol>
+        <div class="record">
+          <span class="record-trofeo" aria-hidden="true"><Icono nombre="trofeoLleno" /></span>
+          <p class="record-marca"><span class="record-rotulo">Récord, a las <span class="hora-num">{dia.horas.record}</span></span><span class="record-cifra"><span class="solo-lector">{marca}</span><span class="letras" aria-hidden="true">{marca}</span></span></p>
+          <p class="record-antes"><s>{s.avisoAntes}</s><svg class="record-tachon" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 13 C 90 5, 220 15, 398 7" /></svg></p>
         </div>
-        <figure class="movil">
-          <div class="pantalla app" aria-hidden="true">
-            <div class="capa capa-hoy"><HoyToca hoy={dia.hoyToca} /></div>
-            <div class="capa capa-sesion">
-              <CabeceraSesion sesion={s} />
-              <EjercicioEnVivo sesion={s}>
-                {s.series.map((serie) => <FilaSerie serie={serie} />)}
-              </EjercicioEnVivo>
-            </div>
-            <div class="capa capa-descanso"><Descanso sesion={s} /></div>
-          </div>
-          <figcaption class="solo-lector">{descripcion}</figcaption>
-        </figure>
       </div>
     </div>
   </section>
 
   <section class="hora cierre" aria-labelledby="h-cierre">
     <h2 id="h-cierre">Mañana, otra vez.</h2>
-    <p><a class="accion" href="/beta">Entra en la beta</a></p>
+    <p><a class="accion" href="/beta"><span>Entra en la beta</span></a></p>
     <p class="cierre-nota">Prueba de la fase 1 de «Un día». La portada de hoy sigue en <a href="/">gymprofit.app</a>.</p>
   </section>
 </main>

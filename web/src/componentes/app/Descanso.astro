@@ -17,11 +17,11 @@ const R = (72 - 7) / 2;
 const PERIMETRO = 2 * Math.PI * R;
 ---
 <div class="desc" data-pieza="descanso">
-  <svg class="desc-aro" viewBox="0 0 72 72" aria-hidden="true">
+  <span class="desc-aro-caja" data-pieza="aro-caja"><svg class="desc-aro" viewBox="0 0 72 72" aria-hidden="true">
     <circle class="desc-pista" cx="36" cy="36" r={R} />
     <circle class="desc-lleno" data-pieza="aro" cx="36" cy="36" r={R}
       style={`--perimetro: ${PERIMETRO.toFixed(2)}`} />
-  </svg>
+  </svg></span>
   <div class="desc-textos">
     <span class="label">{sesion.botones.descanso}</span>
     <span class="number desc-cuenta" data-cifra="cuenta" data-segundos={sesion.descansoSegundos}>{sesion.descansoTexto}</span>
@@ -48,7 +48,8 @@ const PERIMETRO = 2 * Math.PI * R;
     padding: 14px 17px 16px; background: var(--a-surface); border: 1px solid var(--a-stroke);
     border-bottom: 0; border-radius: 24px 24px 0 0;
   }
-  .desc-aro { width: 72px; height: 72px; transform: rotate(-90deg); }
+  .desc-aro-caja { display: block; width: 72px; height: 72px; }
+  .desc-aro { display: block; width: 72px; height: 72px; transform: rotate(-90deg); }
   .desc-aro circle { fill: none; stroke-width: 7; }
   .desc-pista { stroke: var(--a-divider); }
   .desc-lleno {

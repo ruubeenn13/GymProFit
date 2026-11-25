@@ -1,0 +1,24 @@
+---
+/**
+ * El reloj gigante de «Un día»: cada cifra es una columna de cuentakilómetros (una tira de
+ * cifras dentro de una máscara de una cifra de alto) que el movimiento hace rodar con
+ * transform. Sin JavaScript, cada tira se queda en la cifra de su hora por el CSS (--d).
+ *
+ * Las tiras: horas (0–2 y el 0 de la vuelta), horas (0–9 y el 0 de la vuelta), minutos (0–5 y el 0 de la
+ * vuelta), minutos (0–9 y el 0). Decorativo: la hora de cada escena se lee en su texto.
+ *
+ * @prop {string} hora   «07:00»
+ * @prop {string} clase  clases del reloj (reloj-dia, reloj-escena…)
+ */
+const { hora, clase } = Astro.props;
+const TIRAS = ['0120', '01234567890', '0123450', '01234567890'];
+const cifras = hora.replace(':', '').split('').map(Number);
+---
+<span class:list={['odo', clase]} aria-hidden="true">
+  {cifras.map((d, i) => (
+    <>
+      {i === 2 && <span class="odo-dos">:</span>}
+      <span class="odo-col" data-col={i}><span class="odo-tira" style={`--d: ${d}`}>{[...TIRAS[i]].map((c) => <span>{c}</span>)}</span></span>
+    </>
+  ))}
+</span>

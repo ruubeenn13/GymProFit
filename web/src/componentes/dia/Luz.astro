@@ -1,0 +1,17 @@
+---
+/**
+ * La luz del día: luz de ventana que entra por las lamas de una persiana y proyecta bandas
+ * sobre el carbón. Una capa por hora (amanecer, tarde, récord), cada una con sus lamas: un
+ * degradado que se repite, pintado una vez. El movimiento solo las gira, las estira, las
+ * desplaza y funde su opacidad (compositor); nunca recalcula un degradado.
+ *
+ * El color y la opacidad de cada hora están en un-dia.css (--luz-<hora>, --luz-<hora>-alfa),
+ * y LuzDelDiaWebTest comprueba el tope de luminancia: las bandas de una capa no se pisan, así
+ * que su punto más claro es el de una banda.
+ */
+---
+<div class="luz" aria-hidden="true">
+  <span class="luz-capa luz-amanecer"><span class="lamas"></span></span>
+  <span class="luz-capa luz-tarde"><span class="lamas"></span></span>
+  <span class="luz-capa luz-oro"><span class="lamas"></span></span>
+</div>

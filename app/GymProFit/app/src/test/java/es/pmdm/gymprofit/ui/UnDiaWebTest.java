@@ -41,8 +41,9 @@ import es.pmdm.gymprofit.model.record.Record;
 //   LogicaRecordVivo.supera y alMarcar, y el récord tiene que caer en la serie 3.
 // · Las cargas de «Hoy toca» son creíbles: cada ejercicio con la suya, y las elevaciones
 //   laterales (mancuernas, aislamiento) muy por debajo de un básico con barra.
-// · El presupuesto de JS, medido en gzip sobre dist: inicial ≤ 6 KB (el objetivo), diferido
-//   ≤ 60 KB en móvil y ≤ 70 KB en escritorio (con Lenis). El panel de medida no cuenta.
+// · El presupuesto de JS, medido en gzip sobre dist (DEC-069): inicial ≤ 6 KB (el objetivo;
+//   el tope es 50), diferido ≤ 80 KB en móvil y ≤ 90 KB en escritorio (con Lenis y el
+//   cursor). El panel de medida no cuenta.
 // · Las licencias de GSAP y de Lenis viajan en sus trozos.
 // · El scroll táctil es el nativo: ScrollTrigger con ignoreMobileResize, sin pin ni
 //   normalizeScroll (la escena se fija con sticky), y ninguna curva que rebote.
@@ -149,8 +150,8 @@ public class UnDiaWebTest {
             else movil += gz;
         }
         assertTrue("JS inicial " + inicial + " B gzip: el objetivo es ≤ 6 KB", inicial <= 6 * KB);
-        assertTrue("JS diferido en móvil " + movil + " B gzip: tope 60 KB", movil <= 60 * KB);
-        assertTrue("JS diferido en escritorio " + (movil + lenis) + " B gzip: tope 70 KB", movil + lenis <= 70 * KB);
+        assertTrue("JS diferido en móvil " + movil + " B gzip: tope 80 KB", movil <= 80 * KB);
+        assertTrue("JS diferido en escritorio " + (movil + lenis) + " B gzip: tope 90 KB", movil + lenis <= 90 * KB);
         assertTrue("no se encuentra el trozo de Lenis", lenis > 0);
     }
 
@@ -169,13 +170,15 @@ public class UnDiaWebTest {
     @Test
     public void elScrollTactilEsElNativoYNadaRebota() throws IOException {
         Path mov = WebDist.web().resolve("src/movimiento");
-        String escena = new String(Files.readAllBytes(mov.resolve("escena-entreno.js")), StandardCharsets.UTF_8);
-        assertTrue("ScrollTrigger sin ignoreMobileResize", escena.contains("ignoreMobileResize: true"));
-        assertFalse("la escena se fija con sticky, no con pin", Pattern.compile("\\bpin\\s*:").matcher(escena).find());
+        // ScrollTrigger se configura una vez, en motor.js, que comparten las escenas.
+        String motor = new String(Files.readAllBytes(mov.resolve("motor.js")), StandardCharsets.UTF_8);
+        assertTrue("ScrollTrigger sin ignoreMobileResize", motor.contains("ignoreMobileResize: true"));
         try (Stream<Path> s = Files.list(mov)) {
             for (Path js : s.collect(Collectors.toList())) {
                 String c = new String(Files.readAllBytes(js), StandardCharsets.UTF_8);
                 assertFalse(js.getFileName() + " secuestra el scroll", c.contains("normalizeScroll"));
+                assertFalse(js.getFileName() + ": las escenas se fijan con sticky, no con pin",
+                        Pattern.compile("\\bpin\\s*:").matcher(c).find());
                 assertFalse(js.getFileName() + " usa una curva que rebota",
                         Pattern.compile("['\"](back|elastic|bounce)[.(\"']").matcher(c).find());
             }
