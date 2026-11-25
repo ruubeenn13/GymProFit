@@ -1,0 +1,116 @@
+---
+/**
+ * «Un día», prueba de concepto de la fase 1 (DEC-069, propuesta; web/PLAN-UN-DIA.md §7).
+ *
+ * Vive en /un-dia, con noindex, mientras no se acepten la prueba y DEC-069: la portada de
+ * hoy sigue en public/index.html sin tocar. Dos escenas: la entrada de las 7:00 y la sesión
+ * de Torso A de las 19:00 con el récord de las 19:40.
+ *
+ * Todo lo que se ve está en el HTML en su estado final: sin JavaScript o con movimiento
+ * reducido la página se lee entera, y el movimiento siempre va hacia ese estado. Ninguna
+ * cifra se escribe aquí: salen de src/datos/dia-ejemplo.json (scripts/dia-ejemplo-web.py).
+ */
+import '../estilos/tokens-app.css';
+import '../estilos/un-dia.css';
+import dia from '../datos/dia-ejemplo.json';
+import HoyToca from '../componentes/app/HoyToca.astro';
+import CabeceraSesion from '../componentes/app/CabeceraSesion.astro';
+import EjercicioEnVivo from '../componentes/app/EjercicioEnVivo.astro';
+import FilaSerie from '../componentes/app/FilaSerie.astro';
+import Descanso from '../componentes/app/Descanso.astro';
+import Reloj from '../componentes/dia/Reloj.astro';
+
+const s = dia.sesion;
+const [s1, s2, s3] = s.series;
+const descripcion = `La sesión de ${dia.hoyToca.rutina} en la app. Primero, «${dia.hoyToca.rotulo}»: ` +
+  `${dia.hoyToca.rutina}, ${dia.hoyToca.subtitulo}. Después, el ${s.ejercicio.toLowerCase()}, ${s.pauta}, ` +
+  `con tres series apuntadas: ${s1.kg} kg × ${s1.reps}, ${s2.kg} kg × ${s2.reps} y ${s3.kg} kg × ${s3.reps}; ` +
+  `entre una y otra, el descanso de ${s.descansoTexto}. La tercera es un récord: ${s.aviso.replace('¡Récord! ', '')}. ` +
+  `${s.avisoAntes}.`;
+---
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un día con GymProFit · prueba</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="GymProFit apunta tus series, tus comidas y tu peso, y te dice qué toca hoy. App para Android, en beta.">
+<meta name="theme-color" content="#0B0C0E">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body>
+<div class="luz" aria-hidden="true">
+  <span class="luz-capa luz-amanecer"></span>
+  <span class="luz-capa luz-tarde"></span>
+  <span class="luz-capa luz-oro"></span>
+</div>
+
+<header class="cabecera">
+  <a class="marca" href="/"><img class="logo" src="/img/logo.svg" alt="" width="28" height="28"><span>GymProFit</span></a>
+  <Reloj hora={dia.horas.entrada} clase="reloj-cabecera" />
+</header>
+
+<main>
+  <section class="hora entrada" data-hora={dia.horas.entrada} aria-labelledby="titular">
+    <div class="entrada-texto">
+      <Reloj hora={dia.horas.entrada} clase="reloj-grande" />
+      <p class="etiqueta">Un día de ejemplo</p>
+      <h1 class="titular" id="titular">Tu entreno y tu dieta, <span>por fin juntos.</span></h1>
+      <p class="entrada-linea">GymProFit apunta tus series, tus comidas y tu peso, y te dice qué toca hoy. App para Android, en beta.</p>
+      <p><a class="accion" href="/beta">Entra en la beta</a></p>
+    </div>
+    <div class="entrada-movil" aria-hidden="true"><span class="entrada-pantalla"><img class="logo" src="/img/logo.svg" alt="" width="96" height="96"></span></div>
+  </section>
+
+  <section class="hora entreno" data-hora={dia.horas.entreno} data-escena="entreno" aria-labelledby="h-entreno"
+    data-series={JSON.stringify(s.series.map((x) => ({ tiempo: x.tiempo, volumen: x.volumen })))}>
+    <div class="entreno-pista">
+      <div class="entreno-fijo">
+        <div class="entreno-texto">
+          <h2 id="h-entreno"><span class="hora-num">{dia.horas.entreno}</span> · {dia.hoyToca.rutina}</h2>
+          <ol class="pasos">
+            <li data-paso="0">Abres la app: hoy toca {dia.hoyToca.rutina}.</li>
+            <li data-paso="1">Apuntas la serie. Lo de la vez anterior sale en gris.</li>
+            <li data-paso="2">Al marcarla, empieza el descanso.</li>
+            <li data-paso="3">La segunda, igual.</li>
+            <li data-paso="4" data-hora={dia.horas.record}><span class="hora-num">{dia.horas.record}</span> · Y en la tercera, récord.</li>
+          </ol>
+        </div>
+        <figure class="movil">
+          <div class="pantalla app" aria-hidden="true">
+            <div class="capa capa-hoy"><HoyToca hoy={dia.hoyToca} /></div>
+            <div class="capa capa-sesion">
+              <CabeceraSesion sesion={s} />
+              <EjercicioEnVivo sesion={s}>
+                {s.series.map((serie) => <FilaSerie serie={serie} />)}
+              </EjercicioEnVivo>
+            </div>
+            <div class="capa capa-descanso"><Descanso sesion={s} /></div>
+          </div>
+          <figcaption class="solo-lector">{descripcion}</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="hora cierre" aria-labelledby="h-cierre">
+    <h2 id="h-cierre">Mañana, otra vez.</h2>
+    <p><a class="accion" href="/beta">Entra en la beta</a></p>
+    <p class="cierre-nota">Prueba de la fase 1 de «Un día». La portada de hoy sigue en <a href="/">gymprofit.app</a>.</p>
+  </section>
+</main>
+
+<footer class="pie">
+  <a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a> · <a href="/eliminar-cuenta">Eliminar la cuenta</a>
+</footer>
+
+<script>
+  import '../movimiento/inicio.js';
+</script>
+</body>
+</html>

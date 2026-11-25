@@ -1,10 +1,11 @@
-"""Sirve web/ en local como lo sirve Cloudflare Pages, para probar antes de subir el zip.
+"""Sirve web/dist en local como lo sirve Cloudflare Pages, para probar antes de subir el zip.
 
-Uso, desde la raíz del repositorio:
+Uso, desde la raíz del repositorio, tras «npm run build» en web/:
 
     python scripts/servir-web.py            # http://127.0.0.1:8205
     python scripts/servir-web.py 9000       # otro puerto
     python scripts/servir-web.py 8205 --red # también desde el móvil, en la misma wifi
+    python scripts/servir-web.py 8206 --raiz ../otro-clon/web  # otra carpeta (la web de main)
 
 Lo que imita de Pages (GP-205), porque es lo que se mide con Lighthouse y lo que
 comprueban las grabaciones:
@@ -12,12 +13,14 @@ comprueban las grabaciones:
 - Rutas limpias: /beta sirve beta.html y /beta/entrar, beta/entrar.html.
 - Una ruta que no existe responde 404 con 404.html, si existe.
 - Las cabeceras de web/_headers, regla a regla (con * como comodín).
-- Compresión gzip de HTML, CSS, JS, SVG y JSON cuando el navegador la acepta.
-- No sirve lo que no va en el zip: README.md, DISENO.md, PRODUCT.md y .impeccable/.
+- Compresión brotli (o gzip, si el navegador no acepta br) de HTML, CSS, JS, SVG y JSON,
+  como Pages. brotli es el módulo que ya usan las fuentes (fonttools[woff]).
+- No sirve lo que no va en el zip: README.md, DISENO.md, PRODUCT.md, PLAN-UN-DIA.md y .impeccable/.
 - Responde a HEAD con las mismas cabeceras que GET, para mirarlas con curl -I.
 """
 
 import gzip
+import brotli
 import mimetypes
 import re
 import sys
@@ -25,8 +28,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-WEB = Path(__file__).resolve().parent.parent / "web"
-FUERA_DEL_ZIP = {"README.md", "DISENO.md", "PRODUCT.md"}
+WEB = Path(__file__).resolve().parent.parent / "web" / "dist"
+FUERA_DEL_ZIP = {"README.md", "DISENO.md", "PRODUCT.md", "PLAN-UN-DIA.md"}
 COMPRIMIBLE = ("text/", "application/javascript", "application/json", "image/svg+xml")
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("image/webp", ".webp")
@@ -83,9 +86,15 @@ class Pages(BaseHTTPRequestHandler):
         for patron, valores in self.reglas:
             if patron.match(ruta):
                 cabeceras += valores
-        if tipo.startswith(COMPRIMIBLE) and "gzip" in self.headers.get("Accept-Encoding", ""):
+        acepta = self.headers.get("Accept-Encoding", "")
+        if tipo.startswith(COMPRIMIBLE) and "br" in acepta:
+            cuerpo = brotli.compress(cuerpo, quality=11)
+            cabeceras.append(("Content-Encoding", "br"))
+        elif tipo.startswith(COMPRIMIBLE) and "gzip" in acepta:
             cuerpo = gzip.compress(cuerpo, 9)
             cabeceras.append(("Content-Encoding", "gzip"))
+        if tipo.startswith(COMPRIMIBLE):
+            cabeceras.append(("Vary", "Accept-Encoding"))
         self.send_response(estado)
         for nombre, valor in cabeceras:
             self.send_header(nombre, valor)
@@ -99,13 +108,22 @@ class Pages(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    argumentos = [a for a in sys.argv[1:] if a != "--red"]
+    global WEB
+    argumentos = sys.argv[1:]
+    if "--raiz" in argumentos:
+        i = argumentos.index("--raiz")
+        WEB = Path(argumentos[i + 1]).resolve()
+        del argumentos[i:i + 2]
+    argumentos = [a for a in argumentos if a != "--red"]
     puerto = int(argumentos[0]) if argumentos else 8205
+    if not (WEB / "index.html").is_file():
+        sys.exit(f"No hay {WEB / 'index.html'}: ejecuta «npm ci && npm run build» en web/.")
+    Pages.reglas = leer_cabeceras()
     # Con --red escucha en todas las interfaces, para probar en un móvil de verdad.
     # Sin él, solo en este equipo: nadie más de la red ve la web a medio hacer.
     red = "--red" in sys.argv
     host = "0.0.0.0" if red else "127.0.0.1"
-    print(f"Sirviendo web/ en http://{'<IP de este equipo>' if red else '127.0.0.1'}:{puerto}")
+    print(f"Sirviendo {WEB} en http://{'<IP de este equipo>' if red else '127.0.0.1'}:{puerto}")
     ThreadingHTTPServer((host, puerto), Pages).serve_forever()
 
 

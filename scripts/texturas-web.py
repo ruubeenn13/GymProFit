@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
-DESTINO = Path(__file__).resolve().parent.parent / "web" / "img"
+DESTINO = Path(__file__).resolve().parent.parent / "web" / "public" / "img"
 SEMILLA = 205
 
 

@@ -1,0 +1,46 @@
+---
+/**
+ * Cabecera de la sesión en vivo (componente 6): activity_sesion_en_vivo.xml (Cabecera.Sesion).
+ * Tiempo en Number 56, volumen en Number 26 con «kg», «n de m» series y la barra de progreso.
+ * Pinta el estado final (las tres series del ejercicio hechas); el movimiento la lleva desde
+ * el principio hasta aquí.
+ *
+ * @prop {object} sesion  dia-ejemplo.json → sesion
+ */
+const { sesion } = Astro.props;
+const ultima = sesion.series[sesion.series.length - 1];
+const hechas = sesion.series.length;
+---
+<div class="cab" data-pieza="cabecera">
+  <div class="cab-tiempo">
+    <span class="label">Tiempo</span>
+    <span class="number cab-reloj" data-cifra="tiempo">{ultima.tiempo}</span>
+  </div>
+  <div class="cab-lado">
+    <p class="cab-fila"><span class="cab-rotulo">Volumen</span><span class="number cab-vol" data-cifra="volumen">{ultima.volumen}</span><span class="cab-ud">kg</span></p>
+    <p class="cab-fila"><span class="cab-rotulo">Series</span><span class="number cab-series" data-cifra="series">{hechas}</span><span class="cab-ud cab-de">de {sesion.totalSeries}</span></p>
+  </div>
+  <span class="cab-barra"><span class="cab-barra-hecho" style={`--hecho: ${hechas / sesion.totalSeries}`}></span></span>
+</div>
+
+<style>
+  .cab { display: grid; grid-template-columns: 1fr auto; align-items: end; padding: 16px 16px 12px; }
+  .cab-tiempo { display: flex; flex-direction: column; gap: 2px; }
+  .cab-reloj { font-size: 56px; }
+  .cab-lado { margin-left: 12px; padding-bottom: 4px; }
+  .cab-fila { margin: 0; display: flex; align-items: baseline; justify-content: flex-end; }
+  .cab-fila + .cab-fila { margin-top: 6px; }
+  .cab-rotulo { font-size: 13px; color: var(--a-secundario); margin-right: 6px; }
+  .cab-vol { font-size: 26px; }
+  .cab-series { font-size: 20px; }
+  .cab-ud { font-size: 14px; margin-left: 4px; }
+  .cab-de { color: var(--a-secundario); }
+  .cab-barra {
+    grid-column: 1 / -1; margin-top: 10px; height: 4px; border-radius: 2px; background: var(--a-surface-2);
+    overflow: hidden;
+  }
+  .cab-barra-hecho {
+    display: block; height: 100%; background: var(--a-primary); border-radius: 2px;
+    transform-origin: left; transform: scaleX(var(--hecho));
+  }
+</style>

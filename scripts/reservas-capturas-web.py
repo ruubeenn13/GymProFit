@@ -19,7 +19,7 @@ from pathlib import Path
 
 from PIL import Image, ImageFilter, ImageStat
 
-WEB = Path(__file__).resolve().parent.parent / "web"
+WEB = Path(__file__).resolve().parent.parent / "web" / "public"
 HOJA = WEB / "portada.css"
 CAPTURAS = ("inicio", "entreno", "nutricion", "progreso")
 INICIO = "/* ▼ RESERVAS DE LAS CAPTURAS (scripts/reservas-capturas-web.py): no se editan a mano */"

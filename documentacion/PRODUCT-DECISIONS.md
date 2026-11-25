@@ -1280,6 +1280,25 @@ Lo que sí sigue **pendiente de confirmar como decisión**: el proveedor (Brevo 
 
 Hay datos de calorías estimadas ya almacenados en producción. Al retirar la métrica hay que decidir si la columna se conserva sin mostrarse durante una versión o se elimina de inmediato. Propuesta: conservarla primero, eliminarla en una migración posterior, para no perder información de forma irreversible antes de confirmar que nada depende de ella.
 
+### DEC-069 · La web se construye con Astro en estático y la portada enseña la app rehecha en HTML con un día de ejemplo
+**Estado:** Propuesta (no aceptada) · **Fecha:** 2026-11-25 · **Plan:** `web/PLAN-UN-DIA.md` · **Sustituiría a:** la parte de DEC-053 sobre cómo se sirven y versionan los scripts y su presupuesto, y lo que `web/DISENO.md` dice de no animar cifras
+
+**Contexto.** La portada de GP-205 enseña capturas de la app dentro de un mockup, y en móvil, de donde llega casi todo el tráfico (TikTok e Instagram, en su navegador integrado), no tiene escena con movimiento: el móvil fijo solo existe en escritorio. La dirección «Un día» cuenta un día de quien usa la app, de las 7:00 a las 23:00, y necesita animar cada serie, cada barra y cada cifra de la interfaz, nítida a 360 px. Con capturas no se puede; con HTML escrito a mano, la misma interfaz se repetiría en muchas escenas y en varias páginas.
+
+**Decisión propuesta.**
+
+- **La web se construye con Astro, con salida estática** (`build.format: 'file'`, `trailingSlash: 'never'`), y se despliega como hoy: el contenido de `web/dist/` en un zip, subido a mano a Cloudflare Pages. Las URL no cambian; un test lo comprueba sobre la salida. La telemetría de Astro va apagada.
+- **La interfaz de la app se rehace en HTML y CSS** con los tokens de `app/GymProFit/DESIGN.md`, cruzados con `colors.xml` y `dimens.xml` por un test. Es una imagen hecha de HTML: no es interactiva, va oculta al lector de pantalla y lleva su descripción en texto.
+- **Las cifras de la portada son las de la cuenta demo**, sacadas del entorno local a un solo fichero de datos, y la página dice una vez que es «un día de ejemplo». Ninguna cifra cuenta número a número. Ninguna caloría de entrenamiento, en ninguna forma (DEC-004).
+- **Los scripts llegan por npm con lockfile** (`astro`, `gsap`, `lenis`) y Vite los sirve desde nuestro dominio con el hash en el nombre, en `/_astro/`, con `immutable`; se dejan de copiar a mano a `js/vendor/` y de versionar con `?v=`. Su licencia viaja en el trozo que la sirve.
+- **Presupuesto**: JS inicial ≤ 50 KB comprimido (objetivo ≤ 6 KB); el que se pide después con `import()`, ≤ 60 KB en móvil. Lighthouse móvil ≥ 90 en rendimiento y 100 en accesibilidad, LCP ≤ 2,5 s en 4G, CLS < 0,05, INP < 200 ms, ≥ 50 fps en las escenas en un Xiaomi 17T y ninguna tarea de más de 100 ms al desplazar.
+- **Sigue igual de DEC-053**: JavaScript solo como mejora progresiva (sin JS todo se ve y funciona), servido desde el dominio, cero peticiones a terceros al cargar, y con movimiento reducido no se descarga GSAP ni Lenis. **Sigue igual de DEC-050**: el formulario de `/beta` va por POST a Brevo sin JavaScript.
+- **El scroll en táctil es el nativo**: Lenis solo con ratón, nada secuestra el desplazamiento ni lo mete en un contenedor interno.
+
+**Consecuencias.** Entra Node en el CI y en la máquina de desarrollo, y un job `web` que construye la salida y pasa los tests de la web contra ella (hoy esos tests no corren si solo cambia `web/`). `versionar-hojas-web.py`, las capturas de la portada y sus reservas se retiran. Las páginas legales y de la beta pasan al mismo build sin cambiar de URL ni de comportamiento.
+
+**Qué la invalidaría.** Que la prueba de concepto de la fase 1 no llegue a 50 fps o a 90 de rendimiento en el móvil sin quitar el movimiento que justifica el cambio (entonces se queda la portada actual, o una versión sin escenas). Que Astro deje de poder producir HTML estático por fichero, o que mantener el build cueste más que el HTML a mano que sustituye.
+
 ---
 
 *Formato ADR. Añadir una entrada cuesta cinco minutos; reconstruir dentro de un año por qué se decidió algo cuesta mucho más.*

@@ -16,7 +16,7 @@ import re
 import sys
 from pathlib import Path
 
-WEB = Path(__file__).resolve().parent.parent / "web"
+WEB = Path(__file__).resolve().parent.parent / "web" / "public"
 # Una ruta propia a una hoja o a un script, entre comillas o separada por espacios
 # (data-libs lleva varias), con o sin la versión de antes.
 RECURSO = re.compile(r'(?<=["\s])(/[A-Za-z0-9/_.-]+\.(?:css|js))(?:\?v=[0-9a-f]+)?(?=["\s])')

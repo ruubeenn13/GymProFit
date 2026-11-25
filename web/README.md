@@ -1,10 +1,28 @@
 # web — sitio público de GymProFit
 
 Sitio estático de `gymprofit.app`: portada, política de privacidad, términos de uso,
-la página de eliminación de cuenta, la de la beta (`/beta`, `/beta/revisa`, `/beta/dentro` y `/beta/entrar`) y la 404. HTML y CSS a mano, sin build. La portada lleva
+la página de eliminación de cuenta, la de la beta (`/beta`, `/beta/revisa`, `/beta/dentro` y `/beta/entrar`) y la 404. La portada lleva
 JavaScript propio como mejora progresiva (DEC-053, ver «El movimiento de la portada»);
-el resto de páginas, ninguno. Lo que hay en esta carpeta es lo que se sirve, salvo
-lo que se queda fuera del zip (abajo).
+el resto de páginas, ninguno.
+
+**En la rama de «Un día» (fase 1, DEC-069 propuesta) la web se construye con Astro**:
+lo que se sirve es `web/dist/`, no `web/`. Las páginas de siempre viven tal cual en
+`public/` y Astro las copia a `dist` sin tocarlas; la prueba de «Un día» sale de `src/`
+y vive en `/un-dia` (`noindex`) hasta que se acepten la prueba y la decisión.
+
+```
+npm ci && npm run build      # en web/: escribe dist/ (Node ≥ 22.12; la telemetría de Astro va apagada)
+python scripts/servir-web.py # desde la raíz: sirve dist como Pages, con brotli; --red para el móvil
+```
+
+`package.json` · `package-lock.json` · `astro.config.mjs` · `herramientas/astro.mjs` (el
+lanzador que apaga la telemetría) · `src/pages/un-dia.astro` · `src/componentes/app/`
+(la interfaz de la app rehecha) · `src/componentes/dia/` · `src/estilos/` ·
+`src/movimiento/` (`inicio.js`, la escena, `depurar.js` del panel `?debug=motion`) ·
+`src/datos/dia-ejemplo.json` (lo escribe `scripts/dia-ejemplo-web.py` desde la demo
+local). Los tests de la web leen `dist`: hay que construirla antes de `gradlew test`.
+
+Lo que hay en `public/`:
 
 ```
 index.html · portada.css   la portada de producto (GP-203)
@@ -15,6 +33,7 @@ beta/entrar.html   los pasos para entrar, enlace de los correos de «beta abiert
 js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licencia (DEC-053)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
+PLAN-UN-DIA.md   el plan del rediseño «Un día» (DEC-069, propuesta): no va en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057), logo-correo.png
           (la G sola y transparente de los correos, GP-266) + las texturas
@@ -30,12 +49,14 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 ## Cómo se despliega a mano
 
 1. Si ha cambiado alguna hoja, poner su versión nueva en las páginas, desde la
-   raíz del repositorio: `python scripts/versionar-hojas-web.py`. Con
-   `--comprobar` solo dice si falta; el test `HojasVersionadasWebTest` también
-   falla si una hoja cambia y su versión no.
-2. Comprimir el **contenido** de `web/`, no la carpeta, **sin** `README.md`,
-   `DISENO.md`, `PRODUCT.md` ni `.impeccable/`: son documentación del diseño, no
-   páginas. `_headers` y `404.html` van dentro.
+   raíz del repositorio: `python scripts/versionar-hojas-web.py` (versiona
+   `public/`). Con `--comprobar` solo dice si falta; el test
+   `HojasVersionadasWebTest` también falla si una hoja cambia y su versión no.
+2. En `main` (sin Astro): comprimir el **contenido** de `web/`, no la carpeta,
+   **sin** `README.md`, `DISENO.md`, `PRODUCT.md`, `PLAN-UN-DIA.md` ni `.impeccable/`:
+   son documentación del diseño, no páginas. `_headers` y `404.html` van dentro.
+   Con Astro: `npm ci && npm run build` y comprimir el **contenido de `web/dist/`**,
+   donde la documentación ya no está.
 3. Proyecto `gymprofit` en Cloudflare Pages → pestaña **Implementaciones** → subir
    el zip.
 

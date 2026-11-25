@@ -278,7 +278,11 @@ dependencies {
 // pasaba en verde (GP-230). Con todo eso declarado como entrada, se repiten.
 tasks.withType(Test).configureEach {
     def relativa = { it.withPathSensitivity(PathSensitivity.RELATIVE) }
-    relativa(inputs.dir(rootProject.file('../../web')).withPropertyName('web'))
+    // La web se construye con Astro (DEC-069, propuesta): los tests leen web/dist. node_modules
+    // y la caché de Astro no son entradas: hashearlas costaría más que los propios tests.
+    relativa(inputs.files(fileTree(rootProject.file('../../web')) {
+        exclude 'node_modules/**', '.astro/**'
+    }).withPropertyName('web'))
     relativa(inputs.dir(file('src/main/res')).withPropertyName('recursos'))
     relativa(inputs.dir(file('src/main/java')).withPropertyName('codigo'))
     relativa(inputs.file(rootProject.file('DESIGN.md')).withPropertyName('design'))

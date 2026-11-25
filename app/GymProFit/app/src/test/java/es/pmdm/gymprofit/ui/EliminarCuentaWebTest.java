@@ -49,7 +49,7 @@ public class EliminarCuentaWebTest {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull("no se encuentra la carpeta web", raiz);
-        String html = new String(Files.readAllBytes(raiz.resolve("web").resolve("eliminar-cuenta.html")),
+        String html = new String(Files.readAllBytes(WebDist.dist().resolve("eliminar-cuenta.html")),
                 StandardCharsets.UTF_8);
         return html.replaceAll("<[^>]+>", "").replace("&amp;", "&").replaceAll("\\s+", " ");
     }

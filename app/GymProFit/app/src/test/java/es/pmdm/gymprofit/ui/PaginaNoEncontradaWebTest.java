@@ -66,8 +66,8 @@ public class PaginaNoEncontradaWebTest {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull("no se encuentra la carpeta web", raiz);
-        Path fichero = raiz.resolve("web").resolve("404.html");
-        assertTrue("falta web/404.html: Pages respondería 200 con la portada", Files.exists(fichero));
+        Path fichero = WebDist.dist().resolve("404.html");
+        assertTrue("falta web/dist/404.html: Pages respondería 200 con la portada", Files.exists(fichero));
         return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);
     }
 }

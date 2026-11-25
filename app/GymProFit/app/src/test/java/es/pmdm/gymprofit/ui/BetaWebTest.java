@@ -217,7 +217,7 @@ public class BetaWebTest {
 
     @Test
     public void elEnlaceDePlaySoloEstaEnEntrarYElDelGrupoEnDentroYEntrar() throws IOException {
-        Path web = raiz().resolve("web");
+        Path web = WebDist.dist();
         List<Path> ficheros;
         try (Stream<Path> todos = Files.walk(web)) {
             ficheros = todos.filter(Files::isRegularFile)
@@ -240,7 +240,7 @@ public class BetaWebTest {
     @Test
     public void entrarYaNoEsUnaRedireccion() {
         // DEC-052 sustituye a DEC-051: /beta/entrar es una página y ninguna regla le gana
-        assertFalse("vuelve web/_redirects", Files.exists(raiz().resolve("web").resolve("_redirects")));
+        assertFalse("vuelve web/_redirects", Files.exists(WebDist.dist().resolve("_redirects")));
     }
 
     @Test
@@ -346,7 +346,7 @@ public class BetaWebTest {
     }
 
     private static String pagina(String nombre) throws IOException {
-        Path fichero = raiz().resolve("web").resolve(nombre);
+        Path fichero = WebDist.dist().resolve(nombre);
         assertTrue("no existe web/" + nombre, Files.exists(fichero));
         return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);
     }

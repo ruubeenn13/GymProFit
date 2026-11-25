@@ -1,0 +1,64 @@
+---
+/**
+ * Ejercicio de la sesión en vivo (componente 7): item_envivo_ejercicio.xml. Nombre en Display
+ * 20, pauta, el descanso en otra línea, «Tu récord» en oro, «La última vez», el aviso de
+ * récord (gold-container con el trofeo lleno) y los rótulos de columna. Las filas de serie
+ * van dentro, en el slot.
+ *
+ * Estado final: el récord de hoy ya batido. El texto de antes («Tu récord: 80 kg × 10») va
+ * en data-antes para que el movimiento lo enseñe primero.
+ *
+ * @prop {object} sesion  dia-ejemplo.json → sesion
+ */
+import Icono from './Icono.astro';
+const { sesion } = Astro.props;
+---
+<div class="ej" data-pieza="ejercicio">
+  <p class="ej-nombre display">{sesion.ejercicio}</p>
+  <p class="ej-pauta">{sesion.pauta}</p>
+  <p class="ej-notas">{sesion.descanso}</p>
+  <p class="ej-record" data-pieza="tu-record"><Icono nombre="trofeo" /><span data-antes={sesion.recordAntes}>{sesion.recordDespues}</span></p>
+  <p class="ej-ultima">{sesion.ultimaVez}</p>
+  <div class="ej-aviso" data-pieza="aviso-record">
+    <span class="ej-trofeo" data-pieza="trofeo"><Icono nombre="trofeoLleno" /></span>
+    <span class="ej-aviso-texto">
+      <span class="number ej-aviso-titulo">{sesion.aviso}</span>
+      <span class="ej-aviso-antes">{sesion.avisoAntes}</span>
+    </span>
+  </div>
+  <div class="ej-columnas label">
+    <span class="c-serie">Serie</span><span class="c-anterior">Anterior</span><span>kg</span><span>Reps</span><span class="c-hueco"></span>
+  </div>
+  <slot />
+</div>
+
+<style>
+  .ej {
+    margin: 16px 16px 0; padding-top: 12px; background: var(--a-surface);
+    border: 1px solid var(--a-stroke); border-radius: 20px; overflow: hidden;
+  }
+  .ej > p { margin: 0; padding: 0 16px; }
+  .ej .ej-nombre { font-size: 20px; }
+  .ej-pauta { font-size: 16px; margin-top: 4px !important; }
+  .ej-notas, .ej-ultima { font-size: 14px; color: var(--a-secundario); margin-top: 2px !important; }
+  .ej-record {
+    display: flex; align-items: center; gap: 5px; font-size: 14px; color: var(--a-gold); margin-top: 6px !important;
+  }
+  .ej-record :global(.ico) { width: 16px; height: 16px; }
+  .ej-aviso {
+    margin: 10px 12px 0; padding: 12px 14px; display: flex; align-items: center; gap: 12px;
+    background: var(--a-gold-container); border: 1px solid var(--a-gold); border-radius: 14px;
+  }
+  .ej-trofeo { width: 34px; height: 34px; display: grid; place-items: center; color: var(--a-gold); }
+  .ej-trofeo :global(.ico) { width: 24px; height: 24px; }
+  .ej-aviso-texto { display: flex; flex-direction: column; gap: 2px; }
+  .ej-aviso-titulo { font-size: 20px; color: var(--a-gold); }
+  .ej-aviso-antes { font-size: 14px; color: var(--a-secundario); }
+  .ej-columnas {
+    display: flex; align-items: center; margin-top: 10px; padding: 8px 12px; font-size: 13px;
+  }
+  .ej-columnas > span { flex: 1; text-align: center; }
+  .ej-columnas .c-serie { flex: 0 0 48px; }
+  .ej-columnas .c-anterior { flex: 1.3; text-align: left; padding: 0 4px 0 8px; }
+  .ej-columnas .c-hueco { flex: 0 0 48px; }
+</style>

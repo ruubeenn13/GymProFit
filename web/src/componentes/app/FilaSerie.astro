@@ -1,0 +1,48 @@
+---
+/**
+ * Fila de una serie (componente 8): item_envivo_serie.xml. Número, «Anterior», los campos de
+ * kg y reps (bg_envivo_campo: #252A31, borde 1 px #676F7E, radio 10) con la pista gris de la
+ * vez anterior, y el botón de marcar (MarcaSerie). Estado final: hecha (#143323 con aro y
+ * check #4ADE80); la del récord, con el fondo gold-fila.
+ *
+ * @prop {object} serie  dia-ejemplo.json → sesion.series[n]
+ */
+import Icono from './Icono.astro';
+const { serie } = Astro.props;
+---
+<div class:list={['serie', { 'serie-record': serie.record }]} data-pieza="serie" data-n={serie.numero}>
+  <span class="number s-num">{serie.numero}</span>
+  <span class="s-anterior">{serie.anterior}</span>
+  <span class="s-campo"><span class="s-pista" aria-hidden="true">{serie.pistaKg}</span><span class="s-valor">{serie.kg}</span></span>
+  <span class="s-campo"><span class="s-pista" aria-hidden="true">{serie.pistaReps}</span><span class="s-valor">{serie.reps}</span></span>
+  <span class="s-marca"><Icono nombre="check" /></span>
+</div>
+
+<style>
+  .serie {
+    display: flex; align-items: center; gap: 6px; min-height: 56px; padding: 4px 4px 4px 0;
+    transition: background-color 900ms var(--a-estandar);
+  }
+  .serie:last-child { padding-bottom: 12px; }
+  .serie-record { background: var(--a-gold-fila); }
+  .s-num { flex: 0 0 48px; text-align: center; font-size: 16px; }
+  .s-anterior { flex: 1.3; font-size: 16px; color: var(--a-secundario); padding-left: 2px; white-space: nowrap; }
+  .s-campo {
+    flex: 1; position: relative; min-height: 48px; display: grid; place-items: center; font-size: 16px;
+    background: var(--a-surface-2); border: 1px solid var(--a-stroke); border-radius: 10px;
+  }
+  .s-campo > span { grid-area: 1 / 1; }
+  /* Hecha: el número escrito tapa la pista. El movimiento enseña primero la pista. */
+  .s-pista { color: var(--a-secundario); visibility: hidden; }
+  .s-marca {
+    flex: 0 0 48px; height: 48px; display: grid; place-items: center;
+  }
+  .s-marca :global(.ico) {
+    width: 24px; height: 24px; padding: 0; box-sizing: content-box; border-radius: 50%;
+    border: 2px solid var(--a-success); background: var(--a-success-container); color: var(--a-success);
+    padding: 1px;
+  }
+  /* MarcaSerie: pendiente (aro gris) y la que toca (aro naranja); sin clase, hecha. */
+  .s-marca.pendiente :global(.ico) { border-color: var(--a-stroke); background: transparent; color: var(--a-secundario); }
+  .s-marca.toca :global(.ico) { border-color: var(--a-primary); background: transparent; color: var(--a-primary); }
+</style>
