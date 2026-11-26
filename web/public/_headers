@@ -34,9 +34,6 @@
   Cache-Control: no-cache
   X-Robots-Tag: noindex
 
-/estilo.css
-  Cache-Control: public, max-age=31536000, immutable
-
 /beta.css
   Cache-Control: public, max-age=31536000, immutable
 

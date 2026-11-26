@@ -1,0 +1,26 @@
+---
+/**
+ * El pie de las páginas legales: Inicio, las otras dos páginas legales y Soporte, en ese
+ * orden, y la marca. Los textos y los destinos son los de las páginas de antes
+ * (TextoIgualWebTest).
+ *
+ * @prop {'privacidad'|'terminos'|'eliminar-cuenta'} actual  la página en la que está
+ */
+const { actual } = Astro.props;
+const LEGALES = [
+  ['privacidad', 'Política de privacidad'],
+  ['terminos', 'Términos de uso'],
+  ['eliminar-cuenta', 'Eliminar cuenta'],
+];
+---
+<footer class="pie-sitio">
+  <nav>
+    <a href="/">Inicio</a>
+    {LEGALES.filter(([ruta]) => ruta !== actual).map(([ruta, texto]) => <a href={`/${ruta}`}>{texto}</a>)}
+    <a href="mailto:soporte@gymprofit.app">Soporte</a>
+  </nav>
+  <p class="meta pie-marca">
+    <img class="logo" src="/img/logo.svg" alt="" width="20" height="20">
+    GymProFit · gymprofit.app
+  </p>
+</footer>

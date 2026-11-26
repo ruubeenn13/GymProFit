@@ -1,0 +1,121 @@
+/* ============================================================
+   mundo.css — lo común a las páginas secundarias de «Un día» (fase 4, PLAN-UN-DIA.md §7):
+   privacidad, términos, eliminar cuenta, la beta y sus tres páginas, y la 404.
+
+   Sin escenas ni GSAP. Del mundo de la portada se quedan tres cosas:
+   · La tipografía: Barlow Condensed 700 para titulares y cifras, Barlow para leer.
+   · El reloj de cabecera como marca. Cada página marca su hora (las legales, las 7:00; la
+     beta, las 19:00; la 404, una que no existe) y es el elemento compartido de las View
+     Transitions entre documentos: al cambiar de página se queda en su sitio y rueda a la
+     hora nueva. Solo CSS, sin JavaScript ni ClientRouter, y nada con movimiento reducido.
+   · La luz quieta: las lamas de una persiana proyectadas arriba, una capa, pintada una vez.
+     Su color y su opacidad los pone la hoja de cada página (--luz, --luz-alfa) por tema, con
+     el contraste AA de todos los textos medido sobre su punto más claro.
+
+   Cada página define en su hoja: --fondo, --texto, --texto-2, --enlace, --acento, --luz y
+   --luz-alfa (y su versión clara, si la tiene).
+   ============================================================ */
+
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Barlow Condensed"; src: url("/fuentes/barlow-condensed-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/fuentes/barlow-600.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+
+:root {
+  --sans: "Barlow", system-ui, sans-serif;
+  --cond: "Barlow Condensed", var(--sans);
+  /* Las curvas de la página (web/DISENO.md): salir deprisa y posarse; el recorrido del reloj */
+  --salida: cubic-bezier(0.23, 1, 0.32, 1);
+  --recorrido: cubic-bezier(0.77, 0, 0.175, 1);
+  --margen: 20px;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--fondo); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; position: relative; min-height: 100svh; display: flex; flex-direction: column;
+  color: var(--texto); font-family: var(--sans); font-size: 17px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+}
+body > main { flex: 1 0 auto; }
+::selection { background: var(--acento); color: var(--sobre-acento, #0B0C0E); }
+a { color: var(--enlace); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+strong, b { font-weight: 600; }
+:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; border-radius: 4px; }
+
+/* El logo único (DEC-057): la G de la app, sin recolorear. Sobre oscuro va sola; sobre claro,
+   dentro de su baldosa, como el icono. El #0B0C0E es de la marca, no del tema. */
+.logo { display: block; background: #0B0C0E; border-radius: 18%; }
+
+/* ── La luz quieta ──────────────────────────────────────────────────────── */
+/* Un trozo de ventana proyectado arriba: bandas de luz separadas por la sombra fina de cada
+   lama. Detrás de todo y sin puntero; se desvanece antes de llegar al texto largo. */
+.luz {
+  position: absolute; inset: 0 0 auto; height: min(100svh, 860px); overflow: hidden;
+  pointer-events: none; z-index: 0;
+}
+.lamas {
+  position: absolute; left: -35%; top: -30%; width: 170%; height: 160%;
+  background: repeating-linear-gradient(180deg,
+    rgb(var(--luz) / var(--luz-alfa)) 0 4.4%,
+    rgb(var(--luz) / calc(var(--luz-alfa) * .55)) 5.4%,
+    rgb(var(--luz) / 0) 6.2% 7.4%);
+  -webkit-mask-image: radial-gradient(48% 42% at 50% 50%, #000 0 38%, transparent 100%);
+  mask-image: radial-gradient(48% 42% at 50% 50%, #000 0 38%, transparent 100%);
+  transform: var(--lamas, translate(-18%, -6%) rotate(-11deg) skewX(-32deg) scale(1.25, .8));
+  transform-origin: 50% 50%;
+}
+@media (forced-colors: active) { .luz { display: none; } }
+
+/* ── Cabecera: la marca y el reloj ──────────────────────────────────────── */
+.sitio, body > main, .pie-sitio { position: relative; z-index: 1; }
+.sitio {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  width: 100%; max-width: var(--ancho, 1120px); margin: 0 auto; padding: 14px var(--margen);
+}
+.marca {
+  display: inline-flex; align-items: center; gap: 11px; min-height: 48px;
+  color: var(--texto); text-decoration: none;
+  font: 700 18px/1 var(--cond); letter-spacing: .12em;
+}
+.reloj {
+  display: inline-flex; font-family: var(--cond); font-weight: 700; font-size: 30px; line-height: .9;
+  font-variant-numeric: tabular-nums; letter-spacing: -.01em; color: var(--texto);
+  view-transition-name: reloj;
+}
+.reloj-cifra { display: inline-block; overflow: hidden; }
+.reloj-cifra > span, .reloj-dos { display: block; }
+
+/* ── Transición entre páginas ───────────────────────────────────────────── */
+/* Las dos páginas tienen que pedirla: la portada del dorsal (public/index.html) no la pide, y
+   entre ella y estas se navega como siempre. El reloj se queda: la hora de antes sube y sale,
+   la nueva entra desde abajo, como en el cuentakilómetros de la portada (420 ms, --recorrido).
+   El resto funde, corto. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 220ms; }
+  ::view-transition-group(reloj) { animation-duration: 420ms; animation-timing-function: var(--recorrido); }
+  ::view-transition-image-pair(reloj) { overflow: clip; }
+  ::view-transition-old(reloj) { animation: reloj-sale 420ms var(--recorrido) both; }
+  ::view-transition-new(reloj) { animation: reloj-entra 420ms var(--recorrido) both; }
+}
+@keyframes reloj-sale { to { transform: translateY(-100%); } }
+@keyframes reloj-entra { from { transform: translateY(100%); } }
+
+/* ── Pie ────────────────────────────────────────────────────────────────── */
+.pie-sitio {
+  width: 100%; max-width: var(--ancho, 1120px); margin: 0 auto; padding: 28px var(--margen) 48px;
+  color: var(--texto-2); font-size: 15px;
+}
+.pie-sitio nav { display: flex; flex-wrap: wrap; gap: 0 22px; }
+/* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
+.pie-sitio nav a { display: inline-flex; align-items: center; min-height: 48px; }
+.pie-marca { display: flex; align-items: center; gap: 9px; margin: 8px 0 0; }
+
+@media (min-width: 900px) {
+  :root { --margen: 40px; }
+  .sitio { padding-block: 22px; }
+  .reloj { font-size: 34px; }
+}

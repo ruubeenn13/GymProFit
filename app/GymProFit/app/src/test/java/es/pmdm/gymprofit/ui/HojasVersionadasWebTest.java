@@ -38,6 +38,9 @@ public class HojasVersionadasWebTest {
 
     private static final Pattern HOJA = Pattern.compile("<link rel=\"stylesheet\" href=\"([^\"]+)\">");
 
+    /** Las hojas escritas a mano que quedan en public/ (la portada del dorsal, hasta la fase 3). */
+    private static final String[] HOJAS_A_MANO = {"/beta.css", "/portada.css"};
+
     @Test
     public void cadaPaginaPideSusHojasConLaVersionDeSuContenido() throws Exception {
         Path web = web();
@@ -90,8 +93,14 @@ public class HojasVersionadasWebTest {
                 "/*.html", "/un-dia"}) {
             assertEquals("la regla de " + ruta + " no pide revalidar", "no-cache", regla(cabeceras, ruta));
         }
-        for (String hoja : new String[]{"/estilo.css", "/beta.css", "/portada.css"}) {
+        for (String hoja : HOJAS_A_MANO) {
             assertEquals(hoja + " no lleva caché larga", "public, max-age=31536000, immutable", regla(cabeceras, hoja));
+        }
+        // Las hojas de las páginas que ya construye Astro (fase 4) no existen, ni su regla
+        for (String retirada : new String[]{"/estilo.css"}) {
+            assertFalse("vuelve " + retirada + " en dist", Files.exists(web().resolve(retirada.substring(1))));
+            assertFalse("_headers aún tiene la regla de " + retirada,
+                    Pattern.compile("(?m)^" + Pattern.quote(retirada) + "\\s*$").matcher(cabeceras).find());
         }
         assertEquals("los scripts no llevan caché larga", "public, max-age=31536000, immutable",
                 regla(cabeceras, "/js/*"));
@@ -99,7 +108,7 @@ public class HojasVersionadasWebTest {
                 regla(cabeceras, "/_astro/*"));
         // Las fuentes y las imágenes no van versionadas: no pueden ser immutable
         assertFalse("hay algo immutable que no va versionado",
-                cabeceras.replaceAll("(?m)^/((estilo|beta|portada)\\.css|js/\\*|_astro/\\*)\\R[^\\n]*\\R?", "")
+                cabeceras.replaceAll("(?m)^/((beta|portada)\\.css|js/\\*|_astro/\\*)\\R[^\\n]*\\R?", "")
                         .contains("immutable"));
         // Ninguna regla con comodín para todo: Pages uniría su Cache-Control con el de las demás
         assertFalse("una regla /* se sumaría a las demás", Pattern.compile("(?m)^/\\*\\s*$").matcher(cabeceras).find());

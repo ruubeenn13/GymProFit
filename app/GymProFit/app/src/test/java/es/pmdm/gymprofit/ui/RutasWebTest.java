@@ -38,6 +38,26 @@ public class RutasWebTest {
         }
     }
 
+    /**
+     * Las páginas que ya construye Astro (fase 4): salen de src/pages y no queda en public/ un
+     * .html con su nombre, que Astro copiaría encima o al lado y la dejaría servir la de antes.
+     */
+    private static final String[] DE_ASTRO = {
+            "privacidad", "terminos", "eliminar-cuenta",
+    };
+
+    @Test
+    public void lasPaginasSecundariasLasConstruyeAstro() {
+        Path web = WebDist.web();
+        for (String ruta : DE_ASTRO) {
+            assertTrue("falta web/src/pages/" + ruta + ".astro",
+                    Files.isRegularFile(web.resolve("src/pages/" + ruta + ".astro")));
+            assertFalse("web/public/" + ruta + ".html sigue ahí: se serviría la página de antes",
+                    Files.exists(web.resolve("public/" + ruta + ".html")));
+            assertTrue("falta dist/" + ruta + ".html", Files.isRegularFile(WebDist.dist().resolve(ruta + ".html")));
+        }
+    }
+
     @Test
     public void laPaginaNoEncontradaEstaEnLaRaiz() {
         assertTrue("falta dist/404.html: Pages respondería 200 con la portada",

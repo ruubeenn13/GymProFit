@@ -1,0 +1,52 @@
+---
+/**
+ * El armazón de las páginas secundarias (fase 4 de «Un día»): la cabecera del documento, la
+ * luz quieta detrás de todo y la cabecera con la marca y el reloj. Sin ningún script: todo
+ * lo que se mueve (la transición entre páginas) es CSS de mundo.css.
+ *
+ * Cada recurso va con ruta absoluta: la 404 se sirve en cualquier ruta.
+ *
+ * @prop {string}  titulo       el <title>
+ * @prop {string}  [descripcion] la meta description, si la página la tiene
+ * @prop {boolean} [noindex]    no se indexa
+ * @prop {string}  hora         la hora del reloj de cabecera, «07:00»
+ * @prop {string}  colorOscuro  theme-color en oscuro (o el único, si no hay claro)
+ * @prop {string}  [colorClaro] theme-color en claro; sin él, la página va siempre en carbón
+ * @prop {string}  [clase]      clase del body
+ */
+import '../../estilos/mundo.css';
+import Reloj from '../dia/Reloj.astro';
+
+const { titulo, descripcion, noindex = false, hora, colorOscuro, colorClaro, clase } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{titulo}</title>
+{descripcion && <meta name="description" content={descripcion}>}
+{noindex && <meta name="robots" content="noindex">}
+{colorClaro
+  ? <><meta name="theme-color" content={colorOscuro} media="(prefers-color-scheme: dark)"><meta name="theme-color" content={colorClaro} media="(prefers-color-scheme: light)"><meta name="color-scheme" content="light dark"></>
+  : <><meta name="theme-color" content={colorOscuro}><meta name="color-scheme" content="dark"></>}
+<link rel="icon" href="/img/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+</head>
+<body class={clase}>
+<div class="luz" aria-hidden="true"><span class="lamas"></span></div>
+
+<header class="sitio">
+  <a class="marca" href="/">
+    <img class="logo" src="/img/logo.svg" alt="" width="30" height="30">
+    GYMPROFIT
+  </a>
+  <Reloj hora={hora} clase="reloj-cabecera" />
+</header>
+
+<slot />
+
+</body>
+</html>

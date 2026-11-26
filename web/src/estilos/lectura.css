@@ -1,0 +1,113 @@
+/* ============================================================
+   lectura.css — privacidad, términos y eliminar cuenta (fase 4 de «Un día»).
+
+   Páginas para leer de arriba abajo: una columna de 68 caracteres, alineada a la izquierda, y
+   el titular grande de «Un día» arriba, con la luz del amanecer (las 7:00 del reloj). Los
+   colores son los tokens de la app (values/colors.xml y values-night/colors.xml), como en la
+   hoja de antes. Claro y oscuro.
+
+   La luz: #FFB27A, la del amanecer de la portada. Su opacidad sale de medir el contraste de
+   cada texto sobre el punto más claro de una banda (scripts de la fase 4, informe del lote):
+   en oscuro el límite AA es 0,20 (lo marca el naranja de los enlaces) y se usa 0,16; en
+   claro, 0,22 (también el enlace) y se usa 0,18.
+   ============================================================ */
+
+:root {
+  --fondo:     #0B0C0E;
+  --surface:   #1B1E24;
+  --surface-2: #252A31;
+  --stroke:    #4A505B;
+  --acento:    #FF6A00;
+  --sobre-acento: #1A0E00;
+  --texto:     #F2F2F3;
+  --texto-2:   #A1A9B6;
+  --enlace:    #FF6A00;
+  --luz: 255 178 122;
+  --luz-alfa: .16;
+  --ancho: 820px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --fondo:     #F1F1EE;
+    --surface:   #FFFFFF;
+    --surface-2: #E8E8E3;
+    --stroke:    #C9C9C2;
+    --acento:    #B83E00;
+    --sobre-acento: #FFFFFF;
+    --texto:     #17181C;
+    --texto-2:   #5A5C62;
+    --enlace:    #B83E00;
+    --luz-alfa: .18;
+  }
+}
+
+body { line-height: 1.65; }
+main .wrap { max-width: var(--ancho); margin: 0 auto; padding: 40px var(--margen) 72px; }
+/* La medida de lectura: 68 caracteres, también en las listas */
+main .wrap > p, main .wrap > ul, main .wrap > h2, main .wrap > h3 { max-width: 68ch; }
+
+h1, h2, h3 { font-family: var(--cond); font-weight: 700; text-wrap: balance; }
+h1 {
+  margin: 0 0 20px; font-size: clamp(42px, 10.5vw, 88px); line-height: .9; letter-spacing: -.012em;
+  text-transform: uppercase;
+}
+h2 { margin: 52px 0 12px; font-size: 28px; line-height: 1.1; letter-spacing: .005em; }
+h3 { margin: 32px 0 8px; font-weight: 600; font-size: 21px; line-height: 1.2; }
+p  { margin: 0 0 18px; text-wrap: pretty; }
+ul { margin: 0 0 18px; padding-left: 22px; }
+li { margin-bottom: 8px; }
+li::marker { color: var(--texto-2); }
+
+.meta { color: var(--texto-2); font-size: 15px; }
+/* La fecha, en la condensada: es una marca de tiempo, como el reloj */
+h1 + .meta { font-family: var(--cond); font-weight: 600; font-size: 17px; letter-spacing: .02em; margin-bottom: 28px; }
+.lead { font-size: 20px; line-height: 1.5; color: var(--texto-2); }
+
+/* ── Piezas ─────────────────────────────────────────────────────────────── */
+/* Las tarjetas de la app: radio 24, sin borde en oscuro, con él en claro */
+.tarjeta {
+  max-width: 68ch; margin: 0 0 16px; padding: 22px 24px;
+  background: var(--surface); border-radius: 24px;
+}
+.tarjeta h3 { margin-top: 0; }
+.tarjeta p:last-child { margin-bottom: 0; }
+
+/* Un aviso entero, con el acento a la izquierda del texto y no como pestaña de color */
+.acento {
+  max-width: 68ch; margin: 0 0 24px; padding: 18px 22px;
+  background: var(--surface-2); border-radius: 18px;
+}
+.acento p:last-child { margin-bottom: 0; }
+
+@media (prefers-color-scheme: light) {
+  .tarjeta { box-shadow: inset 0 0 0 1px var(--stroke); }
+}
+
+.btn {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 26px;
+  border-radius: 999px; background: var(--acento); color: var(--sobre-acento); text-decoration: none;
+  font: 700 19px/1 var(--cond); letter-spacing: .04em; text-transform: uppercase;
+  transition: transform 140ms var(--salida);
+}
+.btn:active { transform: scale(.97); }
+
+table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 16px; }
+th, td { text-align: left; vertical-align: top; padding: 11px 12px; border-bottom: 1px solid var(--stroke); }
+th {
+  font-family: var(--cond); font-weight: 600; font-size: 15px; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--texto-2);
+}
+.tabla-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* La raya del pie, alineada con el texto (dentro del margen, no de borde a borde) */
+.pie-sitio { max-width: var(--ancho); padding-top: 0; }
+.pie-sitio::before { content: ""; display: block; margin-bottom: 18px; border-top: 1px solid var(--stroke); }
+.pie-marca .logo { width: 20px; height: 20px; }
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  main .wrap { padding-top: 28px; }
+  h2 { font-size: 24px; margin-top: 44px; }
+  .lead { font-size: 18px; }
+}

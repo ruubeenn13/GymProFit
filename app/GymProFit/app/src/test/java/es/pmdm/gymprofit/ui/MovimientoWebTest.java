@@ -26,7 +26,15 @@ import java.util.regex.Pattern;
 // ============================================================
 public class MovimientoWebTest {
 
-    private static final String[] HOJAS = {"portada.css", "beta.css", "estilo.css"};
+    /**
+     * Las hojas: las escritas a mano que aún sirve public/ (se leen en dist) y, con «src/», las
+     * de las páginas que construye Astro (se leen en web/src/estilos: en dist van minificadas).
+     */
+    private static final String[] HOJAS = {"portada.css", "beta.css",
+            "src/mundo.css", "src/lectura.css"};
+
+    /** Las que animan algo y por eso tienen que tener su bloque de movimiento. */
+    private static final String[] CON_MOVIMIENTO = {"portada.css", "beta.css", "src/mundo.css"};
 
     @Test
     public void nadaSeMueveSinParar() throws IOException {
@@ -54,8 +62,14 @@ public class MovimientoWebTest {
 
     @Test
     public void cadaAnimacionVaDentroDeMovimientoSinReducir() throws IOException {
-        for (String hoja : new String[]{"portada.css", "beta.css"}) {
+        for (String hoja : HOJAS) {
             String css = leer(hoja);
+            boolean debeTenerBloque = java.util.Arrays.asList(CON_MOVIMIENTO).contains(hoja);
+            if (!debeTenerBloque) {
+                assertFalse(hoja + " anima algo y no está en CON_MOVIMIENTO",
+                        Pattern.compile("(?<![-\\w])animation(-name)?\\s*:").matcher(css).find());
+                continue;
+            }
             // Lo que queda fuera del bloque de movimiento no puede animar nada
             String fuera = css;
             Matcher bloque = Pattern.compile("@media \\(prefers-reduced-motion: no-preference\\) \\{").matcher(css);
@@ -83,6 +97,9 @@ public class MovimientoWebTest {
         Path raiz = Paths.get("").toAbsolutePath();
         while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
         assertNotNull("no se encuentra la carpeta web", raiz);
-        return new String(Files.readAllBytes(WebDist.dist().resolve(nombre)), StandardCharsets.UTF_8);
+        Path hoja = nombre.startsWith("src/")
+                ? WebDist.web().resolve("src").resolve("estilos").resolve(nombre.substring(4))
+                : WebDist.dist().resolve(nombre);
+        return new String(Files.readAllBytes(hoja), StandardCharsets.UTF_8);
     }
 }
