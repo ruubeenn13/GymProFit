@@ -98,7 +98,7 @@ body { line-height: 1.55; }
   display: block;
   width: 38%;
   height: 6px;
-  margin: 8px 0 0 4px;
+  margin: 13px 0 0 4px;   /* por debajo de la cola de la Q */
   background: var(--naranja);
   transform: skewX(-32deg);
   transform-origin: left center;
@@ -157,7 +157,7 @@ body { line-height: 1.55; }
   display: grid;
   gap: 14px;
   max-width: 30rem;
-  margin-top: 22px;
+  margin-top: 18px;
   padding: 18px;
   border-radius: 24px;
   background: var(--panel);
@@ -198,11 +198,12 @@ body { line-height: 1.55; }
   font-size: 18px;
   transition: border-color 160ms var(--frenada), box-shadow 160ms var(--frenada);
 }
-/* El foco es naranja y se ve sin depender del contorno del sistema */
+/* El foco: el borde pasa a naranja y, por fuera, el mismo contorno de 3 px del color del
+   texto que el resto de la web (el cambio de tono solo del borde se quedaba en 1,2:1). */
 .correo:focus {
-  outline: none;
+  outline: 3px solid var(--texto);
+  outline-offset: 3px;
   border-color: var(--naranja);
-  box-shadow: 0 0 0 4px rgba(232, 113, 10, 0.3);
 }
 
 .consentimiento {
@@ -336,7 +337,7 @@ body { line-height: 1.55; }
 .pie p { margin: 0 0 12px; max-width: 44em; }
 .pie nav { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 18px; }
 /* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
-.pie nav a { display: inline-flex; align-items: center; min-height: 48px; }
+.pie nav a { display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; }
 
 /* ── /beta/revisa, /beta/dentro y /beta/entrar ───────────────────── */
 
@@ -499,6 +500,11 @@ body { line-height: 1.55; }
     align-items: end;
   }
   .titular { margin-top: 28px; }
+  /* En revisa, dentro y entrar la llamada es más alta que el titular (los pasos, el grupo):
+     apoyado en su base, el titular caía al fondo del primer pantallazo. Arriba, con la
+     llamada empezando a su altura. */
+  .dentro .portada { align-items: start; }
+  .dentro .llamada { padding-top: 34px; }
   .llamada { padding-bottom: 6px; }
   .entrada { margin-top: 0; }
   .entrada { font-size: 21px; }

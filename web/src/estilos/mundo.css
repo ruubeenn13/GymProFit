@@ -47,7 +47,10 @@ strong, b { font-weight: 600; }
 
 /* El logo único (DEC-057): la G de la app, sin recolorear. Sobre oscuro va sola; sobre claro,
    dentro de su baldosa, como el icono. El #0B0C0E es de la marca, no del tema. */
-.logo { display: block; background: #0B0C0E; border-radius: 18%; }
+.logo { display: block; border-radius: 18%; }
+@media (prefers-color-scheme: light) {
+  .logo { background: #0B0C0E; }
+}
 
 /* ── La luz quieta ──────────────────────────────────────────────────────── */
 /* Un trozo de ventana proyectado arriba: bandas de luz separadas por la sombra fina de cada
@@ -114,7 +117,7 @@ strong, b { font-weight: 600; }
 }
 .pie-sitio nav { display: flex; flex-wrap: wrap; gap: 0 22px; }
 /* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
-.pie-sitio nav a { display: inline-flex; align-items: center; min-height: 48px; }
+.pie-sitio nav a { display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; }
 .pie-marca { display: flex; align-items: center; gap: 9px; margin: 8px 0 0; }
 
 @media (min-width: 900px) {

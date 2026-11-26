@@ -285,7 +285,8 @@ public class BetaWebTest {
         }
         assertFalse("la política sigue pidiendo el tipo de móvil", texto.contains("tipo de móvil"));
         // La fila de Brevo en la tabla de proveedores, no cualquier mención.
-        Matcher brevo = Pattern.compile("<tr><td>Brevo</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
+        // Las celdas llevan role y data-label desde la fase 4 (la tabla se apila en móvil)
+        Matcher brevo = Pattern.compile("<tr\\b[^>]*><td\\b[^>]*>Brevo</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
         assertTrue("Brevo no está en la tabla de proveedores", brevo.find());
         assertTrue("Brevo no figura para la lista de espera", brevo.group(1).contains("lista de espera"));
         assertTrue("no dice que Brevo recibe los datos de conexión", brevo.group(1).contains("datos de conexión"));
@@ -309,7 +310,7 @@ public class BetaWebTest {
             assertTrue("los recuentos no dicen «" + debe + "»", recuentos.contains(debe));
         }
         assertFalse("la política sigue citando Firebase Analytics", texto.contains("Analytics"));
-        Matcher google = Pattern.compile("<tr><td>Google \\(Firebase\\)</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
+        Matcher google = Pattern.compile("<tr\\b[^>]*><td\\b[^>]*>Google \\(Firebase\\)</td>(.*?)</tr>", Pattern.DOTALL).matcher(html);
         assertTrue("Google (Firebase) no está en la tabla de proveedores", google.find());
         assertFalse("Firebase sigue figurando para el uso", google.group(1).contains("uso"));
     }

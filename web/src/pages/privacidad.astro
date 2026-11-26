@@ -26,19 +26,19 @@ import '../estilos/lectura.css';
 
     <h3>Datos que facilitas tú</h3>
     <div class="tabla-scroll">
-    <table>
-      <thead>
-        <tr><th>Dato</th><th>Cuándo se recoge</th><th>Obligatorio</th></tr>
+    <table role="table">
+      <thead role="rowgroup">
+        <tr role="row"><th role="columnheader">Dato</th><th role="columnheader">Cuándo se recoge</th><th role="columnheader">Obligatorio</th></tr>
       </thead>
-      <tbody>
-        <tr><td>Nombre y dirección de correo</td><td>Al crear la cuenta</td><td>Sí</td></tr>
-        <tr><td>Nombre de usuario</td><td>Al crear la cuenta. Si no lo eliges, lo propone la aplicación a partir de tu nombre. Puedes entrar con él o con el correo</td><td>Sí</td></tr>
-        <tr><td>Contraseña</td><td>Al crear la cuenta</td><td>Sí — se guarda cifrada con BCrypt, nunca en claro</td></tr>
-        <tr><td>Objetivo y nivel de experiencia</td><td>Al preparar tu plan</td><td>Sí</td></tr>
-        <tr><td>Sexo, edad, altura, peso y nivel de actividad</td><td>Al preparar tu plan o en Editar perfil</td><td>No. Sin ellos no se calcula tu objetivo de calorías</td></tr>
-        <tr><td>Qué avisos quieres recibir: entrenar, comidas y progreso</td><td>Después de crear la cuenta, o en Ajustes</td><td>No. Tienen valores de serie y puedes apagarlos todos</td></tr>
-        <tr><td>Fotografía de perfil</td><td>Si decides subirla</td><td>No</td></tr>
-        <tr><td>Mediciones corporales</td><td>Si decides registrarlas</td><td>No</td></tr>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" data-label="Dato">Nombre y dirección de correo</td><td role="cell" data-label="Cuándo se recoge">Al crear la cuenta</td><td role="cell" data-label="Obligatorio">Sí</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Nombre de usuario</td><td role="cell" data-label="Cuándo se recoge">Al crear la cuenta. Si no lo eliges, lo propone la aplicación a partir de tu nombre. Puedes entrar con él o con el correo</td><td role="cell" data-label="Obligatorio">Sí</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Contraseña</td><td role="cell" data-label="Cuándo se recoge">Al crear la cuenta</td><td role="cell" data-label="Obligatorio">Sí — se guarda cifrada con BCrypt, nunca en claro</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Objetivo y nivel de experiencia</td><td role="cell" data-label="Cuándo se recoge">Al preparar tu plan</td><td role="cell" data-label="Obligatorio">Sí</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Sexo, edad, altura, peso y nivel de actividad</td><td role="cell" data-label="Cuándo se recoge">Al preparar tu plan o en Editar perfil</td><td role="cell" data-label="Obligatorio">No. Sin ellos no se calcula tu objetivo de calorías</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Qué avisos quieres recibir: entrenar, comidas y progreso</td><td role="cell" data-label="Cuándo se recoge">Después de crear la cuenta, o en Ajustes</td><td role="cell" data-label="Obligatorio">No. Tienen valores de serie y puedes apagarlos todos</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Fotografía de perfil</td><td role="cell" data-label="Cuándo se recoge">Si decides subirla</td><td role="cell" data-label="Obligatorio">No</td></tr>
+        <tr role="row"><td role="cell" data-label="Dato">Mediciones corporales</td><td role="cell" data-label="Cuándo se recoge">Si decides registrarlas</td><td role="cell" data-label="Obligatorio">No</td></tr>
       </tbody>
     </table>
     </div>
@@ -106,17 +106,17 @@ import '../estilos/lectura.css';
     <h2>5. Con quién se comparten</h2>
     <p>GymProFit se apoya en los siguientes proveedores, que tratan datos por cuenta del responsable y únicamente para prestar su servicio:</p>
     <div class="tabla-scroll">
-    <table>
-      <thead>
-        <tr><th>Proveedor</th><th>Para qué</th><th>Qué recibe</th></tr>
+    <table role="table">
+      <thead role="rowgroup">
+        <tr role="row"><th role="columnheader">Proveedor</th><th role="columnheader">Para qué</th><th role="columnheader">Qué recibe</th></tr>
       </thead>
-      <tbody>
-        <tr><td>Render</td><td>Alojamiento de la API</td><td>Todo el tráfico de la aplicación</td></tr>
-        <tr><td>Aiven</td><td>Base de datos gestionada</td><td>Los datos almacenados de tu cuenta</td></tr>
-        <tr><td>Brevo</td><td>Envío de correo transaccional y la lista de espera de la beta</td><td>Tu dirección de correo y el contenido del mensaje; en la lista de espera, también los datos de conexión al enviar el formulario</td></tr>
-        <tr><td>Google (Firebase)</td><td>Notificaciones e informes de fallo</td><td>Identificador de dispositivo y datos técnicos</td></tr>
-        <tr><td>Cloudflare</td><td>DNS, correo entrante y esta web</td><td>Datos de conexión</td></tr>
-        <tr><td>Open Food Facts</td><td>Consulta de alimentos por código de barras</td><td>Solo el código de barras consultado; ningún dato tuyo</td></tr>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" data-label="Proveedor">Render</td><td role="cell" data-label="Para qué">Alojamiento de la API</td><td role="cell" data-label="Qué recibe">Todo el tráfico de la aplicación</td></tr>
+        <tr role="row"><td role="cell" data-label="Proveedor">Aiven</td><td role="cell" data-label="Para qué">Base de datos gestionada</td><td role="cell" data-label="Qué recibe">Los datos almacenados de tu cuenta</td></tr>
+        <tr role="row"><td role="cell" data-label="Proveedor">Brevo</td><td role="cell" data-label="Para qué">Envío de correo transaccional y la lista de espera de la beta</td><td role="cell" data-label="Qué recibe">Tu dirección de correo y el contenido del mensaje; en la lista de espera, también los datos de conexión al enviar el formulario</td></tr>
+        <tr role="row"><td role="cell" data-label="Proveedor">Google (Firebase)</td><td role="cell" data-label="Para qué">Notificaciones e informes de fallo</td><td role="cell" data-label="Qué recibe">Identificador de dispositivo y datos técnicos</td></tr>
+        <tr role="row"><td role="cell" data-label="Proveedor">Cloudflare</td><td role="cell" data-label="Para qué">DNS, correo entrante y esta web</td><td role="cell" data-label="Qué recibe">Datos de conexión</td></tr>
+        <tr role="row"><td role="cell" data-label="Proveedor">Open Food Facts</td><td role="cell" data-label="Para qué">Consulta de alimentos por código de barras</td><td role="cell" data-label="Qué recibe">Solo el código de barras consultado; ningún dato tuyo</td></tr>
       </tbody>
     </table>
     </div>

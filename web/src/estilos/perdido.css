@@ -30,7 +30,7 @@
 
 /* Las 25:61, enormes: cada cifra en su máscara, para que caiga desde arriba al cargar */
 .perdido-hora {
-  display: flex; margin: 0 0 -.06em -.04em;
+  display: flex; margin: 0 0 .02em -.04em;
   font: 700 clamp(132px, 41vw, 400px)/.9 var(--cond);
   font-variant-numeric: tabular-nums; letter-spacing: -.02em;
   color: #1F2228; -webkit-text-stroke: 2px rgb(255 106 0 / .55);
