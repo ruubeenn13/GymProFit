@@ -1,6 +1,6 @@
 # GP-285, lote 1 de Liquid Glass: sistema visual, cristal vivo, barra flotante e Inicio (2026-11-26)
 
-Rama `gp-285-liquid-glass-lote-1`, **sin fusionar**: el rediseño se aprueba con capturas antes. Sin versión ni etiqueta (DEC-056). Sin cambios de API ni de contratos.
+Rama `gp-285-liquid-glass-lote-1` (PR #144). El propietario aprobó el diseño con cuatro correcciones; están hechas en el **remate**, al final de este informe, que es donde están las cifras de rendimiento que valen y el estado final. Sin versión ni etiqueta (DEC-056). Sin cambios de API ni de contratos.
 
 Referencia: `documentacion/diseno/2026-11-25-liquid-glass/` (dirección A, aprobada el 25-11-2026). Decisión: DEC-070. Sistema: `app/GymProFit/DESIGN.md`, «Liquid Glass».
 
@@ -183,3 +183,182 @@ APK de **release** (R8, firma de release; `app-release.apk`, 6.607.724 bytes, co
 - **Margen de «Empezar» con letra 1,3**: 1,5 dp. Si se quiere holgura, la tarjeta héroe tiene que perder algo más (por ejemplo, una línea del subtítulo).
 - **La escala de letra de la maqueta** (títulos en Barlow Condensed más grandes) no se ha aplicado: sería para toda la app, en su propio lote.
 - **CI**: la rama se sube con este commit; el resultado va en el resumen al propietario.
+
+---
+
+# Remate del lote 1 y GP-286 (2026-11-26, tarde)
+
+El propietario aprobó el diseño con cuatro correcciones vistas en las capturas, y pidió aparte GP-286. Esta sección sustituye, donde se contradigan, a lo de arriba: las cifras de rendimiento, los bajos «sin arreglar» y el estado de la rama. Se fusiona en `main` por la PR #144; el hash de la fusión va en el resumen al propietario. Sin versión ni etiqueta (DEC-056). Solo app: no hay despliegue de API.
+
+## Commits
+
+| Hash | Commit |
+|---|---|
+| `617f348a` | fix(android,documentacion): el contenido se desvanece antes de las barras del sistema y «Hoy toca» no se parte ni se pega a la barra (GP-285) |
+| `c240ee97` | test(android): FilaSerieRotulosTest mira los rótulos de la pantalla que hay, y los tests instrumentados vuelven a compilar (GP-286) |
+| `f46a0aaf` | fix(android): con gestos, el hueco del asa del sistema también va macizo (GP-285) |
+| `20e7dfa1` | ci(android): la instantánea del AVD del humo de la release se rehace con el emulador de ahora |
+| `8125fc88` | test(android): los instrumentados nuevos valen también en Android 7 (GP-285, GP-286) |
+| `944a604e` | fix(android): en Android 7 la sombra de la barra y de la hoja ya no sale cortada en recto (GP-285) |
+| `dd0f1335` | ci(android): el humo de la release guarda el logcat desde el principio y no se queda colgado |
+| `843cfd2b` | fix(android): los bordes del sistema se pintan con una imagen estirada, no con un degradado de ocho paradas (GP-285) |
+
+Más el commit de este informe y del `CHANGELOG.md`.
+
+## Los cuatro fallos, cómo quedan
+
+**1. Bordes del sistema.** Dos vistas en `activity_main` (`bordeSuperior`, `bordeInferior`), dentro del lienzo y debajo del velo, con el fondo base macizo en la franja de cada barra del sistema y en degradado hacia el contenido (`ui/cristal/BordesSistema`, que solo hace cuentas, y `BordeSistema`, que pinta). Iguales en los tres niveles del cristal.
+
+| | Macizo | Degradado |
+|---|---|---|
+| Arriba | la barra de estado entera | 24 dp por debajo (`borde_sistema_desvanecido`) |
+| Abajo, con botones | la franja de los botones entera | hasta media cápsula de la barra (26 + 32 dp) |
+| Abajo, con gestos | el hueco del asa entero | corto: 26 dp, hasta el borde de la cápsula |
+
+Medido por el revisor de UI: en API 36 «100 kg × 12» pasa de 5,19:1 junto a la cápsula a 1,00:1 en la franja de los botones; bajo el reloj, de 12,4:1 a 1,00:1 en 24 dp, sin corte seco. En API 24 el «2.180◁» no se reproduce: nada pasa por detrás de los iconos, y ◁ ● ■ dan 15,9:1 (oscuro) y 5,76:1 (claro) contra su franja.
+
+- **En API < 29 la barra de navegación lleva fondo propio**, y en las demás también: es el tramo macizo del borde, que va en el contenido. La ventana sigue transparente para que el velo lo cubra. La excepción es Android 7 en claro, donde los botones son siempre blancos y la ventana les pone detrás `gp_velo` (ya lo hacía el lote 1).
+- **El contraste forzado del sistema se apaga desde Android 10** (`setNavigationBarContrastEnforced(false)`): era lo que pintaba la franja más clara por encima del velo.
+
+**4. El velo del «+» cubre esa franja con el mismo tono.** Con la hoja abierta en claro: franja `#9E9D9A`, pantalla justo encima `#9E9D9A` (escalón 1,000–1,010:1 en API 36 y API 32; antes 2,0–2,2:1). En Android 7 en claro la franja es más oscura que la pantalla velada (4,07:1), nunca más clara: es la excepción de los botones blancos.
+
+**2. «Hoy toca».** La etiqueta de la última vez sale de la fila de las siluetas: va debajo, a todo el ancho de la tarjeta, con `maxLines="1"`. El subtítulo sigue junto a las siluetas mientras quepa ahí en dos líneas; si necesita más, baja a todo el ancho (`ui/inicio/CabeceraHoyToca`).
+
+| Emulador | Letra | Etiqueta | Subtítulo |
+|---|---|---|---|
+| API 36 y API 32 (411 dp) | 1,0 | 1 línea (25,5 dp) | 2 líneas, junto a las siluetas |
+| API 36 y API 32 | 1,3 | 1 línea (30,5–30,9 dp) | 2 líneas, a todo el ancho |
+| API 24 (392 dp) | 1,0 y 1,3 | 1 línea | 2 líneas, a todo el ancho |
+
+Igual en ES y EN. A 360 dp de ancho con letra 1,0 (probado cambiando la densidad del emulador) también queda en dos líneas, debajo; antes eran tres junto a las siluetas.
+
+**3. Margen de la barra flotante.** Token nuevo `barra_margen_boton` (16 dp), que sustituye a `barra_aire_contenido`: lo último de cada pestaña acaba a esa distancia del pie, y el botón de «Hoy toca», con el scroll arriba, también. Si queda más cerca o a medias debajo y acortando hasta 24 dp el bloque del icono de cada ejercicio se arregla, la tarjeta cede justo lo que falta (`ui/inicio/EncajeHeroe`); si no llega ni con eso, no se toca.
+
+| Emulador | Letra 1,0 (ES · EN) | Letra 1,3 (ES · EN) |
+|---|---|---|
+| API 36 | 155,4 · 135,2 dp | **17,5 · 17,5 dp** (era 1,5) |
+| API 32 | 187,4 · 167,2 dp | 21,7 · 21,7 dp |
+| API 24 | 56,4 · 36,4 dp | el botón queda detrás de la barra (ver «Bajos abiertos») |
+
+El encaje se vio trabajar: con letra 1,36 en API 36 cede 10 px y deja 16,0 dp; a 360 dp de ancho con letra 1,0, cede 10 dp y deja 16,0. Al final del scroll, lo último queda a 40 dp de la cápsula en los tres.
+
+**El halo del botón principal** sale del estilo (`Widget.GymProFit.BotonPildora.Expresivo.Cristal`), de los colores (`gp_boton_halo`), de `dimens.xml`, de DESIGN.md y del README de la referencia. DEC-070 no lo citaba. Las maquetas `.dc.html` lo conservan en su CSS; el README, que manda, dice que no se pinta.
+
+## Lo que salió por el camino
+
+- **Con gestos, el asa del sistema tachaba el texto** (revisor, API 32, medio): el borde corto no tenía tramo macizo y a la altura del asa el texto seguía a 2,0:1 en claro. El hueco de gestos va ahora macizo; el asa da ≥ 3,85:1 siempre (5,52 en claro, 16,86 en oscuro).
+- **En Android 7 la sombra del cristal vivo salía cortada en recto** (revisor, API 24, medio; venía del lote 1): dos orejas grises en las esquinas de la cápsula y de la hoja, con escalones de 19–39 niveles. Antes de Android 8 el recorte «todo menos la forma» parte de la caja de la vista; ahí ya no se recorta, porque el cristal es opaco y tapa lo de debajo. Mayor escalón ahora: 3 niveles en claro. Dentro de la cápsula y de la hoja la diferencia media es de 0,25 niveles.
+- **El degradado de los bordes tiraba el emulador del CI.** La primera versión era un `LinearGradient` de siete u ocho paradas con tramado. Con ella, el humo de la release moría al pintarse Inicio: el emulador entero desaparecía un segundo después de entrar, sin un error de la app. En local no se reproduce, ni con Android 14, gestos, inglés, cuenta nueva y la misma release con R8: en el CI el emulador pinta con SwiftShader sobre Linux. Ahora la rampa es una imagen de 1 px de ancho que se estira; con ese cambio el job pasó a la primera. Queda como hipótesis confirmada por un run (ver «Dudas»).
+- **El job `app-release-r8` ya fallaba a ratos sin este código** (ramas `privacidad-proveedores` y dependabot, el 25 y el 26-11: «no aparece contenedorAlta»). La instantánea del AVD de la caché no valía para el emulador de los runners (37.3.10) y arrancaba en frío en todos los runs. Se renovó la clave de la caché (`-v4`); el run siguiente la creó y el de después la cargó en 2 s. El guion de humo guarda además el logcat desde el principio y pone tope de tiempo a sus órdenes de adb: antes, con el emulador colgado, se quedaba 16 minutos parado y no subía nada.
+
+## GP-286
+
+`FilaSerieRotulosTest` inflaba `item_serie`, borrado en GP-241. Lo que protegía (GP-133: los rótulos de las columnas se leen enteros con letra grande) existe ahora como una fila de textos en `item_apuntar_ejercicio`: el test mira esa. **Todo `connectedAndroidTest` compila y corre.**
+
+- A letra 1,0 y 1,3, en español y en inglés: pasa en API 36, 32 y 24.
+- **A letra 2,0 no pasa, y arreglarlo es tocar producción**: «SERIE» mide 163 px en una columna de 126 y «ANTERIOR» / «PREVIOUS» 281 / 279 en 231 (móvil de 1080 px a 420 ppp): se parten por la mitad de la palabra. No he tocado el layout: ese caso está apartado con `@Ignore` y su porqué, pendiente de decisión.
+- `CamposSerie`, la vista que hacía eso en la pantalla vieja, sigue en el código y ya no la usa ningún layout.
+- En Android 7 fallan dos tests de `CampoContrasenaTest` que no son de este cambio (el nodo de accesibilidad lleva también la pista: «Secreta1234., Contraseña»). Nadie los había pasado ahí porque la batería no compilaba. En API 36 y 32 pasan.
+
+## Tests
+
+**1.405 tests unitarios**, 16 nuevos, todos vistos en rojo. Fallan los cuatro `*WebTest` de siempre por los restos de «Un día» en `web/`, que no son de este cambio. `lintDebug`: 0 errores.
+
+| Clase | Tests | Cómo se vieron en rojo |
+|---|---|---|
+| `BordesSistemaTest` | 6: los bordes existen en los tres niveles; con gestos queda corto y el hueco del asa es macizo; la rampa va de transparente al fondo base; sin contraste del sistema la barra lleva fondo propio; el velo los cubre y el cristal los ve; el margen de la barra sale del token | los 6 con las clases en esqueleto; el del asa y el de la rampa, otra vez al cambiar cada uno |
+| `EncajeHeroeTest` | 5: con sitio no cede; justo de sitio cede lo que falta; si no llega no se toca; con lo ya cedido da lo mismo; la última vez no se parte | 3 con el esqueleto; los otros 2, devolviendo siempre lo que falta |
+| `CabeceraHoyTocaTest` | 4: hasta dos líneas va junto a las siluetas; con tres o más, debajo; sin siluetas no se mueve; el texto de debajo va fuera de la fila | 3 cambiando la regla (`>=`, sin mirar las siluetas, sin la guarda); el de tres líneas, con el tope en 3 |
+| `CristalTest` | +1: la sombra no se recorta donde el recorte la corta; y `DESIGN_recoge_liquid_glass` pide ahora los bordes, el token y el encaje | el nuevo, con el recorte por diferencia aún en el código; el de DESIGN.md, antes de escribirlo |
+
+**Instrumentados** (`connectedDebugAndroidTest`, la batería entera): 30 tests.
+
+| | API 36 | API 32 | API 24 |
+|---|---|---|---|
+| Pasan | 29 | 29 | 27 |
+| Apartado (`@Ignore`, GP-286 a letra 2,0) | 1 | 1 | 1 |
+| Fallan | 0 | 0 | 2 (`CampoContrasenaTest`, ajenos) |
+
+Nuevo: `BordeSistemaPintadoTest` (3), que pinta el borde en un mapa de bits y mira lo que sale en cada versión; visto en rojo invirtiendo el sentido de la rampa. `FilaSerieRotulosTest`, visto en rojo estrechando la columna.
+
+## Revisor de UI
+
+Inicio y la barra (con la hoja del «+»), las ocho combinaciones (ES/EN × claro/oscuro × letra 1,0/1,3) en cada emulador.
+
+| Pasada | Altos | Medios | Qué |
+|---|---|---|---|
+| API 36 (nivel 1, botones) | 0 | 0 | 4 bajos; uno era una cifra de DESIGN.md, corregida |
+| API 32 (nivel 2, gestos), 1.ª | 0 | 1 | el asa de gestos tachaba texto: arreglado |
+| API 32, 2.ª | 0 | 0 | el medio, resuelto y medido |
+| API 24 (nivel 3, botones), 1.ª | 0 | 1 | la sombra cortada en recto: arreglada |
+| API 24, 2.ª | 0 | 0 | el medio, resuelto y medido |
+
+Zonas pulsables: ninguna por debajo de 48 dp. Contraste: ningún texto por debajo de 4,5:1 (peor par, 5,06:1). Pestaña activa con el trofeo dorado detrás: 5,54–5,60:1 (API 36), 5,00:1 en oscuro y 6,23:1 en claro (API 32).
+
+**Lo que el revisor no vio con el código final.** Sus pasadas son anteriores al cambio del degradado por la imagen estirada (y la de API 36, también al del asa, que con botones no cambia nada). La curva es la misma, ahora exacta. Comprobado a mano después, con el código final, en las capturas de entrega: franja de botones, hueco del asa y barra de estado con variación 0 por fila en API 36, 32 y 24, claro y oscuro, con y sin velo; y `BordeSistemaPintadoTest` en verde en los tres.
+
+## Fotogramas lentos (DEC-021)
+
+Mismo guion que en el lote 1 (`medir.py`: 24 deslizamientos, unos 1.090 fotogramas por pasada en Inicio, oscuro, debug compilada entera, emulador con 3 GB y la GPU del equipo), tres rondas intercaladas de tres variantes: `main`, el lote 1 tal como se entregó y el código final.
+
+| Emulador | `main` | Lote 1 entregado | Final |
+|---|---|---|---|
+| API 36 (nivel 1) | 0,73 % (8 de 1.093) | 1,10 % (1,10–1,19; 12–13) | **1,28 %** (1,19–1,28; 13–14 de 1.091) |
+| API 32 (nivel 2) | 0,74 % (8 de 1.086) | 1,51 % (16 de 1.061, las tres) | **1,51 %** (1,51–2,06; 16, 16 y 22) |
+| API 24 (nivel 3) | 0,0 % (0 de 1.285) | 0,0 % | **0,0 %** (0 de 1.299) |
+
+Percentiles, iguales en las tres variantes: API 36, p50 17–18 · p90 18–19 · p95 19 · p99 19–20 ms; API 32, p50 17 · p90 18 · p95 18–19 · p99 19 ms (21 en la ronda de 2,06 %); API 24, p50 5 · p90 5 · p95 5–6 · p99 5–7 ms.
+
+**Lectura, y una corrección al informe de arriba.** El remate no añade fotogramas lentos que se puedan medir: uno o dos de cada 1.090 en API 36, ninguno en API 32 ni en API 24. Pero **el lote 1 costaba más de lo que dije**: lo medí antes de los arreglos del revisor y di 0,82 % en API 36 y 1,2 % en API 32; tal como se entregó son 1,10 % y 1,51 %. Frente a `main`, el rediseño entero cuesta 5–6 fotogramas lentos de cada 1.090 en API 36 y 8 en API 32, todos del tipo «órdenes de dibujo lentas», con los percentiles sin moverse. Ningún dispositivo baja de nivel.
+
+Una tanda anterior en API 36, con el degradado de la GPU, dio 1,28 % (1,19–1,47): la imagen estirada no cambia la cifra.
+
+## Producción
+
+Release (R8, firma de release, 6.608.164 bytes, compilada con `843cfd2b`) en el emulador de API 36, contra `https://api.gymprofit.app` (commit en producción: `20d234d6`; el lote no toca la API).
+
+- Cuenta de prueba `prueba-gp285-c@gymprofit.app`, creada por la API (201).
+- Entrar → cuestionario del alta → avisos → Inicio de una cuenta nueva: bordes del sistema, «Hoy toca» con la etiqueta en una línea («Todavía no la has hecho»), barra flotante y scroll bajo ella.
+- Hoja del «+» → «Empezar entrenamiento» → sesión en vivo → atrás → barra de la sesión → la hoja otra vez → las cuatro pestañas.
+- Sin errores de la app en logcat.
+- **Cuenta borrada** (`DELETE /usuarios/me`, 200) y comprobado: el login devuelve **401**. La clave se eliminó entonces y la release se desinstaló.
+
+Antes, con el código del primer commit, se había hecho la misma pasada con `prueba-gp285-b`, también borrada (401).
+
+## Capturas
+
+Escritorio, carpeta `GP-285 lote 1 remate`, subcarpetas `API 36`, `API 32` y `API 24`: 24 por emulador (oscuro y claro × ES y EN × letra 1,0 y 1,3: Inicio arriba, el scroll con los bordes del sistema y la hoja del «+» con el velo). Hechas con el código final.
+
+## Decisiones tomadas
+
+1. Los bordes van en el contenido y no en el color de la ventana, también en API < 29: así el velo los cubre. Por eso se apaga el contraste forzado del sistema.
+2. Con gestos el degradado queda corto (26 dp), pero el hueco del asa es macizo: sin eso el asa tachaba el texto.
+3. El token del margen es uno solo (`barra_margen_boton`) para el final del scroll y para el botón de «Hoy toca» en reposo; `barra_aire_contenido` desaparece.
+4. La tarjeta cede como mucho 24 dp de sus iconos. Si no basta, no se toca: forzar más quitaría contenido.
+5. El subtítulo sigue la misma regla que la etiqueta (baja a todo el ancho si junto a las siluetas pasa de dos líneas), aunque el encargo solo pedía dos líneas a letra 1,0: a 360 dp de ancho no se cumplía de otro modo.
+6. Los bordes se pintan con una imagen estirada, no con un degradado de la GPU.
+7. Dos commits de `ci` en la rama, fuera de lo pedido: sin ellos el CI no podía ponerse en verde ni decir por qué fallaba.
+8. GP-286: el test se reorienta a la pantalla que existe; el caso de letra 2,0 se aparta en vez de tocar producción.
+
+## Bajos abiertos
+
+- **En Android 7 con letra 1,3 «Empezar» queda detrás de la barra** (392 × 851 dp: 71 dp por debajo de su borde superior; harían falta 87 y se ceden 24). Cumple la regla escrita; la cápsula es opaca y por debajo asoman 6–7 dp de naranja. Se llega con un desplazamiento, con la tarjeta entera o con el «+».
+- La tarjeta «Hoy toca» queda tangente a la barra con letra 1,3 (API 36 y 32); «Tu día» asoma cortado bajo la cápsula en reposo.
+- Con gestos, el degradado corto corta el texto por la mitad más que desvanecerlo (baja de 7:1 a 1,5:1 en 30 px).
+- La sombra del cristal vivo mide unos 13 dp de rampa, no los 26 dp de difuminado que dice DESIGN.md (igual en todas las versiones; se aprobó así en capturas).
+- El cristal opaco al 98 % deja entrever lo de detrás (hasta 5 niveles).
+- «HOY TOCA · DÍA 1 DE 4» parte y deja el «4» solo con letra 1,3 en español en Android 7; «Último récord · hace 6 días» parte mal.
+- Con el velo en claro, el reloj del sistema baja a 3,89:1 (transitorio, texto del sistema).
+- El gris de las siluetas en claro (1,47:1 contra la tarjeta; componente anterior).
+- Sin comprobar: TalkBack encendido de verdad, la sombra de la barra de la sesión en Android 7 y el movimiento de la hoja.
+
+## Tareas del propietario
+
+1. **GP-286, letra 2,0**: decidir si se arregla el layout de «Apuntar entreno» («Serie» y «Anterior» no caben en su columna) y, al hacerlo, quitar el `@Ignore`. Y si se borra `CamposSerie`, que ya no se usa.
+2. `CampoContrasenaTest` falla en Android 7 en dos tests: mirar si es del test o de la app.
+3. Lo pendiente de antes sigue igual (Render y UptimeRobot a liveness, el posible intento de login de `dani.entrena` en producción).
+
+## Dudas
+
+- **La causa de la caída del emulador del CI está confirmada por un solo run** (falló tres veces en Inicio con el degradado, pasó a la primera con la imagen). Si `app-release-r8` vuelve a morir al pintar Inicio, el logcat ya queda guardado en el artefacto `humo-release`.
+- **«Empezar» detrás de la barra en móviles bajos con letra grande**: si se quiere el botón principal siempre visible en la primera pantalla, hay que cambiar la regla (por ejemplo, quitar una línea a los nombres del carrusel al ceder).
