@@ -269,6 +269,20 @@ public class BetaWebTest {
     }
 
     @Test
+    public void enUnaPantallaBajaElFormularioSeAprieta() throws IOException {
+        // A 360 × 640 «Apuntarme» se quedaba a 1 px del borde. Con 700 px o menos de alto
+        // visible (svh), el formulario pierde 24 px: margen 18 → 10, relleno 18 → 14 y
+        // huecos 14 → 10. Por encima del umbral, igual que antes.
+        String css = hoja();
+        String escalon = "\\(100svh - 700px\\) \\* 1000";
+        for (String[] p : new String[][]{{"margin-top", "10", "18"}, {"padding", "14", "18"}, {"gap", "10", "14"}}) {
+            Pattern regla = Pattern.compile("\\.alta \\{[^}]*\\b" + p[0] + ": clamp\\(" + p[1] + "px, calc\\(" + p[1]
+                    + "px \\+ " + escalon + "\\), " + p[2] + "px\\);");
+            assertTrue("el formulario no aprieta su " + p[0] + " en pantallas bajas", regla.matcher(css).find());
+        }
+    }
+
+    @Test
     public void laPortadaInvitaALaBeta() throws IOException {
         assertTrue(pagina("index.html").contains("href=\"/beta\""));
     }

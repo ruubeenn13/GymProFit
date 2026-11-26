@@ -164,6 +164,15 @@ body { line-height: 1.55; }
   box-shadow: inset 0 0 0 1px var(--linea);
   scroll-margin-top: 16px;
 }
+/* En una pantalla baja, de 700 px o menos de lo que se ve (svh: con las barras del navegador
+   dentro), el formulario se aprieta 24 px para que «Apuntarme» entre en el primer pantallazo:
+   a 360 × 640 se quedaba a 1 px del borde. El titular no se toca. Cada clamp es un escalón:
+   (100svh − 700px) × 1000 pasa de negativo a enorme justo en el umbral. Sin svh, los de arriba. */
+.alta {
+  margin-top: clamp(10px, calc(10px + (100svh - 700px) * 1000), 18px);
+  padding: clamp(14px, calc(14px + (100svh - 700px) * 1000), 18px);
+  gap: clamp(10px, calc(10px + (100svh - 700px) * 1000), 14px);
+}
 
 /* Etiqueta flotante sin JavaScript: dentro del campo mientras está vacío y sin foco, arriba
    en cuanto se toca o se escribe (:placeholder-shown, con un placeholder de un espacio).
