@@ -106,9 +106,11 @@ public class CimientosTest {
         String p = estilo(s, "Widget.GymProFit.Card.Protagonista");
         assertTrue(p.contains("@dimen/radio_protagonista"));
         assertTrue(p.contains("<item name=\"cardBackgroundColor\">@color/gp_hero</item>"));
-        assertTrue("«Hoy toca» es la tarjeta protagonista",
-                leer(RES.resolve("layout/fragment_inicio.xml"))
-                        .contains("android:id=\"@+id/cardHoyToca\"\n                style=\"@style/Widget.GymProFit.Card.Protagonista\""));
+        // «Hoy toca» dejó de serlo en GP-285 (ahora es la tarjeta héroe de cristal, CristalTest);
+        // la protagonista sigue en las pantallas que aún no tienen el fondo ambiental.
+        assertTrue("la rutina del detalle sigue en la tarjeta protagonista",
+                leer(RES.resolve("layout/activity_detalle_rutina.xml"))
+                        .contains("style=\"@style/Widget.GymProFit.Card.Protagonista\""));
     }
 
     @Test
@@ -202,7 +204,9 @@ public class CimientosTest {
             assertTrue(b[1] + " tiene que ser un BotonExpresivo", m.find());
         }
         assertTrue(leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BarraNavegacion.java")).contains("BotonExpresivo.alPulsar(btnAcciones)"));
-        assertTrue(leer(RES.resolve("drawable/bg_boton_acciones.xml")).contains("@dimen/boton_radio_reposo"));
+        // El «+» es un círculo de 64 dp desde GP-285: su reposo son 32 dp, y al soltar vuelve a ellos.
+        assertEquals("32dp", dimen(d, "barra_mas_radio"));
+        assertTrue(leer(RES.resolve("drawable/bg_boton_acciones.xml")).contains("@dimen/barra_mas_radio"));
         // El tiempo es el del toque, no un número escrito.
         String c = leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BotonExpresivo.java"));
         assertTrue(c.contains("Movimiento.TOQUE"));

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- brillo_boton — el brillo superior de un botón relleno sobre cristal (GP-285): solo la línea de arriba, en píldora; se quita mientras se pulsa. Lo dibuja Cristal. -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="brillo" />

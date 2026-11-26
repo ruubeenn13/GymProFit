@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Separación entre los tiles de «Tu día» (GP-285): 8 dp, para que tres quepan a lo ancho. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <size android:width="@dimen/espacio_8" android:height="@dimen/espacio_8" />
+    <solid android:color="@android:color/transparent" />
+</shape>

@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
+import es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,10 +50,12 @@ import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.MainActivity;
 import es.pmdm.gymprofit.ui.activities.PerfilActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
+import es.pmdm.gymprofit.ui.inicio.EncajeHeroe;
 import es.pmdm.gymprofit.ui.inicio.InicioEntrenos;
 import es.pmdm.gymprofit.ui.inicio.InicioHoyDetalle;
 import es.pmdm.gymprofit.ui.inicio.InicioProgreso;
@@ -145,6 +147,10 @@ public class InicioFragment extends BaseFragment {
         avatar.setContentDescription(getString(R.string.avatar_perfil_a11y));
         avatar.setOnClickListener(v -> startActivity(new Intent(requireContext(), PerfilActivity.class)));
 
+        // Cada vez que algo de Inicio cambia de medida (llega el carrusel, cambia la letra, sale
+        // la barra de la sesión) se mira si «Empezar» queda pegado a la barra flotante. Fuera
+        // de la pasada de medida, que es donde se puede pedir otra.
+        view.addOnLayoutChangeListener((v, l, t, r, b, l0, t0, r0, b0) -> v.post(this::encajarHeroe));
         hoyDetalle = new InicioHoyDetalle(this, view);
         tuDia = new InicioTuDia(this, view, prefsManager, () -> irATab(NavTabs.NUTRICION), this::registrarComida,
                 this::alTenerComidas);
@@ -583,6 +589,35 @@ public class InicioFragment extends BaseFragment {
         fila.requestLayout();
     }
 
+    // El último botón de «Hoy toca» frente a la barra flotante (EncajeHeroe): si con el scroll
+    // arriba queda a menos de barra_margen_boton de ella y acortando el bloque del icono de cada
+    // ejercicio se arregla, se acorta justo lo que falta; si no, cada bloque vuelve a su alto.
+    private void encajarHeroe() {
+        View raiz = getView();
+        MainActivity m = main();
+        if (!(raiz instanceof ViewGroup) || m == null || m.altoPie() == 0) return;
+        LinearLayout lista = raiz.findViewById(R.id.listaHoyEjercicios);
+        View botones = raiz.findViewById(R.id.filaBotonesHoy);
+        boolean hayCarrusel = raiz.findViewById(R.id.scrollHoyEjercicios).getVisibility() == View.VISIBLE
+                && lista.getChildCount() > 0;
+        int alto = getResources().getDimensionPixelSize(R.dimen.hoy_ejercicio_icono_alto);
+        int cedido = hayCarrusel
+                ? alto - lista.getChildAt(0).findViewById(R.id.bloqueIconoEjercicio).getLayoutParams().height : 0;
+        // Dónde acaba la fila de botones en el contenido del scroll, esté donde esté el scroll.
+        android.graphics.Rect fila = new android.graphics.Rect(0, 0, botones.getWidth(), botones.getHeight());
+        ((ViewGroup) raiz).offsetDescendantRectToMyCoords(botones, fila);
+        int cede = EncajeHeroe.cede(fila.bottom, cedido, raiz.getHeight() - m.altoPie(),
+                getResources().getDimensionPixelSize(R.dimen.barra_margen_boton),
+                hayCarrusel ? getResources().getDimensionPixelSize(R.dimen.hoy_ejercicio_icono_cede) : 0);
+        if (cede == cedido) return;
+        for (int i = 0; i < lista.getChildCount(); i++) {
+            View bloque = lista.getChildAt(i).findViewById(R.id.bloqueIconoEjercicio);
+            ViewGroup.LayoutParams lp = bloque.getLayoutParams();
+            lp.height = alto - cede;
+            bloque.setLayoutParams(lp);
+        }
+    }
+
     private void pintarHoyTocaError() {
         hoyDetalle.ocultar();
         rutinaDelDetalle = -1;
@@ -688,7 +723,8 @@ public class InicioFragment extends BaseFragment {
 
         LinearLayout lista = findViewById(R.id.listaZonasSemana);
         lista.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        // Con el contexto de la lista, que lleva el tema de cristal de Inicio (GP-285).
+        LayoutInflater inflater = LayoutInflater.from(lista.getContext());
         List<String> a11y = new ArrayList<>();
         for (Map.Entry<Zonas.Zona, Integer> e : porZona.entrySet()) {
             String nombre = getString(e.getKey().titulo);
@@ -697,10 +733,10 @@ public class InicioFragment extends BaseFragment {
             ((TextView) fila.findViewById(R.id.tvZonaNombre)).setText(nombre);
             String texto = getResources().getQuantityString(R.plurals.inicio_zona_series, series, series);
             ((TextView) fila.findViewById(R.id.tvZonaSeries)).setText(texto);
-            LinearProgressIndicator barra = fila.findViewById(R.id.barraZona);
-            barra.setProgressCompat(series * 100 / maximo, false);
+            BarraProgresoCristal barra = fila.findViewById(R.id.barraZona);
+            barra.setProgreso(series * 100 / maximo, false);
             // Cuanto más trabajada, más intensa; sin series, solo la pista.
-            barra.setIndicatorColor(colorBarra(series, maximo));
+            barra.setColorRelleno(colorBarra(series, maximo));
             fila.setContentDescription(getString(R.string.hoy_toca_separador, nombre, texto));
             fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             lista.addView(fila);
@@ -710,14 +746,14 @@ public class InicioFragment extends BaseFragment {
         silueta.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
     }
 
-    // El naranja entero para lo más trabajado y dos escalones mezclados con la pista (sin transparencia, que
-    // dejaba ver el borde redondeado de la barra): el valor va escrito en la fila.
+    // El naranja entero para lo más trabajado y dos escalones mezclados con la base del fondo (sin
+    // transparencia, que dejaba ver el borde redondeado de la barra): el valor va escrito en la fila.
     private int colorBarra(int series, int maximo) {
-        int primario = color(androidx.appcompat.R.attr.colorPrimary);
+        int primario = color(R.attr.gpGraficoMarca);
         float proporcion = series / (float) maximo;
         float mezcla = proporcion >= 0.66f ? 1f : proporcion >= 0.33f ? 0.7f : 0.4f;
         return androidx.core.graphics.ColorUtils.blendARGB(
-                androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_meter_track), primario, mezcla);
+                androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_ambiente_base), primario, mezcla);
     }
 
     // Lunes de esta semana a las 00:00, en la hora del teléfono.
@@ -797,8 +833,8 @@ public class InicioFragment extends BaseFragment {
         card.setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tvPrimerosPasos)).setText(
                 getString(R.string.inicio_pasos_titulo, p.hechos(), PrimerosPasos.TOTAL));
-        LinearProgressIndicator barra = findViewById(R.id.barraPasos);
-        barra.setProgressCompat(p.hechos() * 100 / PrimerosPasos.TOTAL, nueva && !Movimiento.quieto(requireContext()));
+        BarraProgresoCristal barra = findViewById(R.id.barraPasos);
+        barra.setProgreso(p.hechos() * 100 / PrimerosPasos.TOTAL, nueva);
 
         HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
         paso(R.id.pasoPlan, R.string.inicio_paso_plan, getString(R.string.inicio_paso_hecho), true, null);
@@ -820,7 +856,7 @@ public class InicioFragment extends BaseFragment {
         ((TextView) fila.findViewById(R.id.tvSubPaso)).setText(sub);
         ImageView icono = fila.findViewById(R.id.ivPaso);
         icono.setImageResource(hecho ? R.drawable.ic_ms_check_circle_fill : R.drawable.ic_ms_radio_button_unchecked);
-        icono.setImageTintList(ColorStateList.valueOf(color(hecho ? androidx.appcompat.R.attr.colorPrimary
+        icono.setImageTintList(ColorStateList.valueOf(color(hecho ? R.attr.gpGraficoMarca
                 : com.google.android.material.R.attr.colorOutline)));
         fila.findViewById(R.id.ivFlechaPaso).setVisibility(hecho ? View.INVISIBLE : View.VISIBLE);
         fila.setClickable(!hecho && accion != null);
@@ -837,9 +873,11 @@ public class InicioFragment extends BaseFragment {
         return s;
     }
 
+    // Del tema de la vista, no del de la pantalla: Inicio lleva el de cristal (GP-285), con su
+    // texto y sus colores de gráfica.
     private int color(@AttrRes int attr) {
         TypedValue tv = new TypedValue();
-        requireContext().getTheme().resolveAttribute(attr, tv, true);
+        requireView().getContext().getTheme().resolveAttribute(attr, tv, true);
         return tv.data;
     }
 }

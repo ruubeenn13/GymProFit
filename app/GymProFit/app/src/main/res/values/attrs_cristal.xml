@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Atributos del cristal de Liquid Glass (GP-285, DEC-070).
+  Cristal es el drawable del cristal estático (<drawable class=…> en bg_cristal*.xml);
+  CristalVivo, la vista que desenfoca lo que tiene detrás.
+-->
+<resources>
+    <!-- Radio de las esquinas; sin él, la mitad del alto (píldora). -->
+    <attr name="cristalRadio" format="dimension" />
+
+    <declare-styleable name="Cristal">
+        <attr name="cristalRadio" />
+        <!-- Qué cristal es: ver Cristal.java. -->
+        <attr name="cristalTipo" format="enum">
+            <enum name="tarjeta" value="0" />
+            <enum name="lente" value="1" />
+            <enum name="oro" value="2" />
+            <enum name="brillo" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <!-- Los colores de una gráfica dibujada a mano (BarrasKilosView, BarrasVecesView): la barra
+         destacada y las demás. En el tema, el naranja y el borde; sobre cristal, los medidos ahí. -->
+    <attr name="gpGraficoMarca" format="color" />
+    <attr name="gpGraficoTenue" format="color" />
+    <attr name="gpGraficoOro" format="color" />
+
+    <declare-styleable name="CristalVivo">
+        <attr name="cristalRadio" />
+        <!-- Sombra suave por fuera. El padre no puede recortar a sus hijos. -->
+        <attr name="cristalSombra" format="boolean" />
+    </declare-styleable>
+</resources>

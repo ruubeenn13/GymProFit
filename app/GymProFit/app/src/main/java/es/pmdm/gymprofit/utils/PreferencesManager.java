@@ -30,6 +30,7 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     private static final String KEY_THEME = "theme_mode";
     // Descanso entre series (GP-013): del móvil, no de la cuenta, como el tema.
     private static final String KEY_DESCANSO_AL_MARCAR = "descanso_al_marcar";
+    private static final String KEY_CRISTAL_TECHO = "cristal_techo";
     private static final String KEY_DESCANSO_SIN_PAUTA = "descanso_sin_pauta";
     private static final String KEY_HOJA_PERMISO_DESCANSO = "descanso_hoja_permiso_vista";
     private static final String KEY_LANGUAGE = "app_language";
@@ -169,6 +170,14 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
     }
     public void saveDescansoSinPauta(int segundos) { editor.putInt(KEY_DESCANSO_SIN_PAUTA, segundos).apply(); }
 
+    /**
+     * El techo del cristal vivo en este móvil (GP-285): el mejor nivel que su rendimiento
+     * medido permite, por su número (1 refracción, 2 desenfoque, 3 opaco). 1 de serie.
+     * Es del dispositivo, no de la cuenta: sobrevive a cerrar sesión y a borrar la cuenta.
+     */
+    public int getCristalTecho() { return prefs.getInt(KEY_CRISTAL_TECHO, 1); }
+    public void saveCristalTecho(int nivel) { editor.putInt(KEY_CRISTAL_TECHO, nivel).apply(); }
+
     /** Si ya salió sola la hoja del permiso de avisar con la pantalla apagada: solo una vez. */
     public boolean getHojaPermisoDescansoVista() { return prefs.getBoolean(KEY_HOJA_PERMISO_DESCANSO, false); }
     public void saveHojaPermisoDescansoVista() { editor.putBoolean(KEY_HOJA_PERMISO_DESCANSO, true).apply(); }
@@ -268,7 +277,7 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
      * reaparecería en la siguiente cuenta que se creara en el mismo móvil.
      *
      * <p>Se vacía el almacén cifrado entero (no solo las dos claves de sesión) y se
-     * tiran todas las preferencias en claro <b>salvo tema e idioma</b>, que son
+     * tiran todas las preferencias en claro <b>salvo tema, idioma y el techo del cristal</b>, que son
      * ajustes del dispositivo y no datos de la cuenta: reiniciarlos dejaría la app
      * en otro color y otro idioma justo después de borrarse, sin explicación.
      */
@@ -277,10 +286,12 @@ public class PreferencesManager implements PerfilCuenta.Almacen {
 
         int tema = getTheme();
         String idioma = getLanguage();
+        int cristal = getCristalTecho();
 
         editor.clear();
         editor.putInt(KEY_THEME, tema);
         editor.putString(KEY_LANGUAGE, idioma);
+        editor.putInt(KEY_CRISTAL_TECHO, cristal);
         editor.apply();
     }
 

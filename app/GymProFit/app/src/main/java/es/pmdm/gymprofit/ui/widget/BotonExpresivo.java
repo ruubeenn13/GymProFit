@@ -67,14 +67,15 @@ public class BotonExpresivo extends MaterialButton {
     /**
      * Lo mismo para un botón que no es un MaterialButton y cuyo fondo es una forma con esquinas
      * (el «+» de la barra, un ImageButton con bg_boton_acciones): al tocarlo, sus esquinas pasan de
-     * boton_radio_reposo a boton_radio_pulsado en TOQUE ms, y vuelven al soltar. No consume el toque.
+     * las que trae su forma (en el «+», 32 dp: un círculo; GP-285) a boton_radio_pulsado en TOQUE ms,
+     * y vuelven al soltar. No consume el toque.
      */
     public static void alPulsar(@NonNull View boton) {
         GradientDrawable forma = formaDe(boton.getBackground());
         if (forma == null) return;
         forma = (GradientDrawable) forma.mutate();
         GradientDrawable f = forma;
-        float reposo = boton.getResources().getDimension(R.dimen.boton_radio_reposo);
+        float reposo = f.getCornerRadius();
         float pulsado = boton.getResources().getDimension(R.dimen.boton_radio_pulsado);
         ValueAnimator[] animador = new ValueAnimator[1];
         boton.setOnTouchListener((v, e) -> {

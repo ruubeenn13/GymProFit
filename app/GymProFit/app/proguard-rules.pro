@@ -75,3 +75,7 @@
 -keep class es.pmdm.gymprofit.ui.widget.BurbujaProfi {
     public <init>();
 }
+# El cristal estático de Liquid Glass (GP-285): bg_cristal*.xml, bg_lente.xml, brillo_boton.xml.
+-keep class es.pmdm.gymprofit.ui.cristal.Cristal {
+    public <init>();
+}

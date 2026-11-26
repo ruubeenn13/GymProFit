@@ -237,4 +237,53 @@
     <color name="gp_codigo_halo">#33B83E00</color>
     <!-- GP-045: el check sobre el círculo dorado, casi negro en los dos temas. -->
     <color name="gp_sobre_oro">#17181C</color>
+    <!-- ── Liquid Glass (GP-285, DEC-070) ─────────────────────────────────────
+         El tema claro no tiene maqueta: cristal blanco esmerilado sobre un fondo claro cálido
+         con brillos suaves, con las mismas reglas de contraste que el oscuro
+         (ContrasteCristalTest; cifras en DESIGN.md). -->
+    <color name="gp_ambiente_base">#F3F1EC</color>
+    <color name="gp_ambiente_brillo_1">#57FF8A3D</color>
+    <color name="gp_ambiente_brillo_2">#42FF9678</color>
+    <color name="gp_ambiente_brillo_3">#3D78A5FF</color>
+    <color name="gp_cristal_alto">#C7FFFFFF</color>
+    <color name="gp_cristal_medio">#8CFFFFFF</color>
+    <color name="gp_cristal_bajo">#A6FFFFFF</color>
+    <color name="gp_cristal_borde">#E6FFFFFF</color>
+    <color name="gp_cristal_brillo">#FFFFFFFF</color>
+    <color name="gp_cristal_texto">#17181C</color>
+    <color name="gp_cristal_texto_2">#4B4D54</color>
+    <color name="gp_cristal_acento">#9A3300</color>
+    <color name="gp_cristal_enlace">#9A3300</color>
+    <color name="gp_cristal_exito">#12693A</color>
+    <!-- Dorado de texto sobre cristal: gp_gold_text (#8A6920) se quedaba en 4,31:1. -->
+    <color name="gp_cristal_oro">#7A5C18</color>
+    <color name="gp_cristal_oro_cifra">#7A5C18</color>
+    <color name="gp_cristal_pista">#1F17181C</color>
+    <color name="gp_cristal_barra_tenue">#8017181C</color>
+    <!-- El tinte del cristal vivo y el velo de detrás van juntos: con la hoja del «+» abierta, la
+         hoja y la barra desenfocan el contenido ya oscurecido por el velo. Con el velo de siempre
+         (negro 62 %) y el tinte al 72–58 %, el cristal salía gris y el secundario de la hoja
+         bajaba a 3,86:1 (revisor de UI, 26-11-2026). Con el velo al 35 % y el tinte al 80–70 %,
+         5,71:1. -->
+    <color name="gp_vivo_alto">#CCFFFFFF</color>
+    <color name="gp_vivo_bajo">#B3F6F4F0</color>
+    <color name="gp_velo_cristal">#59000000</color>
+    <color name="gp_vivo_opaco_alto">#FCFFFFFF</color>
+    <color name="gp_vivo_opaco_bajo">#FCF6F4F0</color>
+    <color name="gp_vivo_texto">#3A3C42</color>
+    <color name="gp_vivo_acento">#8A2E00</color>
+    <color name="gp_vivo_sombra">#2E503214</color>
+    <color name="gp_lente">#1417181C</color>
+    <color name="gp_lente_brillo">#E6FFFFFF</color>
+    <color name="gp_lente_resplandor">#0A17181C</color>
+    <color name="gp_cristal_oro_alto">#59E8B84B</color>
+    <color name="gp_cristal_oro_bajo">#24E8B84B</color>
+    <color name="gp_cristal_oro_brillo">#CCFFFFFF</color>
+    <color name="gp_boton_brillo">#59FFFFFF</color>
+    <color name="gp_cristal_boton">#99FFFFFF</color>
+    <!-- El «+» de la barra: el naranja vivo con el icono casi negro en los dos temas (6,61:1),
+         como la tarjeta de «Tu objetivo». -->
+    <color name="gp_mas_claro">#FFB27A</color>
+    <color name="gp_mas_oscuro">#FF6A00</color>
+    <color name="gp_mas_icono">#1A0E00</color>
 </resources>

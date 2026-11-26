@@ -1,44 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_main — la navegación principal (GP-105).
-  Arriba, las cuatro pestañas en un ViewPager2 sin deslizamiento; abajo, la barra fija,
-  y sobre ella, si hay una sesión en curso, su barra (GP-012).
-  La barra no se superpone al contenido: cada pestaña llega hasta su borde y no tiene
-  que reservar hueco. El velo y la hoja del «+» cubren solo el contenido, de modo que
-  la barra —y su «×»— siguen a la vista y a mano con la hoja abierta.
+  activity_main — la navegación principal (GP-105; Liquid Glass en GP-285, DEC-070).
+
+  Detrás, el lienzo (LienzoCristal): el fondo ambiental de la pestaña que lo tenga, las cuatro
+  pestañas en un ViewPager2 sin deslizamiento, los dos bordes del sistema (el contenido se
+  desvanece antes de los iconos de las barras) y el velo del «+». Ocupa toda la pantalla, también
+  bajo la barra de estado, que es donde el fondo ambiental sigue; las pestañas empiezan debajo
+  de ella (contenedorPager lleva el margen).
+
+  Encima y fuera del lienzo, el cristal vivo, que desenfoca lo que el lienzo tiene en su sitio:
+  la hoja del «+» y, abajo, el pie con la barra de la sesión en curso (GP-012) y la barra
+  flotante. El contenido de cada pestaña pasa por debajo del pie: MainActivity le da a cada
+  una el relleno inferior que hace falta. El velo y la hoja no tapan la barra, que sigue a la
+  vista y a mano —con su «×»— con la hoja abierta.
+
+  Nada de aquí recorta a sus hijos: la sombra de la barra se pinta fuera de ella.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/raizMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/android:colorBackground"
+    android:clipChildren="false">
 
-    <FrameLayout
+    <es.pmdm.gymprofit.ui.cristal.LienzoCristal
+        android:id="@id/lienzoCristal"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/pager"
+        <View
+            android:id="@+id/fondoAmbiental"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:id="@+id/contenedorPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <!-- Los bordes del sistema (BordesSistema): el contenido se desvanece hacia el fondo base
+             antes de llegar a los iconos de la barra de estado y a los botones de navegación.
+             Dentro del lienzo (el cristal vivo los ve) y debajo del velo, que los cubre con su
+             mismo tono. El alto se lo da MainActivity con los márgenes del sistema. -->
+        <View
+            android:id="@+id/bordeSuperior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no" />
+
+        <View
+            android:id="@+id/bordeInferior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:importantForAccessibility="no" />
 
         <View
             android:id="@+id/veloAcciones"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/gp_velo"
+            android:background="@color/gp_velo_cristal"
             android:importantForAccessibility="no"
             android:visibility="gone" />
+    </es.pmdm.gymprofit.ui.cristal.LienzoCristal>
 
-        <include layout="@layout/view_acciones_rapidas" />
-    </FrameLayout>
+    <include layout="@layout/view_acciones_rapidas" />
 
-    <include layout="@layout/view_barra_sesion" />
-
-    <es.pmdm.gymprofit.ui.widget.BarraNavegacion
-        android:id="@+id/barra"
+    <LinearLayout
+        android:id="@+id/pieMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical">
+
+        <include layout="@layout/view_barra_sesion" />
+
+        <es.pmdm.gymprofit.ui.widget.BarraNavegacion
+            android:id="@+id/barra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</FrameLayout>

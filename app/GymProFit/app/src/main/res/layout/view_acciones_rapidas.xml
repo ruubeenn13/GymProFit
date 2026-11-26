@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   view_acciones_rapidas — la hoja del «+» (GP-105): «¿Qué quieres hacer?» con cuatro
-  atajos. Flota 16 dp por encima de la barra, con 12 dp a los lados, como el lienzo.
+  atajos. Flota por encima de la barra (MainActivity le da el margen inferior: el alto del
+  pie más 12 dp), con 12 dp a los lados. Desde GP-285 es cristal vivo, como toda hoja inferior:
+  desenfoca la pestaña, ya oscurecida por el velo, que tiene detrás.
   Los subtítulos (qué rutina toca, qué comida, el último peso) empiezan ocultos y solo
   se enseñan cuando el dato ya está cargado: nunca un «cargando» aquí dentro.
 -->
-<com.google.android.material.card.MaterialCardView
+<es.pmdm.gymprofit.ui.cristal.CristalVivo
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hojaAcciones"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:layout_marginStart="12dp"
-    android:layout_marginEnd="12dp"
-    android:layout_marginBottom="16dp"
+    android:layout_marginStart="@dimen/espacio_12"
+    android:layout_marginEnd="@dimen/espacio_12"
+    android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
     android:visibility="gone"
-    app:cardBackgroundColor="?attr/colorSurface"
-    app:cardCornerRadius="@dimen/radio_protagonista">
+    app:cristalRadio="@dimen/radio_protagonista"
+    app:cristalSombra="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -177,4 +179,4 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</es.pmdm.gymprofit.ui.cristal.CristalVivo>

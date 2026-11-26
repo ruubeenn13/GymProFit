@@ -188,7 +188,7 @@ public final class InicioProgreso {
         String signo = v.porcentaje > 0 ? "+" : v.porcentaje < 0 ? "\u2212" : "";
         tv.setText(fragment.getString(R.string.inicio_variacion, signo, Math.abs(v.porcentaje), v.semanas));
         tv.setTextColor(v.porcentaje > 0
-                ? ContextCompat.getColor(fragment.requireContext(), R.color.gp_success)
+                ? ContextCompat.getColor(fragment.requireContext(), R.color.gp_cristal_exito)
                 : MaterialColors.getColor(tv, com.google.android.material.R.attr.colorOnSurfaceVariant));
     }
 

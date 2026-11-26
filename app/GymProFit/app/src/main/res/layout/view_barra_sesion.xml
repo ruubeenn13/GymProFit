@@ -3,51 +3,69 @@
   view_barra_sesion — la sesión en curso, sobre la navegación de las pestañas (GP-012):
   «Sesión en curso · Pierna B · 23:14 · Volver». Tocarla abre la sesión. Si se intentó
   guardar y no se pudo: «Sin guardar · Pierna B» con «Reintentar».
+  Desde GP-285 es una cápsula de cristal vivo, como la barra: 16 dp a los lados y 8 por encima
+  de ella. Lo de dentro lee sus colores de ThemeOverlay.GymProFit.CristalVivo. Si el texto no
+  cabe en una línea (inglés, o letra grande), MainActivity lo parte por su primer separador
+  («Sesión en curso» arriba y «Torso A · 23:14» debajo): sin eso el reloj se quedaba solo en la
+  segunda línea, con el «·» colgando.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<es.pmdm.gymprofit.ui.cristal.CristalVivo xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/barraSesion"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimaryContainer"
+    android:layout_marginStart="@dimen/barra_margen_lado"
+    android:layout_marginEnd="@dimen/barra_margen_lado"
+    android:layout_marginBottom="@dimen/barra_sesion_hueco"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
-    android:gravity="center_vertical"
-    android:minHeight="56dp"
-    android:orientation="horizontal"
-    android:paddingStart="16dp"
-    android:paddingEnd="8dp"
-    android:visibility="gone">
+    android:foreground="@drawable/fondo_pulsable_pildora"
+    android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
+    android:visibility="gone"
+    app:cristalRadio="@dimen/radio_protagonista"
+    app:cristalSombra="true">
 
-    <ImageView
-        android:id="@+id/ivBarraSesion"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="12dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_ms_timer"
-        app:tint="?attr/colorOnPrimaryContainer" />
-
-    <TextView
-        android:id="@+id/tvBarraSesion"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:importantForAccessibility="no"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:textColor="?attr/colorOnPrimaryContainer"
-        android:textSize="@dimen/text_body" />
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/espacio_16"
+        android:paddingEnd="@dimen/espacio_8">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBarraSesion"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:importantForAccessibility="no"
-        android:text="@string/envivo_volver"
-        android:textColor="?attr/colorOnPrimaryContainer"
-        android:textSize="@dimen/text_fila" />
-</LinearLayout>
+        <ImageView
+            android:id="@+id/ivBarraSesion"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="@dimen/espacio_12"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_ms_timer"
+            app:tint="@color/gp_vivo_acento" />
+
+        <TextView
+            android:id="@+id/tvBarraSesion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:breakStrategy="balanced"
+            android:hyphenationFrequency="none"
+            android:importantForAccessibility="no"
+            android:paddingTop="@dimen/espacio_8"
+            android:paddingBottom="@dimen/espacio_8"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBarraSesion"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:importantForAccessibility="no"
+            android:text="@string/envivo_volver"
+            android:textColor="@color/gp_vivo_acento"
+            android:textSize="@dimen/text_fila"
+            app:rippleColor="@color/tarjeta_capa" />
+    </LinearLayout>
+</es.pmdm.gymprofit.ui.cristal.CristalVivo>

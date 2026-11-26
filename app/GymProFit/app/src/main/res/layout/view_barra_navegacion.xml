@@ -1,57 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_barra_navegacion — contenido de BarraNavegacion (GP-105): una línea arriba y
-  una fila de cinco columnas iguales: Inicio · Entrenar · «+» · Nutrición · Progreso.
-  80 dp de alto como el lienzo (8 arriba, 12 abajo); el hueco de la barra de gestos
-  o de botones del sistema se suma debajo, desde BarraNavegacion.aplicarInsets.
-  El «+» sube 2 dp por encima de su columna (marginTop -2dp, como el lienzo): para que
-  esos 2 dp se dibujen, ni su columna ni filaBarra recortan a sus hijos, y filaBarra
-  tampoco a su relleno (GP-118, BarraNavegacionRecorteTest).
+  view_barra_navegacion — contenido de BarraNavegacion (GP-105; Liquid Glass en GP-285).
+  Una cápsula de cristal vivo de 64 dp con las cuatro pestañas —Inicio · Entrenar · Nutrición ·
+  Progreso— y, separado 10 dp a su derecha, el «+» en un círculo de 64 dp. Los márgenes de la
+  barra (16 a los lados, 26 abajo más el hueco de gestos) los pone BarraNavegacion como relleno.
+  La cápsula lleva sombra por fuera: ni ella ni la barra recortan a sus hijos.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/colorSurfaceVariant" />
+    <es.pmdm.gymprofit.ui.cristal.CristalVivo
+        android:id="@+id/capsulaBarra"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/barra_alto"
+        android:layout_weight="1"
+        app:cristalSombra="true">
 
-    <LinearLayout
-        android:id="@+id/filaBarra"
-        android:layout_width="match_parent"
-        android:layout_height="79dp"
-        android:orientation="horizontal"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="12dp">
-
-        <include android:id="@+id/tabInicio" layout="@layout/view_pestana" />
-        <include android:id="@+id/tabEntrenar" layout="@layout/view_pestana" />
-
-        <FrameLayout
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/filaBarra"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clipChildren="false">
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/barra_relleno"
+            android:paddingEnd="@dimen/barra_relleno">
 
-            <ImageButton
-                android:id="@+id/btnAcciones"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="-2dp"
-                android:background="@drawable/bg_boton_acciones"
-                android:contentDescription="@string/acciones_rapidas"
-                android:padding="13dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_ms_add"
-                app:tint="?attr/colorOnPrimary" />
-        </FrameLayout>
+            <include android:id="@+id/tabInicio" layout="@layout/view_pestana" />
+            <include android:id="@+id/tabEntrenar" layout="@layout/view_pestana" />
+            <include android:id="@+id/tabNutricion" layout="@layout/view_pestana" />
+            <include android:id="@+id/tabProgreso" layout="@layout/view_pestana" />
+        </LinearLayout>
+    </es.pmdm.gymprofit.ui.cristal.CristalVivo>
 
-        <include android:id="@+id/tabNutricion" layout="@layout/view_pestana" />
-        <include android:id="@+id/tabProgreso" layout="@layout/view_pestana" />
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/btnAcciones"
+        android:layout_width="@dimen/barra_alto"
+        android:layout_height="@dimen/barra_alto"
+        android:layout_marginStart="@dimen/barra_hueco_mas"
+        android:background="@drawable/bg_boton_acciones"
+        android:contentDescription="@string/acciones_rapidas"
+        android:padding="19dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_ms_add"
+        app:tint="@color/gp_mas_icono" />
 </merge>

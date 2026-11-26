@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal_oro — la fila de un récord sobre cristal (GP-285): degradado dorado de lado a lado y brillo, radio 20. Lo dibuja Cristal. -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="oro"
+    app:cristalRadio="@dimen/radio_tarjeta_pequena" />

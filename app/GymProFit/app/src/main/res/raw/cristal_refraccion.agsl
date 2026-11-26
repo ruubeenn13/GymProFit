@@ -1,0 +1,36 @@
+// cristal_refraccion.agsl — la lente del borde del cristal vivo (GP-285, DEC-070). Android 13 o más.
+//
+// Se aplica sobre lo ya desenfocado. En una banda junto al borde de la forma (un rectángulo
+// redondeado de tamaño `tam` y radio `radio`), cada punto enseña lo que hay más adentro: tanto
+// más cuanto más cerca del canto (t al cuadrado), como el bisel de un cristal grueso. El rojo y
+// el azul se desplazan un poco distinto: el filo de color de una lente. Fuera de la banda no
+// toca nada. Los uniformes los pone CristalVivo una vez por tamaño, nunca por fotograma.
+
+uniform shader contenido;
+uniform float2 tam;
+uniform float radio;
+uniform float banda;
+uniform float fuerza;
+
+// Distancia con signo al borde de la caja redondeada centrada en el origen: negativa dentro.
+float caja(float2 p, float2 b, float r) {
+    float2 q = abs(p) - b + r;
+    return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+}
+
+half4 main(float2 xy) {
+    float2 c = tam * 0.5;
+    float2 p = xy - c;
+    float d = -caja(p, c, radio);
+    if (d >= banda || d < 0.0) { return contenido.eval(xy); }
+    float t = 1.0 - d / banda;
+    // La normal hacia fuera: hacia donde crece la distancia.
+    float2 n = float2(caja(p + float2(1.0, 0.0), c, radio) - caja(p - float2(1.0, 0.0), c, radio),
+                      caja(p + float2(0.0, 1.0), c, radio) - caja(p - float2(0.0, 1.0), c, radio));
+    n = n / max(length(n), 0.0001);
+    float k = t * t * fuerza;
+    half4 centro = contenido.eval(xy - n * k);
+    half rojo = contenido.eval(xy - n * k * 1.18).r;
+    half azul = contenido.eval(xy - n * k * 0.82).b;
+    return half4(rojo, centro.g, azul, centro.a);
+}

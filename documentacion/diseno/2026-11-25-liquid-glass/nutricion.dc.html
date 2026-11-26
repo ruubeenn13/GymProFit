@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Liquid Glass · Nutrición</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&amp;family=Barlow+Condensed:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FF8A3D}a:hover{color:#FFB27A}
+.g{background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.05) 55%,rgba(255,255,255,.09));backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 32px rgba(0,0,0,.35)}
+.c{font-family:'Barlow Condensed',sans-serif}
+button{font-family:inherit;cursor:pointer}
+.d{flex:1;height:52px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:#C9CDD6;border:0;background:transparent}
+.m{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid rgba(255,255,255,.1)}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#08090B;font-family:Barlow,sans-serif;color:#F2F2F3">
+  <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(400px 320px at 10% 5%,rgba(255,106,0,.45),transparent 70%),radial-gradient(360px 320px at 100% 40%,rgba(46,108,203,.45),transparent 70%),radial-gradient(360px 300px at 10% 90%,rgba(76,195,160,.3),transparent 70%)"></div>
+
+  <div style="position:relative;padding:58px 16px 0;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 class="c" style="margin:0;font-size:34px;font-weight:800">Nutrición</h1>
+      <button class="g" style="height:40px;border-radius:20px;padding:0 14px;color:#F2F2F3;font-size:14px">Semana</button>
+    </div>
+
+    <div class="g" style="border-radius:24px;padding:6px;display:flex;gap:2px">
+      <button class="d"><span>L</span><span class="c" style="font-size:18px;font-weight:700;color:#F2F2F3">23</span></button>
+      <button class="d"><span>M</span><span class="c" style="font-size:18px;font-weight:700;color:#F2F2F3">24</span></button>
+      <button class="d" aria-current="date" style="background:rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 12px rgba(255,255,255,.08);color:#FFB27A"><span>X</span><span class="c" style="font-size:18px;font-weight:800;color:#FFB27A">25</span></button>
+      <button class="d"><span>J</span><span class="c" style="font-size:18px;font-weight:700;color:#8E95A1">26</span></button>
+      <button class="d"><span>V</span><span class="c" style="font-size:18px;font-weight:700;color:#8E95A1">27</span></button>
+      <button class="d"><span>S</span><span class="c" style="font-size:18px;font-weight:700;color:#8E95A1">28</span></button>
+      <button class="d"><span>D</span><span class="c" style="font-size:18px;font-weight:700;color:#8E95A1">29</span></button>
+    </div>
+
+    <section class="g" style="border-radius:30px;padding:18px;display:flex;gap:18px;align-items:center">
+      <div role="img" aria-label="Te quedan 1.030 kcal de 2.450" style="width:132px;height:132px;border-radius:66px;background:conic-gradient(#FF6A00 0 58%,rgba(255,255,255,.14) 58% 100%);display:flex;align-items:center;justify-content:center;flex:none">
+        <div style="width:110px;height:110px;border-radius:55px;background:rgba(14,15,18,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)">
+          <span class="c" style="font-size:32px;font-weight:800;line-height:1">1.030</span>
+          <span style="font-size:12px;color:#C9CDD6">kcal te quedan</span>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+        <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Proteínas</span><span style="color:#C9CDD6">96/160 g</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);margin-top:5px"><div style="width:60%;height:6px;border-radius:3px;background:#7FA8F2"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Carbohidratos</span><span style="color:#C9CDD6">160/290 g</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);margin-top:5px"><div style="width:55%;height:6px;border-radius:3px;background:#E0A34A"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:13px"><span>Grasas</span><span style="color:#C9CDD6">44/75 g</span></div><div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);margin-top:5px"><div style="width:59%;height:6px;border-radius:3px;background:#5CCFA8"></div></div></div>
+      </div>
+    </section>
+
+    <section class="g" style="border-radius:28px;overflow:hidden">
+      <div class="m" style="border-top:0"><div style="flex:1"><div class="c" style="font-size:19px;font-weight:700">Desayuno</div><div style="font-size:13px;color:#C9CDD6">Avena, plátano, leche</div></div><span class="c" style="font-size:18px;font-weight:700">520</span></div>
+      <div class="m"><div style="flex:1"><div class="c" style="font-size:19px;font-weight:700">Almuerzo</div><div style="font-size:13px;color:#C9CDD6">Bocadillo de pavo</div></div><span class="c" style="font-size:18px;font-weight:700">310</span></div>
+      <div class="m"><div style="flex:1"><div class="c" style="font-size:19px;font-weight:700">Comida</div><div style="font-size:13px;color:#C9CDD6">Arroz con pollo, ensalada</div></div><span class="c" style="font-size:18px;font-weight:700">590</span></div>
+      <div class="m" style="background:rgba(255,106,0,.14);box-shadow:inset 0 1px 0 rgba(255,178,122,.35)"><div style="flex:1"><div style="display:flex;gap:8px;align-items:center"><span class="c" style="font-size:19px;font-weight:700">Merienda</span><span style="font-size:11px;font-weight:600;color:#1A0E00;background:#FFB27A;border-radius:999px;padding:2px 8px">ahora toca</span></div><div style="font-size:13px;color:#E4D3C6">Sin alimentos registrados</div></div><button aria-label="Añadir a la merienda" style="width:44px;height:44px;border-radius:22px;border:0;background:#FF6A00;color:#1A0E00;display:flex;align-items:center;justify-content:center;padding:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+      <div class="m"><div style="flex:1"><div class="c" style="font-size:19px;font-weight:700;color:#C9CDD6">Cena</div><div style="font-size:13px;color:#8E95A1">Pendiente</div></div><span class="c" style="font-size:18px;font-weight:700;color:#8E95A1">—</span></div>
+    </section>
+  </div>
+
+  <nav aria-label="Navegación principal" style="position:absolute;left:16px;right:16px;bottom:26px;display:flex;gap:10px;align-items:center">
+    <div class="g" style="flex:1;height:64px;border-radius:32px;display:flex;align-items:center;padding:0 6px;background:linear-gradient(160deg,rgba(40,42,48,.55),rgba(20,22,26,.4))">
+      <a href="Main.dc.html" style="flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#E4E6EB;text-decoration:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span style="font-size:11px">Inicio</span></a>
+      <a href="LG-Sesion.dc.html" style="flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#E4E6EB;text-decoration:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 7v10M18 7v10M3 10v4M21 10v4M6 12h12"/></svg><span style="font-size:11px">Entrenar</span></a>
+      <a href="LG-Nutricion.dc.html" aria-current="page" style="flex:1;height:52px;border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#FF8A3D;text-decoration:none;background:rgba(255,255,255,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 0 12px rgba(255,255,255,.08)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 2.5-3 6h3v12"/></svg><span style="font-size:11px;font-weight:600">Nutrición</span></a>
+      <a href="Main.dc.html" style="flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#E4E6EB;text-decoration:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span style="font-size:11px">Progreso</span></a>
+    </div>
+    <button class="g" aria-label="Acciones rápidas" style="width:64px;height:64px;border-radius:32px;padding:0;color:#1A0E00;background:radial-gradient(circle at 35% 30%,#FFB27A,#FF6A00 70%);display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

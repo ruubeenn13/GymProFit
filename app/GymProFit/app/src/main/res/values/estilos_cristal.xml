@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  estilos_cristal — Liquid Glass (GP-285, DEC-070): los estilos del sistema visual nuevo.
+  Referencia: documentacion/diseno/2026-11-25-liquid-glass/README.md; reglas y cifras, en DESIGN.md.
+
+  Dos clases de cristal. El ESTÁTICO (tarjetas, tiles, chips) es un relleno translúcido sobre
+  el fondo ambiental y es igual en todas las versiones de Android: estos estilos. El VIVO (la
+  barra, la barra de la sesión, la hoja del «+») desenfoca lo que tiene detrás: la vista
+  ui/cristal/CristalVivo.
+
+  Widget.GymProFit.Card, la tarjeta de siempre, NO cambia: las pantallas que aún no tienen el
+  fondo ambiental siguen con ella. Una pantalla pasa al sistema nuevo poniendo
+  ThemeOverlay.GymProFit.Cristal en su raíz y estas tarjetas en lugar de aquellas.
+-->
+<resources>
+
+    <!-- ══ El tema de una pantalla sobre el fondo ambiental ═══════════════════
+         Lo de dentro lee de aquí el texto (principal y secundario), la pista de las barras de
+         progreso y los colores de las gráficas, que sobre cristal no son los de la tarjeta
+         opaca: están medidos sobre el punto más desfavorable de fondo + brillo + cristal
+         (ContrasteCristalTest). El naranja de los botones no cambia. -->
+    <style name="ThemeOverlay.GymProFit.Cristal" parent="">
+        <item name="colorOnSurface">@color/gp_cristal_texto</item>
+        <item name="colorOnSurfaceVariant">@color/gp_cristal_texto_2</item>
+        <item name="android:textColorPrimary">@color/gp_cristal_texto</item>
+        <item name="android:textColorSecondary">@color/gp_cristal_texto_2</item>
+        <!-- La superficie suelta (el bocadillo de Profi) y el contorno de un botón. -->
+        <item name="colorSurface">@color/gp_cristal_boton</item>
+        <item name="colorSurfaceVariant">@color/gp_cristal_pista</item>
+        <item name="colorOutline">@color/gp_cristal_texto_2</item>
+        <item name="colorOutlineVariant">@color/gp_cristal_borde</item>
+        <item name="gpGraficoMarca">@color/gp_cristal_enlace</item>
+        <item name="gpGraficoTenue">@color/gp_cristal_barra_tenue</item>
+        <item name="gpGraficoOro">@color/gp_cristal_oro</item>
+    </style>
+
+    <!-- ══ Tarjetas de cristal estático ═══════════════════════════════════════
+         Siguen siendo MaterialCardView (su capa de pulsar, su recorte y su anillo de foco): la
+         tarjeta va transparente y sin borde, y el cristal lo pinta el fondo de su primer hijo
+         (bg_cristal, bg_cristal_heroe o bg_cristal_tile, con el mismo radio). -->
+    <style name="Widget.GymProFit.Card.Cristal">
+        <item name="cardBackgroundColor">@android:color/transparent</item>
+        <item name="cardCornerRadius">@dimen/radio_cristal</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- La tarjeta héroe: «Hoy toca». -->
+    <style name="Widget.GymProFit.Card.Cristal.Heroe">
+        <item name="cardCornerRadius">@dimen/radio_cristal_heroe</item>
+    </style>
+
+    <!-- Un tile: los tres de «Tu día», un entreno del carrusel. -->
+    <style name="Widget.GymProFit.Card.Cristal.Tile">
+        <item name="cardCornerRadius">@dimen/radio_cristal_tile</item>
+    </style>
+
+    <!-- La fila de un récord: el degradado dorado (bg_cristal_oro en su primer hijo). -->
+    <style name="Widget.GymProFit.Card.Cristal.Oro">
+        <item name="cardCornerRadius">@dimen/radio_tarjeta_pequena</item>
+    </style>
+
+    <!-- ══ Chip ══════════════════════════════════════════════════════════════
+         Un dato corto en una píldora de cristal: informativo, no se pulsa. Texto principal. -->
+    <style name="Widget.GymProFit.ChipCristal" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_cristal_pildora</item>
+        <item name="android:paddingStart">@dimen/espacio_12</item>
+        <item name="android:paddingEnd">@dimen/espacio_12</item>
+        <item name="android:paddingTop">@dimen/chip_cristal_relleno</item>
+        <item name="android:paddingBottom">@dimen/chip_cristal_relleno</item>
+        <item name="android:textAppearance">@style/TextAppearance.GymProFit.Apoyo.Pequeno</item>
+        <item name="android:textColor">@color/gp_cristal_texto</item>
+    </style>
+
+    <!-- ══ Botones ═══════════════════════════════════════════════════════════
+         El principal: el naranja de siempre con el brillo superior del cristal (brillo_boton,
+         que se quita mientras se pulsa). Sin halo: la maqueta lo traía, la sombra de Android no
+         lo da y no se pinta (retirado de la referencia). Cambia de forma al pulsar, como todo
+         botón principal (BotonExpresivo). -->
+    <style name="Widget.GymProFit.BotonPildora.Expresivo.Cristal">
+        <item name="android:foreground">@drawable/brillo_boton</item>
+    </style>
+
+    <!-- El secundario: cristal estático plano con su borde y su brillo. -->
+    <style name="Widget.GymProFit.BotonPildora.Cristal" parent="Widget.GymProFit.BotonPildora.Contorno">
+        <item name="backgroundTint">@color/gp_cristal_boton</item>
+        <item name="strokeColor">@color/gp_cristal_borde</item>
+        <item name="strokeWidth">@dimen/cristal_borde</item>
+        <item name="android:textColor">@color/gp_cristal_texto</item>
+        <item name="iconTint">@color/gp_cristal_texto</item>
+        <item name="android:foreground">@drawable/brillo_boton</item>
+    </style>
+
+    <!-- ══ Cabecera de sección sobre el fondo ambiental ═══════════════════════
+         El enlace va sobre el fondo, sin cristal debajo: su naranja es el medido ahí. -->
+    <style name="Widget.GymProFit.CabeceraSeccion.Enlace.Cristal">
+        <item name="android:textColor">@color/gp_cristal_enlace</item>
+    </style>
+
+    <!-- Rótulo en mayúsculas dentro de una tarjeta de cristal («HOY TOCA»): el acento claro. -->
+    <style name="Widget.GymProFit.Seccion.Cristal">
+        <item name="android:textColor">@color/gp_cristal_acento</item>
+    </style>
+
+    <!-- ══ Lo de dentro de un cristal vivo (la hoja del «+», la barra de la sesión) ══ -->
+    <style name="ThemeOverlay.GymProFit.CristalVivo" parent="">
+        <item name="colorOnSurface">@color/gp_cristal_texto</item>
+        <item name="colorOnSurfaceVariant">@color/gp_cristal_texto_2</item>
+        <!-- El asa de la hoja (bg_asa_hoja): con el separador del tema quedaba a 1,03:1. -->
+        <item name="colorOutlineVariant">@color/gp_cristal_texto_2</item>
+        <item name="android:textColorPrimary">@color/gp_cristal_texto</item>
+        <item name="android:textColorSecondary">@color/gp_cristal_texto_2</item>
+    </style>
+</resources>
