@@ -24,15 +24,16 @@ import java.util.regex.Pattern;
 //
 // La lista sale del código y la configuración: Render aloja la API, TiDB Cloud guarda la
 // base (DEC-068), Brevo envía el correo y gestiona la lista de espera, Firebase manda los
-// avisos y los informes de fallo de la app, Sentry los de la API (DEC-061), Cloudflare
-// sirve la web, el DNS y el correo entrante, y Open Food Facts resuelve los códigos de
-// barras. Si cambia un proveedor, cambian a la vez este test y la página.
+// avisos y los informes de fallo de la app, ML Kit (de Play Services) lee los códigos de
+// barras y manda a Google sus datos de diagnóstico, Sentry recibe los fallos de la API
+// (DEC-061), Cloudflare sirve la web, el DNS y el correo entrante, Gmail recibe ese correo
+// reenviado, y Open Food Facts resuelve los códigos de barras. Si cambia un proveedor, cambian a la vez este test y la página.
 // ============================================================
 public class ProveedoresPrivacidadWebTest {
 
     private static final Set<String> PROVEEDORES = new LinkedHashSet<>(Arrays.asList(
-            "Render", "TiDB Cloud (PingCAP)", "Brevo", "Google (Firebase)", "Sentry",
-            "Cloudflare", "Open Food Facts"));
+            "Render", "TiDB Cloud (PingCAP)", "Brevo", "Google (Firebase)", "Google (ML Kit)",
+            "Google (Gmail)", "Sentry", "Cloudflare", "Open Food Facts"));
 
     @Test
     public void laTablaNombraLosProveedoresReales() throws IOException {
