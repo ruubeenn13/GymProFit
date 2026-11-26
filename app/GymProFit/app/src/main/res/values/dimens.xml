@@ -98,6 +98,10 @@
     <dimen name="aire_anillo_alto">4dp</dimen>
     <dimen name="aire_anillo_alto_fuera">-4dp</dimen>
     <dimen name="separacion_pestana">36dp</dimen>
+    <!-- Para un carrusel que lleva ese hueco como relleno propio (CarruselView): lo descuenta. -->
+    <dimen name="separacion_pestana_fuera">-36dp</dimen>
+    <!-- El fundido con el que un carrusel desvanece su último elemento a la vista. -->
+    <dimen name="carrusel_fundido">28dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>
     <!-- Logros de Progreso (GP-216, lote 4, tablero 16): medallón de 72 con borde de 3 y su
@@ -250,6 +254,13 @@
     <dimen name="radio_cristal_tile">22dp</dimen>
     <!-- Borde y brillo superior del cristal. -->
     <dimen name="cristal_borde">1dp</dimen>
+    <!-- Solo en claro: el filo oscuro del canto y la sombra del cristal estático (28 dp de
+         difuminado, como el «blur» de CSS, y 10 hacia abajo) y la de la lente de la barra. -->
+    <dimen name="cristal_filo">0.5dp</dimen>
+    <dimen name="cristal_estatico_sombra_difuminado">28dp</dimen>
+    <dimen name="cristal_estatico_sombra_baja">10dp</dimen>
+    <dimen name="lente_sombra_difuminado">6dp</dimen>
+    <dimen name="lente_sombra_baja">2dp</dimen>
     <!-- Desenfoque del cristal vivo: la desviación (σ), como el blur(22px) de la maqueta. -->
     <dimen name="cristal_desenfoque">22dp</dimen>
     <!-- La lente del borde (nivel 1): el ancho de la banda que refracta y lo que desplaza como mucho. -->

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  view_record_inicio — el último récord, dentro de «Tu progreso» de Inicio (GP-105; fila
+  rehecha en GP-285, lote 1b). La tarjeta crece hasta la progresión de ese ejercicio.
+
+  Tres textos, ninguno partido (FilaRecord decide la disposición con lo que mide cada uno):
+
+    (trofeo)  Hip thrust con barra            100 kg × 12
+              Último récord · hace 6 días · antes 95 × 12
+
+  · El nombre, en una línea; si no cabe, acaba en puntos suspensivos.
+  · El detalle, en una línea, a todo el ancho que queda a la derecha del trofeo.
+  · La marca, a la derecha del nombre, entera. Si el detalle no cabe en su línea o la marca
+    dejaría al nombre con menos de media línea (letra 1,3, móviles estrechos), la marca baja
+    debajo del texto y el detalle coge también el hueco de debajo del trofeo.
+
+  Va dentro de otra tarjeta de cristal: sin sombra. Sobre el degradado dorado, los textos van
+  en el principal (el secundario no llega a 4,5:1) y la marca en su dorado.
+-->
+<es.pmdm.gymprofit.ui.cristal.TarjetaCristal xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRecordHome"
+    style="@style/Widget.GymProFit.Card.Cristal.Oro"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/espacio_16"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone"
+    app:cristalSombra="false">
+
+    <es.pmdm.gymprofit.ui.inicio.FilaRecord
+        android:id="@+id/filaRecord"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cristal_oro"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/espacio_16"
+        android:paddingTop="@dimen/espacio_12"
+        android:paddingEnd="@dimen/espacio_16"
+        android:paddingBottom="@dimen/espacio_12">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/flRecordIcono"
+                android:layout_width="@dimen/fila_icono_circulo"
+                android:layout_height="@dimen/fila_icono_circulo"
+                android:background="@drawable/bg_circulo_oro">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ms_trophy_fill"
+                    app:tint="@color/gp_gold_container" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tvRecordEjercicio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/fila_icono_a_texto"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
+                android:textColor="?attr/colorOnSurface" />
+
+            <TextView
+                android:id="@+id/tvRecordMarca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+                android:textColor="@color/gp_cristal_oro_cifra" />
+        </LinearLayout>
+
+        <!-- La sangría (el trofeo y su hueco) se la pone y se la quita FilaRecord. -->
+        <TextView
+            android:id="@+id/tvRecordAntes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+            android:textColor="?attr/colorOnSurface" />
+
+        <TextView
+            android:id="@+id/tvRecordMarcaAbajo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_4"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
+            android:textColor="@color/gp_cristal_oro_cifra"
+            android:visibility="gone" />
+    </es.pmdm.gymprofit.ui.inicio.FilaRecord>
+</es.pmdm.gymprofit.ui.cristal.TarjetaCristal>

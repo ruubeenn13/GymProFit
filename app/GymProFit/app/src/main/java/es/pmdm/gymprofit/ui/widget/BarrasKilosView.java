@@ -38,6 +38,8 @@ import es.pmdm.gymprofit.utils.ProgresoSemanal;
 public class BarrasKilosView extends android.view.View {
 
     private final Paint pincelBarra = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // El filo de cada barra: solo donde el tema lo trae (sobre cristal, en claro).
+    private final Paint pincelFilo = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pincelTexto = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path trazo = new Path();
     private final RectF rect = new RectF();
@@ -69,8 +71,13 @@ public class BarrasKilosView extends android.view.View {
         aireEtiqueta = r.getDimension(R.dimen.espacio_8);
         filoVacia = r.getDimension(R.dimen.espacio_4) / 2f;
         // Del tema: el borde y el naranja en una tarjeta opaca; sobre cristal, los medidos ahí (GP-285).
-        colorPasadas = MaterialColors.getColor(this, R.attr.gpGraficoTenue);
-        colorActual = MaterialColors.getColor(this, R.attr.gpGraficoMarca);
+        colorPasadas = MaterialColors.getColor(this, R.attr.gpGraficoKilosTenue);
+        colorActual = MaterialColors.getColor(this, R.attr.gpGraficoKilos);
+        // Sobre cristal, en claro, los colores del diseño (naranja vivo y naranja al 28 %) no
+        // llegan a 3:1 contra el cristal: la forma de cada barra la da un filo de 1 dp que sí.
+        pincelFilo.setStyle(Paint.Style.STROKE);
+        pincelFilo.setStrokeWidth(r.getDimension(R.dimen.cristal_borde));
+        pincelFilo.setColor(MaterialColors.getColor(this, R.attr.gpGraficoKilosFilo));
         pincelTexto.setTextAlign(Paint.Align.CENTER);
         pincelTexto.setTextSize(r.getDimension(R.dimen.text_eyebrow));
         pincelTexto.setColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant));
@@ -123,6 +130,16 @@ public class BarrasKilosView extends android.view.View {
             trazo.reset();
             trazo.addRoundRect(rect, radios, Path.Direction.CW);
             canvas.drawPath(trazo, pincelBarra);
+            if (pincelFilo.getColor() != 0) {
+                // Por dentro del canto de la barra: no la ensancha ni la sube.
+                float m = pincelFilo.getStrokeWidth() / 2f;
+                if (rect.width() > m * 4f && rect.height() > m * 2f) {
+                    rect.inset(m, m);
+                    trazo.reset();
+                    trazo.addRoundRect(rect, radios, Path.Direction.CW);
+                }
+                canvas.drawPath(trazo, pincelFilo);
+            }
             if (i < etiquetas.length && etiquetas[i] != null && KilosMovidos.llevaEtiqueta(i, n, paso)) {
                 // Centrada en su barra sin salirse de la vista (la de esta semana va pegada al borde).
                 float mitad = pincelTexto.measureText(etiquetas[i]) / 2f;

@@ -100,4 +100,62 @@ public class BordeSistemaPintadoTest {
         assertTrue("a media altura del degradado todavía se ve el contenido",
                 Color.alpha(mapa.getPixel(4, (alto - hueco) / 2)) < 110);
     }
+
+    // ── Con fondo ambiental (lote 1b) ────────────────────────────────────────
+    // El borde desvanece el contenido hacia el fondo que hay, no hacia el color base liso: en el
+    // tramo macizo lleva los mismos píxeles que el fondo ambiental en ese sitio. Pintado en liso
+    // tapaba el brillo que hay bajo la barra de estado y dejaba una banda oscura.
+
+    // Un fondo de mentira en el que cada fila tiene su color: así se ve de qué fila sale cada una.
+    private static final int ALTO_FONDO = 600;
+
+    private static Bitmap fondoDeFilas() {
+        Bitmap fondo = Bitmap.createBitmap(8, ALTO_FONDO, Bitmap.Config.ARGB_8888);
+        for (int y = 0; y < ALTO_FONDO; y++) {
+            int color = Color.rgb(40 + y % 200, 20 + (y / 3) % 200, 90);
+            for (int x = 0; x < 8; x++) fondo.setPixel(x, y, color);
+        }
+        return fondo;
+    }
+
+    private static Bitmap pintarConFondo(boolean arriba, float mezcla) {
+        BordeSistema borde = new BordeSistema(arriba);
+        borde.poner(BASE, MACIZO);
+        borde.setBounds(0, 0, 8, ALTO);
+        borde.ponerFondo(fondoDeFilas());
+        borde.mezcla(mezcla);
+        Bitmap mapa = Bitmap.createBitmap(8, ALTO, Bitmap.Config.ARGB_8888);
+        borde.draw(new Canvas(mapa));
+        return mapa;
+    }
+
+    private static void igual(String donde, int esperado, int pixel) {
+        assertEquals(donde + ": opaco", 255, Color.alpha(pixel));
+        assertTrue(donde + ": tenía que ser #" + Integer.toHexString(esperado) + " y es #" + Integer.toHexString(pixel),
+                Math.abs(Color.red(pixel) - Color.red(esperado)) <= TRAMADO
+                        && Math.abs(Color.green(pixel) - Color.green(esperado)) <= TRAMADO
+                        && Math.abs(Color.blue(pixel) - Color.blue(esperado)) <= TRAMADO);
+    }
+
+    @Test
+    public void con_fondo_ambiental_el_tramo_macizo_es_ese_fondo() {
+        Bitmap fondo = fondoDeFilas();
+        // El de arriba está pegado al canto de arriba del fondo: sus filas son las primeras.
+        Bitmap arriba = pintarConFondo(true, 1f);
+        for (int y = 0; y < MACIZO - 1; y++) igual("arriba, y=" + y, fondo.getPixel(4, y), arriba.getPixel(4, y));
+        transparente("arriba, la punta", arriba.getPixel(4, ALTO - 1));
+        // El de abajo, al canto de abajo: sus filas son las últimas.
+        Bitmap abajo = pintarConFondo(false, 1f);
+        for (int y = ALTO - MACIZO + 1; y < ALTO; y++) {
+            igual("abajo, y=" + y, fondo.getPixel(4, ALTO_FONDO - ALTO + y), abajo.getPixel(4, y));
+        }
+        transparente("abajo, la punta", abajo.getPixel(4, 0));
+    }
+
+    // Al irse a una pestaña sin fondo ambiental, el borde vuelve al color liso de esa pestaña.
+    @Test
+    public void sin_mezcla_el_borde_es_el_color_liso() {
+        Bitmap abajo = pintarConFondo(false, 0f);
+        for (int y = ALTO - MACIZO + 1; y < ALTO; y++) macizo("y=" + y, abajo.getPixel(4, y));
+    }
 }

@@ -118,6 +118,7 @@
     <color name="gp_ambiente_brillo_1">#42FF6A00</color>
     <color name="gp_ambiente_brillo_2">#73BE2814</color>
     <color name="gp_ambiente_brillo_3">#593C5AC8</color>
+    <color name="gp_ambiente_brillo_4">#00000000</color>
     <!-- Cristal estático: relleno a 160° blanco 16 % → 5 % (al 55 %) → 9 %, borde 18 % y brillo
          superior 35 %. -->
     <color name="gp_cristal_alto">#29FFFFFF</color>
@@ -125,6 +126,11 @@
     <color name="gp_cristal_bajo">#17FFFFFF</color>
     <color name="gp_cristal_borde">#2EFFFFFF</color>
     <color name="gp_cristal_brillo">#59FFFFFF</color>
+    <!-- Solo del tema claro: la línea inferior, el filo exterior y la sombra del cristal
+         estático. En oscuro no se pintan (la sombra no se distingue sobre #08090B). -->
+    <color name="gp_cristal_brillo_bajo">#00000000</color>
+    <color name="gp_cristal_filo">#00000000</color>
+    <color name="gp_cristal_sombra">#00000000</color>
     <!-- Texto sobre el fondo ambiental y sobre el cristal. -->
     <color name="gp_cristal_texto">#F2F2F3</color>
     <color name="gp_cristal_texto_2">#C9CDD6</color>
@@ -132,6 +138,14 @@
          de la barra. -->
     <color name="gp_cristal_acento">#FFB27A</color>
     <color name="gp_cristal_enlace">#FF8A3D</color>
+    <!-- La marca de una gráfica o de una barra de progreso sobre cristal: el del enlace. -->
+    <color name="gp_cristal_grafico">#FF8A3D</color>
+    <!-- La gráfica de kilos y los rellenos de proteína y agua: en oscuro, los de siempre. -->
+    <color name="gp_cristal_kilos">@color/gp_cristal_grafico</color>
+    <color name="gp_cristal_kilos_tenue">@color/gp_cristal_barra_tenue</color>
+    <color name="gp_cristal_kilos_filo">#00000000</color>
+    <color name="gp_cristal_proteinas">@color/gp_macro_proteinas</color>
+    <color name="gp_cristal_agua">@color/gp_agua</color>
     <color name="gp_cristal_exito">#8FE3B0</color>
     <!-- Dorado de texto sobre cristal (4,65:1) y la cifra de 26 sp sobre la fila de un récord
          (#E8B84B se quedaba en 2,85:1 sobre su propio degradado; #F0DDA8 da 3,90:1). -->
@@ -144,13 +158,22 @@
     <color name="gp_cristal_pista">#66000000</color>
     <color name="gp_cristal_barra_tenue">#73FFFFFF</color>
     <!-- Cristal vivo (barra, barra de sesión, hoja del «+»): el tinte sobre el desenfoque
-         (niveles 1 y 2) y la superficie casi opaca del nivel 3. El tinte va al 72–62 % y no al
+         (niveles 1 y 2) y la superficie opaca del nivel 3. El tinte va al 72–62 % y no al
          55–40 % de la maqueta: con el círculo dorado del trofeo de «Tu progreso» pasando por
          detrás, la etiqueta de la pestaña activa bajaba a 4,15:1 (revisor de UI, 26-11-2026). -->
     <color name="gp_vivo_alto">#B8282A30</color>
+    <!-- Sin tono medio: el tinte va recto del alto al bajo (en claro lleva el del estático). -->
+    <color name="gp_vivo_medio">#00000000</color>
     <color name="gp_vivo_bajo">#9E14161A</color>
-    <color name="gp_vivo_opaco_alto">#FA282A30</color>
-    <color name="gp_vivo_opaco_bajo">#FA14161A</color>
+    <!-- Nivel 3: opaco del todo. Al 98 % el texto que pasaba por detrás se entreveía, nítido
+         (ahí no hay desenfoque): eran los «píxeles detrás» de Android 11 o menos (lote 1b). -->
+    <color name="gp_vivo_opaco_alto">#282A30</color>
+    <color name="gp_vivo_opaco_bajo">#14161A</color>
+    <!-- En oscuro la hoja del «+» lleva el tinte de la barra, y la acción de la barra de la
+         sesión, el acento. -->
+    <color name="gp_vivo_hoja_alto">@color/gp_vivo_alto</color>
+    <color name="gp_vivo_hoja_bajo">@color/gp_vivo_bajo</color>
+    <color name="gp_vivo_accion">@color/gp_vivo_acento</color>
     <color name="gp_vivo_texto">#E4E6EB</color>
     <color name="gp_vivo_acento">#FFB27A</color>
     <color name="gp_vivo_sombra">#59000000</color>
@@ -164,6 +187,8 @@
     <color name="gp_lente">#12FFFFFF</color>
     <color name="gp_lente_brillo">#66FFFFFF</color>
     <color name="gp_lente_resplandor">#14FFFFFF</color>
+    <!-- La lente solo lleva sombra en claro. -->
+    <color name="gp_lente_sombra">#00000000</color>
     <!-- Récord sobre cristal: degradado dorado 28 % → 8 % y brillo. -->
     <color name="gp_cristal_oro_alto">#47E8B84B</color>
     <color name="gp_cristal_oro_bajo">#14E8B84B</color>

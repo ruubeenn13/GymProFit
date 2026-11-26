@@ -84,6 +84,8 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     // Liquid Glass (GP-285): el fondo ambiental de Inicio, el pie flotante y quien vigila el
     // rendimiento del cristal vivo.
     private View fondoAmbiental, pie;
+    private es.pmdm.gymprofit.ui.cristal.FondoAmbiental fondo;
+    private float mezclaFondo;
     private es.pmdm.gymprofit.ui.cristal.LienzoCristal lienzo;
     private es.pmdm.gymprofit.ui.cristal.VigiaCristal vigiaCristal;
     // Los bordes del sistema (BordesSistema): el contenido se desvanece antes de sus iconos.
@@ -144,7 +146,16 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         pie   = findViewById(R.id.pieMain);
         lienzo = findViewById(R.id.lienzoCristal);
         fondoAmbiental = findViewById(R.id.fondoAmbiental);
-        fondoAmbiental.setBackground(new es.pmdm.gymprofit.ui.cristal.FondoAmbiental(this));
+        fondo = new es.pmdm.gymprofit.ui.cristal.FondoAmbiental(this);
+        // Los bordes del sistema desvanecen hacia el fondo ambiental: cuando hay imagen nueva
+        // (se calcula en un hilo aparte tras la primera medida o un giro) la cogen, y siguen el
+        // fundido con el que aparece.
+        fondo.alCambiar(() -> {
+            bordeArriba.ponerFondo(fondo.imagen());
+            bordeAbajo.ponerFondo(fondo.imagen());
+            mezclarBordes(mezclaFondo);
+        });
+        fondoAmbiental.setBackground(fondo);
         bordeSuperior = findViewById(R.id.bordeSuperior);
         bordeInferior = findViewById(R.id.bordeInferior);
         bordeSuperior.setBackground(bordeArriba);
@@ -498,13 +509,24 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         v.setLayoutParams(lp);
     }
 
-    // Los bordes llevan el fondo de la pestaña que hay detrás: el del fondo ambiental en las que
-    // ya están en Liquid Glass y el de siempre en las demás (se diferencian en un tono).
+    // Los bordes llevan el fondo de la pestaña que hay detrás: el fondo ambiental, con sus
+    // brillos, en las que ya están en Liquid Glass (cuánto se enseña lo lleva mezclarBordes, al
+    // paso del fundido del fondo) y el color de siempre en las demás. El color base liso solo se
+    // ve en Inicio mientras el fondo ambiental aún no tiene imagen.
     private void pintarBordes(int index) {
         int base = androidx.core.content.ContextCompat.getColor(this,
                 index == NavTabs.INICIO ? R.color.gp_ambiente_base : R.color.gp_background);
         bordeArriba.poner(base, macizoArriba);
         bordeAbajo.poner(base, macizoAbajo);
+    }
+
+    // Cuánto del fondo ambiental enseñan los bordes: lo que se ve de su vista (el fundido entre
+    // pestañas) por lo que se ve ya de su imagen (el fundido con el que aparece al calcularse).
+    private void mezclarBordes(float parte) {
+        mezclaFondo = parte;
+        float visible = parte * (fondo == null ? 0f : fondo.aparicion());
+        bordeArriba.mezcla(visible);
+        bordeAbajo.mezcla(visible);
     }
 
     // El fondo ambiental llega bajo la barra de estado y el contenido bajo la de navegación: las
@@ -600,16 +622,23 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         fondoAmbiental.animate().cancel();
         if (conFondo == (fondoAmbiental.getVisibility() == View.VISIBLE)) {
             fondoAmbiental.setAlpha(1f);
+            mezclarBordes(conFondo ? 1f : 0f);
             return;
         }
+        // Los bordes siguen el fundido: desvanecen hacia el fondo que se ve en cada momento.
         long dur = getResources().getInteger(android.R.integer.config_shortAnimTime);
         if (conFondo) {
             fondoAmbiental.setAlpha(0f);
             fondoAmbiental.setVisibility(View.VISIBLE);
-            fondoAmbiental.animate().alpha(1f).setDuration(dur).start();
+            fondoAmbiental.animate().alpha(1f).setDuration(dur)
+                    .setUpdateListener(a -> mezclarBordes(fondoAmbiental.getAlpha())).start();
         } else {
             fondoAmbiental.animate().alpha(0f).setDuration(dur)
-                    .withEndAction(() -> fondoAmbiental.setVisibility(View.INVISIBLE)).start();
+                    .setUpdateListener(a -> mezclarBordes(fondoAmbiental.getAlpha()))
+                    .withEndAction(() -> {
+                        fondoAmbiental.setVisibility(View.INVISIBLE);
+                        mezclarBordes(0f);
+                    }).start();
         }
     }
 

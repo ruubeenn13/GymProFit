@@ -238,49 +238,93 @@
     <!-- GP-045: el check sobre el círculo dorado, casi negro en los dos temas. -->
     <color name="gp_sobre_oro">#17181C</color>
     <!-- ── Liquid Glass (GP-285, DEC-070) ─────────────────────────────────────
-         El tema claro no tiene maqueta: cristal blanco esmerilado sobre un fondo claro cálido
-         con brillos suaves, con las mismas reglas de contraste que el oscuro
-         (ContrasteCristalTest; cifras en DESIGN.md). -->
-    <color name="gp_ambiente_base">#F3F1EC</color>
-    <color name="gp_ambiente_brillo_1">#57FF8A3D</color>
-    <color name="gp_ambiente_brillo_2">#42FF9678</color>
-    <color name="gp_ambiente_brillo_3">#3D78A5FF</color>
-    <color name="gp_cristal_alto">#C7FFFFFF</color>
-    <color name="gp_cristal_medio">#8CFFFFFF</color>
-    <color name="gp_cristal_bajo">#A6FFFFFF</color>
-    <color name="gp_cristal_borde">#E6FFFFFF</color>
+         Tema claro, rehecho en el lote 1b: el cristal solo se lee si el fondo tiene color y la
+         tarjeta deja pasar parte de él (el del lote 1 eran tarjetas blancas casi opacas sobre un
+         fondo lavado, y el propietario lo rechazó). Valores del propietario; donde uno choca con
+         una regla de legibilidad manda la regla (DEC-070) y queda escrito aquí con su cifra.
+         Todo medido en ContrasteCristalTest; cifras en DESIGN.md. -->
+    <!-- Fondo ambiental: base cálida y cuatro brillos (naranja 55 %, coral 30 %, azul 36 % y,
+         solo en claro, verde 26 % abajo a la izquierda). -->
+    <color name="gp_ambiente_base">#F2EDE8</color>
+    <color name="gp_ambiente_brillo_1">#8CFF7A28</color>
+    <color name="gp_ambiente_brillo_2">#4DFF606E</color>
+    <color name="gp_ambiente_brillo_3">#5C507DFF</color>
+    <color name="gp_ambiente_brillo_4">#423CBEA0</color>
+    <!-- Cristal estático: relleno a 160° blanco 62 % → 34 % (al 55 %) → 48 %, borde blanco 80 %,
+         brillo superior blanco 100 %, línea inferior blanca 40 %, filo exterior de 0,5 dp y
+         sombra suave (28 dp de difuminado, 10 hacia abajo), que en oscuro no hay. -->
+    <color name="gp_cristal_alto">#9EFFFFFF</color>
+    <color name="gp_cristal_medio">#57FFFFFF</color>
+    <color name="gp_cristal_bajo">#7AFFFFFF</color>
+    <color name="gp_cristal_borde">#CCFFFFFF</color>
     <color name="gp_cristal_brillo">#FFFFFFFF</color>
-    <color name="gp_cristal_texto">#17181C</color>
-    <color name="gp_cristal_texto_2">#4B4D54</color>
-    <color name="gp_cristal_acento">#9A3300</color>
-    <color name="gp_cristal_enlace">#9A3300</color>
+    <color name="gp_cristal_brillo_bajo">#66FFFFFF</color>
+    <color name="gp_cristal_filo">#0F3C1E0A</color>
+    <color name="gp_cristal_sombra">#1F5A280A</color>
+    <!-- Texto. Tres valores del propietario se oscurecen lo justo para llegar a 4,5:1 sobre el
+         punto más desfavorable (el brillo naranja al 55 %, que no se toca: es el que hace que el
+         cristal se lea): el secundario, #4A4F58 → #494E57 (4,47 → 4,54 sobre el fondo); el
+         acento sobre cristal, #A83A00 → #A33800 (4,32 → 4,53); y el enlace, que va sobre el
+         fondo sin cristal debajo, #A83A00 → #8B3000 (3,48 → 4,52). -->
+    <color name="gp_cristal_texto">#15171B</color>
+    <color name="gp_cristal_texto_2">#494E57</color>
+    <color name="gp_cristal_acento">#A33800</color>
+    <color name="gp_cristal_enlace">#8B3000</color>
     <color name="gp_cristal_exito">#12693A</color>
-    <!-- Dorado de texto sobre cristal: gp_gold_text (#8A6920) se quedaba en 4,31:1. -->
-    <color name="gp_cristal_oro">#7A5C18</color>
+    <!-- Dorado de texto sobre cristal: con el cristal nuevo, #7A5C18 se quedaba en 4,19:1. -->
+    <color name="gp_cristal_oro">#745717</color>
     <color name="gp_cristal_oro_cifra">#7A5C18</color>
-    <color name="gp_cristal_pista">#1F17181C</color>
-    <color name="gp_cristal_barra_tenue">#8017181C</color>
-    <!-- El tinte del cristal vivo y el velo de detrás van juntos: con la hoja del «+» abierta, la
-         hoja y la barra desenfocan el contenido ya oscurecido por el velo. Con el velo de siempre
-         (negro 62 %) y el tinte al 72–58 %, el cristal salía gris y el secundario de la hoja
-         bajaba a 3,86:1 (revisor de UI, 26-11-2026). Con el velo al 35 % y el tinte al 80–70 %,
-         5,71:1. -->
-    <color name="gp_vivo_alto">#CCFFFFFF</color>
-    <color name="gp_vivo_bajo">#B3F6F4F0</color>
+    <!-- La marca de un gráfico pequeño sobre cristal (el icono de un ejercicio, la barra de
+         «esta vez» de un entreno): el acento, que pasa de 3:1 solo. Y sus barras apagadas. -->
+    <color name="gp_cristal_grafico">#A33800</color>
+    <color name="gp_cristal_barra_tenue">#8015171B</color>
+    <!-- La gráfica de kilos: la semana en curso en el naranja vivo y las demás en naranja al
+         28 %, como pide el diseño. Ninguno de los dos llega a 3:1 contra el cristal (1,93:1 y
+         1,22:1), así que cada barra lleva un filo de 1 dp en el acento, que sí (4,53:1): la
+         forma de la barra se lee por el filo y el color es el del diseño. -->
+    <color name="gp_cristal_kilos">#FF6A00</color>
+    <color name="gp_cristal_kilos_tenue">#47FF6A00</color>
+    <color name="gp_cristal_kilos_filo">#A33800</color>
+    <!-- Barras de progreso: la pista del diseño (casi negro al 10 %) y, contra ella, el relleno
+         de proteína y de agua un punto más oscuro que el de la tarjeta opaca (#2E6CCB y #0E7C8F
+         se quedaban en 2,82:1 y 2,71:1 contra su pista). -->
+    <color name="gp_cristal_pista">#1A15171B</color>
+    <color name="gp_cristal_proteinas">#2C67C1</color>
+    <color name="gp_cristal_agua">#0D7385</color>
+    <!-- Cristal vivo (barra, barra de sesión, hoja del «+»): el mismo relleno del estático sobre
+         el desenfoque (niveles 1 y 2) y, en el nivel 3, ese relleno ya compuesto sobre el fondo
+         base, opaco. El velo de detrás de la hoja del «+», negro 35 %. -->
+    <color name="gp_vivo_alto">#9EFFFFFF</color>
+    <color name="gp_vivo_medio">#57FFFFFF</color>
+    <color name="gp_vivo_bajo">#7AFFFFFF</color>
     <color name="gp_velo_cristal">#59000000</color>
-    <color name="gp_vivo_opaco_alto">#FCFFFFFF</color>
-    <color name="gp_vivo_opaco_bajo">#FCF6F4F0</color>
-    <color name="gp_vivo_texto">#3A3C42</color>
-    <color name="gp_vivo_acento">#8A2E00</color>
+    <color name="gp_vivo_opaco_alto">#FAF8F6</color>
+    <color name="gp_vivo_opaco_bajo">#F8F6F3</color>
+    <!-- La hoja del «+» lleva más tinte que la barra (blanco 80 % → 70 %): con el del diseño y
+         el velo detrás, su texto secundario se quedaba en 3,44:1. -->
+    <color name="gp_vivo_hoja_alto">#CCFFFFFF</color>
+    <color name="gp_vivo_hoja_bajo">#B3FFFFFF</color>
+    <color name="gp_vivo_texto">#2A2E35</color>
+    <color name="gp_vivo_acento">#A83A00</color>
+    <!-- La acción de la barra de la sesión («Volver») y su icono: sobre la barra, fuera de la
+         lente, el acento se quedaba en 2,69:1 con el velo del «+» detrás; va en el texto. -->
+    <color name="gp_vivo_accion">#2A2E35</color>
     <color name="gp_vivo_sombra">#2E503214</color>
-    <color name="gp_lente">#1417181C</color>
-    <color name="gp_lente_brillo">#E6FFFFFF</color>
-    <color name="gp_lente_resplandor">#0A17181C</color>
+    <!-- Selección «lente»: cápsula blanca 75 % con brillo superior blanco y sombra suave. -->
+    <color name="gp_lente">#BFFFFFFF</color>
+    <color name="gp_lente_brillo">#FFFFFFFF</color>
+    <color name="gp_lente_resplandor">#0A15171B</color>
+    <color name="gp_lente_sombra">#1F5A280A</color>
     <color name="gp_cristal_oro_alto">#59E8B84B</color>
     <color name="gp_cristal_oro_bajo">#24E8B84B</color>
     <color name="gp_cristal_oro_brillo">#CCFFFFFF</color>
     <color name="gp_boton_brillo">#59FFFFFF</color>
     <color name="gp_cristal_boton">#99FFFFFF</color>
+    <!-- Botón principal sobre cristal: el naranja vivo con el texto casi negro en los dos temas
+         (6,61:1), como el «+». En claro, el botón principal del resto de la app sigue siendo el
+         naranja oscuro con texto blanco hasta que su pantalla pase a Liquid Glass. -->
+    <color name="gp_cristal_principal">#FF6A00</color>
+    <color name="gp_cristal_sobre_principal">#1A0E00</color>
     <!-- El «+» de la barra: el naranja vivo con el icono casi negro en los dos temas (6,61:1),
          como la tarjeta de «Tu objetivo». -->
     <color name="gp_mas_claro">#FFB27A</color>

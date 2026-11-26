@@ -7,6 +7,7 @@
 <resources>
     <!-- Radio de las esquinas; sin él, la mitad del alto (píldora). -->
     <attr name="cristalRadio" format="dimension" />
+    <attr name="cristalSombra" format="boolean" />
 
     <declare-styleable name="Cristal">
         <attr name="cristalRadio" />
@@ -24,10 +25,23 @@
     <attr name="gpGraficoMarca" format="color" />
     <attr name="gpGraficoTenue" format="color" />
     <attr name="gpGraficoOro" format="color" />
+    <!-- La gráfica de kilos (BarrasKilosView): la semana en curso, las demás y el filo de cada
+         barra (transparente: sin filo). -->
+    <attr name="gpGraficoKilos" format="color" />
+    <attr name="gpGraficoKilosTenue" format="color" />
+    <attr name="gpGraficoKilosFilo" format="color" />
 
     <declare-styleable name="CristalVivo">
         <attr name="cristalRadio" />
         <!-- Sombra suave por fuera. El padre no puede recortar a sus hijos. -->
-        <attr name="cristalSombra" format="boolean" />
+        <attr name="cristalSombra" />
+        <!-- Tinte con más cuerpo (gp_vivo_hoja_*): la hoja del «+», que lleva texto secundario. -->
+        <attr name="cristalGrueso" format="boolean" />
+    </declare-styleable>
+
+    <!-- La tarjeta de cristal estático. En claro lleva sombra por fuera, salvo que vaya dentro
+         de otra tarjeta: cristalSombra="false". -->
+    <declare-styleable name="TarjetaCristal">
+        <attr name="cristalSombra" />
     </declare-styleable>
 </resources>

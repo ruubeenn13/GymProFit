@@ -29,9 +29,12 @@
         <item name="colorSurfaceVariant">@color/gp_cristal_pista</item>
         <item name="colorOutline">@color/gp_cristal_texto_2</item>
         <item name="colorOutlineVariant">@color/gp_cristal_borde</item>
-        <item name="gpGraficoMarca">@color/gp_cristal_enlace</item>
+        <item name="gpGraficoMarca">@color/gp_cristal_grafico</item>
         <item name="gpGraficoTenue">@color/gp_cristal_barra_tenue</item>
         <item name="gpGraficoOro">@color/gp_cristal_oro</item>
+        <item name="gpGraficoKilos">@color/gp_cristal_kilos</item>
+        <item name="gpGraficoKilosTenue">@color/gp_cristal_kilos_tenue</item>
+        <item name="gpGraficoKilosFilo">@color/gp_cristal_kilos_filo</item>
     </style>
 
     <!-- ══ Tarjetas de cristal estático ═══════════════════════════════════════
@@ -80,6 +83,11 @@
          botón principal (BotonExpresivo). -->
     <style name="Widget.GymProFit.BotonPildora.Expresivo.Cristal">
         <item name="android:foreground">@drawable/brillo_boton</item>
+        <!-- El naranja vivo con el texto casi negro en los dos temas (6,61:1): en claro, el
+             botón principal de la tarjeta opaca es el naranja oscuro con texto blanco. -->
+        <item name="backgroundTint">@color/gp_cristal_principal</item>
+        <item name="android:textColor">@color/gp_cristal_sobre_principal</item>
+        <item name="iconTint">@color/gp_cristal_sobre_principal</item>
     </style>
 
     <!-- El secundario: cristal estático plano con su borde y su brillo. -->

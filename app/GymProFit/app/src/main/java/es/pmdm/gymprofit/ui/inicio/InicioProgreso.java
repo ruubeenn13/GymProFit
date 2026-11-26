@@ -225,7 +225,8 @@ public final class InicioProgreso {
         });
     }
 
-    // «Aperturas en máquina», «Último récord · hoy» y «Antes: 82,5 kg × 10», con la marca a la derecha.
+    // «Aperturas en máquina», «Último récord · hoy · antes 82,5 × 10» en una línea, y la marca a la
+    // derecha o, si no caben, debajo (FilaRecord).
     private void pintarRecord(Record record) {
         hayRecord = true;
         MaterialCardView card = raiz.findViewById(R.id.cardRecordHome);
@@ -234,17 +235,25 @@ public final class InicioProgreso {
         // La marca («60 kg × 10») no se parte: con letra grande dejaba el «10» solo en una tercera línea.
         String marca = Marcas.texto(fragment.requireContext(), record).replace(' ', '\u00A0');
         ((TextView) raiz.findViewById(R.id.tvRecordEjercicio)).setText(nombre);
-        ((TextView) raiz.findViewById(R.id.tvRecordMarca)).setText(marca);
+        FilaRecord fila = raiz.findViewById(R.id.filaRecord);
+        fila.setMarca(marca);
 
-        TextView sub = raiz.findViewById(R.id.tvRecordAntes);
         String cuando = TiempoRelativo.texto(fragment.requireContext(), record.getFecha());
-        String anterior = Marcas.anteriorSolo(fragment.requireContext(), record);
-        if (anterior != null) anterior = anterior.replace(' ', '\u00A0');
+        String anterior = Marcas.anteriorCorta(fragment.requireContext(), record);
         String ultimo = cuando == null ? fragment.getString(R.string.ultimo_record)
                 : fragment.getString(R.string.hoy_toca_separador, fragment.getString(R.string.ultimo_record), cuando);
-        sub.setText(anterior == null ? ultimo : fragment.getString(R.string.inicio_dos_lineas, ultimo,
-                fragment.getString(R.string.record_antes, anterior)));
-        card.setContentDescription(nombre + ". " + sub.getText().toString().replace('\n', ' ') + ". " + marca);
+        String entero = anterior == null ? ultimo : fragment.getString(R.string.inicio_record_detalle, ultimo, anterior);
+        // Sin el rótulo, para cuando el entero no cabe en una línea: «Hace 6 días · antes 95 × 12».
+        // Sin fecha o sin marca anterior no hay forma más corta.
+        String sinRotulo = cuando == null || anterior == null ? entero
+                : fragment.getString(R.string.inicio_record_detalle,
+                cuando.substring(0, 1).toUpperCase(FechaUtils.localeDeLaApp(fragment.requireContext())) + cuando.substring(1),
+                anterior);
+        fila.setDetalle(entero, sinRotulo);
+        // A TalkBack, la marca anterior con su unidad: «95 × 12» suelto no se entiende de oído.
+        String anteriorEntera = Marcas.anterior(fragment.requireContext(), record);
+        card.setContentDescription(nombre + ". " + ultimo + ". "
+                + (anteriorEntera == null ? "" : anteriorEntera + ". ") + marca);
 
         // La ficha espera el ejercicio entero en extras: se pide al pulsar.
         card.setOnClickListener(v ->

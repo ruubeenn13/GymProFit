@@ -42,7 +42,9 @@ import es.pmdm.gymprofit.R;
 //   1 · desenfocado (σ 22 dp, saturación 180 %) y refractado en una banda junto al borde,
 //       como una lente, con un RuntimeShader AGSL; encima, el tinte translúcido.
 //   2 · desenfocado, sin refracción; encima, el tinte.
-//   3 · nada de lo de detrás: una superficie casi opaca.
+//   3 · nada de lo de detrás: una superficie opaca (al 98 % lo de detrás se entreveía, nítido).
+//
+// Con cristalGrueso el tinte tiene más cuerpo: la hoja del «+», que lleva texto secundario.
 //
 // En los tres lleva el borde y el brillo superior del cristal, y con cristalSombra una sombra
 // suave por fuera. Lo que hay dentro (pestañas, textos) es legible en los tres niveles: sus
@@ -60,6 +62,20 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
 
     /** Saturación de lo desenfocado: el «saturate(180%)» de la maqueta. */
     public static final float SATURACION = 1.8f;
+
+    /**
+     * El «radio» que hay que pedirle a RenderEffect para desenfocar con una desviación dada.
+     *
+     * <p>La maqueta (CSS, {@code blur(22px)}) da la desviación σ, en dp: aquí llega ya en px,
+     * convertida por la densidad de la pantalla (cristal_desenfoque es un dimen en dp). Android
+     * saca σ de su radio con σ = radio · 0,57735 + 0,5: esta es la cuenta al revés. El lienzo
+     * se desenfoca a tamaño real, sin reducirlo antes, así que no hay nada más que compensar.
+     *
+     * @param sigmaPx la desviación del desenfoque, en px.
+     */
+    public static float radioDesenfoque(float sigmaPx) {
+        return Math.max(1f, (sigmaPx - 0.5f) / 0.57735f);
+    }
     // La sombra se pinta de una imagen pequeña estirada: es difusa y no se nota.
     private static final int ESCALA_SOMBRA = 4;
     // Fotogramas que espera a que el lienzo tenga algo grabado antes de dejar de repintarse.
@@ -91,12 +107,13 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CristalVivo);
         radio = a.getDimension(R.styleable.CristalVivo_cristalRadio, -1f);
         conSombra = a.getBoolean(R.styleable.CristalVivo_cristalSombra, false);
+        boolean grueso = a.getBoolean(R.styleable.CristalVivo_cristalGrueso, false);
         a.recycle();
         sigma = getResources().getDimension(R.dimen.cristal_desenfoque);
         sombraRadio = getResources().getDimension(R.dimen.cristal_sombra_radio);
         sombraBaja = getResources().getDimension(R.dimen.cristal_sombra_baja);
         pinturaSombra.setColor(ContextCompat.getColor(context, R.color.gp_vivo_sombra));
-        tinte = new Cristal(context, Cristal.VIVO, radio);
+        tinte = new Cristal(context, grueso ? Cristal.VIVO_GRUESO : Cristal.VIVO, radio);
         opaco = new Cristal(context, Cristal.VIVO_OPACO, radio);
         desenfoque = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? new Desenfoque() : null;
         setWillNotDraw(false);
@@ -246,9 +263,7 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         // Se llama al cambiar de tamaño o de nivel, nunca al dibujar.
         void preparar(@NonNull Resources res, int w, int h, float radio, float sigmaPx, boolean refraccion) {
             nodo.setPosition(0, 0, w, h);
-            // RenderEffect pide un «radio», del que saca σ = radio · 0,57735 + 0,5; la maqueta
-            // (CSS blur) da σ directamente.
-            float r = Math.max(1f, (sigmaPx - 0.5f) / 0.57735f);
+            float r = radioDesenfoque(sigmaPx);
             ColorMatrix saturacion = new ColorMatrix();
             saturacion.setSaturation(SATURACION);
             RenderEffect efecto = RenderEffect.createColorFilterEffect(new ColorMatrixColorFilter(saturacion),
