@@ -60,8 +60,10 @@ li { margin-bottom: 8px; }
 li::marker { color: var(--texto-2); }
 
 .meta { color: var(--texto-2); font-size: 15px; }
-/* La fecha, en la condensada: es una marca de tiempo, como el reloj */
-h1 + .meta { font-family: var(--cond); font-weight: 600; font-size: 17px; letter-spacing: .02em; margin-bottom: 28px; }
+/* La fecha, en la condensada: es una marca de tiempo, como el reloj. En el 700, que es el que
+   se precarga: con el 600 la fecha cambiaba de alto al llegar su fuente y empujaba el resto
+   (CLS 0,021 en Lighthouse). */
+h1 + .meta { font-family: var(--cond); font-weight: 700; font-size: 17px; letter-spacing: .03em; margin-bottom: 28px; }
 .lead { font-size: 20px; line-height: 1.5; color: var(--texto-2); }
 
 /* ── Piezas ─────────────────────────────────────────────────────────────── */
