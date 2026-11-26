@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RecordingCanvas;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.RenderEffect;
 import android.graphics.RenderNode;
 import android.graphics.RuntimeShader;
@@ -219,15 +218,17 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         }
     }
 
-    // La sombra solo por fuera de la forma: a través del cristal se vería sucia.
+    // La sombra solo por fuera de la forma: a través del cristal se vería sucia. Antes de
+    // Android 8 no se recorta: allí «todo menos la forma» parte de la caja de la vista, y la
+    // sombra, que cae fuera de ella, salía cortada en recto (dos orejas grises en las esquinas
+    // de la barra). Tampoco hace falta: en esas versiones el cristal es siempre el opaco
+    // (nivel 3) y tapa lo que queda debajo.
     private void pintarSombra(@NonNull Canvas canvas) {
         if (sombra == null) return;
         float margen = sombraRadio * 2f;
         canvas.save();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             canvas.clipOutPath(forma);
-        } else {
-            canvas.clipPath(forma, Region.Op.DIFFERENCE);
         }
         canvas.translate(-margen, -margen + sombraBaja);
         canvas.scale(ESCALA_SOMBRA, ESCALA_SOMBRA);

@@ -108,6 +108,22 @@ public class CristalTest {
         assertFalse(cuerpo(lienzo, "protected void dispatchDraw(").contains("invalidate"));
     }
 
+    // La sombra del cristal vivo cae fuera de su vista. Antes de Android 8, recortar «todo menos
+    // la forma» parte de la caja de la vista y la dejaba cortada en recto (dos orejas grises en
+    // las esquinas de la barra, visto en Android 7). Ahí no se recorta: el cristal es opaco.
+    @Test
+    public void la_sombra_no_se_recorta_donde_el_recorte_la_corta() throws IOException {
+        String c = leer(JAVA.resolve("ui/cristal/CristalVivo.java"));
+        String sombra = cuerpo(c, "private void pintarSombra(");
+        assertFalse("un recorte por diferencia parte de la caja de la vista", c.contains("Region.Op.DIFFERENCE"));
+        assertTrue("desde Android 8, solo por fuera de la forma",
+                sombra.contains("Build.VERSION.SDK_INT >= Build.VERSION_CODES.O") && sombra.contains("canvas.clipOutPath(forma)"));
+        // Sin recorte la sombra queda también debajo: solo vale si ahí el cristal lo tapa.
+        for (int api = 24; api < 26; api++) {
+            assertEquals("API " + api, NivelCristal.OPACO, NivelCristal.elegir(api, false, NivelCristal.REFRACCION));
+        }
+    }
+
     @Test
     public void la_tarjeta_de_siempre_no_cambia() throws IOException {
         String temas = leer(RES.resolve("values/themes.xml"));
