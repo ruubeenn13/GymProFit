@@ -8,6 +8,9 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `14944cdb` | docs(decisiones): DEC-070, Liquid Glass es el lenguaje visual: cristal estático y cristal vivo en tres niveles, componente propio frente a BlurView y contraste medido en el peor punto (GP-285). |
+| `8501a872` | feat(android): la barra de navegación es una cápsula de cristal que flota, con el «+» separado, y el contenido pasa por debajo; la barra de la sesión y la hoja del «+», también en cristal; Inicio en Liquid Glass (fondo ambiental, «Hoy toca» en tarjeta héroe, «Tu día» en tres tiles con barra), con las mismas secciones, textos y lógica; tema claro incluido. Entrenar, Nutrición y Progreso pasan en lotes siguientes (GP-285, lote 1; rama sin fusionar hasta aprobar las capturas). |
+| `6b1c2486` | feat(android): sistema de cristal de Liquid Glass: cristal estático, cristal vivo en tres niveles según la versión de Android (desenfoque y refracción en 13+, desenfoque en 12, superficie opaca en 11 o menos, con texto de alto contraste o si el móvil no da), fondo ambiental y tokens en los dos temas, con el contraste de cada par medido en un test (GP-285). |
 | `0a755920` | ci(web): los `*WebTest` corren en el CI cuando una PR solo toca `web/` (job `web-test`, sin el `assembleDebug` ni el lint); antes solo los pasaba `android-build-test`, que arranca si cambia `app/`. |
 | `ed796c65` | perf(api): la API en reposo pasa de 768 sentencias y 1.608 pings por hora a 8 y 84 (medido en local, perfil prod, 15 min): el barrido de programadas solo va a la base cuando algo vence (la push sale en el mismo minuto), `/actuator/health/liveness` sin base para Render, UptimeRobot y el keep-alive, y Hikari con una conexión ociosa (GP-283). |
 | `1c91804b` | test(api): ningún test arranca contra una base que no sea `localhost`, `127.0.0.1` o `::1` (`BarreraBaseLocal`); la JVM de los tests con `-Xmx1g` y que muere si muere Maven (GP-282). |
