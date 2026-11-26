@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.text.Layout;
+import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.google.android.material.theme.MaterialComponentsViewInflater;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Ignore;
@@ -50,7 +53,23 @@ public class FilaSerieRotulosTest {
         conf.fontScale = escala;
         conf.setLocale(new Locale(idioma));
         Context c = new ContextThemeWrapper(base.createConfigurationContext(conf), R.style.Theme_GymProFit);
-        View tarjeta = LayoutInflater.from(c).inflate(R.layout.item_apuntar_ejercicio, null, false);
+        // Como lo infla una pantalla de verdad: con las vistas de AppCompat y Material. Sin
+        // eso, en Android 7 un TextView a secas no aplica la fuente del estilo (las fuentes de
+        // res/font son de Android 8) y el rótulo sale en la del sistema, más ancha.
+        LayoutInflater inflador = LayoutInflater.from(c).cloneInContext(c);
+        MaterialComponentsViewInflater vistas = new MaterialComponentsViewInflater();
+        inflador.setFactory2(new LayoutInflater.Factory2() {
+            @Override
+            public View onCreateView(View padre, String nombre, Context contexto, AttributeSet atributos) {
+                return vistas.createView(padre, nombre, contexto, atributos, false, false, true, false);
+            }
+
+            @Override
+            public View onCreateView(String nombre, Context contexto, AttributeSet atributos) {
+                return onCreateView(null, nombre, contexto, atributos);
+            }
+        });
+        View tarjeta = inflador.inflate(R.layout.item_apuntar_ejercicio, null, false);
         int ancho = c.getResources().getDisplayMetrics().widthPixels
                 - 2 * c.getResources().getDimensionPixelSize(R.dimen.margen_pantalla);
         tarjeta.measure(View.MeasureSpec.makeMeasureSpec(ancho, View.MeasureSpec.EXACTLY),

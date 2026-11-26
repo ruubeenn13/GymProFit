@@ -27,6 +27,22 @@ public class BordeSistemaPintadoTest {
     // El de abajo con botones en un móvil de 420 ppp: 278 px de alto y 126 de franja.
     private static final int ALTO = 278, MACIZO = 126;
 
+    // El degradado se pinta con tramado (sin él se ven los escalones sobre casi negro), que
+    // en algunas versiones (Android 7) mueve cada canal un nivel arriba o abajo.
+    private static final int TRAMADO = 2;
+
+    private static void transparente(String donde, int pixel) {
+        assertTrue(donde + ", transparente: alfa " + Color.alpha(pixel), Color.alpha(pixel) <= TRAMADO);
+    }
+
+    private static void macizo(String donde, int pixel) {
+        assertEquals(donde + ": opaco", 255, Color.alpha(pixel));
+        assertTrue(donde + ": el fondo base y es #" + Integer.toHexString(pixel),
+                Math.abs(Color.red(pixel) - Color.red(BASE)) <= TRAMADO
+                        && Math.abs(Color.green(pixel) - Color.green(BASE)) <= TRAMADO
+                        && Math.abs(Color.blue(pixel) - Color.blue(BASE)) <= TRAMADO);
+    }
+
     private static Bitmap pintar(boolean arriba, int macizo) {
         return pintar(arriba, macizo, ALTO);
     }
@@ -43,14 +59,14 @@ public class BordeSistemaPintadoTest {
     @Test
     public void el_de_abajo_es_macizo_bajo_los_botones_y_se_va_hacia_arriba() {
         Bitmap mapa = pintar(false, MACIZO);
-        assertEquals("la punta de arriba, transparente", 0, Color.alpha(mapa.getPixel(4, 0)));
+        transparente("la punta de arriba", mapa.getPixel(4, 0));
         // La franja de los botones entera: el fondo base, opaco.
         for (int y = ALTO - MACIZO + 1; y < ALTO; y++) {
-            assertEquals("y=" + y, BASE, mapa.getPixel(4, y));
+            macizo("y=" + y, mapa.getPixel(4, y));
         }
         for (int y = 1; y < ALTO; y++) {
             assertTrue("el alfa no baja hacia los botones (y=" + y + ")",
-                    Color.alpha(mapa.getPixel(4, y)) >= Color.alpha(mapa.getPixel(4, y - 1)));
+                    Color.alpha(mapa.getPixel(4, y)) >= Color.alpha(mapa.getPixel(4, y - 1)) - TRAMADO);
         }
         // A media altura del degradado ya se nota, pero el contenido se sigue viendo.
         int medio = Color.alpha(mapa.getPixel(4, (ALTO - MACIZO) / 2));
@@ -60,13 +76,13 @@ public class BordeSistemaPintadoTest {
     @Test
     public void el_de_arriba_es_macizo_bajo_la_barra_de_estado_y_se_va_hacia_abajo() {
         Bitmap mapa = pintar(true, MACIZO);
-        assertEquals("la punta de abajo, transparente", 0, Color.alpha(mapa.getPixel(4, ALTO - 1)));
+        transparente("la punta de abajo", mapa.getPixel(4, ALTO - 1));
         for (int y = 0; y < MACIZO - 1; y++) {
-            assertEquals("y=" + y, BASE, mapa.getPixel(4, y));
+            macizo("y=" + y, mapa.getPixel(4, y));
         }
         for (int y = 1; y < ALTO; y++) {
             assertTrue("el alfa no sube hacia el contenido (y=" + y + ")",
-                    Color.alpha(mapa.getPixel(4, y)) <= Color.alpha(mapa.getPixel(4, y - 1)));
+                    Color.alpha(mapa.getPixel(4, y)) <= Color.alpha(mapa.getPixel(4, y - 1)) + TRAMADO);
         }
     }
 
@@ -76,10 +92,10 @@ public class BordeSistemaPintadoTest {
     public void con_gestos_el_hueco_del_asa_es_macizo_y_el_degradado_corto() {
         int alto = 110, hueco = 42;
         Bitmap mapa = pintar(false, BordesSistema.macizoInferior(hueco), alto);
-        assertEquals("junto a la cápsula, transparente", 0, Color.alpha(mapa.getPixel(4, 0)));
+        transparente("junto a la cápsula", mapa.getPixel(4, 0));
         // El asa va de 17 a 22 px del canto: ahí, y en todo el hueco, el fondo base.
         for (int y = alto - hueco + 1; y < alto; y++) {
-            assertEquals("y=" + y, BASE, mapa.getPixel(4, y));
+            macizo("y=" + y, mapa.getPixel(4, y));
         }
         assertTrue("a media altura del degradado todavía se ve el contenido",
                 Color.alpha(mapa.getPixel(4, (alto - hueco) / 2)) < 110);
