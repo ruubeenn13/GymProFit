@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `a35b06b3` | fix(web): la política de privacidad nombra los proveedores actuales: TiDB Cloud en lugar de Aiven para la base, Sentry para los informes de fallo de la API y el texto de cada aviso en la fila de Firebase; `ProveedoresPrivacidadWebTest` fija la lista. |
 | `0a755920` | ci(web): los `*WebTest` corren en el CI cuando una PR solo toca `web/` (job `web-test`, sin el `assembleDebug` ni el lint); antes solo los pasaba `android-build-test`, que arranca si cambia `app/`. |
 | `ed796c65` | perf(api): la API en reposo pasa de 768 sentencias y 1.608 pings por hora a 8 y 84 (medido en local, perfil prod, 15 min): el barrido de programadas solo va a la base cuando algo vence (la push sale en el mismo minuto), `/actuator/health/liveness` sin base para Render, UptimeRobot y el keep-alive, y Hikari con una conexión ociosa (GP-283). |
 | `1c91804b` | test(api): ningún test arranca contra una base que no sea `localhost`, `127.0.0.1` o `::1` (`BarreraBaseLocal`); la JVM de los tests con `-Xmx1g` y que muere si muere Maven (GP-282). |
