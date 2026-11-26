@@ -289,9 +289,10 @@ public class BetaWebTest {
         assertTrue("Brevo no está en la tabla de proveedores", brevo.find());
         assertTrue("Brevo no figura para la lista de espera", brevo.group(1).contains("lista de espera"));
         assertTrue("no dice que Brevo recibe los datos de conexión", brevo.group(1).contains("datos de conexión"));
-        // La fecha es la del último cambio de la política: hoy, los recuentos del alta (GP-019).
+        // La fecha es la del último cambio de la política: los proveedores reales
+        // (ProveedoresPrivacidadWebTest).
         assertEquals("la fecha de la política no es la de su último cambio",
-                1, ocurrencias(texto, "Última actualización: 12 de noviembre de 2026"));
+                1, ocurrencias(texto, "Última actualización: 26 de noviembre de 2026"));
     }
 
     // GP-019 (DEC-064): la política cuenta los recuentos del alta y de la primera semana,
