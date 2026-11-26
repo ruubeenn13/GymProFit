@@ -1262,6 +1262,40 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-070 · Liquid Glass es el lenguaje visual: cristal estático y cristal vivo en tres niveles, con componente propio y contraste medido en el peor punto
+**Estado:** Aceptada · **Fecha:** 2026-11-26 · **Tarea:** GP-285 (lote 1)
+
+**Contexto.** El propietario aprobó el 25-11-2026 la dirección A del rediseño (`documentacion/diseno/2026-11-25-liquid-glass/`): el cristal como superficie de toda la app. La app es Java con vistas XML y `minSdk` 24 (DEC-010 sigue: no se migra a Compose), así que hay móviles que no pueden desenfocar en tiempo real. Y ya hubo una barra de cristal con lente (julio de 2026) que se retiró el 18-09-2026 porque creaba un `RenderEffect` y lo ponía en cada fotograma. La DEC-069 está tomada en la rama de «Un día», sin fusionar: por eso esta es la 070.
+
+**Decisión.**
+
+- **Liquid Glass es el lenguaje visual de la app**, y sustituye pantalla a pantalla al de las tarjetas opacas sobre carbón de DESIGN.md. Es el «rediseño de marca deliberado» que DEC-018 pone como su condición: el naranja único, el dorado de lo conseguido, el oscuro por defecto y «sin exceso de efectos» siguen valiendo; lo que cambia es la superficie. Se entrega por lotes: una pantalla que no ha pasado conserva `Widget.GymProFit.Card`, que no se toca.
+- **Dos clases de cristal.** El **estático** (tarjetas, tiles, chips) es un relleno translúcido con borde y brillo sobre el fondo ambiental, que ya es difuso: no desenfoca nada, es igual en todas las versiones de Android y no lleva sombra. El **vivo** (la barra y el «+», la barra de la sesión, las hojas inferiores) tiene contenido que se mueve por debajo y lo desenfoca de verdad.
+- **Tres niveles del cristal vivo**, decididos en un solo sitio (`NivelCristal.elegir`): **1**, Android 13 o más, desenfoque y refracción en los bordes; **2**, Android 12 y 12L, solo desenfoque; **3**, Android 11 o menos, texto de alto contraste del sistema encendido o rendimiento insuficiente, una superficie casi opaca. El rendimiento es un **techo que solo baja**: `VigiaCristal` mide lo que tarda en dibujarse cada fotograma (órdenes y GPU, no el total) y, tras tres ventanas seguidas de 120 fotogramas con más del 25 % por encima de 33,4 ms, guarda en el móvil un nivel menos.
+- **El componente es propio** (`ui/cristal/`: `LienzoCristal`, `CristalVivo`, `Cristal`, `FondoAmbiental`), con `RenderNode` y `RenderEffect` y un `RuntimeShader` AGSL para la refracción. Se comparó con BlurView 4.0.0 (Dimezis):
+
+  | | Propio | BlurView 4.0.0 |
+  |---|---|---|
+  | Licencia | código de la app | Apache-2.0 (leída en su repositorio; compatible con una app cerrada, con aviso en «Licencias de terceros») |
+  | Mantenimiento | el nuestro | activo: 4.0.0 del 25-10-2026 |
+  | Dependencia | ninguna | una más, por JitPack (ya está en el proyecto por MPAndroidChart); +28 KB de código y 6 KB de una textura |
+  | Nivel 2 (API 31+) | `RenderNode` del contenido + `RenderEffect` | lo mismo, la misma técnica |
+  | Nivel 1 (refracción) | efecto encadenado al desenfoque en el mismo nodo | no lo trae, y su nodo es privado: el shader propio tendría que ir sobre la vista entera, hijos incluidos |
+  | Nivel 3 | superficie opaca, por diseño | en API 30 o menos desenfoca con OpenGL o RenderScript: habría que apagarlo |
+  | Saturación 180 % | sí | no |
+  | Fotogramas lentos en el scroll de Inicio (la base, 0,73 % en los dos) | API 36: 0,82 % con refracción y 0,82 % solo con desenfoque · API 32: 1,11 % | API 36: 0,73 % · API 32: 1,11 % |
+
+  Las cifras salen del mismo guion de scroll, con la app compilada y las variantes intercaladas (detalle en `documentacion/estado/2026-11-26-gp285-liquid-glass-lote1.md`): la diferencia entre los dos es de un fotograma de cada mil, dentro de lo que varía una misma variante entre pasadas (0,73 % a 1,1 %). Con el coste igual, decide lo demás: BlurView solo cubriría el nivel 2, que son unas ochenta líneas, y los niveles 1 y 3, la saturación y la sombra habría que escribirlos igual. No se añade una dependencia sin necesidad demostrada.
+- **El efecto no se crea al dibujar.** `RenderEffect` y `RuntimeShader` se montan una vez por tamaño y nivel; el cristal no se invalida cuando el contenido se desplaza, porque su nodo apunta a las listas de dibujo que Android ya mantiene. `CristalTest` lo vigila en el código.
+- **Legibilidad, medida y no supuesta** (`ContrasteCristalTest`): (1) ningún brillo intenso detrás de texto pequeño; (2) cada par texto/superficie pasa 4,5:1 (3:1 en 24 sp o más y en gráficos) sobre el **punto más desfavorable** de fondo + brillo + cristal compuestos, recorriendo el fondo entero; (3) el cristal vivo pasa en los tres niveles sin contar con el desenfoque. Donde un valor de la maqueta choca con una regla, manda la regla, y el cambio queda escrito con su cifra en `colors.xml` y en DESIGN.md: el brillo naranja al 26 % (55 % en la maqueta: 3,19:1 el texto secundario), la lente al 7 % con el acento claro `#FFB27A` (14 % y `#FF8A3D`: 3,19:1 la etiqueta), el tinte de la barra al 72–62 % (55–40 %: 4,15:1 la pestaña activa con contenido claro pasando por detrás), la pista de las barras como surco oscuro (blanco al 14 %: 2,56:1 el relleno) y las barras apagadas de una gráfica al 45 % (20 %).
+- **El tema claro se diseña con las mismas reglas y los mismos tests** y se aprueba con capturas.
+
+**Consecuencias.** Hay dos sistemas de tarjeta conviviendo hasta que pasen todas las pantallas, y la barra de cristal flota ya sobre pestañas que aún son opacas. El contenido pasa por debajo de la barra, así que cada pestaña lleva relleno inferior y un foco de teclado o de TalkBack puede caer en algo que queda debajo. Sobre cristal no valen `gp_primary` ni `gp_text_secondary` como texto: los colores salen del tema de cristal. Lo que se infla por código se infla con el contexto de su padre. El componente es nuestro y hay que mantenerlo: `RenderNode`, `RenderEffect` y AGSL son API públicas y estables, pero una versión nueva de Android se prueba en los tres niveles. Ningún nivel empeora los fotogramas lentos de forma apreciable en los tres emuladores (API 36, 0,73 % → 0,82 %; API 32, 0,73 % → 1,2 %; API 24, 0,0 % → 0,0 %), así que ninguno baja de nivel de salida. Son cifras de emulador con la GPU del equipo: sirven para comparar antes y después, no para predecir un móvil lento; para eso está el vigía.
+
+**Qué la invalidaría.** Que mantener el componente cueste más que depender de una librería (por ejemplo, que una versión de Android rompa `RenderNode` con efecto y la librería ya lo tenga resuelto); que el vigía baje de nivel en móviles corrientes, lo que diría que el nivel 1 es demasiado caro tal como está; o un rediseño de marca posterior. Las reglas de legibilidad no caducan con el diseño: valen para el que venga.
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.

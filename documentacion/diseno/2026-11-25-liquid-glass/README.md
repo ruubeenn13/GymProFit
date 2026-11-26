@@ -42,3 +42,22 @@ Distribución de Android (Google, octubre de 2026): API 33+ ≈ 68 % · API 31�
 ## Tema claro
 
 No hay maqueta. Se diseña con los mismos principios (cristal blanco esmerilado sobre fondo claro con brillos cálidos suaves) y las mismas reglas de contraste, y se enseña en capturas para aprobación.
+
+## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
+
+Donde un valor de arriba chocaba con una regla de legibilidad, manda la regla (DEC-070). Los valores que valen son los de `app/GymProFit/DESIGN.md` («Liquid Glass») y `colors.xml`; cada uno está medido en `ContrasteCristalTest`. Para los lotes siguientes:
+
+| Valor de la maqueta | Problema medido | Valor implementado |
+|---|---|---|
+| Brillo naranja al 55 % | el fondo es fijo y el contenido se desplaza: sobre el brillo, el texto secundario de una tarjeta quedaba en 3,19:1 y el acento en 2,87:1 | 26 % (el peor par, 4,61:1) |
+| Lente al 14 % con icono y etiqueta en `#FF8A3D` | la etiqueta de la pestaña activa, 3,19:1 sobre la barra (3,74:1 en el nivel 3) | lente al 7 % y `#FFB27A` (5,65:1 y 6,45:1) |
+| Tinte de la barra al 55 % → 40 % | con contenido claro pasando por detrás (el círculo dorado del trofeo), la etiqueta de la pestaña activa bajaba a 4,15:1 | 72 % → 62 % |
+| Pista de las barras en blanco al 14 % | el relleno contra su pista, 2,56:1 | surco oscuro, negro al 40 % (5,43:1) |
+| Barras apagadas de la gráfica en blanco al 20 % | menos de 3:1 contra el cristal | blanco al 45 % |
+| Sombra del cristal estático | es translúcido: la sombra se vería a través, y sobre `#08090B` no se distingue | sin sombra; solo la lleva el cristal vivo |
+| «La última vez, hace 3 días» suelto sobre el brillo | el fallo que ya señala la regla 1 | en un chip de cristal, con el texto principal |
+| Ejercicios de «Hoy toca» en chips («Press de banca», «+4») | quitaría la pauta y la última marca de cada ejercicio, que la app ya enseña | se conserva el carrusel, con cada ejercicio en un tile de cristal |
+| «Tu día» con «1.420 · de 2.450» | cambiaría el texto («2.180 · te quedan») | tres tiles con los textos de siempre y su barra |
+| Títulos de sección en Barlow Condensed 22/700, «Torso A» a 44/800 y cifras de los tiles a 28 | la escala de letra de la app (`CimientosTest`: sección en Barlow SemiBold de 20 sp, título de 34, cifra pequeña de 26) es de todas las pantallas, y cambiarla solo en Inicio la partiría en dos | la escala de siempre; si se quiere la de la maqueta, se cambia para toda la app en su propio lote |
+
+El desenfoque de la maqueta (`blur(22px)`) es la desviación (σ); en Android el «radio» de `RenderEffect` que da esa σ es (σ − 0,5) / 0,57735.
