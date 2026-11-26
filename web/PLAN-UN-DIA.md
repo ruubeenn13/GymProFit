@@ -1,7 +1,7 @@
 # Plan del rediseño de gymprofit.app: «Un día» (fase 0)
 
-Plan, no código. Sustituye a la portada de GP-205 («el dorsal») cuando el propietario acepte la
-propuesta de decisión DEC-069 (`documentacion/PRODUCT-DECISIONS.md`, en «Pendientes de decidir»).
+Plan, no código. Sustituye a la portada de GP-205 («el dorsal») según DEC-069
+(`documentacion/PRODUCT-DECISIONS.md`), aceptada el 26-11-2026 tras validar la fase 1 a la vista.
 No va en el zip, como `DISENO.md` y `PRODUCT.md`: está en la lista de lo que se queda fuera, en
 `README.md` y en `scripts/servir-web.py` (`FUERA_DEL_ZIP`).
 
@@ -474,11 +474,11 @@ web/
 | Pieza | Cambia | Se conserva |
 |---|---|---|
 | Despliegue | El zip es el **contenido de `web/dist/`** tras `npm ci && npm run build`. La documentación ya no puede colarse: no está en `dist`. | Subida directa al proyecto `gymprofit` de Cloudflare Pages, a mano, sin conectar el repositorio. El zip al escritorio con el formato de `README.md`. |
-| `scripts/versionar-hojas-web.py` | Se retira en la fase 4, cuando la última página pase a Astro: el hash va en el nombre del fichero (`/_astro/index.AbC123.css`). Mientras tanto (fases 1–3) las páginas que siguen siendo HTML a mano viven en `public/` tal cual y el script versiona `public/` en vez de `web/`. | La idea: la URL cambia solo cuando cambia el contenido. |
+| `scripts/versionar-hojas-web.py` | Se retira cuando la portada del dorsal deje `public/` (fase 3, con el nuevo orden del §7) y ya no quede página a mano: el hash va en el nombre del fichero (`/_astro/index.AbC123.css`). Mientras tanto (fases 1–3) las páginas que siguen siendo HTML a mano viven en `public/` tal cual y el script versiona `public/` en vez de `web/`. | La idea: la URL cambia solo cuando cambia el contenido. |
 | `_headers` | Vive en `public/_headers`. Regla nueva `/_astro/*` con un año e `immutable`; fuera las de `/estilo.css`, `/beta.css`, `/portada.css` y `/js/*` cuando dejen de existir. Si las fuentes pasan a importarse desde el CSS, salen con hash y pueden ir a `immutable`. | El HTML con `no-cache`, una regla por página, ninguna regla `/*`. |
 | `scripts/servir-web.py` | Sirve `web/dist/`; añade **brotli** (el módulo `brotli` de `fonttools` ya se usa para las fuentes) además de gzip, para medir como sirve Pages. | Rutas limpias, la 404 con estado 404, las cabeceras de `_headers`. |
 | `scripts/reservas-capturas-web.py` y `img/capturas/` | Se retiran: ya no hay capturas. | — |
-| `scripts/texturas-web.py`, `tela.webp`, `tyvek.webp` | La tela y el Tyvek son del dorsal: se retiran en la fase 4 si las páginas secundarias dejan el dorsal. | — |
+| `scripts/texturas-web.py`, `tela.webp`, `tyvek.webp` | La tela y el Tyvek son del dorsal: se retiran en la fase 3, cuando `/` pase a «Un día». | — |
 | CI | Job **`web`** nuevo, que corre si cambia `web/` (o el workflow): Node fijado por versión, `npm ci`, `npm run build` y los `*WebTest` contra `dist/`. Arregla el hueco del punto 9 de §0. | Los tests siguen en Java, en el mismo sitio, sin infraestructura de tests nueva. |
 
 ### Los tests de la web
@@ -612,6 +612,15 @@ móvil. Si no caben, se quita movimiento, no se sube el tope (DEC-053).
 
 Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su visto bueno**.
 
+**Orden (26-11-2026).** La fase 1 está cerrada y DEC-069, aceptada. Las fases 2 y 3 **esperan** a
+que termine el rediseño liquid glass de la app (previsto antes del 30-11-2026), porque cambia las
+pantallas que la web rehace: hacerlas antes sería rehacerlas dos veces. **La fase 4 va ahora**, y
+luego la 2, la 3, la 5 y la 6. El borrado de la portada del dorsal (sus texturas, sus capturas, sus
+reservas y el brief de impeccable) pasa de la fase 4 a la 3, cuando `/` pase a «Un día»: hasta
+entonces la portada actual sigue en `public/` tal cual, y con ella `versionar-hojas-web.py`.
+Riesgo abierto de la fase 1: TikTok e Instagram (y el panel corregido) se prueban con la vista
+previa de Pages antes de la fase 6.
+
 ### Fase 1 · Prueba de concepto: la entrada y las 19:00, medidas en el móvil
 
 - Antes de nada: el job `web` del CI y el ayudante de los tests sobre `dist` (con los tests de hoy aún en
@@ -620,7 +629,8 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 - Astro en `web/` (`build.format: 'file'`, `trailingSlash: 'never'`, telemetría apagada), las páginas
   actuales copiadas tal cual a `public/` (cero riesgo para lo que hay). `RutasWebTest` sobre `dist`.
 - **La prueba vive en `/un-dia`** (`noindex`), no en `/`: la portada de hoy se queda en `public/` sin
-  tocar hasta que se acepten la prueba y DEC-069, y entonces `index.astro` la sustituye (fase 3).
+  tocar hasta la fase 3, cuando `index.astro` la sustituye (la prueba y DEC-069 se aceptaron el
+  26-11-2026).
 - La entrada (7:00: el reloj, el titular como LCP, la acción visible en el primer pantallazo y la
   etiqueta «Un día de ejemplo») y la escena fijada de Torso A con el récord, en M y en E, con los
   componentes 1, 6, 7, 8 y 9.
@@ -646,19 +656,21 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 
 - 8:00, 11:00, 14:00, 20:10, 23:00 y el cierre; las transiciones entre horas; la luz de cada hora y
   `LuzDelDiaWebTest`; `PortadaWebTest` reescrito.
+- `/` pasa a «Un día» y con la portada del dorsal se retiran sus texturas (`tela.webp`, `tyvek.webp`,
+  `scripts/texturas-web.py`), sus capturas (`img/capturas/`) y sus reservas, el brief de impeccable
+  `web/.impeccable/surfaces/index-html.md` y, si ya no queda página a mano en `public/`,
+  `versionar-hojas-web.py` (movido aquí desde la fase 4 el 26-11-2026).
 - **Parada:** recorrido completo en M y en E, y otra medida en el móvil.
 
-### Fase 4 · Páginas secundarias y 404 en el mundo nuevo
-
-- Con la portada del dorsal se retiran sus capturas (`img/capturas/`) y el brief de impeccable
-  `web/.impeccable/surfaces/index-html.md`, que apunta a un `index.html` que ya no está en `web/`.
-  Hasta entonces se quedan como están (decisión del propietario, 25-11-2026).
+### Fase 4 · Páginas secundarias y 404 en el mundo nuevo (va antes que la 2 y la 3)
 
 - Privacidad, términos, eliminar cuenta, la beta y sus tres páginas, y la 404, pasadas a `.astro` con el
-  mundo nuevo (sin escenas ni GSAP: solo la tipografía, la luz quieta y el reloj como marca). La beta
-  conserva su formulario sin JS y su paleta.
-- Fuera `versionar-hojas-web.py`, las capturas, sus reservas y las texturas del dorsal, si ya no las usa
-  nadie; `README.md` al día.
+  mundo nuevo (sin escenas ni GSAP: solo la tipografía, la luz quieta y el reloj como marca). URL
+  idénticas (`RutasWebTest`), texto idéntico (un test lo compara con el de las páginas de `public/`),
+  claro y oscuro con contraste AA medido. La beta conserva su formulario sin JS.
+- View Transitions entre documentos, solo CSS, con el reloj como elemento compartido (§3).
+- Fuera `estilo.css`, `beta.css` y sus reglas de `_headers` cuando ya no los use nadie;
+  `README.md` al día. La portada del dorsal y lo suyo se quedan hasta la fase 3.
 - **Parada:** revisión de las nueve URL y de los tests de la beta.
 
 ### Fase 5 · Calidad
@@ -675,7 +687,7 @@ Cada fase acaba con un informe al propietario y **no empieza la siguiente sin su
 - Comprobación en producción: las nueve URL, `curl -I` de las cabeceras, la 404 con estado 404, el
   formulario de la beta de punta a punta con una cuenta de prueba que luego se borra, y las 5 pasadas de
   Lighthouse contra `gymprofit.app`.
-- DEC-069 pasa a «Aceptada» solo si el propietario lo decide; `CHANGELOG.md` con los hashes.
+- `CHANGELOG.md` con los hashes (DEC-069 ya está aceptada desde el 26-11-2026).
 
 ---
 

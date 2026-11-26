@@ -937,7 +937,7 @@ El `LIKE` con comodín delante no usa índice: barre la tabla entera en cada pul
 **Qué la invalidaría.** Que la prueba pase a ser abierta (sin lista de probadores): entonces sobran el grupo y el paso 1. Que Google retire los grupos como lista de probadores, o que la lista pase a gestionarse por correos en Play Console.
 
 ### DEC-053 · La web admite JavaScript propio como mejora progresiva, servido desde el dominio y con presupuesto
-**Estado:** Aceptada · **Fecha:** 2026-10-21 · **Tarea:** GP-205 · **Sustituye a:** la parte «sin JavaScript» de DEC-050
+**Estado:** Aceptada · **Fecha:** 2026-10-21 · **Tarea:** GP-205 · **Sustituye a:** la parte «sin JavaScript» de DEC-050 · **Revisada por:** DEC-069 (cómo se sirven y versionan los scripts, y su presupuesto)
 
 **Contexto.** `gymprofit.app` era HTML y CSS sin una línea de JavaScript (DEC-050). El rediseño de GP-205 quiere movimiento atado al scroll (un móvil que se queda quieto y cambia de pantalla, un dorsal que se suelta al bajar), que CSS solo no resuelve en todos los navegadores, empezando por el integrado de TikTok.
 
@@ -1262,6 +1262,29 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 
 ---
 
+### DEC-069 · La web se construye con Astro en estático y la portada enseña la app rehecha en HTML con un día de ejemplo
+**Estado:** Aceptada · **Fecha:** 2026-11-26 (propuesta el 2026-11-25) · **Plan:** `web/PLAN-UN-DIA.md` · **Sustituye a:** la parte de DEC-053 sobre cómo se sirven y versionan los scripts y su presupuesto, y lo que `web/DISENO.md` dice de no animar cifras
+
+**Contexto.** La portada de GP-205 enseña capturas de la app dentro de un mockup, y en móvil, de donde llega casi todo el tráfico (TikTok e Instagram, en su navegador integrado), no tiene escena con movimiento: el móvil fijo solo existe en escritorio. La dirección «Un día» cuenta un día de quien usa la app, de las 7:00 a las 23:00, y necesita animar cada serie, cada barra y cada cifra de la interfaz, nítida a 360 px. Con capturas no se puede; con HTML escrito a mano, la misma interfaz se repetiría en muchas escenas y en varias páginas.
+
+**Decisión.**
+
+- **La web se construye con Astro, con salida estática** (`build.format: 'file'`, `trailingSlash: 'never'`), y se despliega como hoy: el contenido de `web/dist/` en un zip, subido a mano a Cloudflare Pages. Las URL no cambian; un test lo comprueba sobre la salida. La telemetría de Astro va apagada.
+- **La interfaz de la app se rehace en HTML y CSS** con los tokens de `app/GymProFit/DESIGN.md`, cruzados con `colors.xml` y `dimens.xml` por un test. Es una imagen hecha de HTML: no es interactiva, va oculta al lector de pantalla y lleva su descripción en texto.
+- **Las cifras de la portada son las de la cuenta demo**, sacadas del entorno local a un solo fichero de datos, y la página dice una vez que es «un día de ejemplo». Ninguna cifra de datos cuenta número a número; lo que rueda es el reloj del día (un cuentakilómetros) y la cuenta atrás del descanso, que en la app también corren. Ninguna caloría de entrenamiento, en ninguna forma (DEC-004).
+- **Los scripts llegan por npm con lockfile** (`astro`, `gsap`, `lenis`) y Vite los sirve desde nuestro dominio con el hash en el nombre, en `/_astro/`, con `immutable`; se dejan de copiar a mano a `js/vendor/` y de versionar con `?v=`. Su licencia viaja en el trozo que la sirve.
+- **Presupuesto**: JS inicial ≤ 50 KB comprimido (objetivo ≤ 6 KB); el que se pide después con `import()`, ≤ 80 KB en móvil y ≤ 90 KB en escritorio (con Lenis y el cursor). Sube desde los 60 y 70 de la primera vuelta porque la «Política de impacto» de `web/PLAN-UN-DIA.md` (25-11-2026) pide titulares por caracteres y trazos dibujados: SplitText (3,7 KB) y DrawSVG (2,2 KB) de GSAP, más los módulos de escena. Medido sobre `dist` el 25-11-2026: 1,9 KB inicial, 55,4 KB diferido en móvil y 61,5 KB en escritorio; el margen queda para las escenas de la fase 3. Lighthouse móvil ≥ 90 en rendimiento y 100 en accesibilidad, LCP ≤ 2,5 s en 4G, CLS < 0,05, INP < 200 ms, y ninguna tarea de más de 100 ms al desplazar. Fotogramas (25-11-2026, sustituye a «≥ 50 fps de mediana»): en el Xiaomi 17T, p5 ≥ 50 fps y ≤ 5 % de fotogramas de más de 20 ms en las dos pasadas, medidos con el panel corregido y comparados con su modo de control (`?debug=motion&control`, la página quieta). Primer layout con la CPU a ×4: ≤ 130 ms la página entera en la fase 3 (`scripts/medir-un-dia.py`).
+- **Sigue igual de DEC-053**: JavaScript solo como mejora progresiva (sin JS todo se ve y funciona), servido desde el dominio, cero peticiones a terceros al cargar, y con movimiento reducido no se descarga GSAP ni Lenis. **Sigue igual de DEC-050**: el formulario de `/beta` va por POST a Brevo sin JavaScript.
+- **El scroll en táctil es el nativo**: Lenis solo con ratón, nada secuestra el desplazamiento ni lo mete en un contenedor interno.
+
+**Consecuencias.** Entra Node en el CI y en la máquina de desarrollo, y un job `web` que construye la salida y pasa los tests de la web contra ella (hoy esos tests no corren si solo cambia `web/`). `versionar-hojas-web.py`, las capturas de la portada y sus reservas se retiran. Las páginas legales y de la beta pasan al mismo build sin cambiar de URL ni de comportamiento.
+
+**Qué la invalidaría.** Que la prueba de concepto de la fase 1 no llegue al criterio de fotogramas de arriba o a 90 de rendimiento en el móvil sin quitar el movimiento que justifica el cambio (entonces se queda la portada actual, o una versión sin escenas). Que Astro deje de poder producir HTML estático por fichero, o que mantener el build cueste más que el HTML a mano que sustituye.
+
+**Aceptación (26-11-2026).** El propietario validó `/un-dia` a la vista en el Xiaomi 17T. No aportó los paneles corregidos del modo normal y del de control, así que el criterio de fotogramas queda aceptado sin su cifra; y TikTok e Instagram siguen sin probar, porque no abren http de la red local. Las dos cosas son riesgo abierto: se comprueban con la vista previa de Pages antes de la fase 6 (`documentacion/estado/2026-11-25-un-dia-fase-1-cierre.md`).
+
+---
+
 ## Pendientes de decidir
 
 Se registran aquí para que no se decidan por omisión.
@@ -1279,25 +1302,6 @@ Lo que sí sigue **pendiente de confirmar como decisión**: el proveedor (Brevo 
 **Estado:** PENDIENTE · **Depende de:** DEC-004
 
 Hay datos de calorías estimadas ya almacenados en producción. Al retirar la métrica hay que decidir si la columna se conserva sin mostrarse durante una versión o se elimina de inmediato. Propuesta: conservarla primero, eliminarla en una migración posterior, para no perder información de forma irreversible antes de confirmar que nada depende de ella.
-
-### DEC-069 · La web se construye con Astro en estático y la portada enseña la app rehecha en HTML con un día de ejemplo
-**Estado:** Propuesta (no aceptada) · **Fecha:** 2026-11-25 · **Plan:** `web/PLAN-UN-DIA.md` · **Sustituiría a:** la parte de DEC-053 sobre cómo se sirven y versionan los scripts y su presupuesto, y lo que `web/DISENO.md` dice de no animar cifras
-
-**Contexto.** La portada de GP-205 enseña capturas de la app dentro de un mockup, y en móvil, de donde llega casi todo el tráfico (TikTok e Instagram, en su navegador integrado), no tiene escena con movimiento: el móvil fijo solo existe en escritorio. La dirección «Un día» cuenta un día de quien usa la app, de las 7:00 a las 23:00, y necesita animar cada serie, cada barra y cada cifra de la interfaz, nítida a 360 px. Con capturas no se puede; con HTML escrito a mano, la misma interfaz se repetiría en muchas escenas y en varias páginas.
-
-**Decisión propuesta.**
-
-- **La web se construye con Astro, con salida estática** (`build.format: 'file'`, `trailingSlash: 'never'`), y se despliega como hoy: el contenido de `web/dist/` en un zip, subido a mano a Cloudflare Pages. Las URL no cambian; un test lo comprueba sobre la salida. La telemetría de Astro va apagada.
-- **La interfaz de la app se rehace en HTML y CSS** con los tokens de `app/GymProFit/DESIGN.md`, cruzados con `colors.xml` y `dimens.xml` por un test. Es una imagen hecha de HTML: no es interactiva, va oculta al lector de pantalla y lleva su descripción en texto.
-- **Las cifras de la portada son las de la cuenta demo**, sacadas del entorno local a un solo fichero de datos, y la página dice una vez que es «un día de ejemplo». Ninguna cifra de datos cuenta número a número; lo que rueda es el reloj del día (un cuentakilómetros) y la cuenta atrás del descanso, que en la app también corren. Ninguna caloría de entrenamiento, en ninguna forma (DEC-004).
-- **Los scripts llegan por npm con lockfile** (`astro`, `gsap`, `lenis`) y Vite los sirve desde nuestro dominio con el hash en el nombre, en `/_astro/`, con `immutable`; se dejan de copiar a mano a `js/vendor/` y de versionar con `?v=`. Su licencia viaja en el trozo que la sirve.
-- **Presupuesto**: JS inicial ≤ 50 KB comprimido (objetivo ≤ 6 KB); el que se pide después con `import()`, ≤ 80 KB en móvil y ≤ 90 KB en escritorio (con Lenis y el cursor). Sube desde los 60 y 70 de la primera vuelta porque la «Política de impacto» de `web/PLAN-UN-DIA.md` (25-11-2026) pide titulares por caracteres y trazos dibujados: SplitText (3,7 KB) y DrawSVG (2,2 KB) de GSAP, más los módulos de escena. Medido sobre `dist` el 25-11-2026: 1,9 KB inicial, 55,4 KB diferido en móvil y 61,5 KB en escritorio; el margen queda para las escenas de la fase 3. Lighthouse móvil ≥ 90 en rendimiento y 100 en accesibilidad, LCP ≤ 2,5 s en 4G, CLS < 0,05, INP < 200 ms, y ninguna tarea de más de 100 ms al desplazar. Fotogramas (25-11-2026, sustituye a «≥ 50 fps de mediana»): en el Xiaomi 17T, p5 ≥ 50 fps y ≤ 5 % de fotogramas de más de 20 ms en las dos pasadas, medidos con el panel corregido y comparados con su modo de control (`?debug=motion&control`, la página quieta). Primer layout con la CPU a ×4: ≤ 130 ms la página entera en la fase 3 (`scripts/medir-un-dia.py`).
-- **Sigue igual de DEC-053**: JavaScript solo como mejora progresiva (sin JS todo se ve y funciona), servido desde el dominio, cero peticiones a terceros al cargar, y con movimiento reducido no se descarga GSAP ni Lenis. **Sigue igual de DEC-050**: el formulario de `/beta` va por POST a Brevo sin JavaScript.
-- **El scroll en táctil es el nativo**: Lenis solo con ratón, nada secuestra el desplazamiento ni lo mete en un contenedor interno.
-
-**Consecuencias.** Entra Node en el CI y en la máquina de desarrollo, y un job `web` que construye la salida y pasa los tests de la web contra ella (hoy esos tests no corren si solo cambia `web/`). `versionar-hojas-web.py`, las capturas de la portada y sus reservas se retiran. Las páginas legales y de la beta pasan al mismo build sin cambiar de URL ni de comportamiento.
-
-**Qué la invalidaría.** Que la prueba de concepto de la fase 1 no llegue al criterio de fotogramas de arriba o a 90 de rendimiento en el móvil sin quitar el movimiento que justifica el cambio (entonces se queda la portada actual, o una versión sin escenas). Que Astro deje de poder producir HTML estático por fichero, o que mantener el build cueste más que el HTML a mano que sustituye.
 
 ---
 

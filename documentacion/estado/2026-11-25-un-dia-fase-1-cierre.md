@@ -96,3 +96,19 @@ da 404 hoy.
 
 - Repetir la medida en el Xiaomi (pasos en el resumen) en normal y control, y en TikTok e Instagram
   por la vista previa.
+
+## Cierre de la fase (26-11-2026)
+
+- **Validada a la vista.** El propietario ha recorrido `/un-dia` en el Xiaomi 17T y la da por buena.
+  DEC-069 pasa a «Aceptada» con fecha 26-11-2026.
+- **Sin los paneles corregidos.** No ha aportado los números del panel nuevo (normal y
+  `?debug=motion&control`), así que el criterio de fotogramas de DEC-069 no tiene cifra medida en el
+  móvil: solo la de Chromium del §1.
+- **TikTok e Instagram, sin probar.** No abren http ni IP de la red local, y la vista previa de Pages
+  por https no se ha subido.
+- **Riesgo abierto**: los navegadores integrados (y el panel corregido en ellos) se comprueban con la
+  vista previa de Pages (`web/README.md`, «Vista previa para el móvil») **antes de la fase 6**. Si ahí
+  no llegan al criterio, se quita movimiento antes de desplegar.
+- **Nuevo orden de fases** (`web/PLAN-UN-DIA.md` §7): las fases 2 y 3 esperan a que acabe el rediseño
+  liquid glass de la app (previsto antes del 30-11-2026), porque cambia las pantallas que la web
+  rehace. La fase 4 va ahora.
