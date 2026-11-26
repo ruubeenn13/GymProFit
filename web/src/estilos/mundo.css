@@ -117,7 +117,9 @@ strong, b { font-weight: 600; }
 }
 .pie-sitio nav { display: flex; flex-wrap: wrap; gap: 0 22px; }
 /* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
-.pie-sitio nav a { display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; }
+/* 6 px de relleno a cada lado, devueltos con margen: «Inicio» llega a 48 px de toque y el
+   hueco que se ve entre enlaces sigue siendo el mismo */
+.pie-sitio nav a { display: inline-flex; align-items: center; min-height: 48px; padding-inline: 6px; margin-inline: -6px; }
 .pie-marca { display: flex; align-items: center; gap: 9px; margin: 8px 0 0; }
 
 @media (min-width: 900px) {

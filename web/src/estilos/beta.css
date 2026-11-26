@@ -337,7 +337,7 @@ body { line-height: 1.55; }
 .pie p { margin: 0 0 12px; max-width: 44em; }
 .pie nav { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 18px; }
 /* Enlaces del pie con zona de toque de 48 px aunque la letra sea pequeña */
-.pie nav a { display: inline-flex; align-items: center; min-height: 48px; min-width: 48px; }
+.pie nav a { display: inline-flex; align-items: center; min-height: 48px; padding-inline: 6px; margin-inline: -6px; }
 
 /* ── /beta/revisa, /beta/dentro y /beta/entrar ───────────────────── */
 
