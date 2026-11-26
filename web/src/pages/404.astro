@@ -1,0 +1,25 @@
+---
+/**
+ * La 404 (fase 4 de «Un día»): la hora que no existe. Cloudflare Pages sirve dist/404.html,
+ * con estado 404, en cualquier ruta que no existe (GP-205); sin ella responde con la portada
+ * y un 200. Por eso todo lo que carga va con ruta absoluta, y no se indexa.
+ *
+ * Sin JavaScript: ni el de la portada ni ningún otro. El texto es el de antes
+ * (TextoIgualWebTest); el reloj es decorativo y va oculto al lector de pantalla.
+ */
+import Pagina from '../componentes/comunes/Pagina.astro';
+import '../estilos/perdido.css';
+
+const HORA = '25:61';
+---
+<Pagina titulo="Página no encontrada · GymProFit" noindex hora={HORA} colorOscuro="#0B0C0E">
+
+<main class="perdido">
+  <span class="perdido-hora" aria-hidden="true">{[...HORA].map((c) => <span><span>{c}</span></span>)}</span>
+  <h1>Esta página no existe</h1>
+  <p>Puede que el enlace esté mal escrito o que la página ya no esté.</p>
+  <a class="boton" href="/">Ir al inicio</a>
+  <p class="perdido-beta">¿Venías a probar la app? <a href="/beta">Entra en la beta</a>.</p>
+</main>
+
+</Pagina>

@@ -1,0 +1,70 @@
+/* ============================================================
+   perdido.css — la 404 (fase 4 de «Un día»): la hora que no existe.
+
+   Cada página del mundo de «Un día» marca su hora; la que no existe marca una imposible, las
+   25:61, en el reloj de cabecera y en grande, como el reloj gigante de la portada: lleno, un
+   poco más claro que el carbón, con el trazo de la hora. Siempre en carbón, como la portada.
+
+   La luz es la de la noche (#56C2D6, el agua de la app en oscuro), la más apagada del día.
+   Límite AA medido contra cada texto en su punto más claro: 0,22 (lo marca el naranja del
+   enlace); se usa 0,16.
+   ============================================================ */
+
+:root {
+  --fondo:     #0B0C0E;
+  --texto:     #F2F2F3;
+  --texto-2:   #A1A9B6;
+  --enlace:    #FF6A00;
+  --acento:    #FF6A00;
+  --sobre-acento: #1A0E00;
+  --luz: 86 194 214;
+  --luz-alfa: .16;
+  --lamas: translate(14%, 10%) rotate(-28deg) skewX(24deg) scale(1.1, .9);
+  --ancho: 1120px;
+  color-scheme: dark;
+}
+
+.perdido {
+  width: 100%; max-width: var(--ancho); margin: 0 auto; padding: 8px var(--margen) 72px;
+}
+
+/* Las 25:61, enormes: cada cifra en su máscara, para que caiga desde arriba al cargar */
+.perdido-hora {
+  display: flex; margin: 0 0 -.06em -.04em;
+  font: 700 clamp(132px, 41vw, 400px)/.9 var(--cond);
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  color: #1F2228; -webkit-text-stroke: 2px rgb(255 106 0 / .55);
+}
+.perdido-hora > span { display: block; overflow: hidden; padding-bottom: .04em; }
+.perdido-hora > span > span { display: block; }
+
+.perdido h1 {
+  position: relative; margin: 0; max-width: 11em;
+  font: 700 clamp(40px, 9vw, 76px)/.92 var(--cond); letter-spacing: -.01em; text-transform: uppercase;
+  text-wrap: balance;
+}
+.perdido p { max-width: 32em; margin: 16px 0 0; font-size: 19px; color: var(--texto-2); }
+.perdido .perdido-beta { font-size: 17px; }
+
+.boton {
+  display: inline-flex; align-items: center; min-height: 56px; margin-top: 28px; padding: 0 30px;
+  border-radius: 999px; background: var(--acento); color: var(--sobre-acento); text-decoration: none;
+  font: 700 21px/1 var(--cond); letter-spacing: .04em; text-transform: uppercase;
+  transition: transform 140ms var(--salida);
+}
+.boton:active { transform: scale(.97); }
+
+@media (min-width: 900px) {
+  .perdido { padding-top: 0; }
+  .perdido p { font-size: 21px; }
+}
+
+/* Lo único que se mueve: las cifras caen una vez, escalonadas, y se posan. Sin movimiento
+   reducido; con él, la hora está quieta desde el primer pintado. */
+@media (prefers-reduced-motion: no-preference) {
+  .perdido-hora > span > span { animation: cae 650ms var(--salida) both; }
+  .perdido-hora > span:nth-child(2) > span { animation-delay: 70ms; }
+  .perdido-hora > span:nth-child(4) > span { animation-delay: 140ms; }
+  .perdido-hora > span:nth-child(5) > span { animation-delay: 210ms; }
+}
+@keyframes cae { from { transform: translateY(-100%); } }

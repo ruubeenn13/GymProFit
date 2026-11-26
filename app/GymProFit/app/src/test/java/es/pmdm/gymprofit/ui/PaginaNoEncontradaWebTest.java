@@ -1,7 +1,6 @@
 package es.pmdm.gymprofit.ui;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -10,18 +9,20 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // ============================================================
-// PaginaNoEncontradaWebTest — una ruta que no existe responde 404 de verdad (GP-205).
+// PaginaNoEncontradaWebTest — una ruta que no existe responde 404 de verdad (GP-205), y desde
+// la fase 4 de «Un día» la 404 es «la hora que no existe».
 //
-// Cloudflare Pages sirve web/404.html, con estado 404, en cualquier ruta que no
-// existe. Si el fichero falta, Pages trata el sitio como una aplicación de una página
-// y responde con la portada y un 200, que los buscadores indexan como duplicada.
-// Como se sirve en cualquier ruta (/beta/lo-que-sea incluida), todo lo que carga va
-// con ruta absoluta; y no se indexa.
+// Cloudflare Pages sirve dist/404.html, con estado 404, en cualquier ruta que no existe. Si el
+// fichero falta, Pages trata el sitio como una aplicación de una página y responde con la
+// portada y un 200, que los buscadores indexan como duplicada. Como se sirve en cualquier ruta
+// (/beta/lo-que-sea incluida), todo lo que carga va con ruta absoluta; y no se indexa.
+//
+// En el mundo de «Un día» cada página marca su hora en el reloj; la 404 marca una que no puede
+// ser (más de 23 horas o más de 59 minutos). Sin el JavaScript de la portada, ni ningún otro.
 // ============================================================
 public class PaginaNoEncontradaWebTest {
 
@@ -29,7 +30,7 @@ public class PaginaNoEncontradaWebTest {
     public void existeYNoSeIndexa() throws IOException {
         String html = pagina();
         assertTrue("404.html no lleva noindex", html.contains("<meta name=\"robots\" content=\"noindex\">"));
-        assertTrue("404.html no tiene título", html.contains("<h1>"));
+        assertTrue("404.html no tiene título", Pattern.compile("<h1\\b").matcher(html).find());
     }
 
     @Test
@@ -40,11 +41,30 @@ public class PaginaNoEncontradaWebTest {
     }
 
     @Test
-    public void esUnDorsalDelSistemaSinElJavaScriptDeLaPortada() throws IOException {
+    public void marcaUnaHoraQueNoExiste() throws IOException {
         String html = pagina();
-        assertTrue("404.html no usa la hoja de la portada", html.contains("href=\"/portada.css?v="));
-        assertTrue("404.html no es un dorsal", html.contains("<div class=\"dorsal\">"));
+        int relojes = 0;
+        Matcher reloj = Pattern.compile("<span class=\"(reloj [^\"]*|perdido-hora[^\"]*)\"[^>]*>(.*?)</span>\\s*(?:</h|<h|</div|</header)",
+                Pattern.DOTALL).matcher(html);
+        while (reloj.find()) {
+            String cifras = reloj.group(2).replaceAll("<[^>]+>", "").replaceAll("\\s+", "");
+            Matcher hora = Pattern.compile("^(\\d\\d):(\\d\\d)$").matcher(cifras);
+            assertTrue("el reloj de la 404 no marca una hora: «" + cifras + "»", hora.matches());
+            int h = Integer.parseInt(hora.group(1));
+            int m = Integer.parseInt(hora.group(2));
+            assertTrue("la 404 marca una hora que existe: " + cifras, h > 23 || m > 59);
+            relojes++;
+        }
+        assertTrue("la 404 no tiene el reloj de cabecera y el grande", relojes >= 2);
+    }
+
+    @Test
+    public void esDelMundoNuevoSinElJavaScriptDeLaPortada() throws IOException {
+        String html = pagina();
+        assertFalse("404.html sigue con la hoja del dorsal", html.contains("portada.css"));
+        assertFalse("404.html sigue siendo un dorsal", html.contains("class=\"dorsal"));
         assertFalse("404.html carga el JavaScript de la portada", html.contains("portada.js"));
+        assertFalse("404.html carga los módulos de «Un día»", html.contains("/_astro/") && html.contains(".js"));
     }
 
     @Test
@@ -59,13 +79,17 @@ public class PaginaNoEncontradaWebTest {
             recursos++;
             assertTrue("404.html carga o enlaza algo con ruta relativa: " + url, url.startsWith("/"));
         }
+        // Y lo que pide la hoja: las fuentes, con ruta absoluta también
+        Matcher url = Pattern.compile("url\\(\"?([^\")]*)\"?\\)").matcher(html);
+        while (url.find()) {
+            recursos++;
+            assertTrue("404.html pide desde la hoja algo con ruta relativa: " + url.group(1),
+                    url.group(1).startsWith("/") || url.group(1).startsWith("data:"));
+        }
         assertTrue("no se ha encontrado ningún recurso", recursos > 5);
     }
 
     private static String pagina() throws IOException {
-        Path raiz = Paths.get("").toAbsolutePath();
-        while (raiz != null && !Files.isDirectory(raiz.resolve("web"))) raiz = raiz.getParent();
-        assertNotNull("no se encuentra la carpeta web", raiz);
         Path fichero = WebDist.dist().resolve("404.html");
         assertTrue("falta web/dist/404.html: Pages respondería 200 con la portada", Files.exists(fichero));
         return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);

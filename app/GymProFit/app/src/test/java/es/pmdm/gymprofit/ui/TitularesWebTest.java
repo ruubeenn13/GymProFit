@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class TitularesWebTest {
 
     /** La de la portada se lee en dist; con «src/», las que construye Astro, en web/src/estilos. */
-    private static final String[] HOJAS = {"portada.css", "src/beta.css", "src/lectura.css"};
+    private static final String[] HOJAS = {"portada.css", "src/beta.css", "src/lectura.css", "src/perdido.css"};
 
     /** Un tamaño que depende del ancho: de la pantalla, del contenedor o del --k del titular. */
     private static final Pattern FLUIDO = Pattern.compile("\\d(vw|vi|vmin|vmax|cqi|cqw)\\b|var\\(--k\\)|var\\(--ancho");
