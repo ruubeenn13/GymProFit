@@ -398,6 +398,11 @@ jobs:
       # Se restaura aquí y se guarda justo después de crearlo, no al final del job: con
       # actions/cache a secas se guardaba tras la prueba, con la app instalada y su sesión
       # dentro, y el run siguiente arrancaba con esa sesión vieja.
+      # La instantánea solo vale para la versión del emulador que la guardó. Cuando los runners
+      # traen otra, el emulador la descarta («incompatible snapshot version»), arranca en frío
+      # y el humo se queda colgado a ratos (26-11-2026, emulador 37.3.10: «no aparece
+      # contenedorAlta» tras un «Failed to find ColorBuffer», en ramas sin relación). Si ese
+      # aviso vuelve a salir en el registro, se sube el sufijo de la clave para rehacerla.
       - name: Caché del AVD
         id: avd
         uses: actions/cache/restore@v6
@@ -405,7 +410,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ env.AVD_API }}-${{ env.AVD_TARGET }}-${{ env.AVD_ARCH }}-${{ env.AVD_PROFILE }}-v3
+          key: avd-${{ env.AVD_API }}-${{ env.AVD_TARGET }}-${{ env.AVD_ARCH }}-${{ env.AVD_PROFILE }}-v4
 
       - name: Crear el AVD y su instantánea
         if: steps.avd.outputs.cache-hit != 'true'
