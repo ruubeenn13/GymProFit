@@ -43,7 +43,7 @@ public class RutasWebTest {
      * .html con su nombre, que Astro copiaría encima o al lado y la dejaría servir la de antes.
      */
     private static final String[] DE_ASTRO = {
-            "privacidad", "terminos", "eliminar-cuenta",
+            "privacidad", "terminos", "eliminar-cuenta", "beta", "beta/revisa", "beta/dentro", "beta/entrar",
     };
 
     @Test

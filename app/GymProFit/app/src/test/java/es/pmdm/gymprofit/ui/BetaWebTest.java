@@ -100,7 +100,7 @@ public class BetaWebTest {
         Matcher caja = Pattern.compile("<div class=\"trampa\" aria-hidden=\"true\">\\s*<input[^>]*name=\"email_address_check\"")
                 .matcher(form);
         assertTrue("la trampa no está dentro de un contenedor aria-hidden", caja.find());
-        assertTrue("la trampa no se oculta en la hoja", pagina("beta.css").contains(".trampa {"));
+        assertTrue("la trampa no se oculta en la hoja", hoja().contains(".trampa {"));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class BetaWebTest {
     public void enEscritorioElFormularioPesaComoElTitular() throws IOException {
         // GP-205: a 1280 y 1440 el formulario quedaba estrecho frente al titular. Su
         // columna no baja de 380 px y el formulario la llena hasta el borde derecho.
-        String css = pagina("beta.css");
+        String css = hoja();
         int escritorio = css.indexOf("@media (min-width: 900px)");
         assertTrue("beta.css no tiene bloque de escritorio", escritorio >= 0);
         String bloque = css.substring(escritorio);
@@ -343,6 +343,14 @@ public class BetaWebTest {
     private static String texto(String html) {
         return html.replaceAll("<[^>]+>", " ").replace("&amp;", "&").replaceAll("\\s+", " ")
                 .replaceAll(" ([.,:;])", "$1");
+    }
+
+    // La hoja de la beta, en web/src/estilos (desde la fase 4 de «Un día» la construye Astro:
+    // en dist va minificada, con el hash en el nombre).
+    private static String hoja() throws IOException {
+        Path fichero = WebDist.web().resolve("src/estilos/beta.css");
+        assertTrue("no existe web/src/estilos/beta.css", Files.exists(fichero));
+        return new String(Files.readAllBytes(fichero), StandardCharsets.UTF_8);
     }
 
     private static String pagina(String nombre) throws IOException {

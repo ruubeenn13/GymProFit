@@ -30,11 +30,11 @@ public class MovimientoWebTest {
      * Las hojas: las escritas a mano que aún sirve public/ (se leen en dist) y, con «src/», las
      * de las páginas que construye Astro (se leen en web/src/estilos: en dist van minificadas).
      */
-    private static final String[] HOJAS = {"portada.css", "beta.css",
-            "src/mundo.css", "src/lectura.css"};
+    private static final String[] HOJAS = {"portada.css",
+            "src/mundo.css", "src/lectura.css", "src/beta.css"};
 
     /** Las que animan algo y por eso tienen que tener su bloque de movimiento. */
-    private static final String[] CON_MOVIMIENTO = {"portada.css", "beta.css", "src/mundo.css"};
+    private static final String[] CON_MOVIMIENTO = {"portada.css", "src/mundo.css", "src/beta.css"};
 
     @Test
     public void nadaSeMueveSinParar() throws IOException {

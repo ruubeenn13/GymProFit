@@ -1,30 +1,16 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beta de GymProFit · Pruébala antes que nadie</title>
-<meta name="description" content="Apúntate a la beta de GymProFit para Android: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra.">
-<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
-<link rel="icon" href="/img/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-<link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/beta.css?v=84c10b72">
-</head>
-<body>
-
-<div class="franja"></div>
+---
+/**
+ * La página de la beta (fase 4 de «Un día»): el texto, tal cual estaba en public/beta.html
+ * (TextoIgualWebTest); la firma pasa a la cabecera común. Sin JavaScript (DEC-050).
+ */
+import Pagina from '../componentes/comunes/Pagina.astro';
+import '../estilos/beta.css';
+---
+<Pagina titulo="Beta de GymProFit · Pruébala antes que nadie" descripcion="Apúntate a la beta de GymProFit para Android: entreno, dieta y progreso en una sola app. Te avisamos en cuanto abra." hora="19:00" colorOscuro="#0B0C0E" colorClaro="#F5F1EA">
 
 <main class="marco">
 
   <section class="portada" aria-labelledby="titular">
-    <a class="firma" href="/">
-      <span class="luz" aria-hidden="true"></span>
-      <img class="logo" src="/img/logo.svg" alt="" width="36" height="36">
-      GYMPROFIT
-    </a>
 
     <div class="golpe">
     <h1 class="titular" id="titular">
@@ -88,5 +74,4 @@
 
 </main>
 
-</body>
-</html>
+</Pagina>

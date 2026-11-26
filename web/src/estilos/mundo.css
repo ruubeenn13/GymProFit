@@ -55,6 +55,9 @@ strong, b { font-weight: 600; }
 .luz {
   position: absolute; inset: 0 0 auto; height: min(100svh, 860px); overflow: hidden;
   pointer-events: none; z-index: 0;
+  /* Se apaga hacia abajo: el trozo de ventana no tiene borde */
+  -webkit-mask-image: linear-gradient(#000 55%, transparent);
+  mask-image: linear-gradient(#000 55%, transparent);
 }
 .lamas {
   position: absolute; left: -35%; top: -30%; width: 170%; height: 160%;

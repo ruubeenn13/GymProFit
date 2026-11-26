@@ -1,31 +1,16 @@
-<!doctype html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Revisa tu correo · Beta de GymProFit</title>
-<meta name="description" content="Confirma tu correo para entrar en la lista de espera de la beta de GymProFit.">
-<meta name="robots" content="noindex">
-<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#F5F1EA" media="(prefers-color-scheme: light)">
-<link rel="icon" href="/img/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
-<link rel="preload" href="/fuentes/barlow-condensed-700.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fuentes/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/beta.css?v=84c10b72">
-</head>
-<body>
-
-<div class="franja"></div>
+---
+/**
+ * «Revisa tu correo», adonde manda Brevo tras apuntarse (fase 4 de «Un día»): el texto, tal cual estaba en public/beta/revisa.html
+ * (TextoIgualWebTest); la firma pasa a la cabecera común. Sin JavaScript (DEC-050).
+ */
+import Pagina from '../../componentes/comunes/Pagina.astro';
+import '../../estilos/beta.css';
+---
+<Pagina titulo="Revisa tu correo · Beta de GymProFit" descripcion="Confirma tu correo para entrar en la lista de espera de la beta de GymProFit." noindex hora="19:00" colorOscuro="#0B0C0E" colorClaro="#F5F1EA">
 
 <main class="marco dentro">
 
   <section class="portada" aria-labelledby="titular">
-    <a class="firma" href="/">
-      <span class="luz" aria-hidden="true"></span>
-      <img class="logo" src="/img/logo.svg" alt="" width="36" height="36">
-      GYMPROFIT
-    </a>
 
     <div class="golpe">
       <div class="sello sobre" aria-hidden="true">
@@ -56,5 +41,4 @@
 
 </main>
 
-</body>
-</html>
+</Pagina>

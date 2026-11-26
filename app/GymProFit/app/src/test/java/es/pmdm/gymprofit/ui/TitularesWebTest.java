@@ -28,7 +28,8 @@ import java.util.regex.Pattern;
 // ============================================================
 public class TitularesWebTest {
 
-    private static final String[] HOJAS = {"portada.css", "beta.css"};
+    /** La de la portada se lee en dist; con «src/», las que construye Astro, en web/src/estilos. */
+    private static final String[] HOJAS = {"portada.css", "src/beta.css", "src/lectura.css"};
 
     /** Un tamaño que depende del ancho: de la pantalla, del contenedor o del --k del titular. */
     private static final Pattern FLUIDO = Pattern.compile("\\d(vw|vi|vmin|vmax|cqi|cqw)\\b|var\\(--k\\)|var\\(--ancho");
@@ -56,7 +57,7 @@ public class TitularesWebTest {
     public void losTitularesQueLlenanElAnchoSalenDeSuColumna() throws IOException {
         comprobarTitular("portada.css", ".titular > span", ".titular {");
         comprobarTitular("portada.css", ".problema h2 > span", ".problema h2 {");
-        comprobarTitular("beta.css", ".titular span", ".titular {");
+        comprobarTitular("src/beta.css", ".titular span", ".titular {");
     }
 
     @Test
@@ -102,7 +103,10 @@ public class TitularesWebTest {
     }
 
     private static String leer(String nombre) throws IOException {
-        return new String(Files.readAllBytes(web().resolve(nombre)), StandardCharsets.UTF_8);
+        Path hoja = nombre.startsWith("src/")
+                ? WebDist.web().resolve("src").resolve("estilos").resolve(nombre.substring(4))
+                : web().resolve(nombre);
+        return new String(Files.readAllBytes(hoja), StandardCharsets.UTF_8);
     }
 
     private static Path web() {
