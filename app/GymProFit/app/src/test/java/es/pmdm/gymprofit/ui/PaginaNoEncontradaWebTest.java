@@ -1,5 +1,6 @@
 package es.pmdm.gymprofit.ui;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -65,6 +66,28 @@ public class PaginaNoEncontradaWebTest {
         assertFalse("404.html sigue siendo un dorsal", html.contains("class=\"dorsal"));
         assertFalse("404.html carga el JavaScript de la portada", html.contains("portada.js"));
         assertFalse("404.html carga los módulos de «Un día»", html.contains("/_astro/") && html.contains(".js"));
+    }
+
+    // La 404 va siempre en carbón, como la portada: con el móvil en claro tampoco cambia. Un
+    // solo theme-color, sin media, solo color-scheme oscuro, y ningún bloque claro que toque
+    // algo más que la baldosa del logo (que en claro es del mismo carbón, DEC-057).
+    @Test
+    public void vaSiempreEnCarbon() throws IOException {
+        String html = pagina();
+        Matcher color = Pattern.compile("<meta name=\"theme-color\"[^>]*>").matcher(html);
+        int colores = 0;
+        while (color.find()) {
+            colores++;
+            assertEquals("el theme-color de la 404 no es el carbón",
+                    "<meta name=\"theme-color\" content=\"#0B0C0E\">", color.group());
+        }
+        assertEquals("la 404 lleva más de un theme-color", 1, colores);
+        assertTrue("la 404 no se declara solo oscura", html.contains("<meta name=\"color-scheme\" content=\"dark\">"));
+        Matcher claro = Pattern.compile("prefers-color-scheme:\\s*light\\)\\s*\\{(.*?\\})\\s*\\}", Pattern.DOTALL).matcher(html);
+        while (claro.find()) {
+            assertEquals("la 404 cambia en tema claro: " + claro.group(1),
+                    ".logo{background:#0b0c0e}", claro.group(1).replaceAll("\\s+", "").toLowerCase());
+        }
     }
 
     @Test
