@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_lente — la selección «lente» (GP-285): la pestaña activa de la barra. Cápsula translúcida con brillo arriba. Lo dibuja Cristal. -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="lente" />

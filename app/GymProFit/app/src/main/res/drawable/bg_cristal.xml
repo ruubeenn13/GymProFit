@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal — cristal estático de una tarjeta (GP-285, DEC-070): radio 26. Lo dibuja Cristal. -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalRadio="@dimen/radio_cristal" />

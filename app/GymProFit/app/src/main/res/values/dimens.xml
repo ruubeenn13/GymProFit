@@ -241,4 +241,43 @@
     <!-- GP-265: alto fijo de la cifra de «Tus datos»: el autoajuste necesita una caja con medida,
          y así las cuatro columnas quedan alineadas aunque la actividad encoja. -->
     <dimen name="dato_perfil_alto">36dp</dimen>
+
+    <!-- ── Liquid Glass (GP-285, DEC-070) ─────────────────────────────────────
+         Medidas de documentacion/diseno/2026-11-25-liquid-glass/README.md. -->
+    <!-- Radios del cristal: tarjeta héroe 30, tarjetas 26 y tiles 22; chips y botones, píldora. -->
+    <dimen name="radio_cristal_heroe">30dp</dimen>
+    <dimen name="radio_cristal">26dp</dimen>
+    <dimen name="radio_cristal_tile">22dp</dimen>
+    <!-- Borde y brillo superior del cristal. -->
+    <dimen name="cristal_borde">1dp</dimen>
+    <!-- Desenfoque del cristal vivo: la desviación (σ), como el blur(22px) de la maqueta. -->
+    <dimen name="cristal_desenfoque">22dp</dimen>
+    <!-- La lente del borde (nivel 1): el ancho de la banda que refracta y lo que desplaza como mucho. -->
+    <dimen name="cristal_lente_banda">14dp</dimen>
+    <dimen name="cristal_lente_fuerza">16dp</dimen>
+    <!-- Sombra del cristal vivo: difuminado y cuánto cae. -->
+    <dimen name="cristal_sombra_radio">26dp</dimen>
+    <dimen name="cristal_sombra_baja">12dp</dimen>
+    <!-- La barra flotante: cápsula de 64 a 16 de los lados y 26 del borde de abajo (más el hueco
+         de gestos), el «+» de 64 a 10 de ella y la lente de la pestaña activa, de 52. -->
+    <dimen name="barra_alto">64dp</dimen>
+    <dimen name="barra_margen_lado">16dp</dimen>
+    <dimen name="barra_margen_abajo">26dp</dimen>
+    <dimen name="barra_hueco_mas">10dp</dimen>
+    <dimen name="barra_relleno">6dp</dimen>
+    <dimen name="barra_lente_alto">52dp</dimen>
+    <dimen name="barra_lente_radio">26dp</dimen>
+    <!-- El «+»: círculo de 64 (radio 32) con el degradado radial de 45 dp de radio. -->
+    <dimen name="barra_mas_radio">32dp</dimen>
+    <dimen name="barra_mas_degradado">45dp</dimen>
+    <!-- La barra de la sesión va 8 por encima; el contenido acaba 16 por encima de todo. -->
+    <dimen name="barra_sesion_hueco">8dp</dimen>
+    <dimen name="barra_aire_contenido">16dp</dimen>
+    <!-- Tile de «Tu día»: relleno y barra de progreso. -->
+    <dimen name="tile_relleno">12dp</dimen>
+    <dimen name="tile_barra">6dp</dimen>
+    <dimen name="tile_alto_min">112dp</dimen>
+    <!-- Chip de cristal: 6 arriba y abajo. Halo del botón principal sobre cristal. -->
+    <dimen name="chip_cristal_relleno">6dp</dimen>
+    <dimen name="boton_cristal_halo">8dp</dimen>
 </resources>

@@ -28,4 +28,8 @@
 
     <!-- El tinte que trae del layout un icono de alimento (Categorias.tenir). -->
     <item name="tinte_original" type="id" />
+
+    <!-- GP-285: el LienzoCristal de una pantalla, lo que queda detrás del cristal vivo.
+         CristalVivo lo busca por este id. -->
+    <item name="lienzoCristal" type="id"/>
 </resources>

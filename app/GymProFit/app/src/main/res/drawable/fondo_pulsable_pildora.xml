@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Capa de pulsar en píldora (GP-285): para lo pulsable sobre cristal vivo de radio completo (la
+  barra de la sesión). La capa del 10 % de siempre (GP-227), recortada a la mitad del alto.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/tarjeta_capa">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/barra_alto" />
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>
