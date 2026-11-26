@@ -30,7 +30,7 @@
 /*.html
   Cache-Control: no-cache
 
-# La prueba de «Un día» (DEC-069, propuesta): se revalida y no se indexa.
+# La prueba de «Un día» (DEC-069): se revalida y no se indexa.
 /un-dia
   Cache-Control: no-cache
   X-Robots-Tag: noindex

@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 // ============================================================
-// WebDist — dónde leen los *WebTest la web (DEC-069, propuesta; web/PLAN-UN-DIA.md §3).
+// WebDist — dónde leen los *WebTest la web (DEC-069; web/PLAN-UN-DIA.md §3).
 //
 // La web se construye con Astro: lo que se sirve es web/dist, no web/. Las páginas de antes
 // viven tal cual en web/public y Astro las copia a dist; las nuevas salen de web/src. Los

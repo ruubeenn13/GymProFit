@@ -5,10 +5,12 @@ la página de eliminación de cuenta, la de la beta (`/beta`, `/beta/revisa`, `/
 JavaScript propio como mejora progresiva (DEC-053, ver «El movimiento de la portada»);
 el resto de páginas, ninguno.
 
-**En la rama de «Un día» (fase 1, DEC-069 propuesta) la web se construye con Astro**:
-lo que se sirve es `web/dist/`, no `web/`. Las páginas de siempre viven tal cual en
-`public/` y Astro las copia a `dist` sin tocarlas; la prueba de «Un día» sale de `src/`
-y vive en `/un-dia` (`noindex`) hasta que se acepten la prueba y la decisión.
+**En las ramas de «Un día» (DEC-069, aceptada el 26-11-2026) la web se construye con
+Astro**: lo que se sirve es `web/dist/`, no `web/`. Desde la fase 4, las páginas
+secundarias (privacidad, términos, eliminar cuenta, la beta y sus tres páginas, y la 404)
+salen de `src/pages/` en el mundo de «Un día» (ver «Las páginas secundarias»). La
+portada del dorsal sigue tal cual en `public/` hasta la fase 3, y Astro la copia a `dist`
+sin tocarla; la prueba de «Un día» vive en `/un-dia` (`noindex`).
 
 ```
 npm ci && npm run build      # en web/: escribe dist/ (Node ≥ 22.12; la telemetría de Astro va apagada)
@@ -16,24 +18,33 @@ python scripts/servir-web.py # desde la raíz: sirve dist como Pages, con brotli
 ```
 
 `package.json` · `package-lock.json` · `astro.config.mjs` · `herramientas/astro.mjs` (el
-lanzador que apaga la telemetría) · `src/pages/un-dia.astro` · `src/componentes/app/`
-(la interfaz de la app rehecha) · `src/componentes/dia/` · `src/estilos/` ·
+lanzador que apaga la telemetría) · `src/pages/` (`un-dia.astro`, las legales, `beta/`,
+`404.astro`) · `src/componentes/app/` (la interfaz de la app rehecha) ·
+`src/componentes/dia/` (el reloj, la luz) · `src/componentes/comunes/` (el armazón y el
+pie de las páginas secundarias) · `src/estilos/` ·
 `src/movimiento/` (`inicio.js`, la escena, `depurar.js` del panel `?debug=motion`) ·
 `src/datos/dia-ejemplo.json` (lo escribe `scripts/dia-ejemplo-web.py` desde la demo
 local). Los tests de la web leen `dist`: hay que construirla antes de `gradlew test`.
+`pruebas/antes/` guarda las páginas secundarias tal como eran en `public/` antes de la
+fase 4: son la referencia de `TextoIgualWebTest` y no van en el zip.
 
-Lo que hay en `public/`:
+Las páginas que salen de `src/pages/` (fase 4):
 
 ```
-index.html · portada.css   la portada de producto (GP-203)
-privacidad.html · terminos.html · eliminar-cuenta.html · estilo.css
-beta.html · beta/revisa.html · beta/dentro.html · beta.css   (la beta, GP-201)
-beta/entrar.html   los pasos para entrar, enlace de los correos de «beta abierta» (GP-202)
-404.html  lo que Pages sirve, con estado 404, en cualquier ruta que no existe (GP-205)
+privacidad · terminos · eliminar-cuenta   con lectura.css (y mundo.css, lo común)
+beta · beta/revisa · beta/dentro          con beta.css (la beta, GP-201)
+beta/entrar   los pasos para entrar, enlace de los correos de «beta abierta» (GP-202)
+404           lo que Pages sirve, con estado 404, en cualquier ruta que no existe (GP-205)
+```
+
+Lo que queda en `public/`:
+
+```
+index.html · portada.css   la portada de producto (GP-203), hasta la fase 3
 js/       portada.js y, en js/vendor/, GSAP, ScrollTrigger y Lenis con su licencia (DEC-053)
 _headers  la caché de Cloudflare Pages (ver «Caché y versiones»)
 DISENO.md · PRODUCT.md · .impeccable/   el diseño de GP-205: no van en el zip
-PLAN-UN-DIA.md   el plan del rediseño «Un día» (DEC-069, propuesta): no va en el zip
+PLAN-UN-DIA.md   el plan del rediseño «Un día» (DEC-069): no va en el zip
 fuentes/  seis .woff2: Barlow 400 / 500 / 600 y Barlow Condensed 500 / 600 / 700
 img/      logo.svg (el logo único), favicon.png y apple-touch-icon.png (DEC-057), logo-correo.png
           (la G sola y transparente de los correos, GP-266) + las texturas
@@ -48,9 +59,10 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 
 ## Cómo se despliega a mano
 
-1. Si ha cambiado alguna hoja, poner su versión nueva en las páginas, desde la
-   raíz del repositorio: `python scripts/versionar-hojas-web.py` (versiona
-   `public/`). Con `--comprobar` solo dice si falta; el test
+1. Si ha cambiado `portada.css` o un script de la portada, poner su versión nueva en
+   la página, desde la raíz del repositorio: `python scripts/versionar-hojas-web.py`
+   (versiona `public/`, donde ya solo queda la portada del dorsal; lo que construye
+   Astro lleva el hash en el nombre y no lo necesita). Con `--comprobar` solo dice si falta; el test
    `HojasVersionadasWebTest` también falla si una hoja cambia y su versión no.
 2. En `main` (sin Astro): comprimir el **contenido** de `web/`, no la carpeta,
    **sin** `README.md`, `DISENO.md`, `PRODUCT.md`, `PLAN-UN-DIA.md` ni `.impeccable/`:
@@ -62,7 +74,7 @@ despliega nada**. El dominio `gymprofit.app` apunta a ese proyecto.
 
 Lo del contenido no es manía: el zip se descomprime en la raíz del sitio, así que
 si dentro va una carpeta `web/`, todo queda colgando de `/web/...` y las rutas
-absolutas del HTML —`/estilo.css`, `/fuentes/...`, `/img/...`— apuntan a ficheros
+absolutas del HTML —`/_astro/...`, `/fuentes/...`, `/img/...`— apuntan a ficheros
 que no existen. El sitio se ve sin estilos y sin tipografía.
 
 ## Vista previa para el móvil (nunca producción)
@@ -92,15 +104,18 @@ Sin instalar nada global: `npx wrangler@4.168.0` (comprobado el 25-11-2026 con `
 Un navegador que ya había visitado `/beta` mezcló la página nueva con el
 `beta.css` de su caché (GP-201). Para que no vuelva a pasar:
 
-- **Las hojas y los scripts van versionados por su contenido**: cada página pide
-  `/beta.css?v=<hash>`, `/estilo.css?v=<hash>` o `/portada.css?v=<hash>`, con los 8 primeros caracteres
+- **Las hojas y los scripts van versionados por su contenido.** Lo que construye
+  Astro lleva el hash en el nombre (`/_astro/beta.<hash>.css`), y las hojas pequeñas
+  van dentro del propio HTML (`inlineStylesheets: 'auto'`), que se revalida siempre.
+  La portada del dorsal pide `/portada.css?v=<hash>`, con los 8 primeros caracteres
   del SHA-256 de la hoja (saltos de línea normalizados a `\n`, para que salga
-  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. Los `.js`
-  igual, también los de la lista `data-libs` que carga `portada.js`. La
+  igual en Windows y en el CI). La URL cambia solo cuando cambia la hoja. Sus `.js`
+  igual, también los de la lista `data-libs` que carga `portada.js`. Esa
   versión la pone `scripts/versionar-hojas-web.py`; nunca a mano.
 - **`_headers`**: el HTML, con `Cache-Control: no-cache` (se revalida siempre,
-  y es lo que dice qué versión pedir); `estilo.css`, `beta.css`, `portada.css` y
-  todo `/js/*`, un año e `immutable`. Las fuentes y las imágenes **no** van versionadas, así que se
+  y es lo que dice qué versión pedir); `/_astro/*`, `portada.css` y
+  todo `/js/*`, un año e `immutable`. `estilo.css` y `beta.css` ya no existen (fase 4),
+  ni sus reglas. Las fuentes y las imágenes **no** van versionadas, así que se
   quedan con la revalidación de Pages: si un día se versionan, pueden pasar a
   `immutable`.
 - **El logo y el favicon tienen nombres sin tema ni tamaño**: `img/logo.svg`,
@@ -116,8 +131,9 @@ Un navegador que ya había visitado `/beta` mezcló la página nueva con el
 ## La 404
 
 Cloudflare Pages sirve `404.html`, con estado **404**, en cualquier ruta que no
-exista. Es un dorsal sin número, caído sobre la tela: usa `portada.css` pero no su
-JavaScript, y cabe en una pantalla sin bajar. Sin ese fichero, Pages trata el sitio como una aplicación de una página y
+exista. Sale de `src/pages/404.astro`: «la hora que no existe», las 25:61 en el reloj de
+cabecera y en grande, siempre en carbón, sin ningún JavaScript y con rutas absolutas en
+todo lo que carga (`PaginaNoEncontradaWebTest`). Sin ese fichero, Pages trata el sitio como una aplicación de una página y
 responde a cualquier ruta con la portada y un **200**, que los buscadores indexan
 como páginas duplicadas. `scripts/servir-web.py` hace lo mismo en local.
 
@@ -140,14 +156,14 @@ redirecciones se configuran en Brevo, no aquí.
 - **Los campos son los de Brevo**: `EMAIL`, `OPT_IN` (`value="1"`),
   `email_address_check` (trampa para bots, vacía y oculta para todos),
   `locale=es` y `html_type=simple`. Si la action o un nombre cambian en Brevo, se
-  cambian en `beta.html` y en `BetaWebTest`, que los fija.
+  cambian en `src/pages/beta.astro` y en `BetaWebTest`, que los fija.
 - **Solo Android.** La beta se instala desde Google Play; la página lo dice junto
   al formulario y no pregunta el móvil.
-- **Rutas.** `beta.html` sirve `/beta`, y `beta/revisa.html` y `beta/dentro.html`
+- **Rutas.** `dist/beta.html` sirve `/beta`, y `beta/revisa.html` y `beta/dentro.html`
   sirven sus rutas: Pages resuelve por fichero, así que la carpeta `beta/` no le
   quita la ruta a `beta.html`. No hace falta `beta/index.html`, que daría `/beta/`
-  con barra.
-- **Su hoja es `beta.css`, no `estilo.css`.** La paleta es la de los vídeos
+  con barra (`build.format: 'file'`; `RutasWebTest`).
+- **Su hoja es `src/estilos/beta.css`, no `lectura.css`.** La paleta es la de los vídeos
   (`#E8710A`, `#CBA135`, `#F5F1EA` sobre `#0B0C0E`), no la de la app: es lo que
   reconoce quien llega desde un vídeo. Las fuentes son los mismos ficheros.
 - **El titular llena el ancho** línea a línea: cada `<span>` lleva `--k`, su ancho
@@ -165,11 +181,9 @@ redirecciones se configuran en Brevo, no aquí.
   está ya en su estado final, así que con movimiento reducido se ve quieta y completa.
   Desde GP-205 usa las curvas de la portada, sin rebotes, y nada se mueve sin parar
   (fuera el pulso del botón y la luz que respiraba).
-- **El formulario es el dorsal** (GP-205): el único panel claro, con la banda, los
-  ojales y el troquel de la portada, en el crema de los vídeos. No se gira ni se
-  anima, y no puede crecer: la banda ocupa el relleno de arriba y el troquel va en
-  el hueco de encima del botón, para que a 375 × 667 siga entero en la primera
-  pantalla.
+- **El formulario es una tarjeta de la app** (radio 24) desde la fase 4: deja el dorsal,
+  la tela y el troquel de GP-205. No se gira ni se anima, y no puede crecer, para que
+  a 375 × 667 siga entero en la primera pantalla.
 
 ## El día que abre la beta
 
@@ -179,7 +193,8 @@ cambia nunca: las plantillas no se tocan (GP-202). Es una página de tres pasos
 aceptar la prueba en Google Play e instalar. Una prueba cerrada solo admite las
 cuentas de su lista, y esa lista es el grupo, así que el grupo se ofrece ya en
 `/beta/dentro`. Hasta el día de apertura el paso 2 se ve apagado, con «Disponible
-el día de apertura». Abrir es cambiar un solo bloque de `beta/entrar.html`, el que
+el día de apertura». Abrir es cambiar un solo bloque de `src/pages/beta/entrar.astro`
+(Astro conserva los comentarios en `dist/beta/entrar.html`), el que
 va entre `▼ APERTURA DE LA BETA` y `▲ FIN DE LA APERTURA DE LA BETA`:
 
 1. Dentro de ese bloque, quitar las marcas `<!--` y `-->` que envuelven el paso con
@@ -190,6 +205,28 @@ va entre `▼ APERTURA DE LA BETA` y `▲ FIN DE LA APERTURA DE LA BETA`:
 3. Hacer el zip y subirlo como en «Cómo se despliega a mano».
 4. Comprobar en `https://gymprofit.app/beta/entrar` que el botón está y lleva a la
    prueba. Si la prueba se cierra, se deshace igual: vuelve el paso apagado.
+
+## Las páginas secundarias
+
+Desde la fase 4 de «Un día» (`PLAN-UN-DIA.md` §7), privacidad, términos, eliminar
+cuenta, la beta y sus tres páginas, y la 404 viven en el mundo nuevo sin escenas ni
+GSAP. Todas comparten `src/componentes/comunes/Pagina.astro` y `src/estilos/mundo.css`:
+
+- **El texto no cambia al rediseñar.** Privacidad, términos y eliminar cuenta son textos
+  legales que Google Play tiene declarados. `TextoIgualWebTest` compara el texto y los
+  enlaces de cada página con su copia de `pruebas/antes/`: cambiar un texto a propósito
+  es cambiar también esa copia, en el mismo commit.
+- **El reloj de cabecera es la marca.** Cada página marca su hora: las legales, las 7:00;
+  la beta, las 19:00; la 404, las 25:61. Es decorativo (`aria-hidden`).
+- **La luz, quieta.** Las lamas de la portada, una capa pintada una vez, arriba y
+  apagándose hacia abajo. Su opacidad, por tema, sale de medir el contraste de cada texto
+  sobre el punto más claro de una banda: `LuzQuietaWebTest` falla si un texto baja de
+  4,5:1. Las legales y la beta, en claro y oscuro; la 404, siempre en carbón.
+- **Transición entre páginas** con View Transitions entre documentos: solo
+  `@view-transition` en CSS, sin JavaScript ni `ClientRouter`, con el reloj como elemento
+  compartido (la hora sale por arriba y entra la nueva) y nada con movimiento reducido.
+  La portada del dorsal no la pide, así que entre ella y estas páginas se navega como
+  siempre; `TransicionesWebTest` lo fija.
 
 ## La portada
 
@@ -241,7 +278,7 @@ regla, en DEC-053.
 
 ## Los colores son los de la app
 
-Salvo la beta (arriba), los tokens de `:root` en `estilo.css` y en `portada.css` son **los mismos valores** que
+Salvo la beta (arriba), los tokens de `:root` en `src/estilos/lectura.css` y en `portada.css` son **los mismos valores** que
 `app/GymProFit/app/src/main/res/values/colors.xml` (tema claro) y
 `values-night/colors.xml` (tema oscuro). Están copiados a mano porque no hay
 forma razonable de compartirlos entre un `colors.xml` y una hoja de estilos:

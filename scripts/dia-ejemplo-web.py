@@ -1,4 +1,4 @@
-"""Saca de la cuenta demo LOCAL las cifras del «día de ejemplo» de la portada (DEC-069, propuesta).
+"""Saca de la cuenta demo LOCAL las cifras del «día de ejemplo» de la portada (DEC-069).
 
 Escribe web/src/datos/dia-ejemplo.json. Ninguna cifra de las escenas se escribe a mano: o sale
 de aquí, o la escena no la enseña (web/PLAN-UN-DIA.md, «Reglas comunes»).

@@ -300,7 +300,7 @@ jobs:
       - name: google-services.json de mentira
         run: cp ci/google-services-ci.json app/google-services.json
 
-      # La web se construye con Astro (DEC-069, propuesta) y los tests leen web/dist.
+      # La web se construye con Astro (DEC-069) y los tests leen web/dist.
       # Node fijado por versión, npm ci con el lockfile y la telemetría de Astro apagada
       # (la apaga también el lanzador de package.json).
       - name: Set up Node

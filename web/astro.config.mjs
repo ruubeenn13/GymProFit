@@ -1,5 +1,5 @@
 // ============================================================
-// Astro para gymprofit.app (DEC-069, propuesta; web/PLAN-UN-DIA.md §3).
+// Astro para gymprofit.app (DEC-069; web/PLAN-UN-DIA.md §3).
 //
 // · Salida estática, una página por fichero: src/pages/privacidad.astro sale como
 //   privacidad.html, que es lo que Pages sirve en /privacidad. Con el formato por

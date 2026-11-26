@@ -29,7 +29,7 @@ import es.pmdm.gymprofit.model.envivo.SesionEnCurso;
 import es.pmdm.gymprofit.model.record.Record;
 
 // ============================================================
-// UnDiaWebTest — la prueba de concepto de «Un día» (fase 1; DEC-069, propuesta;
+// UnDiaWebTest — la prueba de concepto de «Un día» (fase 1; DEC-069;
 // web/PLAN-UN-DIA.md). Mira la salida de Astro (web/dist/un-dia.html y sus trozos de JS) y
 // los datos de web/src/datos/dia-ejemplo.json:
 //

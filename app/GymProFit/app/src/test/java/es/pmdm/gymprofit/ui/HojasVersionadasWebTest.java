@@ -119,7 +119,7 @@ public class HojasVersionadasWebTest {
 
     // El Cache-Control de la regla de esa ruta exacta en _headers.
     /**
-     * Lo que construye Astro (DEC-069, propuesta) va en /_astro/ con el hash de su contenido en
+     * Lo que construye Astro (DEC-069) va en /_astro/ con el hash de su contenido en
      * el nombre, no con ?v=: basta con que el nombre lo lleve y el fichero exista en dist.
      * Devuelve false si la ruta no es de Astro, y entonces se comprueba su ?v=.
      */
