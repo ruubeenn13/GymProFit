@@ -26,13 +26,21 @@ ID="resource-id=\"$PAQ:id"
 MAIN=es.pmdm.gymprofit.ui.activities.MainActivity
 mkdir -p "$SALIDA"
 
+# El logcat entero a un fichero desde el principio. Cuando lo que falla es el emulador (se
+# queda colgado y adb deja de contestar), guardar_logcat ya no llega a correr y el job se
+# quedaba sin una sola línea de lo que la app dijo antes de morir (GP-285, 26-11-2026).
+adb logcat -c 2> /dev/null || true
+adb logcat -v threadtime > "$SALIDA/logcat-vivo.txt" 2> /dev/null &
+
 paso() { echo "== $*"; }
 
-captura() { adb exec-out screencap -p > "$SALIDA/$1.png" 2>/dev/null || true; }
+# Con tope de tiempo: con el emulador colgado, una captura o un volcado sin tope dejaban el job
+# parado hasta el límite de 25 minutos en vez de fallar y subir lo que hubiera.
+captura() { timeout 30 adb exec-out screencap -p > "$SALIDA/$1.png" 2>/dev/null || true; }
 
 guardar_logcat() {
-    adb logcat -d -b crash > "$SALIDA/logcat-crash.txt" 2>/dev/null || true
-    adb logcat -d > "$SALIDA/logcat.txt" 2>/dev/null || true
+    timeout 30 adb logcat -d -b crash > "$SALIDA/logcat-crash.txt" 2>/dev/null || true
+    timeout 60 adb logcat -d > "$SALIDA/logcat.txt" 2>/dev/null || true
 }
 
 fallar() {
@@ -40,7 +48,9 @@ fallar() {
     echo "::error::Humo de la release: $*"
     captura fallo
     guardar_logcat
-    adb logcat -d -b crash || true
+    timeout 30 adb logcat -d -b crash || true
+    # Qué queda del emulador: si adb ya no contesta, el fallo es suyo y no de la app.
+    echo "adb: $(timeout 10 adb get-state 2>&1 || echo 'no contesta')"
     exit 1
 }
 
@@ -62,7 +72,7 @@ sin_fatal() {
     fi
 }
 
-vivo() { adb shell pidof "$PAQ" > /dev/null 2>&1; }
+vivo() { timeout 20 adb shell pidof "$PAQ" > /dev/null 2>&1; }
 
 # Centro del primer nodo de la entrada (un nodo por línea) que contiene el trozo dado.
 centro_en() {
