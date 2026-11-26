@@ -19,10 +19,6 @@ package es.pmdm.gymprofit.ui.cristal;
 // ============================================================
 public final class BordesSistema {
 
-    // Tramos del degradado: el alfa sube con el cuadrado de la distancia (despacio junto al
-    // contenido, deprisa junto a los iconos), y un degradado lineal de dos colores no lo da.
-    private static final int TRAMOS = 6;
-
     // Android 10: de aquí en adelante hay navegación por gestos y contraste forzado del sistema.
     private static final int API_GESTOS = 29;
     // Android 8: de aquí en adelante los botones de navegación pueden ser oscuros.
@@ -83,27 +79,21 @@ public final class BordesSistema {
     }
 
     /**
-     * Colores del degradado, de la punta transparente a la maciza.
+     * El alfa (0–255) de cada fila del borde, de la punta transparente (fila 0) a la maciza.
      *
-     * @param base   el fondo base, opaco.
-     * @param macizo parte del alto que es maciza, de 0 a 1.
+     * <p>En la rampa sube con el cuadrado de la distancia: despacio junto al contenido y
+     * deprisa junto a la barra (a media rampa, un cuarto). El tramo macizo es opaco entero.
+     *
+     * @param alto   alto del borde, en px.
+     * @param macizo lo que de él es macizo, desde el canto de la pantalla, en px.
      */
-    public static int[] colores(int base, float macizo) {
-        int[] c = new int[TRAMOS + (macizo > 0f ? 2 : 1)];
-        int rgb = base & 0x00FFFFFF;
-        for (int i = 0; i <= TRAMOS; i++) {
-            float t = i / (float) TRAMOS;
-            c[i] = (Math.round(255f * t * t) << 24) | rgb;
+    public static int[] alfas(int alto, int macizo) {
+        int[] alfas = new int[Math.max(0, alto)];
+        int rampa = alfas.length - Math.min(Math.max(0, macizo), alfas.length);
+        for (int y = 0; y < alfas.length; y++) {
+            float t = y >= rampa ? 1f : y / (float) rampa;
+            alfas[y] = Math.round(255f * t * t);
         }
-        if (macizo > 0f) c[TRAMOS + 1] = 0xFF000000 | rgb;
-        return c;
-    }
-
-    /** Las posiciones de esos colores, de 0 a 1. */
-    public static float[] paradas(float macizo) {
-        float[] p = new float[TRAMOS + (macizo > 0f ? 2 : 1)];
-        for (int i = 0; i <= TRAMOS; i++) p[i] = (i / (float) TRAMOS) * (1f - macizo);
-        if (macizo > 0f) p[TRAMOS + 1] = 1f;
-        return p;
+        return alfas;
     }
 }

@@ -92,27 +92,28 @@ public class BordesSistemaTest {
 
     @Test
     public void el_degradado_va_de_transparente_al_fondo_base() {
-        int base = 0xFF08090B;
-        for (float macizo : new float[]{0f, 0.25f, 0.6f}) {
-            int[] colores = BordesSistema.colores(base, macizo);
-            float[] paradas = BordesSistema.paradas(macizo);
-            assertEquals(colores.length, paradas.length);
-            assertEquals("empieza transparente", 0, colores[0] >>> 24);
-            assertEquals("acaba en el fondo base", base, colores[colores.length - 1]);
-            assertEquals(0f, paradas[0], 0f);
-            assertEquals(1f, paradas[paradas.length - 1], 0.0001f);
-            for (int i = 1; i < colores.length; i++) {
-                assertEquals("siempre el color base", base & 0x00FFFFFF, colores[i] & 0x00FFFFFF);
-                assertTrue("el alfa no baja", (colores[i] >>> 24) >= (colores[i - 1] >>> 24));
-                assertTrue("las paradas no retroceden", paradas[i] >= paradas[i - 1]);
+        // Fila a fila, de la punta transparente a la maciza: 278 px con 126 de franja (botones),
+        // 110 con 42 (gestos) y 126 con 63 (la barra de estado).
+        for (int[] caso : new int[][]{ {278, 126}, {110, 42}, {126, 63}, {110, 0} }) {
+            int alto = caso[0], macizo = caso[1], rampa = alto - macizo;
+            int[] alfas = BordesSistema.alfas(alto, macizo);
+            assertEquals("una fila por píxel", alto, alfas.length);
+            assertEquals("empieza transparente", 0, alfas[0]);
+            for (int y = 1; y < alto; y++) {
+                assertTrue("el alfa no baja (y=" + y + ")", alfas[y] >= alfas[y - 1]);
+                assertTrue("sin escalones: de fila a fila, 8 niveles como mucho (y=" + y + ")",
+                        alfas[y] - alfas[y - 1] <= 8 || y == rampa);
             }
-            // El tramo macizo lo es de verdad: opaco desde donde empieza.
-            if (macizo > 0f) {
-                int empieza = colores.length - 2;
-                assertEquals(0xFF, colores[empieza] >>> 24);
-                assertEquals(1f - macizo, paradas[empieza], 0.0001f);
-            }
+            // El tramo macizo lo es de verdad: opaco desde donde empieza hasta el canto.
+            for (int y = rampa; y < alto; y++) assertEquals("y=" + y, 255, alfas[y]);
+            // Despacio junto al contenido y deprisa junto a la barra: a media rampa, un cuarto.
+            assertEquals(64, alfas[rampa / 2], 3);
+            assertTrue("la última fila de la rampa ya es casi el fondo", alfas[rampa - 1] > 240);
         }
+        // Un macizo mayor que el alto no desborda.
+        assertEquals(10, BordesSistema.alfas(10, 40).length);
+        assertEquals(255, BordesSistema.alfas(10, 40)[0]);
+        assertEquals(0, BordesSistema.alfas(0, 0).length);
     }
 
     @Test
@@ -162,9 +163,15 @@ public class BordesSistemaTest {
                 assertEquals("", e.getAttributeNS(ANDROID, "clickable"));
             }
         }
-        // El degradado no se monta al dibujar.
+        // La rampa no se monta al dibujar: una imagen de 1 px de ancho, hecha al cambiar de
+        // tamaño, de color o de tramo macizo, que al pintar solo se estira.
         String borde = leer(JAVA.resolve("ui/cristal/BordeSistema.java"));
-        assertFalse(cuerpo(borde, "public void draw(").contains("new LinearGradient"));
+        String dibujar = cuerpo(borde, "public void draw(");
+        assertFalse(dibujar.contains("createBitmap") || dibujar.contains("alfas("));
+        assertTrue(dibujar.contains("canvas.drawBitmap("));
+        // Y es una imagen, no un degradado de la GPU: el de ocho paradas con tramado tiraba el
+        // emulador del CI (SwiftShader) al pintarse Inicio.
+        assertFalse(borde.contains("new LinearGradient") || borde.contains("import android.graphics.LinearGradient"));
     }
 
     @Test

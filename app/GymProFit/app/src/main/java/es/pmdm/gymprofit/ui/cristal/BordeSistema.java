@@ -1,12 +1,10 @@
 package es.pmdm.gymprofit.ui.cristal;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.ColorInt;
@@ -18,21 +16,25 @@ import androidx.annotation.Nullable;
 // (GP-285, DEC-070): el fondo base, macizo en la franja de la barra, y de ahí a transparente.
 //
 // Es el fondo de una vista sin más (bordeSuperior y bordeInferior en activity_main). Las
-// medidas las da BordesSistema; aquí solo se pinta. El degradado se monta al cambiar de
-// tamaño, de color o de tramo macizo, nunca al dibujar.
+// medidas y la rampa las da BordesSistema; aquí solo se pinta.
+//
+// La rampa es una imagen de 1 px de ancho, una fila por píxel de alto, que al dibujar se
+// estira a lo ancho. No es un degradado de la GPU a propósito: la curva (el alfa al cuadrado)
+// pedía ocho paradas, y ese sombreador, con tramado, tiraba el emulador del CI (SwiftShader)
+// en cuanto se pintaba Inicio. Una imagen estirada es lo más simple que se le puede pedir a
+// una GPU, da la curva exacta y no necesita tramado: son 255 niveles en un centenar de filas.
+// Se rehace al cambiar de tamaño, de color o de tramo macizo, nunca al dibujar.
 // ============================================================
 public class BordeSistema extends Drawable {
 
     private final boolean arriba;
-    private final Paint pintura = new Paint();
     @ColorInt private int color;
     private int macizo;
+    @Nullable private Bitmap rampa;
 
     /** @param arriba true para el de la barra de estado (macizo arriba); false, el de abajo. */
     public BordeSistema(boolean arriba) {
         this.arriba = arriba;
-        // Degradado largo sobre casi negro: sin tramado se ven los escalones.
-        pintura.setDither(true);
     }
 
     /**
@@ -55,17 +57,24 @@ public class BordeSistema extends Drawable {
     }
 
     private void montar() {
-        Rect b = getBounds();
-        if (b.isEmpty()) return;
-        float parte = Math.min(1f, macizo / (float) b.height());
-        // De la punta transparente a la maciza: el de arriba, de abajo arriba.
-        pintura.setShader(new LinearGradient(0f, arriba ? b.bottom : b.top, 0f, arriba ? b.top : b.bottom,
-                BordesSistema.colores(color, parte), BordesSistema.paradas(parte), Shader.TileMode.CLAMP));
+        int alto = getBounds().height();
+        if (alto <= 0) {
+            rampa = null;
+            return;
+        }
+        int[] alfas = BordesSistema.alfas(alto, macizo);
+        int rgb = color & 0x00FFFFFF;
+        int[] filas = new int[alto];
+        for (int y = 0; y < alto; y++) {
+            // La fila 0 de la rampa es la punta transparente: en el de arriba va abajo.
+            filas[arriba ? alto - 1 - y : y] = (alfas[y] << 24) | rgb;
+        }
+        rampa = Bitmap.createBitmap(filas, 1, alto, Bitmap.Config.ARGB_8888);
     }
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        canvas.drawRect(getBounds(), pintura);
+        if (rampa != null) canvas.drawBitmap(rampa, null, getBounds(), null);
     }
 
     @Override

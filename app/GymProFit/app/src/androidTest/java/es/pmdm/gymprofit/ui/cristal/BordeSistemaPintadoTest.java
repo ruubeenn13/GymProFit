@@ -27,8 +27,8 @@ public class BordeSistemaPintadoTest {
     // El de abajo con botones en un móvil de 420 ppp: 278 px de alto y 126 de franja.
     private static final int ALTO = 278, MACIZO = 126;
 
-    // El degradado se pinta con tramado (sin él se ven los escalones sobre casi negro), que
-    // en algunas versiones (Android 7) mueve cada canal un nivel arriba o abajo.
+    // Holgura por canal: al componer la imagen de la rampa, cada versión de Android redondea
+    // a su manera (en Android 7, un nivel arriba o abajo).
     private static final int TRAMADO = 2;
 
     private static void transparente(String donde, int pixel) {
