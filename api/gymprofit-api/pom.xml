@@ -157,13 +157,13 @@
 		<dependency>
 			<groupId>io.sentry</groupId>
 			<artifactId>sentry-spring-boot-starter-jakarta</artifactId>
-			<version>8.64.0</version>
+			<version>8.65.0</version>
 		</dependency>
 		<!-- Firebase Admin SDK: envío de notificaciones push (FCM) desde el backend -->
 		<dependency>
 			<groupId>com.google.firebase</groupId>
 			<artifactId>firebase-admin</artifactId>
-			<version>9.11.0</version>
+			<version>9.12.0</version>
 		</dependency>
 	</dependencies>
 
@@ -217,7 +217,7 @@
 			<plugin>
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq-codegen-maven</artifactId>
-				<version>3.21.9</version>
+				<version>3.21.10</version>
 
 				<executions>
 					<execution>
