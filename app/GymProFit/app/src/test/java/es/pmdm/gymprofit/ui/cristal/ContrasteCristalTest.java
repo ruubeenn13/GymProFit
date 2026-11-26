@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 //
 // Regla 3: el cristal vivo pasa en los tres niveles. Detrás de la barra puede haber cualquier
 // punto del fondo, con o sin una tarjeta de cristal, desenfocado (que promedia: nunca supera
-// al punto extremo) y con la saturación subida; encima va su tinte (niveles 1 y 2) o su
-// superficie casi opaca (nivel 3).
+// al punto extremo) y con la saturación subida, y además el velo del «+» cuando la hoja está
+// abierta; encima va su tinte (niveles 1 y 2) o su superficie casi opaca (nivel 3).
 //
 // Lee values/colors.xml y values-night/colors.xml tal cual. Deja las cifras de cada par en
 // build/reports/contraste-cristal.txt, de donde salen las de DESIGN.md.
@@ -131,6 +131,9 @@ public class ContrasteCristalTest {
             // encima, y eso mismo con la saturación del desenfoque.
             Set<Integer> detras = new LinkedHashSet<>(t.fondo());
             detras.addAll(t.capas(t.fondo(), CRISTAL));
+            // Y todo eso con el velo del «+» encima: con la hoja abierta, la hoja y la barra
+            // desenfocan el contenido ya oscurecido.
+            detras.addAll(t.capas(detras, new String[]{ "gp_velo_cristal" }));
             Set<Integer> saturado = new LinkedHashSet<>(detras);
             for (int c : detras) saturado.add(saturar(c, CristalVivo.SATURACION));
 

@@ -80,9 +80,10 @@ public class BarrasVecesView extends View {
         minimo = getResources().getDimension(R.dimen.barras_minimo);
         radioArriba = Math.min(getResources().getDimension(R.dimen.espacio_8), ancho / 2f);
         radioAbajo = Math.min(getResources().getDimension(R.dimen.espacio_4), ancho / 2f);
-        colorEsta = MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary);
-        colorOro = ContextCompat.getColor(context, R.color.gp_gold);
-        colorResto = ContextCompat.getColor(context, R.color.gp_stroke);
+        // Del tema: el naranja, el dorado y el borde en una tarjeta opaca; sobre cristal, los medidos ahí (GP-285).
+        colorEsta = MaterialColors.getColor(this, R.attr.gpGraficoMarca);
+        colorOro = MaterialColors.getColor(this, R.attr.gpGraficoOro);
+        colorResto = MaterialColors.getColor(this, R.attr.gpGraficoTenue);
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
     }
 

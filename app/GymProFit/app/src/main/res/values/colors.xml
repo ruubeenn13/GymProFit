@@ -260,12 +260,18 @@
     <color name="gp_cristal_oro_cifra">#7A5C18</color>
     <color name="gp_cristal_pista">#1F17181C</color>
     <color name="gp_cristal_barra_tenue">#8017181C</color>
-    <color name="gp_vivo_alto">#B8FFFFFF</color>
-    <color name="gp_vivo_bajo">#94F6F4F0</color>
+    <!-- El tinte del cristal vivo y el velo de detrás van juntos: con la hoja del «+» abierta, la
+         hoja y la barra desenfocan el contenido ya oscurecido por el velo. Con el velo de siempre
+         (negro 62 %) y el tinte al 72–58 %, el cristal salía gris y el secundario de la hoja
+         bajaba a 3,86:1 (revisor de UI, 26-11-2026). Con el velo al 35 % y el tinte al 80–70 %,
+         5,71:1. -->
+    <color name="gp_vivo_alto">#CCFFFFFF</color>
+    <color name="gp_vivo_bajo">#B3F6F4F0</color>
+    <color name="gp_velo_cristal">#59000000</color>
     <color name="gp_vivo_opaco_alto">#FCFFFFFF</color>
     <color name="gp_vivo_opaco_bajo">#FCF6F4F0</color>
     <color name="gp_vivo_texto">#3A3C42</color>
-    <color name="gp_vivo_acento">#9A3300</color>
+    <color name="gp_vivo_acento">#8A2E00</color>
     <color name="gp_vivo_sombra">#2E503214</color>
     <color name="gp_lente">#1417181C</color>
     <color name="gp_lente_brillo">#E6FFFFFF</color>

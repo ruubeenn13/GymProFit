@@ -25,7 +25,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
+import es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -688,7 +688,8 @@ public class InicioFragment extends BaseFragment {
 
         LinearLayout lista = findViewById(R.id.listaZonasSemana);
         lista.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        // Con el contexto de la lista, que lleva el tema de cristal de Inicio (GP-285).
+        LayoutInflater inflater = LayoutInflater.from(lista.getContext());
         List<String> a11y = new ArrayList<>();
         for (Map.Entry<Zonas.Zona, Integer> e : porZona.entrySet()) {
             String nombre = getString(e.getKey().titulo);
@@ -697,10 +698,10 @@ public class InicioFragment extends BaseFragment {
             ((TextView) fila.findViewById(R.id.tvZonaNombre)).setText(nombre);
             String texto = getResources().getQuantityString(R.plurals.inicio_zona_series, series, series);
             ((TextView) fila.findViewById(R.id.tvZonaSeries)).setText(texto);
-            LinearProgressIndicator barra = fila.findViewById(R.id.barraZona);
-            barra.setProgressCompat(series * 100 / maximo, false);
+            BarraProgresoCristal barra = fila.findViewById(R.id.barraZona);
+            barra.setProgreso(series * 100 / maximo, false);
             // Cuanto más trabajada, más intensa; sin series, solo la pista.
-            barra.setIndicatorColor(colorBarra(series, maximo));
+            barra.setColorRelleno(colorBarra(series, maximo));
             fila.setContentDescription(getString(R.string.hoy_toca_separador, nombre, texto));
             fila.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             lista.addView(fila);
@@ -710,14 +711,14 @@ public class InicioFragment extends BaseFragment {
         silueta.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
     }
 
-    // El naranja entero para lo más trabajado y dos escalones mezclados con la pista (sin transparencia, que
-    // dejaba ver el borde redondeado de la barra): el valor va escrito en la fila.
+    // El naranja entero para lo más trabajado y dos escalones mezclados con la base del fondo (sin
+    // transparencia, que dejaba ver el borde redondeado de la barra): el valor va escrito en la fila.
     private int colorBarra(int series, int maximo) {
-        int primario = color(androidx.appcompat.R.attr.colorPrimary);
+        int primario = color(R.attr.gpGraficoMarca);
         float proporcion = series / (float) maximo;
         float mezcla = proporcion >= 0.66f ? 1f : proporcion >= 0.33f ? 0.7f : 0.4f;
         return androidx.core.graphics.ColorUtils.blendARGB(
-                androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_meter_track), primario, mezcla);
+                androidx.core.content.ContextCompat.getColor(requireContext(), R.color.gp_ambiente_base), primario, mezcla);
     }
 
     // Lunes de esta semana a las 00:00, en la hora del teléfono.
@@ -797,8 +798,8 @@ public class InicioFragment extends BaseFragment {
         card.setVisibility(View.VISIBLE);
         ((TextView) findViewById(R.id.tvPrimerosPasos)).setText(
                 getString(R.string.inicio_pasos_titulo, p.hechos(), PrimerosPasos.TOTAL));
-        LinearProgressIndicator barra = findViewById(R.id.barraPasos);
-        barra.setProgressCompat(p.hechos() * 100 / PrimerosPasos.TOTAL, nueva && !Movimiento.quieto(requireContext()));
+        BarraProgresoCristal barra = findViewById(R.id.barraPasos);
+        barra.setProgreso(p.hechos() * 100 / PrimerosPasos.TOTAL, nueva);
 
         HoyToca.Eleccion hoy = HoyToca.elegir(seguido, propias, sesiones);
         paso(R.id.pasoPlan, R.string.inicio_paso_plan, getString(R.string.inicio_paso_hecho), true, null);
@@ -820,7 +821,7 @@ public class InicioFragment extends BaseFragment {
         ((TextView) fila.findViewById(R.id.tvSubPaso)).setText(sub);
         ImageView icono = fila.findViewById(R.id.ivPaso);
         icono.setImageResource(hecho ? R.drawable.ic_ms_check_circle_fill : R.drawable.ic_ms_radio_button_unchecked);
-        icono.setImageTintList(ColorStateList.valueOf(color(hecho ? androidx.appcompat.R.attr.colorPrimary
+        icono.setImageTintList(ColorStateList.valueOf(color(hecho ? R.attr.gpGraficoMarca
                 : com.google.android.material.R.attr.colorOutline)));
         fila.findViewById(R.id.ivFlechaPaso).setVisibility(hecho ? View.INVISIBLE : View.VISIBLE);
         fila.setClickable(!hecho && accion != null);
@@ -837,9 +838,11 @@ public class InicioFragment extends BaseFragment {
         return s;
     }
 
+    // Del tema de la vista, no del de la pantalla: Inicio lleva el de cristal (GP-285), con su
+    // texto y sus colores de gráfica.
     private int color(@AttrRes int attr) {
         TypedValue tv = new TypedValue();
-        requireContext().getTheme().resolveAttribute(attr, tv, true);
+        requireView().getContext().getTheme().resolveAttribute(attr, tv, true);
         return tv.data;
     }
 }

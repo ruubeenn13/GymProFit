@@ -2,8 +2,9 @@
 <!--
   item_hoy_ejercicio — un ejercicio del carrusel de «Hoy toca» (GP-216, tablero 13): el icono
   de su zona (provisional, hasta tener ilustraciones), su nombre y su pauta. No es pulsable:
-  se pulsa la tarjeta entera, que abre la rutina. Va dentro de la tarjeta protagonista, así
-  que sus colores salen de ThemeOverlay.GymProFit.Hero.
+  se pulsa la tarjeta entera, que abre la rutina. Va dentro de la tarjeta héroe de cristal
+  (GP-285): el bloque del icono es un tile de cristal y sus colores salen del tema de Inicio
+  (ThemeOverlay.GymProFit.Cristal).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,8 +14,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="84dp"
-        android:background="@drawable/bg_icono_hero_ejercicio"
+        android:layout_height="@dimen/hoy_ejercicio_icono_alto"
+        android:background="@drawable/bg_cristal_tile"
         android:importantForAccessibility="no">
 
         <ImageView
@@ -23,7 +24,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:importantForAccessibility="no"
-            app:tint="?attr/colorPrimary" />
+            app:tint="?attr/gpGraficoMarca" />
     </FrameLayout>
 
     <TextView

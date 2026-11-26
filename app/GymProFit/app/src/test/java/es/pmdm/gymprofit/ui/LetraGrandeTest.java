@@ -42,6 +42,24 @@ public class LetraGrandeTest {
         assertEquals(1.3f, BarraNavegacion.escalaEtiqueta(2.0f), 0.0001f);
     }
 
+    // GP-285: la barra es una cápsula más estrecha que la pantalla. La etiqueta sigue a la letra
+    // hasta 1,3 solo si cabe en su pestaña; si no, hasta donde quepa, y nunca por debajo de 1.
+    @Test
+    public void la_etiqueta_de_la_barra_no_crece_mas_de_lo_que_cabe_en_su_pestana() {
+        // Cabe de sobra: manda la letra del sistema.
+        assertEquals(1.3f, BarraNavegacion.escalaEtiqueta(1.3f, 100f, 200f), 0.0001f);
+        assertEquals(1.0f, BarraNavegacion.escalaEtiqueta(1.0f, 100f, 200f), 0.0001f);
+        // «Nutrición» mide 100 a escala 1 y la pestaña 115: se queda en 1,15 aunque se pidan 1,3 o 2.
+        assertEquals(1.15f, BarraNavegacion.escalaEtiqueta(1.3f, 100f, 115f), 0.0001f);
+        assertEquals(1.15f, BarraNavegacion.escalaEtiqueta(2.0f, 100f, 115f), 0.0001f);
+        // Ni cabiendo justa baja de 1: 13 sp es el suelo de la app.
+        assertEquals(1.0f, BarraNavegacion.escalaEtiqueta(1.3f, 100f, 90f), 0.0001f);
+        // Con letra pequeña del sistema no se toca.
+        assertEquals(0.85f, BarraNavegacion.escalaEtiqueta(0.85f, 100f, 200f), 0.0001f);
+        // Sin medidas todavía (antes del primer layout), la de siempre.
+        assertEquals(1.3f, BarraNavegacion.escalaEtiqueta(1.5f, 0f, 0f), 0.0001f);
+    }
+
     @Test
     public void la_etiqueta_de_la_barra_no_se_recorta_a_una_altura_fija() throws Exception {
         Element etiqueta = porId(LAYOUT.resolve("view_pestana.xml"), "@+id/tvEtiqueta");

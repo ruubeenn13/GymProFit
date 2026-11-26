@@ -52,8 +52,14 @@ import es.pmdm.gymprofit.utils.TiempoRelativo;
 //
 // Cuatro pestañas —Inicio, Entrenar, Nutrición y Progreso— en un ViewPager2 que ya
 // no se desliza de lado: solo se cambia tocando la barra, y el cambio es un fundido
-// corto, no un desplazamiento. El «+» central de la barra abre la hoja «¿Qué quieres
+// corto, no un desplazamiento. El «+» de la barra abre la hoja «¿Qué quieres
 // hacer?» sobre la pestaña que haya.
+//
+// Desde GP-285 (Liquid Glass, DEC-070) la barra flota: las pestañas pasan por debajo de ella
+// y de la barra de la sesión, que son cristal vivo y desenfocan lo que el lienzo
+// (LienzoCristal) tiene detrás. Esta pantalla reparte los márgenes: arriba, el de la barra de
+// estado a las pestañas (el fondo ambiental sigue por debajo de ella); abajo, a cada pestaña,
+// el alto del pie como relleno. Inicio lleva el fondo ambiental; las demás, el de siempre.
 //
 // Atrás, como en la 1.0.2 (GP-097): desde cualquier pestaña vuelve a Inicio y desde
 // Inicio sale; con la hoja abierta, la cierra.
@@ -74,6 +80,11 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     private ViewPager2 pager;
     private BarraNavegacion barra;
     private View velo, hoja;
+    // Liquid Glass (GP-285): el fondo ambiental de Inicio, el pie flotante y quien vigila el
+    // rendimiento del cristal vivo.
+    private View fondoAmbiental, pie;
+    private es.pmdm.gymprofit.ui.cristal.LienzoCristal lienzo;
+    private es.pmdm.gymprofit.ui.cristal.VigiaCristal vigiaCristal;
     private boolean hojaAbierta = false;
 
     // Lo que ya se sabe para los subtítulos de la hoja. null = todavía no.
@@ -121,6 +132,16 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         barra = findViewById(R.id.barra);
         velo  = findViewById(R.id.veloAcciones);
         hoja  = findViewById(R.id.hojaAcciones);
+        pie   = findViewById(R.id.pieMain);
+        lienzo = findViewById(R.id.lienzoCristal);
+        fondoAmbiental = findViewById(R.id.fondoAmbiental);
+        fondoAmbiental.setBackground(new es.pmdm.gymprofit.ui.cristal.FondoAmbiental(this));
+        vigiaCristal = new es.pmdm.gymprofit.ui.cristal.VigiaCristal(this, lienzo);
+        // El pie cambia de alto con la barra de la sesión y con los márgenes del sistema: el
+        // relleno de las pestañas y el sitio de la hoja del «+» lo siguen.
+        pie.addOnLayoutChangeListener((v, l, t, r, b, l0, t0, r0, b0) -> {
+            if (b - t != b0 - t0) pie.post(this::aplicarHuecoInferior);
+        });
         atrasCierraHoja = new AtrasHoja(hoja) {
             @Override
             protected void cerrar() {
@@ -196,6 +217,7 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
                                                       @NonNull Fragment f, @NonNull View v,
                                                       @Nullable Bundle estado) {
                         pager.post(() -> ocultarPestanasNoVisibles(pager.getCurrentItem()));
+                        aplicarHuecoInferior();
                     }
                 }, false);
 
@@ -203,6 +225,8 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         int tab = savedInstanceState != null
                 ? savedInstanceState.getInt(KEY_TAB, tabPorDefecto) : tabPorDefecto;
         pager.setCurrentItem(tab, false);
+        // El fondo de la primera pestaña, ya puesto: sin fundido al entrar.
+        fondoAmbiental.setVisibility(tab == NavTabs.INICIO ? View.VISIBLE : View.INVISIBLE);
         pintarPestana(tab);
 
         if (savedInstanceState == null) aplicarDestino(getIntent());
@@ -360,12 +384,39 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
                 barraSesion.setContentDescription(a11y);
             }
         }
+        partirSiNoCabe(texto);
+    }
+
+    // La barra de la sesión es una cápsula más estrecha que la pantalla (GP-285): en inglés o con
+    // letra grande su texto no cabe en una línea, y entonces va en dos (TextoBarraSesion). Lo que
+    // oye TalkBack es la descripción de la barra, que no cambia.
+    private static void partirSiNoCabe(android.widget.TextView tv) {
+        String s = tv.getText().toString();
+        int ancho = tv.getWidth() - tv.getPaddingLeft() - tv.getPaddingRight();
+        if (ancho <= 0 || tv.getPaint().measureText(s) <= ancho) return;
+        String partido = es.pmdm.gymprofit.ui.widget.TextoBarraSesion.enDosLineas(s);
+        if (!partido.equals(s)) tv.setText(partido);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         relojBarra.post(ticBarra);
+    }
+
+    // Al volver, el nivel del cristal puede ser otro (el alto contraste se cambia en Ajustes), y
+    // mientras la pantalla está delante se vigila que el móvil lo aguante (GP-285).
+    @Override
+    protected void onResume() {
+        super.onResume();
+        lienzo.revisarNivel();
+        vigiaCristal.empezar();
+    }
+
+    @Override
+    protected void onPause() {
+        vigiaCristal.parar();
+        super.onPause();
     }
 
     @Override
@@ -394,19 +445,67 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         if (pager != null) outState.putInt(KEY_TAB, pager.getCurrentItem());
     }
 
-    // Esta pantalla gestiona sus márgenes del sistema (InsetsUtils la deja): arriba y a
-    // los lados, la raíz; abajo, la barra, que pinta su fondo bajo la barra de gestos.
+    // Esta pantalla gestiona sus márgenes del sistema (InsetsUtils la deja): a los lados, la
+    // raíz; arriba, las pestañas (el lienzo, con el fondo ambiental, sigue bajo la barra de
+    // estado); abajo, la barra, que flota por encima del hueco de gestos o de botones.
     private void aplicarInsets() {
+        barrasDelSistemaTransparentes();
         View raiz = findViewById(R.id.raizMain);
+        View contenedor = findViewById(R.id.contenedorPager);
         ViewCompat.setOnApplyWindowInsetsListener(raiz, (v, insets) -> {
             Insets barras = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             Insets muesca = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(Math.max(barras.left, muesca.left), Math.max(barras.top, muesca.top),
-                    Math.max(barras.right, muesca.right), 0);
+            v.setPadding(Math.max(barras.left, muesca.left), 0, Math.max(barras.right, muesca.right), 0);
+            contenedor.setPadding(0, Math.max(barras.top, muesca.top), 0, 0);
             barra.aplicarInsetInferior(Math.max(barras.bottom, muesca.bottom));
             return insets;
         });
         ViewCompat.requestApplyInsets(raiz);
+    }
+
+    // El fondo ambiental llega bajo la barra de estado y el contenido bajo la de navegación.
+    // Desde Android 15 las barras ya son transparentes; antes llevan el color del tema.
+    @SuppressWarnings("deprecation")
+    private void barrasDelSistemaTransparentes() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) return;
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        // Android 7: los botones de navegación son siempre blancos. En claro (el tema que pide
+        // iconos oscuros) se quedan con un velo detrás para que se vean.
+        boolean botonesBlancosSobreClaro = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+                && getResources().getBoolean(R.bool.gp_iconos_barra_oscuros);
+        getWindow().setNavigationBarColor(botonesBlancosSobreClaro
+                ? androidx.core.content.ContextCompat.getColor(this, R.color.gp_velo)
+                : android.graphics.Color.TRANSPARENT);
+    }
+
+    // El contenido de cada pestaña pasa por debajo del pie (la barra y, si hay sesión, la suya):
+    // su scroll lleva de relleno inferior el alto del pie más un poco de aire y no lo recorta,
+    // así que lo último se puede subir por encima de la barra. La hoja del «+» se apoya encima.
+    private void aplicarHuecoInferior() {
+        if (pie == null || pie.getHeight() == 0) return;
+        int hueco = pie.getHeight() + getResources().getDimensionPixelSize(R.dimen.barra_aire_contenido);
+        for (int i = 0; i < NavTabs.TOTAL; i++) {
+            Fragment f = getSupportFragmentManager().findFragmentByTag("f" + i);
+            View v = f != null ? f.getView() : null;
+            if (!(v instanceof android.view.ViewGroup)) continue;
+            // El relleno que traía el layout, guardado la primera vez para no acumular.
+            Object original = v.getTag(R.id.tag_hueco_barra_reservado);
+            if (original == null) {
+                original = v.getPaddingBottom();
+                v.setTag(R.id.tag_hueco_barra_reservado, original);
+                ((android.view.ViewGroup) v).setClipToPadding(false);
+            }
+            int abajo = (Integer) original + hueco;
+            if (v.getPaddingBottom() != abajo) {
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), abajo);
+            }
+        }
+        android.view.ViewGroup.MarginLayoutParams lp = (android.view.ViewGroup.MarginLayoutParams) hoja.getLayoutParams();
+        int margen = pie.getHeight() + getResources().getDimensionPixelSize(R.dimen.espacio_12);
+        if (lp.bottomMargin != margen) {
+            lp.bottomMargin = margen;
+            hoja.setLayoutParams(lp);
+        }
     }
 
     // ── Pestañas ─────────────────────────────────────────────────────────────
@@ -430,11 +529,32 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
 
     private void pintarPestana(int index) {
         barra.setActiva(index);
+        pintarFondo(index);
         atrasAInicio.setEnabled(NavTabs.atrasVuelveAInicio(index));
         pager.post(() -> {
             ocultarPestanasNoVisibles(index);
             focoAlContenido(index);
         });
+    }
+
+    // El fondo ambiental es de las pestañas que ya están en Liquid Glass (GP-285): hoy, Inicio.
+    // Aparece y se va con el mismo fundido corto que la pestaña.
+    private void pintarFondo(int index) {
+        boolean conFondo = index == NavTabs.INICIO;
+        fondoAmbiental.animate().cancel();
+        if (conFondo == (fondoAmbiental.getVisibility() == View.VISIBLE)) {
+            fondoAmbiental.setAlpha(1f);
+            return;
+        }
+        long dur = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        if (conFondo) {
+            fondoAmbiental.setAlpha(0f);
+            fondoAmbiental.setVisibility(View.VISIBLE);
+            fondoAmbiental.animate().alpha(1f).setDuration(dur).start();
+        } else {
+            fondoAmbiental.animate().alpha(0f).setDuration(dur)
+                    .withEndAction(() -> fondoAmbiental.setVisibility(View.INVISIBLE)).start();
+        }
     }
 
     // Con teclado, si al cambiar de pestaña el foco se queda en la que se aparta (en un enlace,
@@ -515,14 +635,15 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         velo.setVisibility(View.VISIBLE);
         velo.animate().alpha(1f).setDuration(dur).start();
 
+        // Sube un tramo corto y aparece: la barra flota y ya no la tapa, así que no puede venir
+        // de debajo de ella (GP-285).
         hoja.animate().cancel();
+        hoja.setAlpha(0f);
+        hoja.setTranslationY(recorridoHoja());
         hoja.setVisibility(View.VISIBLE);
-        hoja.post(() -> {
-            hoja.setTranslationY(hoja.getHeight() + getResources().getDisplayMetrics().density * 16);
-            hoja.animate().translationY(0f).setDuration(dur)
-                    .setInterpolator(Movimiento.ENFATIZADA)
-                    .start();
-        });
+        hoja.animate().translationY(0f).alpha(1f).setDuration(dur)
+                .setInterpolator(Movimiento.ENFATIZADA)
+                .start();
 
         barra.setAccionesAbiertas(true);
         atrasCierraHoja.setEnabled(true);
@@ -531,6 +652,11 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         View titulo = findViewById(R.id.tvTituloAcciones);
         titulo.post(() -> titulo.performAccessibilityAction(
                 AccessibilityNodeInfo.ACTION_ACCESSIBILITY_FOCUS, null));
+    }
+
+    // Lo que la hoja del «+» recorre al abrirse y al cerrarse.
+    private float recorridoHoja() {
+        return getResources().getDimension(R.dimen.espacio_36);
     }
 
     /** Cierra la hoja del «+» si está abierta. */
@@ -543,7 +669,7 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         velo.animate().alpha(0f).setDuration(dur)
                 .withEndAction(() -> velo.setVisibility(View.GONE)).start();
         hoja.animate().cancel();
-        hoja.animate().translationY(hoja.getHeight() + getResources().getDisplayMetrics().density * 16)
+        hoja.animate().translationY(recorridoHoja()).alpha(0f)
                 .setDuration(dur).setInterpolator(Movimiento.ESTANDAR)
                 .withEndAction(() -> hoja.setVisibility(View.GONE)).start();
 

@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
@@ -25,24 +25,28 @@ import es.pmdm.gymprofit.R;
 import es.pmdm.gymprofit.utils.NavTabs;
 
 // ============================================================
-// BarraNavegacion — la barra fija de abajo (GP-105): Inicio · Entrenar · «+» ·
-// Nutrición · Progreso.
+// BarraNavegacion — la barra de abajo (GP-105; Liquid Glass en GP-285, DEC-070): una cápsula
+// de cristal vivo con Inicio · Entrenar · Nutrición · Progreso y, separado a su derecha, el «+».
 //
-// Sustituye a la FloatingNavBar. La etiqueta se ve siempre; la pestaña activa lleva
-// la píldora y el icono relleno, las demás el icono en contorno. El «+» central no es
-// una pestaña: abre las acciones rápidas y, abierto, gira a «×».
+// Flota sobre el contenido, que pasa por debajo: a 16 dp de los lados y 26 del borde de abajo,
+// más el hueco de la barra de gestos o de botones del sistema. La etiqueta se ve siempre; la
+// pestaña activa lleva la «lente» (bg_lente), el icono relleno y la etiqueta en negrita, los
+// dos en el acento; las demás, el icono en contorno. El «+» no es una pestaña: abre las
+// acciones rápidas y, abierto, gira a «×».
 //
 // Son vistas normales infladas de XML, no una vista dibujada a mano: cada pestaña es
 // un botón con su nombre, y lo que TalkBack no sabría deducir se le dice aquí —que es
 // una pestaña, cuál de cuatro, si está seleccionada, y si las acciones rápidas están
 // abiertas o cerradas— (DEC-019).
 //
-// El hueco de la barra de gestos o de botones del sistema se suma aquí y en ningún
-// otro sitio (aplicarInsetInferior): la barra no se superpone al contenido, así que
-// ninguna pestaña tiene que reservar nada (GP-059).
+// El hueco de la barra de gestos o de botones del sistema se suma aquí (aplicarInsetInferior).
+// La barra se superpone al contenido: el relleno inferior de cada pestaña lo pone
+// MainActivity con el alto del pie. Lo que queda a los lados y debajo de la cápsula es
+// relleno transparente y no se queda con los toques.
 //
-// Las etiquetas crecen con la letra del sistema solo hasta 1,3 (GP-128): más grandes
-// no caben. Cada botón enseña su nombre en un tooltip al mantenerlo pulsado.
+// Las etiquetas crecen con la letra del sistema solo hasta 1,3 (GP-128) y nunca más de lo que
+// cabe en su pestaña (en un móvil estrecho, «Nutrición» a 1,3 no cabe). Cada botón enseña su
+// nombre en un tooltip al mantenerlo pulsado.
 // ============================================================
 public class BarraNavegacion extends LinearLayout {
 
@@ -70,24 +74,30 @@ public class BarraNavegacion extends LinearLayout {
     private int activa = -1;
     private boolean accionesAbiertas = false;
 
-    private int colorMarca, colorTexto, colorSecundario;
+    private int colorActiva, colorResto;
     private Typeface normal, negrita;
+    private final int margenLado, margenAbajo;
 
     public BarraNavegacion(Context c) { this(c, null); }
 
     public BarraNavegacion(Context c, @Nullable AttributeSet a) {
         super(c, a);
-        setOrientation(VERTICAL);
-        setBackgroundColor(color(com.google.android.material.R.attr.colorSurface));
+        setOrientation(HORIZONTAL);
+        // La sombra de la cápsula se pinta fuera de ella.
+        setClipChildren(false);
+        setClipToPadding(false);
+        margenLado = getResources().getDimensionPixelSize(R.dimen.barra_margen_lado);
+        margenAbajo = getResources().getDimensionPixelSize(R.dimen.barra_margen_abajo);
+        aplicarInsetInferior(0);
         LayoutInflater.from(c).inflate(R.layout.view_barra_navegacion, this, true);
 
-        colorMarca = color(androidx.appcompat.R.attr.colorPrimary);
-        colorTexto = color(com.google.android.material.R.attr.colorOnSurface);
-        colorSecundario = color(com.google.android.material.R.attr.colorOnSurfaceVariant);
+        // Sobre el cristal vivo: medidos en sus tres niveles (ContrasteCristalTest).
+        colorActiva = ContextCompat.getColor(c, R.color.gp_vivo_acento);
+        colorResto = ContextCompat.getColor(c, R.color.gp_vivo_texto);
         normal = ResourcesCompat.getFont(c, R.font.barlow);
         negrita = Typeface.create(normal, Typeface.BOLD);
 
-        float tamEtiqueta = tamanoEtiqueta();
+        float tamEtiqueta = tamanoEtiqueta(Float.MAX_VALUE);
         int[] ids = {R.id.tabInicio, R.id.tabEntrenar, R.id.tabNutricion, R.id.tabProgreso};
         for (int i = 0; i < ids.length; i++) {
             final int indice = i;
@@ -150,31 +160,69 @@ public class BarraNavegacion extends LinearLayout {
         return Math.min(escalaSistema, ESCALA_MAXIMA_ETIQUETA);
     }
 
-    // Tamaño de las etiquetas en px: el de text_eyebrow a la escala de escalaEtiqueta().
-    // Se calcula a mano porque un tamaño en sp crece sin tope con la letra del sistema.
-    private float tamanoEtiqueta() {
+    /**
+     * La escala de las etiquetas cuando además tienen que caber (GP-285): la de la letra del
+     * sistema con su tope de 1,3, o menos si la etiqueta más ancha no cabe en su pestaña; nunca
+     * por debajo de 1, que es el tamaño mínimo de la app (13 sp).
+     *
+     * @param escalaSistema escala de letra del sistema.
+     * @param anchoA1       ancho de la etiqueta más ancha a escala 1, en px.
+     * @param anchoPestana  ancho disponible para ella, en px.
+     */
+    public static float escalaEtiqueta(float escalaSistema, float anchoA1, float anchoPestana) {
+        float pedida = escalaEtiqueta(escalaSistema);
+        if (anchoA1 <= 0 || anchoPestana <= 0) return pedida;
+        float cabe = anchoPestana / anchoA1;
+        if (pedida <= cabe) return pedida;
+        // No cabe: hasta donde quepa, sin bajar de 1 (ni de lo pedido, si ya era menos).
+        return Math.max(Math.min(1f, pedida), cabe);
+    }
+
+    // Tamaño de las etiquetas en px: el de text_eyebrow a la escala de escalaEtiqueta(), sin
+    // pasar del ancho de una pestaña. Se calcula a mano porque un tamaño en sp crece sin tope
+    // con la letra del sistema.
+    private float tamanoEtiqueta(float anchoPestana) {
         TypedValue valor = new TypedValue();
         getResources().getValue(R.dimen.text_eyebrow, valor, true);
-        float sp = TypedValue.complexToFloat(valor.data);
-        float escala = escalaEtiqueta(getResources().getConfiguration().fontScale);
-        return sp * getResources().getDisplayMetrics().density * escala;
+        float base = TypedValue.complexToFloat(valor.data) * getResources().getDisplayMetrics().density;
+        // La más ancha, en negrita (la activa), a escala 1.
+        android.graphics.Paint pincel = new android.graphics.Paint();
+        pincel.setTypeface(negrita);
+        pincel.setTextSize(base);
+        float ancha = 0f;
+        for (int etiqueta : ETIQUETAS) ancha = Math.max(ancha, pincel.measureText(getContext().getString(etiqueta)));
+        return base * escalaEtiqueta(getResources().getConfiguration().fontScale, ancha, anchoPestana);
+    }
+
+    // Con el ancho ya sabido, las etiquetas se ajustan a lo que cabe en una pestaña.
+    @Override
+    protected void onLayout(boolean cambia, int l, int t, int r, int b) {
+        super.onLayout(cambia, l, t, r, b);
+        if (pestanas[0] == null || pestanas[0].getWidth() == 0) return;
+        float aire = getResources().getDimension(R.dimen.espacio_4);
+        float tam = tamanoEtiqueta(pestanas[0].getWidth() - 2 * aire);
+        TextView primera = pestanas[0].findViewById(R.id.tvEtiqueta);
+        if (Math.abs(primera.getTextSize() - tam) < 0.5f) return;
+        for (View p : pestanas) {
+            ((TextView) p.findViewById(R.id.tvEtiqueta)).setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
+        }
     }
 
     public void setOyente(Oyente oyente) { this.oyente = oyente; }
 
-    /** Deja marcada la pestaña activa: píldora, icono relleno y etiqueta en negrita. */
+    /** Deja marcada la pestaña activa: la lente, el icono relleno y la etiqueta en negrita. */
     public void setActiva(int pestana) {
         activa = pestana;
         for (int i = 0; i < pestanas.length; i++) {
             boolean esta = i == pestana;
             View p = pestanas[i];
             p.setSelected(esta);
-            p.findViewById(R.id.flPildora).setBackgroundResource(esta ? R.drawable.bg_pildora_pestana : 0);
+            p.findViewById(R.id.flPildora).setBackgroundResource(esta ? R.drawable.bg_lente : 0);
             ImageView icono = p.findViewById(R.id.ivIcono);
             icono.setImageResource(esta ? ICONOS_RELLENOS[i] : ICONOS[i]);
-            icono.setImageTintList(ColorStateList.valueOf(esta ? colorMarca : colorSecundario));
+            icono.setImageTintList(ColorStateList.valueOf(esta ? colorActiva : colorResto));
             TextView etiqueta = p.findViewById(R.id.tvEtiqueta);
-            etiqueta.setTextColor(esta ? colorTexto : colorSecundario);
+            etiqueta.setTextColor(esta ? colorActiva : colorResto);
             etiqueta.setTypeface(esta ? negrita : normal);
         }
     }
@@ -207,16 +255,10 @@ public class BarraNavegacion extends LinearLayout {
     }
 
     /**
-     * Suma bajo la barra el hueco de la barra de gestos o de botones del sistema. Es
-     * el único sitio de la app que lo hace para la navegación principal.
+     * Deja la barra a sus márgenes (16 dp a los lados, 26 abajo) más el hueco de la barra de
+     * gestos o de botones del sistema.
      */
     public void aplicarInsetInferior(int px) {
-        setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), px);
-    }
-
-    private int color(@AttrRes int attr) {
-        TypedValue tv = new TypedValue();
-        getContext().getTheme().resolveAttribute(attr, tv, true);
-        return tv.data;
+        setPadding(margenLado, 0, margenLado, margenAbajo + px);
     }
 }

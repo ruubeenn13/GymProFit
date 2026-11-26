@@ -278,6 +278,9 @@
     <dimen name="tile_barra">6dp</dimen>
     <dimen name="tile_alto_min">112dp</dimen>
     <!-- Chip de cristal: 6 arriba y abajo. Halo del botón principal sobre cristal. -->
-    <dimen name="chip_cristal_relleno">6dp</dimen>
+    <dimen name="chip_cristal_relleno">4dp</dimen>
+    <!-- El bloque del icono de cada ejercicio de «Hoy toca» (eran 84: con letra 1,3 la tarjeta
+         héroe dejaba «Empezar» bajo la barra flotante). -->
+    <dimen name="hoy_ejercicio_icono_alto">72dp</dimen>
     <dimen name="boton_cristal_halo">8dp</dimen>
 </resources>

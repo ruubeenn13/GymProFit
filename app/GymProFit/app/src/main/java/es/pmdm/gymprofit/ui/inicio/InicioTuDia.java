@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -23,7 +22,7 @@ import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.DiarioApi;
-import es.pmdm.gymprofit.ui.widget.VasosAguaView;
+import es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal;
 import es.pmdm.gymprofit.utils.Agua;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.DiaNutricion;
@@ -34,14 +33,15 @@ import es.pmdm.gymprofit.utils.TiempoRelativo;
 import es.pmdm.gymprofit.utils.VistaEstado;
 
 // ============================================================
-// InicioTuDia — «Tu día» de Inicio (GP-216, tablero 13): un carrusel con calorías, proteína y
-// agua de hoy, y debajo el botón de la comida que toca ahora.
+// InicioTuDia — «Tu día» de Inicio (GP-216, tablero 13): calorías, proteína y agua de hoy en
+// tres tiles de cristal con su barra (GP-285; antes, un carrusel con aros y vasos), y debajo el
+// botón de la comida que toca ahora.
 //
 // Los números son los de la pestaña Nutrición (DiaNutricion sobre las comidas de hoy, y el agua
 // del diario con el vaso de la cuenta), así que las dos pantallas no discrepan. Con la red
-// caída no se enseña un cero que parezca un dato: el carrusel se cambia por el error con su
-// «Reintentar» (GP-211). Sin peso ni altura (GP-103) no hay objetivo: se enseña lo comido, sin
-// aro ni «te quedan».
+// caída no se enseña un cero que parezca un dato: los tiles se cambian por el error con su
+// «Reintentar» (GP-211). Sin peso ni altura (GP-103) no hay objetivo: se enseña lo comido, con
+// la barra vacía y sin «te quedan».
 // ============================================================
 public final class InicioTuDia {
 
@@ -77,7 +77,7 @@ public final class InicioTuDia {
             raiz.findViewById(id).setOnClickListener(v -> abrirNutricion.run());
         }
         raiz.findViewById(R.id.cardComidaQueToca).setOnClickListener(v -> apuntarComida.run());
-        rotulo(R.id.cardDiaKcal, R.drawable.ic_ms_local_fire_department, androidx.appcompat.R.attr.colorPrimary, R.string.inicio_dia_calorias);
+        rotuloColor(R.id.cardDiaKcal, R.drawable.ic_ms_local_fire_department, R.color.gp_cristal_enlace, R.string.inicio_dia_calorias);
         rotuloColor(R.id.cardDiaProteina, R.drawable.ic_ms_egg_alt, R.color.gp_macro_proteinas, R.string.inicio_dia_proteina);
         rotuloColor(R.id.cardDiaAgua, R.drawable.ic_ms_water_drop, R.color.gp_agua, R.string.inicio_dia_agua);
         pintarComidaQueToca(null);
@@ -98,7 +98,7 @@ public final class InicioTuDia {
         fallo = false;
         // La carga, en el bloque, si no hay nada pintado (la primera vez o tras un fallo); al
         // volver con el día a la vista, se queda hasta que llega lo nuevo (GP-064).
-        if (raiz.findViewById(R.id.scrollTuDia).getVisibility() != View.VISIBLE) estado.cargando();
+        if (raiz.findViewById(R.id.filaTuDia).getVisibility() != View.VISIBLE) estado.cargando();
         String hoy = TiempoRelativo.hoy();
         comidaApi.getDeUsuarioFecha(uid, hoy).enqueue(new ApiCallback<List<Comida>>() {
             @Override public void onOk(List<Comida> lista) {
@@ -127,7 +127,7 @@ public final class InicioTuDia {
     private void fallo(int esta, int code, String message) {
         if (esta != generacion || !fragment.isAdded() || fallo) return;
         fallo = true;
-        raiz.findViewById(R.id.scrollTuDia).setVisibility(View.GONE);
+        raiz.findViewById(R.id.filaTuDia).setVisibility(View.GONE);
         estado.error(VistaEstado.mensaje(fragment.requireContext(), R.string.inicio_dia_error, code, message), this::cargar);
         // El botón de la comida que toca no necesita datos: se queda.
         pintarComidaQueToca(null);
@@ -137,7 +137,7 @@ public final class InicioTuDia {
 
     private void pintar() {
         estado.oculto();
-        raiz.findViewById(R.id.scrollTuDia).setVisibility(View.VISIBLE);
+        raiz.findViewById(R.id.filaTuDia).setVisibility(View.VISIBLE);
         Locale idioma = FechaUtils.localeDeLaApp(fragment.requireContext());
         NumberFormat entero = NumberFormat.getIntegerInstance(idioma);
         NumberFormat decimal = NumberFormat.getNumberInstance(idioma);
@@ -155,17 +155,17 @@ public final class InicioTuDia {
 
     private void pintarCalorias(DiaNutricion d, NumberFormat entero) {
         View card = raiz.findViewById(R.id.cardDiaKcal);
-        CircularProgressIndicator anillo = card.findViewById(R.id.anilloDia);
+        BarraProgresoCristal anillo = card.findViewById(R.id.barraDia);
         TextView cifra = card.findViewById(R.id.tvCifraDia);
         TextView apoyo = card.findViewById(R.id.tvApoyoDia);
         String a11y;
         if (d.sinObjetivo) {
-            anillo.setProgressCompat(0, false);
+            anillo.setProgreso(0, false);
             cifra.setText(entero.format(d.kcal));
             apoyo.setText(R.string.inicio_dia_kcal_hoy);
             a11y = fragment.getString(R.string.nutricion_sin_objetivo_a11y, entero.format(d.kcal));
         } else {
-            anillo.setProgressCompat(DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
+            anillo.setProgreso(DiaNutricion.porcentaje(d.kcal, d.objetivoKcal), false);
             int quedan = d.kcalRestantes();
             cifra.setText(entero.format(Math.abs(quedan)));
             apoyo.setText(quedan >= 0 ? R.string.inicio_dia_quedan : R.string.inicio_dia_pasas);
@@ -177,18 +177,18 @@ public final class InicioTuDia {
 
     private void pintarProteina(DiaNutricion d) {
         View card = raiz.findViewById(R.id.cardDiaProteina);
-        CircularProgressIndicator anillo = card.findViewById(R.id.anilloDia);
+        BarraProgresoCristal anillo = card.findViewById(R.id.barraDia);
         TextView cifra = card.findViewById(R.id.tvCifraDia);
         TextView apoyo = card.findViewById(R.id.tvApoyoDia);
         int g = (int) Math.round(d.proteinas);
         cifra.setText(fragment.getString(R.string.inicio_cifra_g, g));
         String a11y;
         if (d.sinObjetivo) {
-            anillo.setProgressCompat(0, false);
+            anillo.setProgreso(0, false);
             apoyo.setText(R.string.inicio_dia_kcal_hoy_g);
             a11y = fragment.getString(R.string.inicio_dia_proteina_sin_objetivo_a11y, g);
         } else {
-            anillo.setProgressCompat(DiaNutricion.porcentaje(d.proteinas, d.objetivoProteinas), false);
+            anillo.setProgreso(DiaNutricion.porcentaje(d.proteinas, d.objetivoProteinas), false);
             apoyo.setText(fragment.getString(R.string.inicio_dia_de, String.valueOf(d.objetivoProteinas)));
             a11y = fragment.getString(R.string.inicio_dia_proteina_a11y, g, d.objetivoProteinas);
         }
@@ -198,9 +198,7 @@ public final class InicioTuDia {
 
     private void pintarAgua(@Nullable ResultadoNutricional objetivo, NumberFormat decimal) {
         View card = raiz.findViewById(R.id.cardDiaAgua);
-        card.findViewById(R.id.anilloDia).setVisibility(View.GONE);
-        VasosAguaView vasos = card.findViewById(R.id.vasosDia);
-        vasos.setVisibility(View.VISIBLE);
+        BarraProgresoCristal barra = card.findViewById(R.id.barraDia);
         TextView cifra = card.findViewById(R.id.tvCifraDia);
         TextView apoyo = card.findViewById(R.id.tvApoyoDia);
 
@@ -208,7 +206,9 @@ public final class InicioTuDia {
         double litrosObjetivo = objetivo == null ? 0 : objetivo.agua;
         int llenos = Agua.vasosLlenos(aguaMl, vaso);
         int objetivoVasos = Agua.vasosObjetivo(litrosObjetivo, vaso);
-        vasos.setVasos(Agua.vasosAPintar(llenos, objetivoVasos), llenos);
+        // La barra, lo bebido frente al objetivo; los vasos se siguen diciendo a TalkBack.
+        barra.setProgreso(litrosObjetivo > 0
+                ? DiaNutricion.porcentaje(aguaMl, (int) Math.round(litrosObjetivo * 1000)) : 0, false);
 
         String bebidos = decimal.format(aguaMl / 1000.0);
         cifra.setText(fragment.getString(R.string.inicio_cifra_l, bebidos));
@@ -252,12 +252,6 @@ public final class InicioTuDia {
 
     // ── Rótulos de cada tarjeta ──────────────────────────────────────────────
 
-    private void rotulo(int cardId, int icono, int atributoColor, int texto) {
-        android.util.TypedValue tv = new android.util.TypedValue();
-        fragment.requireContext().getTheme().resolveAttribute(atributoColor, tv, true);
-        rotuloConColor(cardId, icono, tv.data, texto);
-    }
-
     private void rotuloColor(int cardId, int icono, int color, int texto) {
         rotuloConColor(cardId, icono, ContextCompat.getColor(fragment.requireContext(), color), texto);
     }
@@ -267,8 +261,8 @@ public final class InicioTuDia {
         ImageView iv = card.findViewById(R.id.ivRotuloDia);
         iv.setImageResource(icono);
         iv.setImageTintList(android.content.res.ColorStateList.valueOf(color));
-        // El aro lleva el color de su macro, como el icono.
-        ((CircularProgressIndicator) card.findViewById(R.id.anilloDia)).setIndicatorColor(color);
+        // La barra lleva el color de su macro, como el icono.
+        ((BarraProgresoCristal) card.findViewById(R.id.barraDia)).setColorRelleno(color);
         ((TextView) card.findViewById(R.id.tvRotuloDia)).setText(texto);
     }
 }

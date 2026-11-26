@@ -19,8 +19,9 @@ import es.pmdm.gymprofit.utils.UIHelper;
 // Centraliza el acceso a preferencias, el guard de usuario registrado, el helper
 // findViewById sobre la vista del fragment y el cambio de pestaña.
 //
-// Desde GP-105 la barra ya no flota sobre el contenido: va debajo del pager, así
-// que las pestañas no reservan hueco para ella (lo hacía reservarHuecoBarraFlotante).
+// La barra flota sobre el contenido (GP-285): el relleno inferior que hace falta para que lo
+// último de cada pestaña se pueda subir por encima de ella lo pone MainActivity en la raíz
+// de la pestaña (aplicarHuecoInferior), no cada fragment.
 // ============================================================
 public abstract class BaseFragment extends Fragment {
 

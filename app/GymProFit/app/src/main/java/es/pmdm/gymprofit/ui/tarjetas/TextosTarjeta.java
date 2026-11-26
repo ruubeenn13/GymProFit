@@ -57,6 +57,19 @@ public final class TextosTarjeta {
     private final int neutro;
 
     public TextosTarjeta(@NonNull Context ctx) {
+        this(ctx, R.color.gp_gold_text, R.color.gp_success, R.color.gp_text_secondary);
+    }
+
+    /**
+     * Para tarjetas de cristal (GP-285): el dorado, el verde y el secundario medidos sobre el
+     * cristal y no sobre la tarjeta opaca.
+     */
+    @NonNull
+    public static TextosTarjeta sobreCristal(@NonNull Context ctx) {
+        return new TextosTarjeta(ctx, R.color.gp_cristal_oro, R.color.gp_cristal_exito, R.color.gp_cristal_texto_2);
+    }
+
+    private TextosTarjeta(@NonNull Context ctx, int colorOro, int colorVerde, int colorNeutro) {
         this.ctx = ctx;
         this.idioma = FechaUtils.localeDeLaApp(ctx);
         this.numeros = NumberFormat.getIntegerInstance(idioma);
@@ -64,9 +77,9 @@ public final class TextosTarjeta {
         this.cuando = CuandoTarjeta.Textos.de(ctx);
         this.cifras = CifraTarjeta.Textos.de(ctx, idioma);
         this.hoy = TiempoRelativo.hoy();
-        this.oro = ContextCompat.getColor(ctx, R.color.gp_gold_text);
-        this.verde = ContextCompat.getColor(ctx, R.color.gp_success);
-        this.neutro = ContextCompat.getColor(ctx, R.color.gp_text_secondary);
+        this.oro = ContextCompat.getColor(ctx, colorOro);
+        this.verde = ContextCompat.getColor(ctx, colorVerde);
+        this.neutro = ContextCompat.getColor(ctx, colorNeutro);
     }
 
     // ── Cifras ───────────────────────────────────────────────────────────────

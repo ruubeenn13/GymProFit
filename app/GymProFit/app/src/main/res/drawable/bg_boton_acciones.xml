@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  bg_boton_acciones — el «+» central de la barra (GP-105): naranja, con esquinas de 26 dp que al
-  pulsar pasan a 12 (BotonExpresivo.alPulsar, GP-210 paso 2). Sobre 56 dp, 26 es casi un círculo.
+  bg_boton_acciones — el «+» de la barra (GP-105; GP-285): círculo de 64 dp con el degradado
+  radial #FFB27A → #FF6A00 de Liquid Glass y el borde del cristal. Sus esquinas pasan de 32 dp
+  (círculo) a 12 al pulsar (BotonExpresivo.alPulsar, GP-210 paso 2).
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/tarjeta_capa">
+    android:color="@color/boton_capa">
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="@dimen/boton_radio_reposo" />
-            <solid android:color="?attr/colorPrimary" />
+            <corners android:radius="@dimen/barra_mas_radio" />
+            <gradient
+                android:type="radial"
+                android:centerX="0.35"
+                android:centerY="0.30"
+                android:gradientRadius="@dimen/barra_mas_degradado"
+                android:startColor="@color/gp_mas_claro"
+                android:endColor="@color/gp_mas_oscuro" />
+            <stroke
+                android:width="@dimen/cristal_borde"
+                android:color="@color/gp_cristal_brillo" />
         </shape>
     </item>
 </ripple>

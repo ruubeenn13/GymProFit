@@ -109,6 +109,8 @@
     <style name="ThemeOverlay.GymProFit.CristalVivo" parent="">
         <item name="colorOnSurface">@color/gp_cristal_texto</item>
         <item name="colorOnSurfaceVariant">@color/gp_cristal_texto_2</item>
+        <!-- El asa de la hoja (bg_asa_hoja): con el separador del tema quedaba a 1,03:1. -->
+        <item name="colorOutlineVariant">@color/gp_cristal_texto_2</item>
         <item name="android:textColorPrimary">@color/gp_cristal_texto</item>
         <item name="android:textColorSecondary">@color/gp_cristal_texto_2</item>
     </style>

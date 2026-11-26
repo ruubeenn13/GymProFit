@@ -109,10 +109,11 @@ public final class InicioEntrenos {
         }
         estado.oculto();
         scroll.setVisibility(View.VISIBLE);
-        TextosTarjeta textos = new TextosTarjeta(fragment.requireContext());
         LinearLayout lista = raiz.findViewById(R.id.listaEntrenos);
         lista.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(fragment.requireContext());
+        // Con el contexto de la lista, que lleva el tema de cristal de Inicio (GP-285).
+        TextosTarjeta textos = TextosTarjeta.sobreCristal(lista.getContext());
+        LayoutInflater inflater = LayoutInflater.from(lista.getContext());
         for (PaginaHistorial.Sesion s : todas.subList(0, Math.min(MAXIMO, todas.size()))) {
             View tarjeta = inflater.inflate(R.layout.item_ultimo_entreno, lista, false);
             lista.addView(tarjeta);

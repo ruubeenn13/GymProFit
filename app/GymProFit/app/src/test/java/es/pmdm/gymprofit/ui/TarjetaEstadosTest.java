@@ -243,8 +243,9 @@ public class TarjetaEstadosTest {
 
     @Test
     public void elAnilloDeLaBarraVaEnLaPildora() throws IOException {
-        // Un óvalo en toda la pestaña cruzaba la etiqueta (revisor, tercera pasada): como en
-        // Material 3, el foco se marca en la píldora del icono.
+        // Un óvalo en toda la pestaña cruzaba la etiqueta (revisor, tercera pasada): el foco se
+        // marca en la píldora de la pestaña, que desde GP-285 es su lente (icono y etiqueta) y va
+        // sobre el cristal vivo de la barra, en el color del texto de la barra.
         String pestana = leer(RES.resolve("layout/view_pestana.xml"));
         assertTrue(pestana.contains("android:background=\"@drawable/fondo_pestana\""));
         assertTrue(pestana.contains("android:duplicateParentState=\"true\"")
@@ -253,7 +254,7 @@ public class TarjetaEstadosTest {
         assertTrue("el fondo de la pestaña no dibuja el foco", !fondo.contains("state_focused"));
         String anillo = leer(RES.resolve("drawable/anillo_pildora.xml"));
         assertTrue(anillo.contains("android:state_focused=\"true\"")
-                && anillo.contains("<stroke android:width=\"@dimen/selector_anillo_foco\" android:color=\"@color/gp_on_surface\""));
+                && anillo.contains("<stroke android:width=\"@dimen/selector_anillo_foco\" android:color=\"@color/gp_vivo_texto\""));
     }
 
     @Test

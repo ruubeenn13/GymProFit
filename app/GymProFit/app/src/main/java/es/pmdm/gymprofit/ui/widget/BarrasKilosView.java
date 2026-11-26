@@ -68,8 +68,9 @@ public class BarrasKilosView extends android.view.View {
         separacionEtiqueta = r.getDimension(R.dimen.espacio_8);
         aireEtiqueta = r.getDimension(R.dimen.espacio_8);
         filoVacia = r.getDimension(R.dimen.espacio_4) / 2f;
-        colorPasadas = ContextCompat.getColor(context, R.color.gp_stroke);
-        colorActual = MaterialColors.getColor(this, androidx.appcompat.R.attr.colorPrimary);
+        // Del tema: el borde y el naranja en una tarjeta opaca; sobre cristal, los medidos ahí (GP-285).
+        colorPasadas = MaterialColors.getColor(this, R.attr.gpGraficoTenue);
+        colorActual = MaterialColors.getColor(this, R.attr.gpGraficoMarca);
         pincelTexto.setTextAlign(Paint.Align.CENTER);
         pincelTexto.setTextSize(r.getDimension(R.dimen.text_eyebrow));
         pincelTexto.setColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant));

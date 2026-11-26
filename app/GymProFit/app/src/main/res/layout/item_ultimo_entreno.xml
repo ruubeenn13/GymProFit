@@ -5,10 +5,11 @@
   pequeñas de sus últimas veces (bajan bajo los kilos si no caben) y una sola línea destacada:
   los récords en dorado o, si no hubo, la comparación con la anterior. La rellena
   InicioEntrenos. Pulsable: abre el resumen de esa sesión y la tarjeta crece hasta él.
+  Desde GP-285 es un tile de cristal.
 -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.GymProFit.Card.Pequena"
+    style="@style/Widget.GymProFit.Card.Cristal.Tile"
     android:layout_width="220dp"
     android:layout_height="match_parent"
     android:clickable="true"
@@ -16,7 +17,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_cristal_tile"
         android:importantForAccessibility="noHideDescendants"
         android:orientation="vertical"
         android:padding="@dimen/espacio_16">
@@ -26,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
-            android:textColor="@color/gp_text_secondary" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <!-- La rutina en dos líneas como mucho: a letra 1,3 no se corta («Torso y pierna B»). -->
         <TextView

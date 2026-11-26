@@ -69,6 +69,22 @@ colors:
   agua-container-light: "#D7F2F6"
   meter-track-dark: "#353A43"
   meter-track-light: "#D6D6D0"
+  # Liquid Glass (GP-285, DEC-070): fondo ambiental, texto sobre cristal y cristal vivo.
+  # Solo los opacos: los translúcidos (rellenos, bordes y tintes) están en «Liquid Glass».
+  ambiente-base-dark: "#08090B"
+  ambiente-base-light: "#F3F1EC"
+  cristal-texto-dark: "#F2F2F3"
+  cristal-texto-2-dark: "#C9CDD6"
+  cristal-acento-dark: "#FFB27A"
+  cristal-enlace-dark: "#FF8A3D"
+  cristal-texto-light: "#17181C"
+  cristal-texto-2-light: "#4B4D54"
+  cristal-acento-light: "#9A3300"
+  vivo-bajo-dark: "#14161A"  # el tinte de la barra, al 40 % sobre el desenfoque
+  vivo-texto-dark: "#E4E6EB"
+  vivo-acento-dark: "#FFB27A"
+  mas-claro: "#FFB27A"
+  mas-oscuro: "#FF6A00"
 typography:
   # Familias: font/barlow.xml (400, 500, 600) y font/barlow_condensed.xml (500, 600, 700).
   # Unidades: el linter de DESIGN.md solo admite unidades CSS, así que aquí 1px = 1dp = 1sp (los lienzos
@@ -134,6 +150,10 @@ rounded:
   card-pequena: "20px"
   card: "24px"          # tarjeta estándar
   protagonista: "28px"  # tarjeta protagonista y hojas inferiores
+  # Liquid Glass (GP-285): tarjeta héroe, tarjeta y tile de cristal
+  cristal-heroe: "30px"
+  cristal: "26px"
+  cristal-tile: "22px"
   dialog: "22px"
   button: "26px"        # botón principal en reposo (Expressive); al pulsar, 12px
   circle: "9999px"      # cornerSize 50% en Android (ShapeAppearance.GymProFit.Circulo)
@@ -200,9 +220,11 @@ components:
     rounded: "{rounded.circle}"
     size: "48px"
   barra-navegacion:
-    backgroundColor: "{colors.surface-dark}"
-    textColor: "{colors.text-secondary-dark}"
-    height: "60px"
+    # Cristal vivo (GP-285): el tinte va sobre el desenfoque; ver «Liquid Glass».
+    backgroundColor: "{colors.vivo-bajo-dark}"
+    textColor: "{colors.vivo-texto-dark}"
+    rounded: "{rounded.circle}"
+    height: "64px"
   fab:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary-dark}"
@@ -210,7 +232,7 @@ components:
 
 # Design System: GymProFit (app Android)
 
-Documenta lo que **existe** en `app/GymProFit` tras GP-210 paso 2 (22-10-2026, lote 1.8.0): los cimientos de GP-216 y las transiciones y estilos Expressive. Contexto del producto en [PRODUCT.md](PRODUCT.md). Las decisiones que mandan: DEC-018 (oscuro, naranja, dorado), DEC-019 (accesibilidad), DEC-020 (ES y EN) y DEC-039 (movimiento), en `documentacion/PRODUCT-DECISIONS.md`. Los diseños aprobados, en `documentacion/diseno/` (el de referencia para estructura: `2026-09-27-estructura/`). **Si un lienzo y un token no coinciden, manda el token** (sus contrastes están medidos, GP-063).
+Documenta lo que **existe** en `app/GymProFit` tras GP-210 paso 2 (22-10-2026, lote 1.8.0): los cimientos de GP-216 y las transiciones y estilos Expressive. Desde GP-285 (26-11-2026) la app está pasando a **Liquid Glass** (DEC-070): la barra de navegación e Inicio ya lo son y el resto de pantallas sigue con los cimientos hasta su lote; ver «Liquid Glass». Contexto del producto en [PRODUCT.md](PRODUCT.md). Las decisiones que mandan: DEC-018 (oscuro, naranja, dorado), DEC-019 (accesibilidad), DEC-020 (ES y EN) y DEC-039 (movimiento), en `documentacion/PRODUCT-DECISIONS.md`. Los diseños aprobados, en `documentacion/diseno/` (el de referencia para estructura: `2026-09-27-estructura/`). **Si un lienzo y un token no coinciden, manda el token** (sus contrastes están medidos, GP-063).
 
 Quien cambie un token o un patrón en `res/` o en `Movimiento.java` actualiza este fichero (regla en `CLAUDE.md`).
 
@@ -230,6 +252,7 @@ Es una interfaz de uso, no de exhibición (modo *Operate*): se usa entre series,
 - Material Components 1.14.0 sobre vistas XML, tematizados con tokens `gp_*` (Material 3 estructura; la marca va en el tema), con transiciones de Material motion y estilos Expressive (ver «Cimientos» y «Motion»).
 - Sin emojis; iconos Material Symbols Rounded teñidos por el tema.
 - Sin estética gaming, sin exceso de efectos (DEC-018).
+- En las pantallas ya pasadas a Liquid Glass (DEC-070), las tarjetas son cristal translúcido sobre un fondo ambiental con brillos, y la barra flota y desenfoca lo que pasa por debajo; el naranja, el dorado, la tipografía y las reglas de contraste son los mismos.
 
 ## Cimientos
 
@@ -286,6 +309,68 @@ Las cifras de 56 sp (héroe) y 72 sp (resumen del entreno) siguen existiendo com
 
 `BotonExpresivo` (`ui/widget`) es el botón principal que cambia de forma al pulsarlo: las esquinas pasan de 26 a 12 dp en 120 ms con la curva estándar (`Movimiento.TOQUE`) y vuelven al soltar. Lo son «Empezar» (Inicio, Entrenar y «Tu programa»), «Hecho» (resumen y barra de Añadir) y el «+» de la barra (`BotonExpresivo.alPulsar`). **Selector de opciones** (`SelectorPildora`, GP-224) donde Material 3 Expressive pone los botones conectados: una pista con una píldora naranja que viaja a la elegida. Sustituyó a los botones conectados y a la unidad de la ficha, que se borraron. Los filtros largos y desplazables se quedan en chips. **Indicador de carga con forma** (`LoadingIndicator`) solo en esperas cortas dentro de un botón o una tarjeta: «Crear cuenta», el guardado de la sesión y el programa del alta.
 
+## Liquid Glass (GP-285, DEC-070)
+
+El lenguaje visual nuevo, aprobado el 25-11-2026 (`documentacion/diseno/2026-11-25-liquid-glass/`, dirección A). **Lote 1: el sistema, el cristal vivo, la barra flotante e Inicio.** Las demás pantallas siguen con los cimientos de arriba (`Widget.GymProFit.Card` no cambia) hasta que su lote las pase; una pantalla pasa poniendo `ThemeOverlay.GymProFit.Cristal` en su raíz, el fondo ambiental detrás y las tarjetas de `values/estilos_cristal.xml`. Todo vive en `ui/cristal/`, `values/estilos_cristal.xml`, `values/attrs_cristal.xml` y los tokens `gp_ambiente_*`, `gp_cristal_*`, `gp_vivo_*`, `gp_lente*` y `gp_mas_*` de `colors.xml`.
+
+### Dos clases de cristal
+
+- **Estático** (tarjetas, tiles, chips): un relleno translúcido sobre el fondo ambiental, que ya es difuso. No desenfoca nada: es igual en todas las versiones de Android y cuesta lo que un degradado. Lo dibuja `ui/cristal/Cristal` (`bg_cristal*.xml`, con `<drawable class=…>` y su regla de R8).
+- **Vivo** (la barra y el «+», la barra de la sesión, la hoja del «+»): tiene contenido que se mueve por debajo y lo desenfoca en tiempo real. Es la vista `ui/cristal/CristalVivo`, que vuelve a dibujar lo que el `LienzoCristal` de la pantalla tiene detrás (un `RenderNode`: no copia píxeles ni se invalida al desplazar). **Un cristal vivo va siempre fuera de su lienzo** (`CristalTest`).
+
+### Tres niveles del cristal vivo
+
+| Nivel | Cuándo | Qué hace |
+|---|---|---|
+| 1 · refracción | Android 13 o más (API 33+) | desenfoque (σ 22 dp, saturación 180 %) y refracción en una banda de 14 dp junto al borde (`res/raw/cristal_refraccion.agsl`), más el tinte |
+| 2 · desenfoque | Android 12 y 12L (API 31–32) | el mismo desenfoque, sin refracción |
+| 3 · opaco | Android 11 o menos, texto de alto contraste del sistema encendido, o un móvil que no aguanta los otros | superficie casi opaca (`gp_vivo_opaco_*`, 98 %; con menos, el texto de detrás se entreveía), sin desenfoque |
+
+Lo decide `NivelCristal.elegir(api, altoContraste, techo)` y nada más (`NivelCristalTest`). El **techo** es el interruptor de rendimiento: `VigiaCristal` mide lo que tarda en dibujarse cada fotograma (órdenes + GPU) y, si tres ventanas seguidas de 120 fotogramas pierden más del 25 % (más de 33,4 ms de dibujo), baja un nivel y lo guarda en el móvil (`RendimientoCristal`, `PreferencesManager.getCristalTecho`). No vuelve a subir. **El efecto se crea una vez por tamaño y nivel, nunca al dibujar** (`CristalTest`: la lente de la barra anterior creaba un `RenderEffect` por fotograma y se retiró).
+
+### Fondo ambiental
+
+`ui/cristal/FondoAmbiental` (geometría en `Ambiente`): la base y tres brillos radiales, estático, pintado una vez por tamaño. Vive en `activity_main` detrás de las pestañas, también bajo la barra de estado, y se enseña solo en las pestañas que ya están en Liquid Glass (hoy, Inicio).
+
+| | Oscuro | Claro |
+|---|---|---|
+| Base (`gp_ambiente_base`) | `#08090B` | `#F3F1EC` |
+| Brillo 1, arriba a la derecha (90 %, 8 %; elipse 420 × 320) | naranja `#FF6A00` al **26 %** | `#FF8A3D` al 34 % |
+| Brillo 2, izquierda a media altura (0 %, 42 %; 360 × 300) | rojo `#BE2814` al 45 % | `#FF9678` al 26 % |
+| Brillo 3, abajo a la derecha (85 %, 78 %; 380 × 320) | azul `#3C5AC8` al 35 % | `#78A5FF` al 24 % |
+
+El naranja va al 26 % y no al 55 % de la maqueta: con el 55 %, el texto secundario de una tarjeta que pasa sobre el brillo quedaba en 3,19:1 y el acento en 2,87:1 (regla 1).
+
+### Cristal estático
+
+Relleno a 160° `gp_cristal_alto` → `gp_cristal_medio` (al 55 %) → `gp_cristal_bajo` (oscuro: blanco 16 % → 5 % → 9 %; claro: blanco 78 % → 55 % → 65 %), borde de 1 dp `gp_cristal_borde` (blanco 18 % · 90 %) y brillo de 1 dp por dentro del canto de arriba `gp_cristal_brillo` (35 % · 100 %). **Sin sombra**: es translúcido y se vería a través (y sobre `#08090B` no se distingue). Radios: héroe 30 (`radio_cristal_heroe`), tarjeta 26 (`radio_cristal`), tile 22 (`radio_cristal_tile`); chips y botones, píldora.
+
+- **Tarjetas**: `Widget.GymProFit.Card.Cristal` (y `.Heroe`, `.Tile`, `.Oro`). Siguen siendo `MaterialCardView` (capa de pulsar, recorte, anillo de foco), transparentes; el cristal lo pinta el fondo de su primer hijo (`bg_cristal`, `bg_cristal_heroe`, `bg_cristal_tile`, `bg_cristal_oro`).
+- **Chip** (`Widget.GymProFit.ChipCristal`, `bg_cristal_pildora`): un dato corto, informativo, en el texto principal. «La última vez, hace 3 días» de «Hoy toca».
+- **Botón principal** (`BotonPildora.Expresivo.Cristal`): el naranja de siempre con el brillo superior (`brillo_boton`, se quita mientras se pulsa) y un halo naranja declarado (`gp_boton_halo`) que **hoy no se pinta** (medido en captura: sin tinte bajo el botón); queda pendiente, ver el informe del lote 1. **Secundario** (`BotonPildora.Cristal`): cristal plano `gp_cristal_boton` con borde y brillo.
+- **Récord** (`Card.Cristal.Oro`): degradado dorado de lado a lado (`gp_cristal_oro_alto` → `_bajo`, 28 % → 8 % en oscuro) con su brillo. Encima, las dos líneas van en el texto principal y la marca de 26 sp en `gp_cristal_oro_cifra`.
+- **Barras de progreso**: pista `gp_cristal_pista`, un surco oscuro (negro 40 % · casi negro 12 %), no el blanco 14 % de la maqueta: contra él el relleno quedaba en 2,56:1 (la pista se mide contra su relleno, GP-078). La barra es `ui/cristal/BarraProgresoCristal` (6 dp, informativa, sin nombre para TalkBack: lo lleva su grupo) y no el indicador de Material, que pinta la pista por tramos que se pisan en las puntas y, con una pista translúcida, dejaba dos lentejas más oscuras. **Gráficas dibujadas a mano** (`BarrasKilosView`, `BarrasVecesView`): leen `gpGraficoMarca`, `gpGraficoTenue` y `gpGraficoOro` del tema; sobre cristal, `gp_cristal_enlace`, `gp_cristal_barra_tenue` (blanco 45 % · casi negro 50 %, 3:1 contra el cristal) y `gp_cristal_oro`.
+
+### Cristal vivo
+
+Tinte a 160° `gp_vivo_alto` → `gp_vivo_bajo` (oscuro: `rgba(40,42,48,.72)` → `rgba(20,22,26,.62)`, no el 55–40 % de la maqueta: con el trofeo dorado de «Tu progreso» pasando por detrás, la pestaña activa bajaba a 4,15:1; claro: blanco 80 % → `#F6F4F0` 70 %) sobre el desenfoque, con el borde y el brillo del cristal y, con `app:cristalSombra`, una sombra suave por fuera (`gp_vivo_sombra`, 26 dp de difuminado y 12 hacia abajo; el padre no puede recortar a sus hijos). Lo de dentro lee su texto de `ThemeOverlay.GymProFit.CristalVivo`.
+
+- **Barra** (`BarraNavegacion`, `view_barra_navegacion`): cápsula de 64 dp a 16 de los lados y 26 del borde de abajo, más el hueco de gestos o de botones; el «+», un círculo de 64 a 10 dp de ella, con el degradado radial `gp_mas_claro` → `gp_mas_oscuro` (`#FFB27A` → `#FF6A00`) e icono `gp_mas_icono` (`#1A0E00`) en los dos temas; al pulsar pasa de 32 a 12 dp de esquina (`BotonExpresivo.alPulsar`). **El contenido pasa por debajo**: `MainActivity` da a cada pestaña, de relleno inferior, el alto del pie más 16 dp (`barra_aire_contenido`) y le quita el recorte del relleno.
+- **Selección «lente»** (`bg_lente`): la pestaña activa lleva una cápsula de 52 dp con relleno `gp_lente` (blanco **7 %** en oscuro, no el 14 % de la maqueta; casi negro 8 % en claro), brillo superior `gp_lente_brillo` (40 %) y canto `gp_lente_resplandor`; su icono (relleno) y su etiqueta (negrita), en `gp_vivo_acento` (`#FFB27A` · `#8A2E00`; con el `#FF8A3D` de la maqueta la etiqueta daba 3,19:1). Las demás, en `gp_vivo_texto` (`#E4E6EB` · `#3A3C42`). Las etiquetas crecen con la letra hasta 1,3 y nunca más de lo que cabe en su pestaña (`BarraNavegacion.escalaEtiqueta`).
+- **Barra de la sesión** (`view_barra_sesion`): otra cápsula de cristal vivo, 8 dp por encima de la barra; si su texto no cabe en una línea, parte por el primer separador («Sesión en curso» / «Torso A · 23:14»). **Hoja del «+»** (`view_acciones_rapidas`): cristal vivo de radio 28 sobre el velo; sube 36 dp y aparece (ya no viene de debajo de la barra, que flota). Su asa va en el texto secundario del cristal. **El velo** de detrás es `gp_velo_cristal` (negro 62 % en oscuro, **35 % en claro**): con la hoja abierta, la hoja y la barra desenfocan el contenido ya oscurecido, y en claro, con el velo de siempre y el tinte al 72–58 %, el cristal salía gris y el secundario de la hoja bajaba a 3,86:1 (revisor de UI). El velo y el tinte del cristal vivo se tocan juntos.
+
+### Reglas de legibilidad (obligatorias, medidas en `ContrasteCristalTest`)
+
+1. **Ningún brillo intenso detrás de texto pequeño.** El fondo es fijo y el contenido se desplaza: cualquier texto puede pasar por cualquier punto, así que el límite es para todo el fondo.
+2. **4,5:1 (3:1 en 24 sp o más y en gráficos) sobre el punto más desfavorable** de fondo + brillo + cristal compuestos: el test recorre el fondo entero en seis tamaños de pantalla y compone cada capa con sus tres tonos. Peor par de cada grupo (oscuro · claro): texto sobre el fondo 8,43 · 5,79 (secundario) y 5,72 · 5,06 (enlace); sobre el cristal 7,59 · 15,02 (principal), 5,33 · 7,14 (secundario), 4,81 · 6,24 (acento), 5,58 · 5,72 (éxito), 4,61 · 5,27 (dorado); sobre el chip 5,48 · 16,58; sobre el récord 4,67 · 12,87 y su cifra 3,88 · 4,52; gráficos sobre el cristal 3,40 · 4,14; relleno contra su pista 5,43 · 3,25.
+3. **El cristal vivo se lee en los tres niveles, sin contar con el desenfoque**: detrás puede haber cualquier punto del fondo con o sin tarjeta, y además el velo del «+». Pestañas 9,99 · 7,48 (niveles 1 y 2) y 11,34 · 9,95 (nivel 3); la activa sobre su lente 5,65 · 4,95 y 6,45 · 6,57; el secundario de la hoja 7,83 · 5,73. Eso es el fondo propio; con contenido claro pasando por detrás (el trofeo dorado de «Tu progreso») la activa se midió en captura en 5,45:1 en oscuro y 6,24:1 en claro.
+
+Sobre cristal el texto sale del tema de la pantalla (`colorOnSurface` → `gp_cristal_texto` `#F2F2F3` · `#17181C`; `colorOnSurfaceVariant` → `gp_cristal_texto_2` `#C9CDD6` · `#4B4D54`), no de `gp_text_secondary`. El acento de texto pequeño sobre cristal es `gp_cristal_acento` (`#FFB27A` · `#9A3300`) y el de un enlace sobre el fondo `gp_cristal_enlace` (`#FF8A3D` · `#9A3300`): **`gp_primary` y `gp_text_secondary` no se usan como texto sobre cristal** (en oscuro quedan en 2,96:1 y 3,59:1 sobre el punto más claro). Lo inflado por código se infla con el contexto de su padre, que es el que lleva el tema.
+
+### Tema claro
+
+Sin maqueta: cristal blanco esmerilado sobre un fondo claro cálido con brillos suaves, con las mismas reglas y los mismos tests. Pendiente de aprobación con capturas.
+
 ## Colors
 
 Paleta atlética de dos temas con nombres semánticos. Los layouts no escriben hex: usan `@color/gp_*` o `?attr/...` (`values/colors.xml`, cabecera). Fuentes: `values/colors.xml` (claro, y los alias heredados) y `values-night/colors.xml` (oscuro, por defecto). El tema mapea los tokens a roles M3 en `values/themes.xml` (`Theme.GymProFit`).
@@ -309,7 +394,7 @@ Paleta atlética de dos temas con nombres semánticos. Los layouts no escriben h
 - **Borde** (`gp_stroke`, `#676F7E` · `#8C8C7D`): delimita tarjeta, campo y chip; 3:1 contra fondo y tarjeta desde GP-063. **Separador** (`gp_divider`, `#4A505B` · `#C9C9C2`): línea decorativa interna, no delimita nada.
 - **Texto** (`gp_on_surface`, `#F2F2F3` · `#17181C`) y **texto secundario** (`gp_text_secondary`, `#A1A9B6` · `#5A5C62`): el secundario sustituye a los `android:alpha` sobre texto, que bajaban a 2,14:1.
 - **Pista del medidor** (`gp_meter_track`, `#353A43` · `#D6D6D0`): se mide contra la marca, no contra la tarjeta (GP-078).
-- **Velo del «+»** (`gp_velo`, `#9E000000`, igual en los dos temas) y el escáner (`gp_escaner_texto` `#F2F2F3`, `gp_escaner_leido` `#4ADE80`, `gp_escaner_velo` `#C70B0C0E`): siempre sobre imagen o sobre la capa oscura, sin variante por tema.
+- **Velo del «+»** (`gp_velo`, `#9E000000`, igual en los dos temas; sobre un lienzo de cristal, `gp_velo_cristal`: ver «Liquid Glass») y el escáner (`gp_escaner_texto` `#F2F2F3`, `gp_escaner_leido` `#4ADE80`, `gp_escaner_velo` `#C70B0C0E`): siempre sobre imagen o sobre la capa oscura, sin variante por tema.
 
 ### Named Rules
 **The One Voice Rule.** El naranja es el único acento y el mismo en los dos temas; su rareza es la jerarquía. Si todo es naranja, nada lo es.
@@ -354,7 +439,7 @@ Los tamaños son los once escalones de `values/dimens.xml` (más `envivo_descans
 
 Una pantalla es una columna de tarjetas sobre el fondo. Las cuatro pestañas (Inicio, Entrenar, Nutrición, Progreso) comparten cabecera: título de 34 sp, botón redondo o avatar de 48 dp a la derecha, `margen_pantalla` (20 dp) a los lados, 18 arriba y 6 abajo (`Widget.GymProFit.CabeceraPestana`, `values/estilos_estructura.xml`). Las pantallas secundarias llevan una sola cabecera, la `MaterialToolbar` con «Volver» (`Widget.GymProFit.Cabecera`; `CabeceraTest` vigila que no vuelva la fila hecha a mano).
 
-La navegación principal es una barra fija inferior de cuatro pestañas más el «+» central (`ui/widget/BarraNavegacion.java`, mínimo 60 dp). El hueco de la barra de gestos se suma ahí y en ningún otro sitio. Las etiquetas crecen con la letra del sistema hasta 1,3.
+La navegación principal es una barra flotante de cristal vivo con cuatro pestañas y, a su derecha, el «+» (`ui/widget/BarraNavegacion.java`; GP-285, ver «Liquid Glass»): 64 dp de alto, a 16 de los lados y 26 del borde de abajo más el hueco de gestos, que se suma ahí. El contenido de las pestañas pasa por debajo: el relleno inferior lo pone `MainActivity`. Las etiquetas crecen con la letra del sistema hasta 1,3 y nunca más de lo que cabe en su pestaña.
 
 **Espaciado.** La escala es la de «Cimientos» (4, 8, 12, 16, 20, 24, 28 y 36 dp, con `espacio_*`). Quedan layouts anteriores a ella con 6, 10, 14 y otros valores sueltos; se llevan a la escala cuando GP-216 rehaga cada pantalla. Piezas repetidas: cabecera de pestaña 20/18/6; fila de lista 64 dp con 16 a los lados; icono de comida 44 dp con un icono de 24; tarjeta de comida con 14 dp de relleno.
 
@@ -372,7 +457,7 @@ La navegación principal es una barra fija inferior de cuatro pestañas más el 
 - **Velo del «+»** (`gp_velo`, negro al 62 %) para separar la hoja del contenido, sin sombra.
 
 ### Named Rules
-**The Tone-Not-Shadow Rule.** Una tarjeta se separa del fondo por el tono en oscuro y por un borde de 1 dp en claro, nunca con una sombra que en oscuro no se ve. El borde de la tarjeta (`outlineVariant`, 1,66:1 contra blanco) no delimita un control; los bordes de campos y chips siguen siendo `gp_stroke` a 3:1.
+**The Tone-Not-Shadow Rule.** Una tarjeta se separa del fondo por el tono en oscuro y por un borde de 1 dp en claro, nunca con una sombra que en oscuro no se ve. En Liquid Glass la regla sigue: el cristal estático se separa por su relleno, su borde y su brillo, sin sombra; la única sombra nueva es la del cristal vivo, que flota sobre contenido que se mueve. El borde de la tarjeta (`outlineVariant`, 1,66:1 contra blanco) no delimita un control; los bordes de campos y chips siguen siendo `gp_stroke` a 3:1.
 
 ## Shapes
 
@@ -433,6 +518,7 @@ Lo que está en uso. Todo se tematiza por `Theme.GymProFit` (`values/themes.xml`
 ### Inicio, Perfil y ajustes (GP-216, lote 1)
 
 - **Avatar en las cuatro pestañas.** Inicio, Entrenar, Nutrición y Progreso llevan el avatar de 48 dp arriba a la derecha (`avatarCabecera`, `AvatarUtils.cabecera`) y abre Perfil y ajustes. Progreso pierde el engranaje.
+- **Inicio en Liquid Glass (GP-285).** Las mismas secciones, textos y lógica, con otra piel: fondo ambiental detrás, «Hoy toca» en la tarjeta héroe de cristal (radio 30; «La última vez…» pasa a un chip; los ejercicios del carrusel, en tiles de cristal), «Tu día» en **tres tiles a lo ancho** con una barra de progreso cada uno (`item_tu_dia`; ya no es un carrusel con aros y vasos: los vasos se siguen diciendo a TalkBack), y el resto de tarjetas en cristal (`Card.Cristal`, `.Tile` en los carruseles, `.Oro` en el récord). Lo de abajo describe el contenido, que no cambia.
 - **Inicio** (`fragment_inicio.xml`, `ui/inicio/`): bocadillo de Profi (`bg_burbuja_profi`: esquina de la cola 4, las otras 16; solo sale con un dato real, `FraseProfi`; «Hoy toca · día 3 de 3» es el lugar de la rutina de hoy en el ciclo, `TuPrograma.diaHoy`, el mismo que dice Entrenar; la sigla final del nombre de una rutina va pegada a su palabra con un espacio duro, `FraseProfi.sinPartirSigla`, para que a 1,3 la «B» no se quede sola en otra línea) · «Hoy toca» (tarjeta protagonista con `SiluetaMuscularView` de 120 dp con las zonas del día y un carrusel de `item_hoy_ejercicio`; el icono de cada ejercicio es el de su zona, provisional) · «Tu día» (carrusel de `item_tu_dia`: aro de 72 dp de calorías y de proteína y `VasosAguaView` para el agua, y la fila de la comida que toca) · «Tus músculos esta semana» (silueta y una barra por zona, `item_zona_semana`) · «Tu progreso» (`BarrasKilosView`, kilos de las seis últimas semanas o, sin kilos en ellas, «Series por semana» con las series y el mismo «+12 % en 5 semanas»; sin kilos ni series, el bloque no sale; GP-249, `MedidaSemanal`; y la tarjeta dorada del último récord, que crece hasta la progresión) · «Tus últimos entrenos» (carrusel de `item_ultimo_entreno`). Cada bloque de red usa `VistaEstado`: cargando, error con «Reintentar» y vacío, sin toast.
 - **Vistas dibujadas a mano**: `BarrasKilosView` y `VasosAguaView` nacen con su descripción para TalkBack; los aros son `CircularProgressIndicator`.
 - **Fila de Perfil y ajustes** (`view_fila_ajuste.xml`): una sola fila para las 22 de antes, con segunda línea, valor, interruptor, botón y flecha opcionales. Rótulo de grupo `Widget.GymProFit.RotuloGrupo` y grupo `GrupoAjustes.Pantalla` (tarjeta de 24 con filas de 64).
@@ -488,7 +574,7 @@ Lo que está en uso. Todo se tematiza por `Theme.GymProFit` (`values/themes.xml`
 - Selectores: `Spinner` con flecha Material Symbols y 48 dp de alto mínimo (`Widget.GymProFit.Spinner`); el selector de opciones para las que se excluyen (`ui/widget/SelectorPildora.java`, ver «Selector de opciones»). Su menú va en `bg_menu_desplegable` (superficie, borde `gp_stroke` y radio 12; en oscuro se confundía con el fondo). Apuntar entreno ya no lleva desplegable (GP-241): la rutina se elige en su hoja.
 
 ### Navigation
-- **Barra inferior** (`BarraNavegacion`): Inicio · Entrenar · «+» · Nutrición · Progreso. Pestaña activa con píldora `gp_primary_container` e icono relleno; el resto, icono en contorno y `gp_text_secondary`. El «+» abre las acciones rápidas y, abierto, gira a «×». Cada botón lleva nombre, rol de pestaña, posición y estado para TalkBack, y su tooltip.
+- **Barra inferior** (`BarraNavegacion`): una cápsula de cristal vivo con Inicio · Entrenar · Nutrición · Progreso y, separado a su derecha, el «+» (GP-285; medidas y colores en «Liquid Glass»). Pestaña activa con la lente (`bg_lente`), icono relleno y etiqueta en negrita en `gp_vivo_acento`; el resto, icono en contorno y `gp_vivo_texto`. El «+» abre las acciones rápidas y, abierto, gira a «×». Cada botón lleva nombre, rol de pestaña, posición y estado para TalkBack, y su tooltip; el anillo de foco de una pestaña va en su lente (`anillo_pildora`).
 - **Cabecera** de pantalla secundaria: `MaterialToolbar` de 56 dp (`Widget.GymProFit.Cabecera`, mínimo `cabecera_alto`: el `?attr/actionBarSize` de Material 3 son 64) con «Volver»; el botón de atrás se llama «Volver» en todas las pantallas.
 - **Transición entre pantallas:** las de Material motion de «Motion» (contenedor que crece y eje X); el resto, el deslizamiento lateral con parallax (`GymProFit.WindowAnimation`, `res/anim/slide_*`). Entre pestañas, el fundido de GP-105.
 
@@ -647,5 +733,6 @@ Lo que hoy es incoherente o no existe. Aquí no se arregla nada.
 10. **Chips que no se han convertido.** Siguen siendo chips los filtros largos y desplazables (Ejercicios, las cuatro listas de administración, Añadir ejercicios, equipamiento y días de Programas) y la ficha del resumen; solo pasan a botones conectados las opciones que se excluyen y son pocas.
 11. **Borde discontinuo sin documentar.** La tarjeta del fundador (`drawable/bg_tarjeta_fundador.xml`), el botón discontinuo (`bg_boton_discontinuo.xml`) y «nueva rutina» (`bg_nueva_rutina.xml`) usan trazo discontinuo, una tercera forma de borde que «Components» no recoge y que el diseño de Inicio aprobado no tiene.
 13. **Datos que el tablero 14/29–32 dibuja y la API no tiene (GP-216, lote 2).** Sin «semana 3 de 8» ni días de la semana en el programa (es cíclico: «día 2 de 4»); sin «Añadir a una rutina», «favoritos» ni el rótulo «Bajar · subir» de la ficha del ejercicio; sin filtro de material en la Biblioteca (el botón «Filtros» del tablero no se hizo: la API solo filtra por grupo y nivel); sin «Compartir» en el programa; «Más opciones» de la rutina se queda en «Editar». Los iconos de los chips de grupo son provisionales.
+14. **Liquid Glass, a medias (GP-285, lote 1).** Solo la barra, la barra de la sesión, la hoja del «+» e Inicio están en el sistema nuevo. Entrenar, Nutrición, Progreso y todas las subpantallas siguen con la tarjeta opaca y pasan bajo la barra de cristal con su fondo de siempre; las demás hojas inferiores (`BottomSheetDialog`) no son cristal vivo todavía. El avatar de cabecera, el bocadillo de Profi y la tarjeta del fundador conservan su dibujo. El tema claro está sin aprobar. Un foco de teclado o de TalkBack puede caer en algo que queda bajo la barra flotante: el scroll lo acerca, pero no cuenta con ella.
 12. **Inicio con errores de carga (resuelto en GP-216, lote 1).** Cada bloque dice su fallo dentro con `VistaEstado` y «Reintentar»; ya no hay toast duplicado.
 14. **Datos que los tableros 15, 16 y 24 a 28 dibujan y la API no tiene (GP-216, lotes 3 y 4).** Sin ideas de proteína para una cuenta nueva: salen de lo tuyo (favoritos, platos, lo habitual), no de un catálogo de recomendados. Sin la hora de la comida («14:10») en la cabecera de la comida apuntada. Sin «Merienda de ayer» y «Crear alimento» como botones bajo Recientes: la copia de comidas ya está en «Comidas recientes» y crear, en Mis platos y en «¿No lo encuentras?». La barra de Añadir cuenta la proteína que falta del día, no de la comida. En Progreso (tablero 16): sin logros de racha («4 semanas seguidas») ni de récords («50 récords»), porque `TipoLogro` solo tiene sesiones, ejercicios y objetivos: salen los reales; sin día fijo para pesarse («el día 1 de cada mes»): la API avisa cuando pasan 30 días desde la última medición, y eso es lo que se dice; los kilos por sesión ya no se piden fila a fila: salen de `GET /sesiones/historial` (GP-232).
