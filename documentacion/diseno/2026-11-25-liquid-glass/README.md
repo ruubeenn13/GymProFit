@@ -27,7 +27,7 @@ Distribución de Android (Google, octubre de 2026): API 33+ ≈ 68 % · API 31�
 - **Cristal vivo (barra):** degradado `rgba(40,42,48,.55)` → `rgba(20,22,26,.40)` sobre desenfoque 22 dp con saturación 180 %; mismo borde y brillo.
 - **Selección «lente» (pestaña activa, día elegido, serie en curso):** cápsula blanco 14 % con brillo superior blanco 40 % y resplandor interior blanco 8 %; icono y etiqueta en `#FF8A3D`.
 - **Radios:** tarjeta héroe 30 dp · tarjetas 26–28 dp · tiles 22 dp · chips y botones en píldora.
-- **Botón principal:** `#FF6A00` con texto `#1A0E00`, brillo superior blanco 45 % y halo naranja 45 %. Secundario: cristal estático.
+- **Botón principal:** `#FF6A00` con texto `#1A0E00` y brillo superior blanco 45 %. Secundario: cristal estático.
 - **«+»:** círculo de 64 dp, degradado radial `#FFB27A` → `#FF6A00`, icono `#1A0E00`.
 - **Barra:** cápsula flotante de 64 dp a 16 dp de los lados y 26 dp del borde inferior (más el hueco de gestos), con el «+» separado a su derecha. El contenido pasa por debajo.
 - **Texto:** principal `#F2F2F3`; secundario `#C9CDD6`; acento `#FFB27A`/`#FF8A3D`. Títulos y cifras en Barlow Condensed 700–800; texto en Barlow.
@@ -59,5 +59,18 @@ Donde un valor de arriba chocaba con una regla de legibilidad, manda la regla (D
 | Ejercicios de «Hoy toca» en chips («Press de banca», «+4») | quitaría la pauta y la última marca de cada ejercicio, que la app ya enseña | se conserva el carrusel, con cada ejercicio en un tile de cristal |
 | «Tu día» con «1.420 · de 2.450» | cambiaría el texto («2.180 · te quedan») | tres tiles con los textos de siempre y su barra |
 | Títulos de sección en Barlow Condensed 22/700, «Torso A» a 44/800 y cifras de los tiles a 28 | la escala de letra de la app (`CimientosTest`: sección en Barlow SemiBold de 20 sp, título de 34, cifra pequeña de 26) es de todas las pantallas, y cambiarla solo en Inicio la partiría en dos | la escala de siempre; si se quiere la de la maqueta, se cambia para toda la app en su propio lote |
+
+### Remate del lote 1 (26-11-2026)
+
+Lo que el propietario corrigió al aprobar el diseño con las capturas. Vale para los lotes siguientes:
+
+| Qué | Cómo queda |
+|---|---|
+| El botón principal traía un resplandor naranja al 45 % alrededor (las maquetas lo conservan en su CSS) | retirado de esta referencia: la sombra de Android no lo da y no se pinta |
+| El contenido que pasa bajo la barra flotante llegaba hasta los iconos del sistema (las cifras bajo ◁ ● ■; arriba, cortado en seco bajo el reloj) | dos bordes que lo desvanecen hacia el fondo base antes de llegar: macizos en la franja de cada barra del sistema y en degradado hacia el contenido; con gestos, el de abajo queda corto. Con la hoja del «+» abierta, el velo los cubre con su mismo tono |
+| «La última vez, hace 1 semana» se partía en dos líneas junto a las siluetas con letra grande | una línea siempre, debajo de la fila del título y las siluetas, a todo el ancho de la tarjeta |
+| «Empezar» quedaba a 1,5 dp de la barra flotante con letra 1,3 | margen mínimo de 16 dp (`barra_margen_boton`) entre el último botón de una tarjeta y la barra |
+
+Detalle y medidas en `app/GymProFit/DESIGN.md` («Bordes del sistema» y «Cristal vivo»).
 
 El desenfoque de la maqueta (`blur(22px)`) es la desviación (σ); en Android el «radio» de `RenderEffect` que da esa σ es (σ − 0,5) / 0,57735.

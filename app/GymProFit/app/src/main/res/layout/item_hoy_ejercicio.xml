@@ -12,7 +12,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <!-- Su alto cede hasta hoy_ejercicio_icono_cede si «Empezar» queda pegado a la barra (EncajeHeroe). -->
     <FrameLayout
+        android:id="@+id/bloqueIconoEjercicio"
         android:layout_width="match_parent"
         android:layout_height="@dimen/hoy_ejercicio_icono_alto"
         android:background="@drawable/bg_cristal_tile"

@@ -168,9 +168,8 @@
     <color name="gp_cristal_oro_alto">#47E8B84B</color>
     <color name="gp_cristal_oro_bajo">#14E8B84B</color>
     <color name="gp_cristal_oro_brillo">#66FFECBE</color>
-    <!-- Botón principal sobre cristal: brillo superior y halo. -->
+    <!-- Botón principal sobre cristal: brillo superior. -->
     <color name="gp_boton_brillo">#73FFFFFF</color>
-    <color name="gp_boton_halo">#73FF6A00</color>
     <!-- Botón secundario y chip: cristal estático plano. -->
     <color name="gp_cristal_boton">#1FFFFFFF</color>
 </resources>

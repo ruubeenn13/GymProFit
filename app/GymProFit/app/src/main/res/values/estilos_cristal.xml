@@ -12,7 +12,7 @@
   fondo ambiental siguen con ella. Una pantalla pasa al sistema nuevo poniendo
   ThemeOverlay.GymProFit.Cristal en su raíz y estas tarjetas en lugar de aquellas.
 -->
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- ══ El tema de una pantalla sobre el fondo ambiental ═══════════════════
          Lo de dentro lee de aquí el texto (principal y secundario), la pista de las barras de
@@ -75,13 +75,11 @@
 
     <!-- ══ Botones ═══════════════════════════════════════════════════════════
          El principal: el naranja de siempre con el brillo superior del cristal (brillo_boton,
-         que se quita mientras se pulsa) y, desde Android 9, un halo naranja en lugar de la
-         sombra gris. Cambia de forma al pulsar, como todo botón principal (BotonExpresivo). -->
+         que se quita mientras se pulsa). Sin halo: la maqueta lo traía, la sombra de Android no
+         lo da y no se pinta (retirado de la referencia). Cambia de forma al pulsar, como todo
+         botón principal (BotonExpresivo). -->
     <style name="Widget.GymProFit.BotonPildora.Expresivo.Cristal">
         <item name="android:foreground">@drawable/brillo_boton</item>
-        <item name="elevation">@dimen/boton_cristal_halo</item>
-        <item name="android:outlineAmbientShadowColor" tools:targetApi="28">@color/gp_boton_halo</item>
-        <item name="android:outlineSpotShadowColor" tools:targetApi="28">@color/gp_boton_halo</item>
     </style>
 
     <!-- El secundario: cristal estático plano con su borde y su brillo. -->

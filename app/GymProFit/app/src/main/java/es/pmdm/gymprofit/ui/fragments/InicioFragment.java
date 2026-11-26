@@ -50,10 +50,12 @@ import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.activities.AnadirAlimentoActivity;
 import es.pmdm.gymprofit.ui.activities.CrearRutinaActivity;
+import es.pmdm.gymprofit.ui.activities.MainActivity;
 import es.pmdm.gymprofit.ui.activities.PerfilActivity;
 import es.pmdm.gymprofit.ui.activities.ProgramasActivity;
 import es.pmdm.gymprofit.envivo.EmpezarSesion;
 import es.pmdm.gymprofit.ui.activities.ResumenSesionActivity;
+import es.pmdm.gymprofit.ui.inicio.EncajeHeroe;
 import es.pmdm.gymprofit.ui.inicio.InicioEntrenos;
 import es.pmdm.gymprofit.ui.inicio.InicioHoyDetalle;
 import es.pmdm.gymprofit.ui.inicio.InicioProgreso;
@@ -145,6 +147,10 @@ public class InicioFragment extends BaseFragment {
         avatar.setContentDescription(getString(R.string.avatar_perfil_a11y));
         avatar.setOnClickListener(v -> startActivity(new Intent(requireContext(), PerfilActivity.class)));
 
+        // Cada vez que algo de Inicio cambia de medida (llega el carrusel, cambia la letra, sale
+        // la barra de la sesión) se mira si «Empezar» queda pegado a la barra flotante. Fuera
+        // de la pasada de medida, que es donde se puede pedir otra.
+        view.addOnLayoutChangeListener((v, l, t, r, b, l0, t0, r0, b0) -> v.post(this::encajarHeroe));
         hoyDetalle = new InicioHoyDetalle(this, view);
         tuDia = new InicioTuDia(this, view, prefsManager, () -> irATab(NavTabs.NUTRICION), this::registrarComida,
                 this::alTenerComidas);
@@ -581,6 +587,35 @@ public class InicioFragment extends BaseFragment {
         p2.leftMargin = apilar ? 0 : margen;
         p2.topMargin = apilar ? margen : 0;
         fila.requestLayout();
+    }
+
+    // El último botón de «Hoy toca» frente a la barra flotante (EncajeHeroe): si con el scroll
+    // arriba queda a menos de barra_margen_boton de ella y acortando el bloque del icono de cada
+    // ejercicio se arregla, se acorta justo lo que falta; si no, cada bloque vuelve a su alto.
+    private void encajarHeroe() {
+        View raiz = getView();
+        MainActivity m = main();
+        if (!(raiz instanceof ViewGroup) || m == null || m.altoPie() == 0) return;
+        LinearLayout lista = raiz.findViewById(R.id.listaHoyEjercicios);
+        View botones = raiz.findViewById(R.id.filaBotonesHoy);
+        boolean hayCarrusel = raiz.findViewById(R.id.scrollHoyEjercicios).getVisibility() == View.VISIBLE
+                && lista.getChildCount() > 0;
+        int alto = getResources().getDimensionPixelSize(R.dimen.hoy_ejercicio_icono_alto);
+        int cedido = hayCarrusel
+                ? alto - lista.getChildAt(0).findViewById(R.id.bloqueIconoEjercicio).getLayoutParams().height : 0;
+        // Dónde acaba la fila de botones en el contenido del scroll, esté donde esté el scroll.
+        android.graphics.Rect fila = new android.graphics.Rect(0, 0, botones.getWidth(), botones.getHeight());
+        ((ViewGroup) raiz).offsetDescendantRectToMyCoords(botones, fila);
+        int cede = EncajeHeroe.cede(fila.bottom, cedido, raiz.getHeight() - m.altoPie(),
+                getResources().getDimensionPixelSize(R.dimen.barra_margen_boton),
+                hayCarrusel ? getResources().getDimensionPixelSize(R.dimen.hoy_ejercicio_icono_cede) : 0);
+        if (cede == cedido) return;
+        for (int i = 0; i < lista.getChildCount(); i++) {
+            View bloque = lista.getChildAt(i).findViewById(R.id.bloqueIconoEjercicio);
+            ViewGroup.LayoutParams lp = bloque.getLayoutParams();
+            lp.height = alto - cede;
+            bloque.setLayoutParams(lp);
+        }
     }
 
     private void pintarHoyTocaError() {

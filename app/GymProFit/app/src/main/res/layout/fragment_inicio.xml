@@ -112,15 +112,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Sin recortar a sus hijos: el halo del botón principal sale de su fila. -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_cristal_heroe"
-                    android:clipChildren="false"
                     android:orientation="vertical"
                     android:paddingTop="@dimen/espacio_20"
                     android:paddingBottom="@dimen/espacio_20">
+
+                    <!-- El título con las siluetas al lado. El subtítulo va junto a ellas mientras
+                         quepa en dos líneas; si no, lo enseña tvHoySubAncho, debajo y a todo el
+                         ancho (CabeceraHoyToca lo decide en cada medida). -->
+                    <es.pmdm.gymprofit.ui.inicio.CabeceraHoyToca
+                        android:id="@+id/cabeceraHoy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -171,14 +178,6 @@
                                 android:layout_marginTop="@dimen/espacio_4"
                                 android:textSize="@dimen/text_body"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
-
-                            <!-- «La última vez, hace 3 días», en un chip: en la maqueta iba suelto arriba a
-                                 la derecha, sobre el brillo, y no se leía (README, regla 1). -->
-                            <TextView
-                                android:id="@+id/tvHoyUltima"
-                                style="@style/Widget.GymProFit.ChipCristal"
-                                android:layout_marginTop="@dimen/espacio_4"
-                                android:visibility="gone" />
                         </LinearLayout>
 
                         <!-- Las zonas de hoy en el cuerpo: dibujada a mano, con su descripción. -->
@@ -189,6 +188,32 @@
                             android:layout_marginStart="@dimen/espacio_12"
                             android:visibility="gone" />
                     </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvHoySubAncho"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/espacio_20"
+                            android:layout_marginEnd="@dimen/espacio_20"
+                            android:layout_marginTop="@dimen/espacio_4"
+                            android:textSize="@dimen/text_body"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            android:visibility="gone" />
+                    </es.pmdm.gymprofit.ui.inicio.CabeceraHoyToca>
+
+                    <!-- «La última vez, hace 3 días», en un chip: en la maqueta iba suelto arriba a
+                         la derecha, sobre el brillo, y no se leía (README, regla 1). Debajo de la fila
+                         del título y las siluetas, a todo el ancho de la tarjeta y en una línea:
+                         junto a las siluetas, con letra grande, se partía en dos. -->
+                    <TextView
+                        android:id="@+id/tvHoyUltima"
+                        style="@style/Widget.GymProFit.ChipCristal"
+                        android:layout_marginStart="@dimen/espacio_20"
+                        android:layout_marginEnd="@dimen/espacio_20"
+                        android:layout_marginTop="@dimen/espacio_4"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:visibility="gone" />
 
                     <HorizontalScrollView
                         android:id="@+id/scrollHoyEjercicios"

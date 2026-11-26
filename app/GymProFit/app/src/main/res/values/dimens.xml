@@ -270,17 +270,24 @@
     <!-- El «+»: círculo de 64 (radio 32) con el degradado radial de 45 dp de radio. -->
     <dimen name="barra_mas_radio">32dp</dimen>
     <dimen name="barra_mas_degradado">45dp</dimen>
-    <!-- La barra de la sesión va 8 por encima; el contenido acaba 16 por encima de todo. -->
+    <!-- La barra de la sesión va 8 por encima. -->
     <dimen name="barra_sesion_hueco">8dp</dimen>
-    <dimen name="barra_aire_contenido">16dp</dimen>
+    <!-- Margen mínimo entre el último botón de una tarjeta y la barra flotante: lo último de
+         cada pestaña acaba a esto del pie (MainActivity.aplicarHuecoInferior) y, en reposo, el
+         botón de «Hoy toca» también (EncajeHeroe). -->
+    <dimen name="barra_margen_boton">16dp</dimen>
+    <!-- Bordes del sistema (BordesSistema): el tramo, bajo la barra de estado, en que el
+         contenido se desvanece hacia el fondo base. El de abajo sale de las medidas de la barra. -->
+    <dimen name="borde_sistema_desvanecido">24dp</dimen>
     <!-- Tile de «Tu día»: relleno y barra de progreso. -->
     <dimen name="tile_relleno">12dp</dimen>
     <dimen name="tile_barra">6dp</dimen>
     <dimen name="tile_alto_min">112dp</dimen>
-    <!-- Chip de cristal: 6 arriba y abajo. Halo del botón principal sobre cristal. -->
+    <!-- Chip de cristal: 4 arriba y abajo. -->
     <dimen name="chip_cristal_relleno">4dp</dimen>
     <!-- El bloque del icono de cada ejercicio de «Hoy toca» (eran 84: con letra 1,3 la tarjeta
-         héroe dejaba «Empezar» bajo la barra flotante). -->
+         héroe dejaba «Empezar» bajo la barra flotante), y lo más que cede si aun así el botón
+         queda a menos de barra_margen_boton de la barra (EncajeHeroe): hasta 48, con el icono de 40. -->
     <dimen name="hoy_ejercicio_icono_alto">72dp</dimen>
-    <dimen name="boton_cristal_halo">8dp</dimen>
+    <dimen name="hoy_ejercicio_icono_cede">24dp</dimen>
 </resources>

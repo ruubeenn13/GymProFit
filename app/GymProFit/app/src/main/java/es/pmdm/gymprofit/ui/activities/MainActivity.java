@@ -38,6 +38,7 @@ import es.pmdm.gymprofit.model.rutina.Rutina;
 import es.pmdm.gymprofit.network.ApiCallback;
 import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.MedicionApi;
+import es.pmdm.gymprofit.ui.cristal.BordesSistema;
 import es.pmdm.gymprofit.ui.fragments.EntrenarFragment;
 import es.pmdm.gymprofit.ui.fragments.InicioFragment;
 import es.pmdm.gymprofit.ui.fragments.NutricionFragment;
@@ -85,6 +86,14 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     private View fondoAmbiental, pie;
     private es.pmdm.gymprofit.ui.cristal.LienzoCristal lienzo;
     private es.pmdm.gymprofit.ui.cristal.VigiaCristal vigiaCristal;
+    // Los bordes del sistema (BordesSistema): el contenido se desvanece antes de sus iconos.
+    private View bordeSuperior, bordeInferior;
+    private final es.pmdm.gymprofit.ui.cristal.BordeSistema bordeArriba =
+            new es.pmdm.gymprofit.ui.cristal.BordeSistema(true);
+    private final es.pmdm.gymprofit.ui.cristal.BordeSistema bordeAbajo =
+            new es.pmdm.gymprofit.ui.cristal.BordeSistema(false);
+    // Lo que de cada borde es macizo (la franja de su barra del sistema), en px.
+    private int macizoArriba, macizoAbajo;
     private boolean hojaAbierta = false;
 
     // Lo que ya se sabe para los subtítulos de la hoja. null = todavía no.
@@ -136,6 +145,10 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         lienzo = findViewById(R.id.lienzoCristal);
         fondoAmbiental = findViewById(R.id.fondoAmbiental);
         fondoAmbiental.setBackground(new es.pmdm.gymprofit.ui.cristal.FondoAmbiental(this));
+        bordeSuperior = findViewById(R.id.bordeSuperior);
+        bordeInferior = findViewById(R.id.bordeInferior);
+        bordeSuperior.setBackground(bordeArriba);
+        bordeInferior.setBackground(bordeAbajo);
         vigiaCristal = new es.pmdm.gymprofit.ui.cristal.VigiaCristal(this, lienzo);
         // El pie cambia de alto con la barra de la sesión y con los márgenes del sistema: el
         // relleno de las pestañas y el sitio de la hoja del «+» lo siguen.
@@ -447,7 +460,8 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
 
     // Esta pantalla gestiona sus márgenes del sistema (InsetsUtils la deja): a los lados, la
     // raíz; arriba, las pestañas (el lienzo, con el fondo ambiental, sigue bajo la barra de
-    // estado); abajo, la barra, que flota por encima del hueco de gestos o de botones.
+    // estado); abajo, la barra, que flota por encima del hueco de gestos o de botones. Y los dos
+    // bordes del sistema, que desvanecen el contenido antes de los iconos de cada barra.
     private void aplicarInsets() {
         barrasDelSistemaTransparentes();
         View raiz = findViewById(R.id.raizMain);
@@ -455,35 +469,76 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
         ViewCompat.setOnApplyWindowInsetsListener(raiz, (v, insets) -> {
             Insets barras = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             Insets muesca = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+            int arriba = Math.max(barras.top, muesca.top);
+            int abajo = Math.max(barras.bottom, muesca.bottom);
             v.setPadding(Math.max(barras.left, muesca.left), 0, Math.max(barras.right, muesca.right), 0);
-            contenedor.setPadding(0, Math.max(barras.top, muesca.top), 0, 0);
-            barra.aplicarInsetInferior(Math.max(barras.bottom, muesca.bottom));
+            contenedor.setPadding(0, arriba, 0, 0);
+            barra.aplicarInsetInferior(abajo);
+
+            boolean botones = BordesSistema.hayBotones(Build.VERSION.SDK_INT,
+                    insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
+                    insets.getInsets(WindowInsetsCompat.Type.tappableElement()).bottom);
+            macizoArriba = arriba;
+            macizoAbajo = BordesSistema.macizoInferior(abajo, botones);
+            ponerAlto(bordeSuperior, BordesSistema.altoSuperior(arriba,
+                    getResources().getDimensionPixelSize(R.dimen.borde_sistema_desvanecido)));
+            ponerAlto(bordeInferior, BordesSistema.altoInferior(abajo, botones,
+                    getResources().getDimensionPixelSize(R.dimen.barra_margen_abajo),
+                    getResources().getDimensionPixelSize(R.dimen.barra_alto)));
+            pintarBordes(pager != null && pager.getAdapter() != null ? pager.getCurrentItem() : NavTabs.INICIO);
             return insets;
         });
         ViewCompat.requestApplyInsets(raiz);
     }
 
-    // El fondo ambiental llega bajo la barra de estado y el contenido bajo la de navegación.
-    // Desde Android 15 las barras ya son transparentes; antes llevan el color del tema.
+    private static void ponerAlto(View v, int alto) {
+        android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp.height == alto) return;
+        lp.height = alto;
+        v.setLayoutParams(lp);
+    }
+
+    // Los bordes llevan el fondo de la pestaña que hay detrás: el del fondo ambiental en las que
+    // ya están en Liquid Glass y el de siempre en las demás (se diferencian en un tono).
+    private void pintarBordes(int index) {
+        int base = androidx.core.content.ContextCompat.getColor(this,
+                index == NavTabs.INICIO ? R.color.gp_ambiente_base : R.color.gp_background);
+        bordeArriba.poner(base, macizoArriba);
+        bordeAbajo.poner(base, macizoAbajo);
+    }
+
+    // El fondo ambiental llega bajo la barra de estado y el contenido bajo la de navegación: las
+    // dos barras son transparentes (desde Android 15 ya lo son; antes llevan el color del tema).
+    // El fondo de sus iconos lo ponen los bordes del sistema, que van en el contenido y por eso el
+    // velo del «+» los cubre igual que al resto. Desde Android 10 el sistema pintaba además su
+    // franja de contraste bajo los tres botones, por encima del velo (en claro quedaba más clara
+    // que la pantalla): se apaga.
     @SuppressWarnings("deprecation")
     private void barrasDelSistemaTransparentes() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) return;
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         // Android 7: los botones de navegación son siempre blancos. En claro (el tema que pide
         // iconos oscuros) se quedan con un velo detrás para que se vean.
-        boolean botonesBlancosSobreClaro = Build.VERSION.SDK_INT < Build.VERSION_CODES.O
-                && getResources().getBoolean(R.bool.gp_iconos_barra_oscuros);
-        getWindow().setNavigationBarColor(botonesBlancosSobreClaro
-                ? androidx.core.content.ContextCompat.getColor(this, R.color.gp_velo)
-                : android.graphics.Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(BordesSistema.colorBarraNavegacion(Build.VERSION.SDK_INT,
+                getResources().getBoolean(R.bool.gp_iconos_barra_oscuros),
+                androidx.core.content.ContextCompat.getColor(this, R.color.gp_velo)));
+    }
+
+    /** Alto del pie (la barra flotante y, si hay sesión, la suya), que tapa el final de cada pestaña. */
+    public int altoPie() {
+        return pie == null ? 0 : pie.getHeight();
     }
 
     // El contenido de cada pestaña pasa por debajo del pie (la barra y, si hay sesión, la suya):
-    // su scroll lleva de relleno inferior el alto del pie más un poco de aire y no lo recorta,
-    // así que lo último se puede subir por encima de la barra. La hoja del «+» se apoya encima.
+    // su scroll lleva de relleno inferior el alto del pie más el margen de la barra flotante
+    // (barra_margen_boton) y no lo recorta, así que lo último se puede subir por encima de la
+    // barra y queda a ese margen de ella. La hoja del «+» se apoya encima.
     private void aplicarHuecoInferior() {
         if (pie == null || pie.getHeight() == 0) return;
-        int hueco = pie.getHeight() + getResources().getDimensionPixelSize(R.dimen.barra_aire_contenido);
+        int hueco = pie.getHeight() + getResources().getDimensionPixelSize(R.dimen.barra_margen_boton);
         for (int i = 0; i < NavTabs.TOTAL; i++) {
             Fragment f = getSupportFragmentManager().findFragmentByTag("f" + i);
             View v = f != null ? f.getView() : null;
@@ -540,6 +595,7 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     // El fondo ambiental es de las pestañas que ya están en Liquid Glass (GP-285): hoy, Inicio.
     // Aparece y se va con el mismo fundido corto que la pestaña.
     private void pintarFondo(int index) {
+        pintarBordes(index);
         boolean conFondo = index == NavTabs.INICIO;
         fondoAmbiental.animate().cancel();
         if (conFondo == (fondoAmbiental.getVisibility() == View.VISIBLE)) {

@@ -280,7 +280,6 @@
     <color name="gp_cristal_oro_bajo">#24E8B84B</color>
     <color name="gp_cristal_oro_brillo">#CCFFFFFF</color>
     <color name="gp_boton_brillo">#59FFFFFF</color>
-    <color name="gp_boton_halo">#4DB83E00</color>
     <color name="gp_cristal_boton">#99FFFFFF</color>
     <!-- El «+» de la barra: el naranja vivo con el icono casi negro en los dos temas (6,61:1),
          como la tarjeta de «Tu objetivo». -->

@@ -3,7 +3,8 @@
   activity_main — la navegación principal (GP-105; Liquid Glass en GP-285, DEC-070).
 
   Detrás, el lienzo (LienzoCristal): el fondo ambiental de la pestaña que lo tenga, las cuatro
-  pestañas en un ViewPager2 sin deslizamiento y el velo del «+». Ocupa toda la pantalla, también
+  pestañas en un ViewPager2 sin deslizamiento, los dos bordes del sistema (el contenido se
+  desvanece antes de los iconos de las barras) y el velo del «+». Ocupa toda la pantalla, también
   bajo la barra de estado, que es donde el fondo ambiental sigue; las pestañas empiezan debajo
   de ella (contenedorPager lleva el margen).
 
@@ -44,6 +45,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
+
+        <!-- Los bordes del sistema (BordesSistema): el contenido se desvanece hacia el fondo base
+             antes de llegar a los iconos de la barra de estado y a los botones de navegación.
+             Dentro del lienzo (el cristal vivo los ve) y debajo del velo, que los cubre con su
+             mismo tono. El alto se lo da MainActivity con los márgenes del sistema. -->
+        <View
+            android:id="@+id/bordeSuperior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no" />
+
+        <View
+            android:id="@+id/bordeInferior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:importantForAccessibility="no" />
 
         <View
             android:id="@+id/veloAcciones"

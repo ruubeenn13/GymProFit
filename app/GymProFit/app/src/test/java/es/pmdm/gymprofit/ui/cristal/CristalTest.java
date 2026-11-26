@@ -163,8 +163,14 @@ public class CristalTest {
         for (String clave : new String[]{ "## Liquid Glass (GP-285, DEC-070)", "### Tres niveles del cristal vivo",
                 "### Reglas de legibilidad", "NivelCristal.elegir", "ContrasteCristalTest", "gp_ambiente_base",
                 "Widget.GymProFit.Card.Cristal", "ThemeOverlay.GymProFit.Cristal", "bg_lente", "radio_cristal_heroe",
-                "cristal_refraccion.agsl", "VigiaCristal" }) {
+                "cristal_refraccion.agsl", "VigiaCristal",
+                "### Bordes del sistema", "BordesSistema", "borde_sistema_desvanecido", "barra_margen_boton",
+                "EncajeHeroe", "hoy_ejercicio_icono_cede" }) {
             assertTrue("DESIGN.md no recoge «" + clave + "»", d.contains(clave));
+        }
+        // Lo retirado no se queda en el sistema: el halo del botón principal y el token viejo del margen.
+        for (String fuera : new String[]{ "gp_boton_halo", "barra_aire_contenido" }) {
+            assertFalse("DESIGN.md sigue nombrando «" + fuera + "»", d.contains(fuera));
         }
         // Y los valores del fondo y del texto son los de colors.xml.
         String oscuro = leer(RES.resolve("values-night/colors.xml"));
