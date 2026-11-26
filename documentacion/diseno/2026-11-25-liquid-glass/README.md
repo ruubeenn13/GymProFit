@@ -41,7 +41,22 @@ Distribución de Android (Google, octubre de 2026): API 33+ ≈ 68 % · API 31�
 
 ## Tema claro
 
-No hay maqueta. Se diseña con los mismos principios (cristal blanco esmerilado sobre fondo claro con brillos cálidos suaves) y las mismas reglas de contraste, y se enseña en capturas para aprobación.
+No hay maqueta. El del lote 1 (cristal blanco casi opaco sobre un fondo lavado) se rechazó: «no veo nada de liquid glass en modo claro, solo el fondo». El cristal solo se lee si el fondo tiene color y la tarjeta deja pasar parte de él. Estos son los valores del propietario (lote 1b, 26-11-2026) y lo que se implementó: donde uno choca con una regla de legibilidad, manda la regla (DEC-070) y queda con su cifra. Pendiente de aprobación con capturas.
+
+| | Valor pedido | Implementado |
+|---|---|---|
+| Fondo base | `#F2EDE8` | el pedido |
+| Brillos | naranja `rgba(255,122,40,.55)` arriba a la derecha · coral `rgba(255,96,110,.30)` a la izquierda a media altura · azul `rgba(80,125,255,.36)` abajo a la derecha · verde `rgba(60,190,160,.26)` abajo a la izquierda | los pedidos (el verde, en 6 %, 88 %; elipse 360 × 300) |
+| Cristal estático | 160°, blanco 62 % → 34 % (al 55 %) → 48 %; borde 1 dp blanco 80 %; brillo superior blanco 100 % y línea inferior blanca 40 %; filo exterior `rgba(60,30,10,.06)` de 0,5 dp; sombra `rgba(90,40,10,.12)`, 28 dp y 10 hacia abajo | lo pedido; la sombra, solo por fuera de la forma |
+| Cristal vivo (barra) | el mismo relleno sobre el desenfoque | el pedido en la barra y en la barra de la sesión; la hoja del «+», blanco 80 % → 70 % (su secundario, 3,44:1 → 5,84:1) |
+| Texto | `#15171B`; secundario `#4A4F58`; acento y enlaces `#A83A00` | `#15171B`; secundario `#494E57` (4,47 → 4,54:1); acento sobre cristal `#A33800` (4,32 → 4,53:1); enlace sobre el fondo `#8B3000` (3,48 → 4,52:1) |
+| Botón principal | `#FF6A00` con texto `#1A0E00`; secundario en cristal | el pedido (6,61:1) |
+| Pestaña activa | lente blanca 75 % con brillo superior blanco y sombra `rgba(90,40,10,.12)`; icono y etiqueta `#A83A00`; las demás `#2A2E35` | lo pedido (5,27:1 y 5,70:1); la sombra, 6 dp de difuminado y 2 hacia abajo |
+| Gráfica de kilos | barras en naranja al 28 % y la semana en curso en `#FF6A00` | los colores pedidos (1,22:1 y 1,93:1 contra el cristal) con un filo de 1 dp en `#A33800` en cada barra (4,53:1) |
+| Pistas de las barras de progreso | `rgba(21,23,27,.10)` | la pedida; los rellenos de proteína y agua, `#2C67C1` y `#0D7385` (2,82 y 2,71 → 3,05 y 3,06:1 contra ella) |
+| Bordes de las barras del sistema y velo del «+» | con el tono del fondo nuevo, sin escalón | el borde es el propio fondo ambiental, con sus brillos; el velo, negro 35 %, los cubre igual que al resto |
+
+Otros dos ajustes por contraste, sobre valores que venían del lote 1: el dorado de texto sobre cristal, `#7A5C18` → `#745717` (4,19 → 4,53:1), y la acción de la barra de la sesión («Volver»), que en claro va en el texto de la barra y no en el acento (2,69 → 5,70:1).
 
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 
@@ -74,3 +89,16 @@ Lo que el propietario corrigió al aprobar el diseño con las capturas. Vale par
 Detalle y medidas en `app/GymProFit/DESIGN.md` («Bordes del sistema» y «Cristal vivo»).
 
 El desenfoque de la maqueta (`blur(22px)`) es la desviación (σ); en Android el «radio» de `RenderEffect` que da esa σ es (σ − 0,5) / 0,57735.
+
+### Lote 1b (26-11-2026): suavidad
+
+Lo que el propietario veía en el oscuro («se ven píxeles detrás, quiero que sea smooth»), medido en los tres emuladores antes de tocar nada, y cómo queda. Vale para los lotes siguientes:
+
+| Qué | Causa | Cómo queda |
+|---|---|---|
+| «Bordes de mancha» en el fondo | cada brillo bajaba en línea recta hasta apagarse al 70 % del radio (el `transparent 70%` de la maqueta): la pendiente pasa de golpe a cero y se ve el canto | la misma elipse y el mismo alfa en el centro, con una curva plana en el centro y plana al apagarse |
+| Grano en el fondo en Android 7 | tres degradados de la GPU, cada uno con el tramado de su versión: saltos de hasta 10 niveles entre píxeles vecinos | el fondo es una imagen calculada a resolución completa con tramado propio de menos de un nivel, igual en todas las versiones |
+| Banda oscura bajo la barra de estado | los bordes del sistema pintaban el color base liso encima del brillo | el borde es el propio fondo ambiental |
+| Texto nítido a través de la barra (Android 11 o menos) | el nivel 3 no desenfoca y su superficie iba al 98 % | opaca del todo |
+| «Poco desenfocado» bajo la barra (Android 12 o más) | no se reproduce: el desenfoque es el de la maqueta (σ 22 dp, convertido a px con la densidad) y el lienzo no se reduce antes | sin cambios; un test lo ata a la maqueta |
+
