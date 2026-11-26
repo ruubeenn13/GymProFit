@@ -27,7 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 //   · Los dos bordes existen en los tres niveles del cristal (no dependen del nivel) y en
 //     todas las versiones de Android: arriba tapan la barra de estado entera y abajo, con
 //     botones, la franja de los botones entera.
-//   · Con gestos el de abajo queda corto: no llega a la cápsula.
+//   · Con gestos el de abajo queda corto: no llega a la cápsula. El hueco del asa, macizo.
 //   · Van dentro del lienzo y debajo del velo del «+»: el velo los cubre con su mismo tono y
 //     el cristal vivo los ve.
 //   · El contraste forzado del sistema se apaga: pintaba su propia franja encima del velo.
@@ -54,7 +54,7 @@ public class BordesSistemaTest {
             assertEquals(ESTADO + DESVANECIDO, BordesSistema.altoSuperior(ESTADO, DESVANECIDO));
             // Abajo: la franja de los botones entera, maciza, y el degradado por encima de ella.
             int alto = BordesSistema.altoInferior(BOTONES, botones, MARGEN, BARRA);
-            int macizo = BordesSistema.macizoInferior(BOTONES, botones);
+            int macizo = BordesSistema.macizoInferior(BOTONES);
             assertEquals("API " + api + ": los botones del sistema van sobre el fondo base", BOTONES, macizo);
             assertTrue("API " + api + ": el contenido se desvanece antes de los botones", alto > macizo + MARGEN);
         }
@@ -77,7 +77,9 @@ public class BordesSistemaTest {
             assertFalse("API " + api, botones);
             int alto = BordesSistema.altoInferior(GESTOS, botones, MARGEN, BARRA);
             assertEquals("no llega a la cápsula", GESTOS + MARGEN, alto);
-            assertEquals("sin tramo macizo", 0, BordesSistema.macizoInferior(GESTOS, botones));
+            // El hueco de gestos, macizo: el asa del sistema nunca tiene texto detrás (con el
+            // degradado hasta el canto, el asa tachaba lo que pasaba por ahí a 2,0:1).
+            assertEquals("el asa va sobre el fondo base", GESTOS, BordesSistema.macizoInferior(GESTOS));
             assertTrue(alto < BordesSistema.altoInferior(GESTOS, true, MARGEN, BARRA));
         }
         // Antes de Android 10 no hay gestos: un hueco de navegación son botones, diga lo que diga lo tocable.

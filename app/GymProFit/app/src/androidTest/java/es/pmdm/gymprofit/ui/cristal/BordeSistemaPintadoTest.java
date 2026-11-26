@@ -28,10 +28,14 @@ public class BordeSistemaPintadoTest {
     private static final int ALTO = 278, MACIZO = 126;
 
     private static Bitmap pintar(boolean arriba, int macizo) {
+        return pintar(arriba, macizo, ALTO);
+    }
+
+    private static Bitmap pintar(boolean arriba, int macizo, int alto) {
         BordeSistema borde = new BordeSistema(arriba);
         borde.poner(BASE, macizo);
-        borde.setBounds(0, 0, 8, ALTO);
-        Bitmap mapa = Bitmap.createBitmap(8, ALTO, Bitmap.Config.ARGB_8888);
+        borde.setBounds(0, 0, 8, alto);
+        Bitmap mapa = Bitmap.createBitmap(8, alto, Bitmap.Config.ARGB_8888);
         borde.draw(new Canvas(mapa));
         return mapa;
     }
@@ -66,11 +70,18 @@ public class BordeSistemaPintadoTest {
         }
     }
 
+    // Con gestos, en ese móvil: 110 px de alto (el hueco de 42 y los 68 hasta la cápsula) con
+    // el hueco macizo, que es donde va el asa del sistema.
     @Test
-    public void con_gestos_no_hay_tramo_macizo_y_solo_el_canto_llega_al_fondo() {
-        Bitmap mapa = pintar(false, 0);
-        assertEquals(0, Color.alpha(mapa.getPixel(4, 0)));
-        assertTrue("el canto de la pantalla, casi el fondo base", Color.alpha(mapa.getPixel(4, ALTO - 1)) > 245);
-        assertTrue("a tres cuartos todavía se ve el contenido", Color.alpha(mapa.getPixel(4, ALTO * 3 / 4)) < 160);
+    public void con_gestos_el_hueco_del_asa_es_macizo_y_el_degradado_corto() {
+        int alto = 110, hueco = 42;
+        Bitmap mapa = pintar(false, BordesSistema.macizoInferior(hueco), alto);
+        assertEquals("junto a la cápsula, transparente", 0, Color.alpha(mapa.getPixel(4, 0)));
+        // El asa va de 17 a 22 px del canto: ahí, y en todo el hueco, el fondo base.
+        for (int y = alto - hueco + 1; y < alto; y++) {
+            assertEquals("y=" + y, BASE, mapa.getPixel(4, y));
+        }
+        assertTrue("a media altura del degradado todavía se ve el contenido",
+                Color.alpha(mapa.getPixel(4, (alto - hueco) / 2)) < 110);
     }
 }

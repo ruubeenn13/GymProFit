@@ -368,7 +368,7 @@ El contenido pasa bajo la barra flotante, pero **no llega a los iconos del siste
 |---|---|---|
 | Arriba | la barra de estado entera | 24 dp por debajo (`borde_sistema_desvanecido`) |
 | Abajo, con botones (◁ ● ■) | la franja de los botones entera | de ahí hasta media cápsula de la barra flotante (26 + 32 dp): el contenido se sigue viendo pasar tras ella |
-| Abajo, con gestos | nada | corto: del borde de la pantalla al de la cápsula (el hueco de gestos + 26 dp); no hay iconos que proteger, solo el asa |
+| Abajo, con gestos | el hueco de gestos entero: el asa nunca tiene texto detrás (con el degradado hasta el canto lo tachaba, a 2,0:1 en claro) | corto: de ahí al borde de la cápsula (26 dp); no llega a pasar tras ella |
 
 - El alfa sube con el cuadrado de la distancia (seis tramos): despacio junto al contenido y deprisa junto a los iconos. El degradado se monta al cambiar de tamaño o de color, nunca al dibujar.
 - **El color es el fondo de la pestaña**: `gp_ambiente_base` en las que ya están en Liquid Glass (Inicio) y `gp_background` en las demás.

@@ -11,8 +11,8 @@ package es.pmdm.gymprofit.ui.cristal;
 //   · Arriba: la barra de estado entera, maciza, y un tramo de degradado por debajo.
 //   · Abajo, con botones: la franja de los botones, maciza, y el degradado hasta media
 //     cápsula de la barra flotante (el contenido se sigue viendo pasar tras ella).
-//   · Abajo, con gestos: corto, del borde de la pantalla al de la cápsula y sin tramo macizo;
-//     no hay iconos que proteger, solo el asa.
+//   · Abajo, con gestos: el hueco del asa, macizo, y un degradado corto, solo hasta el borde
+//     de la cápsula; no hay iconos que proteger, solo el asa, que no puede tener texto detrás.
 //
 // No dependen del nivel del cristal: son los mismos en los tres. Aquí solo hay cuentas, sin
 // nada de Android, para poder probarlas (BordesSistemaTest); quien las usa es MainActivity.
@@ -60,9 +60,13 @@ public final class BordesSistema {
         return hueco + margenBarra + (botones ? altoBarra / 2 : 0);
     }
 
-    /** Lo que del borde de abajo es macizo: con botones, su franja entera; con gestos, nada. */
-    public static int macizoInferior(int hueco, boolean botones) {
-        return botones ? hueco : 0;
+    /**
+     * Lo que del borde de abajo es macizo: el hueco del sistema entero, sean botones o el asa
+     * de gestos. Con el degradado hasta el canto de la pantalla, el asa quedaba encima de texto
+     * todavía legible y lo tachaba.
+     */
+    public static int macizoInferior(int hueco) {
+        return hueco;
     }
 
     /**

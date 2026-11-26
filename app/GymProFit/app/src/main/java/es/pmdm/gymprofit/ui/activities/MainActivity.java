@@ -479,7 +479,7 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
                     insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom,
                     insets.getInsets(WindowInsetsCompat.Type.tappableElement()).bottom);
             macizoArriba = arriba;
-            macizoAbajo = BordesSistema.macizoInferior(abajo, botones);
+            macizoAbajo = BordesSistema.macizoInferior(abajo);
             ponerAlto(bordeSuperior, BordesSistema.altoSuperior(arriba,
                     getResources().getDimensionPixelSize(R.dimen.borde_sistema_desvanecido)));
             ponerAlto(bordeInferior, BordesSistema.altoInferior(abajo, botones,
