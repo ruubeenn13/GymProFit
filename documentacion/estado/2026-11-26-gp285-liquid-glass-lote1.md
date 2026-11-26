@@ -131,7 +131,7 @@ El revisor solo midió el nivel 1 (API 36). Los niveles 2 y 3 se comprueban con 
 
 ## Comprobaciones a mano
 
-- **Los tres niveles, en los tres emuladores**, ES y EN, claro y oscuro: capturas en `C:\Users\ruben\Desktop\GP-285 lote 1\API 36`, `API 32` y `API 24` (20 por emulador: Inicio arriba, con scroll y el contenido bajo la barra, la hoja del «+», la barra de la sesión y la barra de la sesión con scroll). Hechas con el código final.
+- **Los tres niveles, en los tres emuladores**, ES y EN, claro y oscuro: capturas en el escritorio, carpeta `GP-285 lote 1`, subcarpetas `API 36`, `API 32` y `API 24` (20 por emulador: Inicio arriba, con scroll y el contenido bajo la barra, la hoja del «+», la barra de la sesión y la barra de la sesión con scroll). Hechas con el código final.
 - **«Quitar animaciones»** (las tres escalas a 0, API 36, release): la hoja del «+» abre y cierra, el «+» pasa a «×» y vuelve, el scroll bajo la barra va bien. Sin errores en logcat.
 - **Texto de alto contraste**: `BarraNavegacionRecorteTest` en API 32 con `high_text_contrast_enabled` a 1 (nivel opaco), en una tanda anterior a los últimos arreglos de color.
 - **TalkBack de verdad, no**: lo comprobado es el árbol de accesibilidad (nombres, rol, estado y posición de cada control, en el test instrumentado y en las dos pasadas del revisor), no una sesión con TalkBack encendido.
