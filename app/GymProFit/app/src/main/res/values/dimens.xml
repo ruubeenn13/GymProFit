@@ -280,14 +280,14 @@
     <dimen name="barra_relleno">6dp</dimen>
     <dimen name="barra_lente_alto">52dp</dimen>
     <dimen name="barra_lente_radio">26dp</dimen>
-    <!-- El «+»: círculo de 64 (radio 32). De cristal (niveles 1 y 2), con una línea de reflejo
-         de 1,5 dp a 5 del canto, solo en su cuarto de arriba: el icono, a 19 del borde, queda
-         fuera de ella. Opaco (nivel 3), con el degradado radial de 45 dp de radio. -->
+    <!-- El «+»: círculo de 64 (radio 32). De cristal (niveles 1 y 2), con el borde de 1,5 dp y
+         el reflejo en media luna a 3 del canto, solo en su cuarto de arriba: el icono, a 19 del
+         borde, queda fuera de ella. Opaco (nivel 3), con el degradado radial de 45 dp de radio. -->
     <dimen name="barra_mas_radio">32dp</dimen>
     <dimen name="barra_mas_degradado">45dp</dimen>
     <dimen name="barra_mas_icono_margen">19dp</dimen>
-    <dimen name="barra_mas_reflejo_dentro">5dp</dimen>
-    <dimen name="barra_mas_reflejo_grosor">1.5dp</dimen>
+    <dimen name="barra_mas_reflejo_dentro">3dp</dimen>
+    <dimen name="barra_mas_borde">1.5dp</dimen>
     <!-- La barra de la sesión va 8 por encima. -->
     <dimen name="barra_sesion_hueco">8dp</dimen>
     <!-- Margen mínimo entre el último botón de una tarjeta y la barra flotante: lo último de

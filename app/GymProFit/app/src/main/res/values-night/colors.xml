@@ -193,12 +193,10 @@
     <color name="gp_lente_resplandor">#14FFFFFF</color>
     <!-- La lente solo lleva sombra en claro. -->
     <color name="gp_lente_sombra">#00000000</color>
-    <!-- El «+» de cristal: el naranja como tinte sobre el desenfoque, del 72 % al 65 %, y el
-         borde blanco al 35 %. Abajo se pidió el 55 %: con la hoja abierta el velo oscurece lo
-         de detrás y el icono, casi negro, se quedaba en 2,51:1; al 65 %, 3,18:1. -->
-    <color name="gp_mas_tinte_alto">#B8FF6A00</color>
-    <color name="gp_mas_tinte_bajo">#A6FF6A00</color>
-    <color name="gp_mas_borde">#59FFFFFF</color>
+    <!-- El «+» de cristal: en oscuro, más suelo de luz bajo el tinte (14 %), para que el naranja
+         no se lea apagado, casi marrón, sobre el fondo oscuro. El tinte es el mismo en los dos
+         temas. -->
+    <color name="gp_mas_luz">#24FFFFFF</color>
     <!-- Récord sobre cristal: degradado dorado 28 % → 8 % y brillo. -->
     <color name="gp_cristal_oro_alto">#47E8B84B</color>
     <color name="gp_cristal_oro_bajo">#14E8B84B</color>

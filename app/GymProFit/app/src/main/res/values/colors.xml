@@ -337,13 +337,22 @@
     <color name="gp_mas_claro">#FFB27A</color>
     <color name="gp_mas_oscuro">#FF6A00</color>
     <color name="gp_mas_icono">#1A0E00</color>
-    <!-- El «+» de cristal (niveles 1 y 2; el degradado de arriba queda para el nivel 3): el
-         naranja como tinte sobre el desenfoque, a 160°, del 78 % al 60 %; borde blanco al 60 %,
-         brillo interior de arriba al 55 % y la línea de reflejo del cuarto superior. El icono se
-         mide sobre el peor punto de lo que queda detrás (ContrasteCristalTest). -->
-    <color name="gp_mas_tinte_alto">#C7FF6A00</color>
-    <color name="gp_mas_tinte_bajo">#99FF6A00</color>
-    <color name="gp_mas_borde">#99FFFFFF</color>
-    <color name="gp_mas_brillo">#8CFFFFFF</color>
-    <color name="gp_mas_reflejo">#73FFFFFF</color>
+    <!-- El «+» de cristal (niveles 1 y 2; el degradado de arriba queda para el nivel 3; lote 1c).
+         De abajo arriba, sobre el desenfoque: un suelo de luz blanca (gp_mas_luz: 8 % aquí, 14 %
+         en oscuro), para que el naranja no se apague a marrón sobre un fondo oscuro; el tinte de
+         la marca, #FF7A1A del 82 % al 70 % a 160°, igual en los dos temas; un brillo radial
+         blanco al 35 %, muy difuminado, en el tercio superior izquierdo; el borde de 1,5 dp en
+         degradado blanco del 70 % arriba al 15 % abajo; y el reflejo de arriba, una media luna
+         blanca del 40 % a transparente. Se pidió el tinte del 58 % al 46 %: con él el «+» salía
+         más luminoso pero no más naranja (saturación de 0,80 a 0,40 en oscuro, salmón; en
+         claro, melocotón), porque el fondo se ve a través de medio cristal; el propietario
+         eligió este (27-11-2026). El icono se mide sobre el peor punto de lo que queda detrás,
+         con la luz y el tinte (ContrasteCristalTest). -->
+    <color name="gp_mas_luz">#14FFFFFF</color>
+    <color name="gp_mas_tinte_alto">#D1FF7A1A</color>
+    <color name="gp_mas_tinte_bajo">#B3FF7A1A</color>
+    <color name="gp_mas_brillo_interior">#59FFFFFF</color>
+    <color name="gp_mas_borde_alto">#B3FFFFFF</color>
+    <color name="gp_mas_borde_bajo">#26FFFFFF</color>
+    <color name="gp_mas_reflejo">#66FFFFFF</color>
 </resources>

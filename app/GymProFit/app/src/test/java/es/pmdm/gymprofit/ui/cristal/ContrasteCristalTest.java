@@ -57,6 +57,8 @@ public class ContrasteCristalTest {
     private static final String[] ORO = { "gp_cristal_oro_alto", "gp_cristal_oro_bajo" };
     // El «+»: los dos tonos de su tinte de cristal y los dos de su degradado opaco.
     private static final String[] MAS = { "gp_mas_tinte_alto", "gp_mas_tinte_bajo" };
+    // El suelo de luz que el «+» pinta bajo su tinte (lote 1c): sin él, el naranja se apaga.
+    private static final String[] MAS_LUZ = { "gp_mas_luz" };
     private static final String[] MAS_OPACO = { "gp_mas_claro", "gp_mas_oscuro" };
 
     private static final double TEXTO = 4.5, GRANDE = 3.0;
@@ -193,15 +195,17 @@ public class ContrasteCristalTest {
     // El «+» es cristal vivo teñido de naranja: su icono («+» y «×», un gráfico: 3:1) se mide en
     // los dos temas y los tres niveles. En los niveles 1 y 2, sobre su tinte compuesto encima de
     // todo lo que puede quedar detrás (lo mismo que la barra, con el velo de la hoja abierta
-    // incluido, que es cuando se ve la «×»); en el 3, sobre su degradado macizo. El icono es
-    // casi negro, así que su peor punto es el más oscuro de lo de detrás, no el más claro: se
-    // apuntan los dos.
+    // incluido, que es cuando se ve la «×»), con su suelo de luz debajo del tinte, que es lo
+    // que lo sostiene: si no llega, se sube la luz, no el tinte; en el 3, sobre su degradado
+    // macizo. El icono es casi negro, así que su peor punto es el más oscuro de lo de detrás,
+    // no el más claro: se apuntan los dos. El brillo, el borde y el reflejo solo aclaran: no
+    // bajan el contraste de algo oscuro.
     @Test
     public void el_mas_de_cristal_se_lee_en_los_tres_niveles() throws IOException {
         List<String> fallos = new ArrayList<>();
         for (String tema : TEMAS) {
             Tema t = new Tema(tema);
-            Set<Integer> cristal = t.capas(saturados(t.detrasDelVivo()), MAS);
+            Set<Integer> cristal = t.capas(t.capas(saturados(t.detrasDelVivo()), MAS_LUZ), MAS);
             t.medir("el «+», niveles 1 y 2", "gp_mas_icono", cristal, GRANDE, fallos);
             t.medir("el «+», 1 y 2, lo más claro", "gp_mas_icono", masClaro(cristal), GRANDE, fallos);
             Set<Integer> opaco = new LinkedHashSet<>();
@@ -326,6 +330,12 @@ public class ContrasteCristalTest {
 
         /** El peor contraste del texto sobre esas superficies; si no llega, lo apunta. */
         void medir(String donde, String texto, Set<Integer> superficies, double minimo, List<String> fallos) {
+            // Sin superficies no hay nada medido (una capa transparente no se compone): eso no
+            // es pasar.
+            if (superficies.isEmpty()) {
+                fallos.add(nombre + " " + donde + ": no hay ninguna superficie que medir");
+                return;
+            }
             int t = color(texto);
             double peor = Double.MAX_VALUE;
             int peorColor = 0;
