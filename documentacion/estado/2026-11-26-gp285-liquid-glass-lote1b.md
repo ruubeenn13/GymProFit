@@ -12,6 +12,11 @@ El propietario rechazó el claro del lote 1 («no veo nada de liquid glass en mo
 | `010dd204` | test(android): GP-287, `CampoContrasenaTest` espera el nodo de cada versión de Android |
 | `26508c77` | docs(decisiones,documentacion): DEC-070 y la referencia recogen el lote 1b |
 | `e7b1eddb` | fix(android): lo que encontró el revisor de UI en la primera pasada |
+| `e064ff0a` | docs(changelog,documentacion): este informe y el CHANGELOG, en su primera versión |
+| `80bd7c2d` | feat(android): el «+» de la barra pasa a cristal vivo teñido de naranja |
+| `79662ec5` | docs(decisiones,documentacion): DEC-070 y la referencia recogen el «+» de cristal |
+| `8b683df9` | fix(android): segunda pasada del revisor: las etiquetas de la barra en Android 8 o menos y la capa de pulsado del «+» |
+| `4e6b181e` | fix(android): segunda pasada del revisor: la silueta muscular en claro |
 
 ## 1. Suavidad: diagnóstico antes de tocar nada
 
@@ -70,9 +75,37 @@ Comprobado con el nombre más largo del catálogo, «Elevaciones para deltoides 
 
 Los dos tests de `CampoContrasenaTest` que fallaban en Android 7: **la causa era el test, no la app.** Desde Android 8 el nodo de accesibilidad tiene sitio para la pista (`getHintText`) y su texto es solo lo escrito; antes no existe y Material mete la pista en el texto, detrás de lo escrito: «••••••••••••, Contraseña». `CampoContrasena.enmascarar` ya lo tenía en cuenta. El test espera ahora el nodo de la versión en la que corre. Pasa en API 24, 32 y 36.
 
+## 6. El «+» de la barra, en cristal
+
+Pedido el 27-11, con el lote ya en revisión: el «+» macizo chirriaba junto a la barra de cristal, en los dos temas. Pasa a **cristal vivo teñido de naranja**: sigue siendo la acción principal, con el material de la barra. Commit aparte, `80bd7c2d`.
+
+- **El mismo componente y los mismos niveles que la cápsula** (`CristalVivo` con `app:cristalAccion`): refracción en Android 13 o más, desenfoque en Android 12. **En el nivel 3 queda como estaba**: macizo, con su degradado radial `#FFB27A` → `#FF6A00`, sin sombra ni reflejo.
+- **Tinte** a 160° de `#FF6A00` sobre el desenfoque: 78 % → 60 % en claro (lo pedido) y 72 % → **65 %** en oscuro (se pidió 55 %: ver abajo). **Borde** de 1 dp blanco al 35 % (oscuro) y al 60 % (claro). **Brillo** interior de arriba, blanco al 55 %. **Reflejo**: una línea blanca al 45 % de 1,5 dp, a 5 dp del canto y solo en el cuarto de arriba, que se apaga hacia sus extremos; no llega al icono, que empieza a 19 dp. **Sombra**, la de la barra.
+- **Sin cambios**: los 64 dp, su sitio, el velo y la hoja. El giro a «×» también, pero ahora **gira el icono y no el cristal**, que habría girado con su reflejo. El cambio de forma al pulsar (de 32 a 12 dp) se conserva: mueve el radio del cristal.
+- Para TalkBack sigue siendo un botón con su nombre y su estado; su icono no es un nodo aparte.
+
+**Contraste del icono** (`#1A0E00`, un gráfico: 3:1). El encargo pedía medirlo sobre el punto más claro; el icono es casi negro, así que su punto más desfavorable es el más **oscuro** de lo que puede quedar detrás (el fondo bajo el velo de la hoja abierta, que es cuando se ve la «×»). El test mide el peor y apunta los dos:
+
+| | Oscuro | Claro |
+|---|---|---|
+| Niveles 1 y 2, peor punto | **3,18:1** (con el 55 % pedido, **2,51:1**: no llegaba) | 5,37:1 |
+| Niveles 1 y 2, punto más claro | 5,21:1 | 9,57:1 |
+| Nivel 3, peor punto | 6,61:1 | 6,61:1 |
+| Nivel 3, punto más claro | 10,75:1 | 10,75:1 |
+
+Como pedía el encargo, donde no llegaba se subió el tinte en vez de cambiar el icono: el tono de abajo en oscuro, del 55 % al 65 % (al 63 % daba 3,02:1, sin margen).
+
+Medido además en captura, contra el cristal que rodea al icono:
+
+| Emulador | Oscuro, cerrado | Oscuro, abierto | Claro, cerrado | Claro, abierto |
+|---|---|---|---|---|
+| API 36 (nivel 1) | 3,67–4,11:1 | 3,38–3,76:1 | 7,60–8,36:1 | 5,88–6,13:1 |
+| API 32 (nivel 2) | 3,59–4,05:1 | 3,38–3,74:1 | 7,70–8,48:1 | 5,94–6,19:1 |
+| API 24 (nivel 3) | 6,93–10,75:1 | 6,93–10,75:1 | 6,93–10,75:1 | 6,93–10,75:1 |
+
 ## Tests
 
-**Unitarios**: 1.429 en local (de ellos, 4 `*WebTest` fallan solo en local por los restos sin versionar de «Un día» en `web/`; en el CI, con el árbol limpio, pasan). **Instrumentados**: 34 en cada emulador, 33 pasan y el otro es el apartado de GP-286, en API 36, 32 y 24.
+**Unitarios**: 1.431 en local con el código final (de ellos, 4 `*WebTest` fallan solo en local por los restos sin versionar de «Un día» en `web/`; en el CI, con el árbol limpio, pasan). **Instrumentados**, con el código final (`4e6b181e`): 35 en cada emulador, 34 pasan y el otro es el apartado de GP-286, en API 36, 32 y 24. Lint pasa.
 
 Nuevos, y cómo se vieron en rojo:
 
@@ -87,37 +120,53 @@ Nuevos, y cómo se vieron en rojo:
 | `FilaRecordPintadaTest` (instrumentado, 2): el nombre más largo a letra 1,0 y 1,3, ES y EN | con la mutación (el detalle acababa en puntos suspensivos) y, de verdad, en API 24 (3 px) |
 | `BordeSistemaPintadoTest` (+2): con fondo ambiental, el tramo macizo es ese fondo | con el borde volviendo al color liso |
 | `CampoContrasenaTest` (GP-287) | los dos que fallaban en API 24 |
+| `ContrasteCristalTest`: el icono del «+» de cristal en los dos temas y los tres niveles | con el tinte pedido en oscuro (72 % → 55 %): **2,51:1** contra un mínimo de 3 |
+| `CristalTest`: el «+» es cristal vivo con su tinte y su sombra, su reflejo no llega al icono y solo gira el icono | con tres mutaciones: sin `cristalAccion`, girando el cristal y con el icono a 15 dp del borde |
+| `BarraNavegacionRecorteTest` (instrumentado, +1): a letra 1,3 la caja de cada etiqueta es la de su texto | antes del arreglo, en API 24: caja de 123 px para un texto de 99 |
+| `ContrasteCristalTest`: en claro, la zona trabajada de la silueta se distingue del cuerpo | con los colores de la primera pasada: **1,22:1** contra un mínimo de 3 |
 
-CI de la PR #145 en verde en `26508c77`: `android-build-test`, `api-build-test`, `app-release-r8`, `secretos` y `cambios`.
+CI de la PR #145 en verde en `4e6b181e`, el código final: `android-build-test`, `api-build-test`, `app-release-r8`, `secretos` y `cambios`.
 
 ## Fotogramas lentos (DEC-021)
 
-Mismo guion que en el lote 1 (24 deslizamientos, unos 1.290 fotogramas por pasada en Inicio, debug compilada entera, GPU del equipo, variantes intercaladas), ahora en oscuro y en claro, con tres variantes: `main` antes del rediseño (`4dfa4006`), el lote 1 (`c34f085f`) y el final.
+Mismo guion que en el lote 1 (24 deslizamientos en Inicio, debug compilada entera, GPU del equipo, variantes intercaladas), en oscuro y en claro, con el emulador recién arrancado, solo y asentado. **El resultado es desigual y lo cuento entero: solo API 36 tiene cifra válida del código final.**
 
-| Emulador | `main` | `c34f085f` | Final |
+| Emulador | `main` (`4dfa4006`) | `c34f085f` (lote 1) | Final (`4e6b181e`) |
 |---|---|---|---|
-| API 24 (nivel 3), oscuro | 0,00 % (0 de 1.288 y 0 de 1.291) | 0,00 % (0 de 1.288 y 0 de 1.289) | **0,00 %** (0 de 1.291 y 0 de 1.286) |
-| API 24 (nivel 3), claro | 0,00 % (0 de 1.288 y 0 de 1.290) | 0,00 % (0 de 1.297 y 0 de 1.289) | **0,00 %** (0 de 1.288 y 0 de 1.289) |
-| API 36 (nivel 1) | pendiente | pendiente | pendiente |
-| API 32 (nivel 2) | pendiente | pendiente | pendiente |
+| API 36 (nivel 1), oscuro | 0,73 % (8 de 1.097) | 1,28 % (medida del lote 1, 26-11) | **1,47 % y 1,48 %** (16 de 1.088 y 16 de 1.083) |
+| API 36 (nivel 1), claro | 0,73 % (8 de 1.093) | sin medida válida | **1,47 % y 1,48 %** (16 de 1.087 y 16 de 1.084) |
+| API 32 (nivel 2) | 0,74 % (medida del lote 1, oscuro); sin medida válida del 27-11 | 1,51 % (medida del lote 1, oscuro) | **sin medida válida** |
+| API 24 (nivel 3), oscuro y claro | 0,00 % (26-11) | 0,00 % (26-11) | 0,00 % con `7b7c55b4` (26-11); **sin medida válida del código final** |
 
-Percentiles en API 24, iguales en las tres variantes: p50 5 · p90 5 · p99 5–6 ms. La columna «Final» de API 24 se midió con `7b7c55b4`, antes de los arreglos del revisor (`e7b1eddb`).
+**API 36, el nivel más caro (ahí el «+» de cristal desenfoca y además refracta): dentro del 2 %.** Las cuatro pasadas del código final (dos rondas, dos temas) dan 1,47–1,48 %, con p50 17–18 ms y p99 19–20 ms. `main` da 0,73 % en sus dos pasadas de la primera ronda, la misma cifra que en el lote 1. El camino es 0,73 % → 1,28 % → 1,47 %: el «+» de cristal y lo demás del lote 1b cuestan dos fotogramas de cada mil sobre el lote 1.
 
-**API 36 y API 32 están sin medir**: ver «Pendiente». Las cifras del lote 1 para comparar (solo oscuro): API 36, 0,73 % → 1,28 %; API 32, 0,74 % → 1,51 %.
+**Lo que no vale, y por qué.** El 27-11 el equipo estuvo en uso mientras se medía (el propietario trabajando, otras sesiones abiertas), y se nota en `main`, que es la app de antes del rediseño y no ha cambiado:
 
-Lo aprendido al medir: con el emulador abierto desde hacía horas, el **mismo** APK de `main` dio 0 lentos de 1.308 en una ronda y 133 de 1.302 en la siguiente. Esas tandas se tiraron; cada tanda se mide con el emulador recién arrancado, con 3 GB, y sin tocar el equipo mientras.
+| Tanda | Qué salió | Por qué se descarta |
+|---|---|---|
+| Mañana, cadena de los tres emuladores (lanzada antes de un cambio de sesión) | API 36: `main` 17 % y 12 % en una ronda y 3 % en la otra. API 32: `main` 5–20 %, final 19–26 %. API 24: `main` 2–5 %, final 0,1–12 % | `main` fuera de rango y distinto de una ronda a otra; en API 24 el mismo APK había dado 0,00 % la noche anterior. Mientras medía se estaba trabajando en el equipo |
+| Mediodía, API 36, segunda ronda de `main` | 14,1 % y 14,0 %, con p50 de 25 ms | las otras seis pasadas de esa tanda tienen p50 de 17–18 ms: en esas dos el emulador entero iba lento, no la app |
+| Mediodía, API 32 | `main` 15–35 %, final 20–52 %, p50 de 23–28 ms en todas | el emulador entero iba lento en las ocho pasadas, también con `main` |
+| Mediodía, API 24 | `main` 0,00–7,5 %, final 0,15–8,8 % | la misma variante va de 0 a 8 % entre rondas: el ruido es mayor que cualquier diferencia |
+| Tercera ronda de API 36 | `main` 16,6 % y 16,4 %; final 14,9 % y 23,8 %; p50 de 29–36 ms | el equipo estaba al 60 % de carga al empezar |
+
+El criterio para separar una pasada válida de una estropeada no mira el resultado: es la **mediana del tiempo de fotograma**. En una pasada estropeada todos los fotogramas van lentos (p50 de 23 a 36 ms), también los de `main`; en una válida de API 36 el p50 es de 17–18 ms.
+
+De API 32 y API 24 no se deduce ni que el lote cumpla ni que no: no hay regresión a la vista (en API 24, la mejor pasada de cada variante es 0,00 % y 0,15 %; y en el nivel 3 el «+» sigue macizo, como estaba), pero tampoco cifra. Queda en «Pendiente»: es una orden y unos 35 minutos con el equipo sin usar.
+
+Lo aprendido al medir: cada tanda, con el emulador recién arrancado, con 3 GB, **y sin nadie usando el equipo**; y si `main` no sale estable entre rondas, la tanda no vale.
 
 ## Producción
 
-Release (R8, firma de release, `app-release.apk` de 6.612.033 bytes, compilada con `7b7c55b4`) en el emulador de API 36, contra `https://api.gymprofit.app` (commit en producción: `20d234d6`; el lote no toca la API).
+Release (R8, firma de release, `app-release.apk` de 6.613.342 bytes, compilada con el código final, `4e6b181e`) en el emulador de API 32, contra `https://api.gymprofit.app` (commit en producción: `20d234d6`; el lote no toca la API). 27-11.
 
-- Cuenta de prueba `prueba-gp285b-a@gymprofit.app`, creada por la API (201).
-- Entrar → cuestionario del alta (cuatro pasos) → plan → avisos → **Inicio** de una cuenta nueva: fondo suave, «Hoy toca» con su carrusel y el fundido, «Primeros pasos», «Tu día» a cero; el carrusel deslizado, el scroll bajo la barra y la hoja del «+» abierta y cerrada.
+- Cuenta de prueba `prueba-gp285c-a@gymprofit.app`, creada por la API (201); login 200.
+- Entrar → cuestionario del alta (cuatro pasos) → plan → avisos («Ahora no») → **Inicio** de una cuenta nueva: fondo suave, «Hoy toca» con su carrusel y el fundido, la silueta, «Primeros pasos», «Tu día» a cero; el carrusel deslizado, el scroll bajo la barra y **el «+» de cristal**, con su hoja abierta y cerrada.
 - **Tema claro** puesto desde Perfil → Tema: Inicio, scroll y hoja del «+».
-- Sin errores de la app en logcat.
-- **Cuenta borrada** (`DELETE /usuarios/me`, 200) y comprobado: el login devuelve **401**. La clave se eliminó entonces. La release se desinstaló del emulador.
+- Sin errores de la app en logcat (0 `FATAL EXCEPTION`).
+- **Cuenta borrada** (`DELETE /usuarios/me`, 200) y comprobado: el login devuelve **401**. La clave se eliminó entonces, no antes. La release se desinstaló del emulador.
 
-La release probada es anterior a los arreglos del revisor (`e7b1eddb`).
+El 26-11 se había hecho la misma prueba con `7b7c55b4` en API 36 (cuenta `prueba-gp285b-a`, borrada y comprobada igual); esta la repite con el «+» y los arreglos del revisor.
 
 ## Revisor de UI
 
@@ -143,9 +192,36 @@ Los cinco, arreglados en `e7b1eddb`, y **cada uno comprobado a mano con una medi
 
 Arreglando el rótulo metí un fallo y lo cazó esa misma comprobación: con el ajuste de tamaño en el layout, **Inicio no abría a letra 1,0** (el ajuste de AppCompat exige máximo mayor que mínimo y ahí son iguales). No llegó a ningún commit: se activa desde código y solo con margen (`TextoQueEncoge`), con su test. Después, Inicio abierto a letra 1,0 y 0,85 en los dos temas sin errores en logcat.
 
-**La segunda pasada del revisor no se pudo completar**: ver «Pendiente».
+**Segunda pasada** (sobre `79662ec5`, ya con el «+» de cristal; con Opus, porque el cupo del modelo habitual de los subagentes se había agotado). Alcance acordado con el propietario: las ocho combinaciones en API 36; en API 32 y API 24, lo que cambia por nivel (ES, claro y oscuro, a letra 1,3).
 
-Bajos que quedan anotados, sin arreglar: en claro, la semana en curso a 0 kg no se distingue de las otras semanas vacías en la gráfica de kilos; a letra 1,3 el icono del rótulo de los tiles de «Tu día» queda 2 dp por encima del centro de su texto; con la hoja del «+» abierta en claro, los tres botones del sistema bajan a 1,99:1 bajo el velo; el bocadillo de Profi conserva el borde gris de la tarjeta opaca. Y los conocidos: a letra 1,3 en un móvil bajo (393 × 851 dp, API 24) «Empezar» queda detrás de la barra; en Android 7, en claro, los botones del sistema llevan su velo oscuro.
+| Emulador | Altos | Medios | Qué |
+|---|---|---|---|
+| API 36 (8 combinaciones) | 0 | 2 | la capa de pulsado del «+» era un círculo fijo dentro del cuadrado redondeado en que se convierte al pulsarlo (zona «+»); y en claro, al oscurecer el cuerpo de la silueta en la primera pasada, la zona trabajada se había quedado a 1,14:1 de él (zona tema claro) |
+| API 32 | 0 | 0 | un bajo: la misma capa de pulsado |
+| API 24 | **1** | 0 | **alto**: las etiquetas de la barra seguían descentrándose a letra 1,3 (hasta 12 px) al recrearse la pantalla; el arreglo de la primera pasada no había cambiado nada ahí. Y dos bajos del «+»: la capa de pulsado y un canto en dos líneas |
+
+Los seis arreglos de la primera pasada, comprobados con medida por los tres revisores: resueltos (el de las etiquetas, solo en API 36 y API 32).
+
+**El alto: la causa, con traza.** A letra 1,3 las etiquetas encogen hasta lo que cabe en su pestaña, y se encogían al **colocar** la barra. En Android 8 o menos, cuando el tamaño de un texto cambia durante la colocación, AppCompat marca para medir solo la etiqueta, sin avisar a sus padres. Con trazas en la barra se vio la cadena: la etiqueta, marcada; todo lo que hay entre ella y la barra, sin marcar. Ninguna medida posterior bajaba hasta la etiqueta, que se quedaba con la caja del tamaño grande (111 px) y el texto, ya encogido (98 px), a la izquierda. En un arranque en frío lo tapaba una medida posterior de la propia pestaña; al recrearse la pantalla (cambiar de tema o de idioma, volver tras un rato), no. El arreglo de la primera pasada pedía otra medida a la barra, que por lo mismo no llegaba. **Arreglo** (`8b683df9`): el tamaño se decide al medir la barra, que se vuelve a medir en la misma pasada. Medido en API 24, a letra 1,3, tras recrear la pantalla: cajas de 98 / 157 / 165 / 162 px (antes, 111 / 178 / 188 / 183).
+
+**Los dos medios**, de las zonas que se arreglan en esta rama («+» y tema claro), cada uno comprobado a mano con su medida:
+
+| Arreglo | Medida después |
+|---|---|
+| Capa de pulsado del «+» (`8b683df9`): su máscara cambia de esquinas con el botón | en captura con el «+» pulsado, API 24 y API 32, los dos temas: el cuadrado es uniforme hasta las esquinas (API 24: `#FF720D` en claro y `#F36500` en oscuro, sin ningún píxel `#FF6A00` dentro; antes, un círculo) |
+| Silueta en claro (`4e6b181e`): el cuerpo en tinta `#45474C` y la zona trabajada en `#FF6A00` | cuerpo, 8,56:1 contra el cristal; zona contra el cuerpo, 3,24:1 a pleno color (por cálculo) y 2,28:1 (espalda) y 1,87:1 (pecho) con el alfa de la demo (antes, 1,14–1,24:1); zona contra el cristal, 3,76–4,62:1 |
+
+De paso, en el nivel 3 el canto del «+» vuelve a medirse en píxeles enteros, como antes de ser cristal.
+
+**Tercera pasada** (sobre `4e6b181e`), la vuelta extra por el alto, solo en API 24: **0 altos y 0 medios**. Las etiquetas, en claro y en oscuro, a letra 1,3:
+
+| Caso | Inicio | Entrenar | Nutrición | Progreso |
+|---|---|---|---|---|
+| En frío · recreada · HOME y lanzador · HOME y recreada · otra pestaña y vuelta · tras la hoja del «+» (los seis, iguales) | 98 px, +0,5 | 157 px, +1,5 | 165 px, +1,0 | 162 px, 0,0 |
+
+(ancho de la caja y descentrado de la tinta respecto a su pestaña, en px). A letra 1,0, como siempre: 84 / 135 / 143 / 140 px.
+
+Bajos que quedan anotados, sin arreglar: en claro, la semana en curso a 0 kg no se distingue de las otras semanas vacías en la gráfica de kilos; a letra 1,3 el icono del rótulo de los tiles de «Tu día» queda 2 dp por encima del centro de su texto; con la hoja del «+» abierta en claro, los tres botones del sistema bajan a 1,99:1 bajo el velo; el bocadillo de Profi conserva el borde gris de la tarjeta opaca; y en la silueta, una zona con pocas series se acerca al cuerpo (1,87:1 el pecho en la demo): es lo que cuenta la escala. Y los conocidos: a letra 1,3 en un móvil bajo (393 × 851 dp, API 24) «Empezar» queda detrás de la barra; en Android 7, en claro, los botones del sistema llevan su velo oscuro.
 
 ## Decisiones tomadas
 
@@ -156,23 +232,58 @@ Bajos que quedan anotados, sin arreglar: en claro, la semana en curso a 0 kg no 
 - **El fondo pasa de degradados de la GPU a una imagen** calculada en un hilo aparte.
 - **La hoja del «+» lleva más tinte que la barra** en claro.
 - A letra 1,3 en móviles estrechos **el detalle del récord pierde su rótulo** antes que partirse o cortarse.
+- **El tinte del «+» en oscuro baja hasta el 65 %, no hasta el 55 %**: es lo único que se aparta de lo pedido, y por la regla del propio encargo (subir el tinte antes que cambiar el icono).
+- **El contraste del icono del «+» se mide sobre su peor punto, que es el más oscuro** de lo que queda detrás, no el más claro que decía el encargo: el icono es casi negro. Se apuntan los dos.
+- **Del «+» gira el icono, no el cristal**, y en el nivel 3 no lleva sombra: «queda como ahora».
+- **La silueta en claro va en tinta, con la zona trabajada en el naranja vivo.** Es un cambio de aspecto que nadie pidió así: sale de hacer cumplir a la vez que el cuerpo se vea (primera pasada) y que la zona se distinga de él (segunda). Si no convence, la alternativa es volver al cuerpo claro y darle un contorno, que pide rehacer los vectores.
+- **El tamaño de las etiquetas de la barra se decide al medir**, no al colocar.
+- **Alcance del revisor en la segunda pasada, reducido por el propietario**: las ocho combinaciones solo en API 36; en API 32 y API 24, claro y oscuro en español a letra 1,3. Y la vuelta extra, una y solo donde hubo un alto.
+- **Lo publicado va a Drive, no al repo de marketing** (limpieza del escritorio).
 - Durante la sesión el propietario autorizó **dos emuladores a la vez** para lo que no mide tiempos (revisor de UI, release contra producción); los fotogramas lentos se siguen midiendo con uno solo y el equipo quieto.
 
 ## Pendiente
 
-- **Segunda pasada del revisor de UI** con `e7b1eddb`, en los tres emuladores: las de API 24 y API 32 se cortaron al agotarse el cupo de uso del modelo de los subagentes (se repone el 1-12). Los arreglos están comprobados a mano con medida, pero la regla pide la pasada entera.
-- **Fotogramas lentos en API 36 y API 32**, y repetir API 24 con el código final.
-- **Aprobación de las capturas por el propietario** y fusión de la PR #145.
+- **Aprobación de las capturas por el propietario** y fusión de la PR #145 (sigue en borrador).
+- **Fotogramas lentos del código final en API 32 y API 24**: tres intentos el 27-11, ninguno válido porque el equipo estaba en uso (ver «Fotogramas lentos»). Hay que medirlos con el equipo sin usar: unos 35 minutos. API 36, el nivel más caro, sí está medido y dentro del 2 %; en API 32 el «+» también desenfoca, y esa es la cifra que más falta.
 
 ## Dudas
 
-- **Qué móvil y qué Android tiene el propietario.** Si es Android 11 o menos, lo que veía en la barra era el nivel 3 (y, en Android 7, el grano). Si es Android 12 o más, el desenfoque que he medido es el de la maqueta, y lo que queda por explicar de su captura sería el canto de los brillos y la banda bajo la barra de estado, ya corregidos.
-- **Los ajustes de contraste del claro**, en especial el enlace sobre el fondo (`#8B3000` en vez de `#A83A00`), el filo de la gráfica y el tinte de la hoja.
+- **Qué móvil y qué Android tiene el propietario.** Si es Android 11 o menos, lo que veía en la barra era el nivel 3 (y, en Android 7, el grano), y ahí el «+» sigue macizo. Si es Android 12 o más, el desenfoque que he medido es el de la maqueta, y lo que queda por explicar de su captura sería el canto de los brillos y la banda bajo la barra de estado, ya corregidos.
+- **Los ajustes de contraste del claro**, en especial el enlace sobre el fondo (`#8B3000` en vez de `#A83A00`), el filo de la gráfica y el tinte de la hoja; y ahora **el 65 % del «+» en oscuro** y **la silueta en tinta**.
+- **El «+» en oscuro se lee casi macizo**: con el naranja al 72–65 % sobre un fondo oscuro pasa poco de lo de detrás, y que parezca el material de la barra depende sobre todo del borde y del reflejo (lo anotó el revisor). Es lo que da la especificación; más transparencia choca con el contraste del icono.
+- **La silueta en oscuro** sigue como antes del rediseño: la zona trabajada, a 1,2:1 del cuerpo, se distingue solo por el tono. No es de este lote; quedaría para el suyo.
+- **El nombre accesible de la silueta de «Hoy toca» corta en tres zonas** (`InicioHoyDetalle`): si la rutina trabaja cuatro, la cuarta se pinta pero TalkBack no la dice. Lo vio el revisor en la tercera pasada; es anterior a este lote y no se ha tocado.
+- **La bienvenida a letra 1,3 en un móvil bajo (API 24)**: al volver a entrar con la cuenta demo, «Ya tengo cuenta» no estaba a la vista bajo «Empezar» y hubo que bajar la letra para tocarlo. No es de este lote y no lo he comprobado a fondo (puede que baste con desplazar); lo dejo anotado.
 
 ## Capturas
 
-En la carpeta de entregas del escritorio, `GymProFit\2026-11-26-gp285-lote-1b`: Inicio arriba, con scroll y al final en los dos temas y los tres emuladores; recortes ampliados de fondo, barra de estado y barra, antes y después, en los tres; los dos carruseles; la fila del récord; y la release contra producción.
+En la carpeta de entregas del escritorio, `GymProFit\2026-11-26-gp285-lote-1b` (70 PNG, 80,8 MB, todas rehechas con el código final `4e6b181e`): **1**, Inicio arriba, con scroll y al final en los dos temas y los tres emuladores, y a letra 1,3 en API 36; **2**, recortes ampliados de fondo, barra de estado y barra, antes y después, en los tres; **3**, los dos carruseles; **4**, la fila del récord; **5**, la release contra producción; y **6**, el «+» de cristal: cerrado y abierto, en claro y oscuro, en API 36, 32 y 24 (la pantalla entera y el «+» ampliado ×4), y cómo cambia de forma al pulsarlo.
 
 ## Limpieza del escritorio
 
-Encargo añadido durante la sesión. Hecho el inventario (sin mover ni borrar nada) y presentada la tabla al propietario; la ejecución espera su aprobación. Se completará aquí con la tabla final, los commits de cada repositorio y lo que ocupaba lo borrado.
+Encargo añadido durante la sesión: dejar el escritorio sin material de GymProFit suelto. Inventario primero (por SHA-256, sin mover nada), tabla al propietario, y ejecutado el 27-11 solo lo que aprobó.
+
+| Elemento | Qué era | Destino | Peso |
+|---|---|---|---|
+| `gymprofit-web-2026-11-12-gp019.zip` y `…-11-13-gp266.zip` | zips de la web | **borrados**: sus ficheros son idénticos a `web/` en `main` | 1,0 MB |
+| `tableros-lote11.zip` | tableros del lote 11 | **borrado**: sus 5 ficheros están en `documentacion/diseno/2026-11-06-rutinas-tiempo-y-crear/` | 13 KB |
+| `capturas-carruseles\2026-11-06` y `\2026-11-13` | capturas de la app para carruseles | **borradas**: idénticas en `gymprofit-marketing\out\carruseles\capturas\` | 1,2 MB |
+| `GP-285 lote 1\` y `GP-285 lote 1 remate\` | capturas del lote 1 | **borradas**: lote fusionado en `c34f085f` | 130,0 MB |
+| `capturas-carruseles\publicar\k5-ig` y `k9-ig` | K5 y K9 de Instagram | **borradas**: idénticas en Drive, «Vídeos para subir\Carruseles» (comprobado otra vez antes de borrar) | 14,3 MB |
+| `…\publicar\k3-tiktok`, `k6-tiktok`, `k7-tiktok` | PNG de TikTok con versión JPG | **borrados**: se conserva el JPG | 35,7 MB |
+| `…\publicar\` K3, K6, K7 y K8 de Instagram; K3, K6 y K7 de TikTok en JPG; K5, K8 y K9 de TikTok en PNG | carruseles ya publicados | **Drive**, `GymProFit · Publicados\Carruseles\<KN>\ig` y `\tiktok` | 74,3 MB |
+| `capturas-carruseles\linkedin-tarjetas` y los dos PNG del 19-11 y el 20-11 | posts de LinkedIn | **Drive**, `GymProFit · Publicados\LinkedIn\` | 2,0 MB |
+| `gymprofit-web-2026-11-26-privacidad.zip` | web de la rama `privacidad-proveedores`, sin subir | **entregas**, `GymProFit\2026-11-26-privacidad-proveedores\` | 0,5 MB |
+| `un-dia-fase-1\` | rama «Un día» | **entregas**, `GymProFit\2026-11-25-un-dia-fase-1\` | 17,4 MB |
+| `un-dia-fase-4\` y `capturas-beta-2026-11-26\` | rama «Un día» y sus capturas de `/beta` | **entregas**, `GymProFit\2026-11-26-un-dia-fase-4\` | 63,5 MB |
+
+- **Borrado: 182,3 MB** (178 ficheros). **A Drive: 76,3 MB** (86 ficheros); sus originales se borraron del escritorio después de comprobar cada copia: mismo SHA-256 al releerla de Drive y los 86 ficheros vistos en la nube con su mismo tamaño. **A entregas: 81,4 MB**, sin copiar: es un cambio de carpeta.
+- Lo publicado **no fue al repo de marketing**, como se propuso al principio: va a Drive, a una carpeta «Publicados» junto a «Vídeos para subir» (decisión del propietario; el `.git` de marketing ya pesa 1,4 GB).
+- En el escritorio, de GymProFit, quedan la carpeta `GymProFit\` y los clones de los repos.
+
+**La regla, en los dos `CLAUDE.md`**: todo lo que se entrega va a `GymProFit\`, una subcarpeta por entrega (`AAAA-MM-DD-<lote o tarea>`), que se borra con el lote fusionado y aprobado salvo un APK pendiente de repartir; y lo ya publicado se archiva en Drive, en «Publicados», nunca en un repositorio.
+
+| Repositorio | Commit | Cómo |
+|---|---|---|
+| App | `b5a96be1`, fusionado en `main` con `5829ac6c` | rama propia desde `main`, PR #146, CI en verde; rama borrada |
+| Marketing | `a845189` | en `main`, subido, como manda su `CLAUDE.md` |

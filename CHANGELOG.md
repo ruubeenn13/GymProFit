@@ -8,6 +8,10 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `4e6b181e` | fix(android): en el tema claro, las zonas trabajadas de la silueta muscular de Inicio vuelven a distinguirse del cuerpo: el cuerpo va en tinta y la zona en el naranja vivo (GP-285). |
+| `8b683df9` | fix(android): en Android 8 o menos, con letra grande, las etiquetas de la barra ya no quedan descentradas al recrearse la pantalla (al cambiar de tema o de idioma, o al volver tras un rato); y al pulsar el «+», su capa de pulsado sigue la forma del botón (GP-285). |
+| `79662ec5` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el «+» de cristal, con sus valores y sus contrastes (GP-285). |
+| `80bd7c2d` | feat(android): el «+» de la barra pasa a ser de cristal, como la barra, teñido de naranja: desenfoca lo que pasa por detrás (y lo refracta en Android 13 o más), con su borde, su brillo y una línea de reflejo. En Android 11 o menos queda como estaba. Al abrirse gira solo el icono (GP-285). |
 | `e7b1eddb` | fix(android): lo que encontró el revisor de UI en el lote 1b de Liquid Glass: la sombra de las tarjetas de «Tus últimos entrenos» ya no se corta en recto en claro; ese carrusel encaja también al soltarlo despacio; la silueta muscular se ve en claro; «HOY TOCA · DÍA 1 DE 4» va en una línea con letra grande; y las etiquetas de la barra no se descentran al volver a la app (GP-285). |
 | `26508c77` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el lote 1b: el tema claro con sus valores y sus ajustes de contraste, el nivel 3 opaco y el fondo como imagen (GP-285). |
 | `010dd204` | test(android): `CampoContrasenaTest` espera en cada versión de Android el nodo de esa versión; dos casos fallaban en Android 7, donde Material mete la pista en el texto del nodo. La app no cambia (GP-287). |
