@@ -23,8 +23,8 @@ import es.pmdm.gymprofit.ui.cristal.Hundir;
 // demás. Se usa con el estilo Widget.GymProFit.Boton.Marca. Nunca dos en la misma vista.
 //
 // Es un BotonExpresivo que no cambia de forma al pulsarlo: se hunde y se le enciende el brillo
-// (Hundir). Su sombra naranja cae fuera de su caja: sus padres no recortan a sus hijos, hasta
-// la tarjeta o lo que se desplaza (que siguen recortando lo suyo).
+// (Hundir). Su sombra naranja cae fuera de su caja: sus padres no recortan a sus hijos ni a su
+// relleno, hasta la tarjeta o lo que se desplaza (que siguen recortando lo suyo).
 // ============================================================
 public class BotonMarca extends BotonExpresivo {
 
@@ -48,12 +48,18 @@ public class BotonMarca extends BotonExpresivo {
         quitarRecorte(this);
     }
 
-    /** Que la sombra de un botón no la corten sus padres, hasta su tarjeta o lo que se desplaza. */
+    /**
+     * Que la sombra de un botón no la corten sus padres (ni a su caja ni a su relleno), hasta su
+     * tarjeta o lo que se desplaza.
+     */
     static void quitarRecorte(@NonNull android.view.View boton) {
         for (ViewParent p = boton.getParent(); p instanceof ViewGroup; p = p.getParent()) {
             if (p instanceof MaterialCardView || p instanceof ScrollingView
                     || p instanceof ScrollView || p instanceof HorizontalScrollView) break;
+            // Ni a sus hijos ni a su relleno: el contenido de una tarjeta lleva relleno debajo, y
+            // recortado a él la sombra se cortaba en seco justo bajo el botón (revisor, lote 1c).
             ((ViewGroup) p).setClipChildren(false);
+            ((ViewGroup) p).setClipToPadding(false);
         }
     }
 }
