@@ -352,17 +352,52 @@ Con las dudas de los botones ya decididas por el propietario: la media luna se q
 - `API36_{claro,oscuro}_letra2.0_tu-dia_{es,en}`.
 - «Cambiar» y el «+» pulsados no se volvieron a capturar (no se pidieron). Sus capturas viejas se borraron con las demás de API 36 y 24.
 
+## Cierre: el carrusel de «Hoy toca» sin partir palabras y la fusión de los botones (27-11, rama `gp-285-botones`)
+
+**Commit.** `3e473367` (GP-288, segunda parte).
+
+**Fotogramas lentos: la PR #148 se fusiona sin medida válida.** Decisión de planificación del propietario. Las dos tandas (ver «Cierre: botones de acción» y «Cierre de noche») fallaron por el equipo, no por la rama: otra sesión trabajando y el portátil con batería, con `main` inestable entre rondas. El cambio solo toca el dibujo de botones. **La medida no se da por buena ni se sustituye por otra**: la hará el lote 2, con `main` ya actualizado. En este cierre no se midió nada.
+
+**Qué cambia (GP-288, carrusel).**
+- A letra 2,0 las tarjetas del carrusel (118 dp) partían «Domina / s» y cortaban los nombres con elipsis a media palabra («mancue…»).
+- Nombre y pauta de cada tarjeta son `TextoSinPartir`, con la regla de `11b12ad4`: encogen lo justo para que quepa su palabra más ancha, nunca por debajo de su tamaño a letra 1,0 y sin guiones. Todas las tarjetas del carrusel van al mismo tamaño (`InicioHoyDetalle.igualarTextos`).
+- Más líneas antes que elipsis: el nombre pasa de tres líneas a cinco.
+- La elipsis sigue haciendo falta: el catálogo tiene nombres de hasta 82 caracteres («Elevaciones para deltoides posterior sentado con el torso inclinado con mancuernas»), que no caben en cinco líneas ni a letra 1,0. `TextoSinPartir` quita entonces palabras enteras y acaba en «…»: cae siempre tras una palabra completa. Vale para cualquier `TextoSinPartir` con `android:maxLines`; los de «Tu día» no lo llevan y no cambian.
+- Recortado, `getText()` da lo que se ve y `getTextoCompleto()` el nombre entero, que se pone de descripción: TalkBack lee el nombre completo.
+- Una palabra unida por guion que ya trae el nombre («Range-Of-Motion», «glúteo-femoral») puede pasar de línea tras su guion: no es un guion añadido.
+
+**Test visto en rojo.** `HoyTocaSinPartirTest` (instrumentado; letra 1,0, 1,3, 1,5 y 2,0, en ES y EN, seis nombres del catálogo por idioma, entre ellos el más largo de cada uno, y la pauta más ancha con su última marca). Se quitó cada pieza por separado:
+- sin encoger: `[es, letra 1.3] «Limpiaparabrisas isométrico» a 18.666666 dp: parte una palabra en «Limpiap»`;
+- sin el recorte por palabras: `[es, letra 1.0] «Elevaciones para deltoides posterior sentado con el torso inclinado con mancuernas» a 14.095238 dp: Android corta con elipsis en la línea 4`;
+- sin igualar las tarjetas: `[es, letra 1.3] «Limpiaparabrisas isométrico» a 15.619047 dp: no va al tamaño de sus hermanas expected:<49.0> but was:<41.0>`.
+
+**Batería.**
+- Instrumentados: 40 de 40 en API 36, 32 y 24 (los 39 de antes y `HoyTocaSinPartirTest`).
+- Unitarios: 1.437; fallan solo los 4 `*WebTest` locales de siempre.
+- Lint sin errores.
+
+**Capturas.** En `Desktop\GymProFit\2026-11-27-gp285-botones\`, Inicio en API 36 a letra 2,0 con la cuenta local `prueba`:
+- `API36_{claro,oscuro}_letra2.0_carrusel_{es,en}`: el carrusel a la vista;
+- `API36_{claro,oscuro}_letra2.0_carrusel-deslizado_{es,en}`: el resto de sus tarjetas.
+- En `botones-1c\`, las capturas de los botones que estaban en la carpeta del 1c, que se borra. Sus `letra2.0_reposo` son de antes de este arreglo y aún enseñan el carrusel partido.
+
+**Decisiones tomadas.**
+- Tope de cinco líneas para el nombre (antes tres). Sin tope, el nombre más largo ocuparía unas diez líneas a letra 2,0 y la tarjeta crecería unos 260 dp.
+- La pauta también es `TextoSinPartir`, igualada entre tarjetas: es el mismo bloque y la misma regla.
+- El hash de la fusión no puede ir en este informe, que viaja en la rama: va en el resumen al propietario.
+
 ## Pendiente
 
+- **Fotogramas lentos de los botones (PR #148):** sin medir. Lo mide el lote 2 con `main` ya actualizado, con el cargador enchufado y sin otras sesiones trabajando.
 - El «+» lo aprueba el propietario en el cierre: la PR #147 se fusiona con el CI en verde.
 - Carpeta `Desktop\GymProFit\2026-11-26-gp285-lote-1b\`: borrada el 27-11, a petición del propietario.
 - Los bajos del revisor de arriba.
 
 ## Dudas
-- **Botones, fotogramas:** sin medida válida en dos noches seguidas (ver «Cierre de noche»). La PR #148 sigue en borrador hasta repetirla con el cargador enchufado y sin otras sesiones de Claude trabajando.
+- Resuelto: la PR #148 se fusiona sin medida válida de fotogramas, por decisión de planificación; la medida pasa al lote 2 (ver el último cierre). No se da por buena.
 - Resuelto en el cierre de noche: a letra 1,5 se acepta que los botones queden detrás de la barra con el scroll arriba (se alcanzan con scroll y quedan enteros encima).
 - Resuelto en el cierre de noche: el brillo de «Empezar» va centrado y ancho (`74ca0bf2`).
-- **Inicio, fuera de GP-288:** a letra 2,0 el carrusel de «Hoy toca» parte «Domina / s» (Dominadas) en API 36. Es el mismo fallo que el de «Tu día», pero en otro bloque: no se tocó. ¿Se le aplica `TextoSinPartir` en el lote siguiente?
+- Resuelto en `3e473367`: el carrusel de «Hoy toca» ya no parte «Domina / s» a letra 2,0.
 - **Botones:** a letra 2,0 el icono de «Empezar» no crece con el texto (24 dp fijos, como en todos los botones con icono).
 
 - Resuelto en el cierre: la capa de pulsado ya no existe y el «+» pulsado queda a ΔE ≤ 15.
