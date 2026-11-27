@@ -32,6 +32,7 @@
         <item name="gpGraficoMarca">@color/gp_cristal_grafico</item>
         <item name="gpGraficoTenue">@color/gp_cristal_barra_tenue</item>
         <item name="gpGraficoOro">@color/gp_cristal_oro</item>
+        <item name="gpSilueta">@color/gp_cristal_silueta</item>
         <item name="gpGraficoKilos">@color/gp_cristal_kilos</item>
         <item name="gpGraficoKilosTenue">@color/gp_cristal_kilos_tenue</item>
         <item name="gpGraficoKilosFilo">@color/gp_cristal_kilos_filo</item>

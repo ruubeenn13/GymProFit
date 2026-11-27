@@ -277,6 +277,9 @@
     <!-- La marca de un gráfico pequeño sobre cristal (el icono de un ejercicio, la barra de
          «esta vez» de un entreno): el acento, que pasa de 3:1 solo. Y sus barras apagadas. -->
     <color name="gp_cristal_grafico">#A33800</color>
+    <!-- El cuerpo de la silueta muscular sobre cristal: el gris de la tarjeta opaca (#D2D2D6)
+         se quedaba en 1,39:1 contra el cristal y el cuerpo casi no se veía. -->
+    <color name="gp_cristal_silueta">#737579</color>
     <color name="gp_cristal_barra_tenue">#8015171B</color>
     <!-- La gráfica de kilos: la semana en curso en el naranja vivo y las demás en naranja al
          28 %, como pide el diseño. Ninguno de los dos llega a 3:1 contra el cristal (1,93:1 y

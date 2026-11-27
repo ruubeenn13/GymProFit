@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.ui.widget;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -98,5 +99,12 @@ public class EncajeCarruselTest {
         // 20 dp se veían sin fundir.
         assertTrue(vista.contains("protected boolean isPaddingOffsetRequired()"));
         assertTrue(vista.contains("return getPaddingRight();"));
+        // La marca del lanzamiento se borra al acabar el gesto y no al empezarlo: con elementos
+        // pulsables el primer toque no llega al carrusel, y con la marca de un lanzamiento
+        // anterior puesta ya no encajaba al soltarlo despacio.
+        String toque = vista.substring(vista.indexOf("public boolean onTouchEvent("), vista.indexOf("private void encajar("));
+        assertTrue(toque.contains("if (!lanzado) encajar(0);"));
+        assertTrue(toque.indexOf("lanzado = false;") > toque.indexOf("if (!lanzado) encajar(0);"));
+        assertFalse(toque.contains("ACTION_DOWN"));
     }
 }

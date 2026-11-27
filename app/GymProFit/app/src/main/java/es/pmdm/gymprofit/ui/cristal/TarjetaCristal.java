@@ -30,8 +30,9 @@ import es.pmdm.gymprofit.R;
 // Para dibujar fuera de su caja:
 //   · no se recorta a su contorno (lo de dentro ya es redondo: el cristal lo es, y la capa de
 //     pulsar de la tarjeta lleva su propia máscara);
-//   · sus padres no recortan a sus hijos, hasta el primero que se desplaza, que sí recorta a
-//     su caja (un carrusel deja sitio a la sombra con su relleno).
+//   · sus padres no recortan a sus hijos, hasta el primero que se desplaza (incluido), que
+//     queda recortado a su propia caja por quien lo contiene (un carrusel deja sitio a la
+//     sombra con su relleno).
 //
 // Una tarjeta dentro de otra (la fila del récord) va sin sombra: app:cristalSombra="false".
 // ============================================================
@@ -69,10 +70,13 @@ public class TarjetaCristal extends MaterialCardView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (!conSombra()) return;
-        // La sombra cae fuera de la tarjeta: que ningún padre la recorte, hasta el que se desplaza.
+        // La sombra cae fuera de la tarjeta: que ningún padre la recorte, hasta el que se desplaza,
+        // este incluido. Él sigue recortado a su caja por su propio padre (la pantalla, o la
+        // sección), pero deja de recortar a su hijo a la caja de este: en un carrusel la fila mide
+        // lo que sus tarjetas, y la sombra se cortaba en recto justo en su canto.
         for (ViewParent p = getParent(); p instanceof ViewGroup; p = p.getParent()) {
-            if (p instanceof ScrollingView || p instanceof ScrollView || p instanceof HorizontalScrollView) break;
             ((ViewGroup) p).setClipChildren(false);
+            if (p instanceof ScrollingView || p instanceof ScrollView || p instanceof HorizontalScrollView) break;
         }
     }
 

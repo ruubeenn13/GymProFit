@@ -143,6 +143,9 @@ public class InicioFragment extends BaseFragment {
         // El carrusel de «Hoy toca» no es una parada del teclado (se para en lo que tiene dentro):
         // HorizontalScrollView se hace enfocable en su constructor y el atributo del XML no basta.
         view.findViewById(R.id.scrollHoyEjercicios).setFocusable(false);
+        // «HOY TOCA · DÍA 1 DE 4» en una línea: con letra grande encoge antes que partirse.
+        es.pmdm.gymprofit.ui.widget.TextoQueEncoge.enUnaLinea(view.findViewById(R.id.tvHoyEyebrow),
+                getResources().getDimension(R.dimen.text_eyebrow_minimo));
         View avatar = findViewById(R.id.avatarInicio);
         avatar.setContentDescription(getString(R.string.avatar_perfil_a11y));
         avatar.setOnClickListener(v -> startActivity(new Intent(requireContext(), PerfilActivity.class)));

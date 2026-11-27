@@ -206,6 +206,10 @@ public class BarraNavegacion extends LinearLayout {
         for (View p : pestanas) {
             ((TextView) p.findViewById(R.id.tvEtiqueta)).setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
         }
+        // El tamaño cambia a mitad de una colocación, y la medida que eso pide se pierde: cada
+        // etiqueta se quedaba con la caja del tamaño anterior y su texto descentrado (visto a
+        // letra 1,3 al volver a la app). Se pide otra en cuanto acaba esta.
+        post(this::requestLayout);
     }
 
     public void setOyente(Oyente oyente) { this.oyente = oyente; }

@@ -82,11 +82,17 @@ public class CarruselView extends HorizontalScrollView {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
-        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) lanzado = false;
         boolean usado = super.onTouchEvent(ev);
         int accion = ev.getActionMasked();
-        // Soltado sin lanzar (o gesto cancelado): al elemento más cercano.
-        if ((accion == MotionEvent.ACTION_UP || accion == MotionEvent.ACTION_CANCEL) && !lanzado) encajar(0);
+        if (accion == MotionEvent.ACTION_UP || accion == MotionEvent.ACTION_CANCEL) {
+            // Soltado sin lanzar (o gesto cancelado): al elemento más cercano.
+            if (!lanzado) encajar(0);
+            // La marca es de este gesto y se borra aquí, al acabar. No al empezar: si los
+            // elementos son pulsables (las tarjetas de los entrenos), el primer toque se lo
+            // queda la tarjeta y aquí no llega; la marca de un lanzamiento anterior se quedaba
+            // puesta y el carrusel ya no encajaba al soltarlo despacio.
+            lanzado = false;
+        }
         return usado;
     }
 

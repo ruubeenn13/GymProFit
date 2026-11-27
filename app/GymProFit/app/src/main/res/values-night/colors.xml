@@ -140,6 +140,8 @@
     <color name="gp_cristal_enlace">#FF8A3D</color>
     <!-- La marca de una gráfica o de una barra de progreso sobre cristal: el del enlace. -->
     <color name="gp_cristal_grafico">#FF8A3D</color>
+    <!-- El cuerpo de la silueta muscular sobre cristal: en oscuro, el de siempre. -->
+    <color name="gp_cristal_silueta">@color/body_silhouette</color>
     <!-- La gráfica de kilos y los rellenos de proteína y agua: en oscuro, los de siempre. -->
     <color name="gp_cristal_kilos">@color/gp_cristal_grafico</color>
     <color name="gp_cristal_kilos_tenue">@color/gp_cristal_barra_tenue</color>

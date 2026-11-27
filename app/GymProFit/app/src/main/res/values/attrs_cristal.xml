@@ -25,6 +25,8 @@
     <attr name="gpGraficoMarca" format="color" />
     <attr name="gpGraficoTenue" format="color" />
     <attr name="gpGraficoOro" format="color" />
+    <!-- El gris del cuerpo de la silueta muscular (SiluetaMuscularView). -->
+    <attr name="gpSilueta" format="color" />
     <!-- La gráfica de kilos (BarrasKilosView): la semana en curso, las demás y el filo de cada
          barra (transparente: sin filo). -->
     <attr name="gpGraficoKilos" format="color" />

@@ -13,6 +13,7 @@
     android:layout_weight="1"
     android:clickable="true"
     android:focusable="true"
+    android:clipChildren="false"
     android:background="@drawable/fondo_pestana">
 
     <!-- Dos vistas a propósito: la de fuera es la zona pulsable (toda la columna, 64 dp) y esta, la

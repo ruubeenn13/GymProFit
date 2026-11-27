@@ -84,7 +84,7 @@ public class ContrasteCristalTest {
                 t.medir("sobre el cristal", texto, cristal, TEXTO, fallos);
             }
             // Gráficos: iconos con color, barras de progreso y la última barra de la gráfica.
-            for (String grafico : new String[]{ "gp_cristal_grafico", "gp_cristal_proteinas", "gp_cristal_agua" }) {
+            for (String grafico : new String[]{ "gp_cristal_grafico", "gp_cristal_proteinas", "gp_cristal_agua", "gp_cristal_silueta" }) {
                 t.medir("gráfico sobre el cristal", grafico, cristal, GRANDE, fallos);
             }
             // El chip y el botón secundario: cristal plano encima del de la tarjeta.
