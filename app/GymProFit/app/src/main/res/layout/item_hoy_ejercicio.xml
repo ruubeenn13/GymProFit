@@ -5,6 +5,10 @@
   se pulsa la tarjeta entera, que abre la rutina. Va dentro de la tarjeta héroe de cristal
   (GP-285): el bloque del icono es un tile de cristal y sus colores salen del tema de Inicio
   (ThemeOverlay.GymProFit.Cristal).
+  Nombre y pauta son TextoSinPartir (GP-288): con letra grande encogen antes que partir una
+  palabra, nunca por debajo de su tamaño a letra 1,0, y todas las tarjetas del carrusel van al
+  mismo tamaño (InicioHoyDetalle.igualarTextos). El nombre llega a cinco líneas; si aun así no
+  cabe, acaba en «…» tras una palabra entera.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -29,18 +33,18 @@
             app:tint="?attr/gpGraficoMarca" />
     </FrameLayout>
 
-    <TextView
+    <es.pmdm.gymprofit.ui.widget.TextoSinPartir
         android:id="@+id/tvNombreEjercicio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/espacio_8"
-        android:maxLines="3"
+        android:maxLines="5"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.GymProFit.Apoyo"
         android:textStyle="bold"
         android:textColor="?attr/colorOnSurface" />
 
-    <TextView
+    <es.pmdm.gymprofit.ui.widget.TextoSinPartir
         android:id="@+id/tvMetaEjercicio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
