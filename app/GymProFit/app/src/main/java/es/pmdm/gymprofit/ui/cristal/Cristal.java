@@ -68,8 +68,10 @@ public class Cristal extends Drawable {
     static final float MEDIO = 0.55f;
     /** Hasta dónde baja la media luna del reflejo del «+»: su cuarto de arriba. */
     static final float REFLEJO_ALTO = 0.25f;
-    // El brillo radial del «+»: su centro y su radio, en fracción de su caja.
-    static final float BRILLO_X = 0.30f, BRILLO_Y = 0.28f, BRILLO_RADIO = 0.60f;
+    // El brillo radial del «+»: su centro y su radio, en fracción de su caja. Pequeño y solo en
+    // el tercio de arriba (se apaga antes de un tercio del alto): más grande, aclaraba todo el
+    // botón y lo alejaba del naranja de la marca.
+    static final float BRILLO_X = 0.32f, BRILLO_Y = 0.14f, BRILLO_RADIO = 0.19f;
     // El centro del degradado radial del «+» opaco, en fracción de su caja.
     private static final float RADIAL_X = 0.35f, RADIAL_Y = 0.30f;
 
@@ -304,7 +306,7 @@ public class Cristal extends Drawable {
     // El brillo radial y el borde en degradado del «+»: dependen de la caja.
     private void prepararAccion() {
         if (tipo != VIVO_ACCION || caja.isEmpty()) return;
-        // Muy difuminado: del 35 % en su centro a nada en su radio, con un tramo intermedio al
+        // Muy difuminado: del 20 % en su centro a nada en su radio, con un tramo intermedio al
         // 40 % de su alfa para que no se lea como un disco. Tres paradas, no más (DEC-070).
         float radioBrillo = Math.max(1f, Math.min(caja.width(), caja.height()) * BRILLO_RADIO);
         int alfaMedio = Math.round((brilloRadialColor >>> 24) * 0.4f);
@@ -372,7 +374,8 @@ public class Cristal extends Drawable {
 
     // El «+» de cristal, de abajo arriba: suelo de luz, tinte, brillo radial, borde y reflejo.
     private void pintarAccion(@NonNull Canvas canvas) {
-        canvas.drawPath(forma, suelo);
+        // El suelo de luz solo se pinta si lo hay: con el tinte de la marca no hace falta.
+        if (suelo.getAlpha() != 0) canvas.drawPath(forma, suelo);
         canvas.drawPath(forma, relleno);
         canvas.drawPath(forma, brilloRadial);
         canvas.drawPath(bordeForma, trazo);

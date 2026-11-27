@@ -195,8 +195,9 @@ public class ContrasteCristalTest {
     // El «+» es cristal vivo teñido de naranja: su icono («+» y «×», un gráfico: 3:1) se mide en
     // los dos temas y los tres niveles. En los niveles 1 y 2, sobre su tinte compuesto encima de
     // todo lo que puede quedar detrás (lo mismo que la barra, con el velo de la hoja abierta
-    // incluido, que es cuando se ve la «×»), con su suelo de luz debajo del tinte, que es lo
-    // que lo sostiene: si no llega, se sube la luz, no el tinte; en el 3, sobre su degradado
+    // incluido, que es cuando se ve la «×»), con su suelo de luz debajo del tinte si lo lleva
+    // (hoy no: el tinte de la marca llega solo); si un día no llega, se pone luz, no más tinte,
+    // que es lo que lo alejaría del naranja de la marca; en el 3, sobre su degradado
     // macizo. El icono es casi negro, así que su peor punto es el más oscuro de lo de detrás,
     // no el más claro: se apuntan los dos. El brillo, el borde y el reflejo solo aclaran: no
     // bajan el contraste de algo oscuro.
@@ -205,7 +206,11 @@ public class ContrasteCristalTest {
         List<String> fallos = new ArrayList<>();
         for (String tema : TEMAS) {
             Tema t = new Tema(tema);
-            Set<Integer> cristal = t.capas(t.capas(saturados(t.detrasDelVivo()), MAS_LUZ), MAS);
+            // La luz solo se pone donde hace falta (en claro puede ser transparente): sin capa,
+            // el tinte va directo sobre lo de detrás.
+            Set<Integer> detras = saturados(t.detrasDelVivo());
+            Set<Integer> suelo = t.color(MAS_LUZ[0]) >>> 24 == 0 ? detras : t.capas(detras, MAS_LUZ);
+            Set<Integer> cristal = t.capas(suelo, MAS);
             t.medir("el «+», niveles 1 y 2", "gp_mas_icono", cristal, GRANDE, fallos);
             t.medir("el «+», 1 y 2, lo más claro", "gp_mas_icono", masClaro(cristal), GRANDE, fallos);
             Set<Integer> opaco = new LinkedHashSet<>();
