@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -40,15 +41,17 @@ import es.pmdm.gymprofit.R;
 //   · TARJETA      tarjetas, tiles y chips (el radio lo da cristalRadio; sin él, píldora).
 //   · LENTE        la selección: la pestaña activa de la barra. En claro, con sombra.
 //   · ORO          la fila de un récord: degradado dorado de lado a lado y brillo.
-//   · BRILLO       solo el brillo de arriba, para ponerlo encima de un botón relleno.
 //   · VIVO         el tinte que el cristal vivo pinta sobre su desenfoque (CristalVivo).
 //   · VIVO_OPACO   la superficie del cristal vivo cuando no desenfoca (nivel 3).
 //   · VIVO_GRUESO  el tinte de la hoja del «+», con más cuerpo que el de la barra.
-//   · VIVO_ACCION  el «+» de la barra, cristal naranja (lote 1c). De abajo arriba: un suelo de
-//                  luz blanca, el tinte de la marca a 160°, un brillo radial difuminado en el
-//                  tercio superior izquierdo, el borde en degradado (claro arriba, tenue abajo)
-//                  y el reflejo de arriba, una media luna que se apaga hacia abajo.
-//   · VIVO_ACCION_OPACO  el «+» cuando no desenfoca (nivel 3): el degradado radial macizo.
+//   · MARCA        el botón principal y el «+» de la barra (lote 1c): NO es cristal, es el
+//                  naranja de la marca macizo con acabado, igual en los tres niveles. De abajo
+//                  arriba: una sombra suave del propio naranja por fuera, el relleno en degradado
+//                  vertical muy suave (gp_marca_alto → _bajo, los dos a ΔE ≤ 15 de #FF6A00), un
+//                  brillo radial pequeño en el tercio de arriba (en un botón ancho, una elipse
+//                  centrada de en torno al 60 % de su ancho), el borde de 1,5 dp en degradado
+//                  (claro arriba, tenue abajo) y el reflejo de arriba, una media luna que se apaga
+//                  hacia abajo. Pulsado, el brillo y la media luna suben (ponerLuz, Hundir).
 //
 // La sombra del cristal estático en claro no la pinta este dibujo sino su tarjeta
 // (TarjetaCristal), que es quien puede dibujar fuera de su caja; la de la lente sí, y por eso
@@ -59,23 +62,26 @@ import es.pmdm.gymprofit.R;
 // ============================================================
 public class Cristal extends Drawable {
 
-    public static final int TARJETA = 0, LENTE = 1, ORO = 2, BRILLO = 3, VIVO = 4, VIVO_OPACO = 5, VIVO_GRUESO = 6;
-    public static final int VIVO_ACCION = 7, VIVO_ACCION_OPACO = 8;
+    public static final int TARJETA = 0, LENTE = 1, ORO = 2, VIVO = 4, VIVO_OPACO = 5, VIVO_GRUESO = 6;
+    public static final int MARCA = 7;
 
     /** El ángulo del degradado del relleno, como en CSS: 0 hacia arriba, 90 hacia la derecha. */
     static final float ANGULO = 160f;
     /** Dónde cae el tono medio del relleno. */
     static final float MEDIO = 0.55f;
-    /** Hasta dónde baja la media luna del reflejo del «+»: su cuarto de arriba. */
+    /** Hasta dónde baja la media luna del reflejo de un botón de marca: su cuarto de arriba. */
     static final float REFLEJO_ALTO = 0.25f;
-    // El brillo radial del «+»: su centro y su radio, en fracción de su caja. Pequeño y solo en
-    // el tercio de arriba (se apaga antes de un tercio del alto): más grande, aclaraba todo el
-    // botón y lo alejaba del naranja de la marca.
+    // El brillo radial de un botón de marca: su centro y su radio, en fracción de su caja (el
+    // radio, del lado corto). Pequeño y solo en el tercio de arriba: más grande, aclaraba todo
+    // el botón y lo alejaba del naranja de la marca.
     static final float BRILLO_X = 0.32f, BRILLO_Y = 0.14f, BRILLO_RADIO = 0.19f;
-    // Cuánto del brillo y de la media luna se pinta otra vez encima con el «+» pulsado del todo.
+    // En un botón ancho (el principal, «Empezar»), el brillo es una elipse centrada que ocupa en
+    // torno al 60 % de su ancho (BRILLO_ANCHO es su semieje, en fracción del ancho), con el mismo
+    // alto y la misma altura que el del «+»: con el centro del redondo se leía como un punto a
+    // la izquierda (propietario, 27-11). Ancho es más de ANCHO_DESDE veces su alto.
+    static final float BRILLO_ANCHO = 0.30f, ANCHO_DESDE = 1.5f;
+    // Cuánto del brillo y de la media luna se pinta otra vez encima con el botón pulsado del todo.
     static final float LUZ_PULSADO = 0.75f;
-    // El centro del degradado radial del «+» opaco, en fracción de su caja.
-    private static final float RADIAL_X = 0.35f, RADIAL_Y = 0.30f;
 
     private final Paint relleno = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint trazo = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -83,8 +89,7 @@ public class Cristal extends Drawable {
     private final Paint luzBaja = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint filo = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint reflejo = new Paint(Paint.ANTI_ALIAS_FLAG);
-    // El «+»: el suelo de luz bajo el tinte y el brillo radial encima.
-    private final Paint suelo = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // El botón de marca: su brillo radial.
     private final Paint brilloRadial = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path forma = new Path(), bordeForma = new Path(), luzForma = new Path();
     private final Path luzBajaForma = new Path(), filoForma = new Path(), reflejoForma = new Path();
@@ -95,16 +100,15 @@ public class Cristal extends Drawable {
     private float radio = -1f;
     private float grosor = 1f, grosorFilo = 1f;
     private int alto, medio, bajo;
-    private boolean pulsado;
     // La sombra de la lente (solo en claro): sus medidas en px y su color.
     private float sombraDifuminado, sombraBaja;
     private int sombraColor;
     @Nullable private SombraCristal sombra;
-    // El «+»: su reflejo (color y cuánto se mete del canto, en px), el radio de su degradado
-    // opaco, el brillo radial y los dos extremos del degradado de su borde.
+    // El botón de marca: su reflejo (color y cuánto se mete del canto, en px), el brillo radial
+    // y los dos extremos del degradado de su borde.
     private int reflejoColor, brilloRadialColor, bordeAlto, bordeBajo;
-    private float reflejoDentro, radialRadio;
-    // El «+»: lo pulsado que está, de 0 a 1 (ponerLuz).
+    private float reflejoDentro;
+    // El botón de marca: lo pulsado que está, de 0 a 1 (ponerLuz).
     private float luzPulsado;
 
     /** Para <drawable class=…>: los atributos llegan en inflate(). */
@@ -116,7 +120,6 @@ public class Cristal extends Drawable {
         filo.setStyle(Paint.Style.STROKE);
         reflejo.setStyle(Paint.Style.FILL);
         reflejo.setDither(true);
-        suelo.setStyle(Paint.Style.FILL);
         brilloRadial.setStyle(Paint.Style.FILL);
         brilloRadial.setDither(true);
         relleno.setDither(true);
@@ -174,11 +177,6 @@ public class Cristal extends Drawable {
                 borde = brilloBajo = canto = 0;
                 brillo = R.color.gp_cristal_oro_brillo;
                 break;
-            case BRILLO:
-                a = m = b = 0;
-                borde = brilloBajo = canto = 0;
-                brillo = R.color.gp_boton_brillo;
-                break;
             case VIVO:
                 a = R.color.gp_vivo_alto;
                 m = R.color.gp_vivo_medio;
@@ -194,34 +192,23 @@ public class Cristal extends Drawable {
                 b = R.color.gp_vivo_opaco_bajo;
                 m = 0;
                 break;
-            case VIVO_ACCION:
-                a = R.color.gp_mas_tinte_alto;
-                b = R.color.gp_mas_tinte_bajo;
+            case MARCA:
+                a = R.color.gp_marca_alto;
+                b = R.color.gp_marca_bajo;
                 m = 0;
-                // El borde lo pinta un degradado (bordeAlto → bordeBajo, prepararAccion).
-                borde = R.color.gp_mas_borde_alto;
+                // El borde lo pinta un degradado (bordeAlto → bordeBajo, prepararMarca).
+                borde = R.color.gp_marca_borde_alto;
                 brillo = brilloBajo = canto = 0;
-                suelo.setColor(ResourcesCompat.getColor(r, R.color.gp_mas_luz, theme));
-                brilloRadialColor = ResourcesCompat.getColor(r, R.color.gp_mas_brillo_interior, theme);
-                bordeAlto = ResourcesCompat.getColor(r, R.color.gp_mas_borde_alto, theme);
-                bordeBajo = ResourcesCompat.getColor(r, R.color.gp_mas_borde_bajo, theme);
-                reflejoColor = ResourcesCompat.getColor(r, R.color.gp_mas_reflejo, theme);
-                reflejoDentro = r.getDimension(R.dimen.barra_mas_reflejo_dentro);
-                grosor = r.getDimension(R.dimen.barra_mas_borde);
+                brilloRadialColor = ResourcesCompat.getColor(r, R.color.gp_marca_brillo, theme);
+                bordeAlto = ResourcesCompat.getColor(r, R.color.gp_marca_borde_alto, theme);
+                bordeBajo = ResourcesCompat.getColor(r, R.color.gp_marca_borde_bajo, theme);
+                reflejoColor = ResourcesCompat.getColor(r, R.color.gp_marca_reflejo, theme);
+                reflejoDentro = r.getDimension(R.dimen.marca_reflejo_dentro);
+                grosor = r.getDimension(R.dimen.marca_borde);
                 trazo.setStrokeWidth(grosor);
-                break;
-            case VIVO_ACCION_OPACO:
-                // El «+» de antes de ser cristal: degradado radial y el borde del cristal, sin brillo.
-                a = R.color.gp_mas_claro;
-                b = R.color.gp_mas_oscuro;
-                m = 0;
-                borde = R.color.gp_cristal_brillo;
-                brillo = brilloBajo = canto = 0;
-                radialRadio = r.getDimension(R.dimen.barra_mas_degradado);
-                // Su borde, en píxeles enteros, como el de la forma que lo pintaba antes: con el
-                // grosor en décimas (2,75 px a 440 ppp) el canto salía en dos líneas.
-                grosor = r.getDimensionPixelSize(R.dimen.cristal_borde);
-                trazo.setStrokeWidth(grosor);
+                sombraColor = ResourcesCompat.getColor(r, R.color.gp_marca_sombra, theme);
+                sombraDifuminado = r.getDimension(R.dimen.marca_sombra_difuminado);
+                sombraBaja = r.getDimension(R.dimen.marca_sombra_baja);
                 break;
             default:
                 break;
@@ -242,14 +229,24 @@ public class Cristal extends Drawable {
     }
 
     /**
-     * La luz del «+» pulsado (lote 1c): de 0, en reposo, a 1, pulsado del todo. El brillo y la
+     * Otro color para el borde (el botón secundario en claro, BotonCristal). Uno transparente no
+     * cambia nada: se queda el del cristal.
+     */
+    public void ponerBorde(@androidx.annotation.ColorInt int color) {
+        if (color >>> 24 == 0) return;
+        trazo.setColor(color);
+        invalidateSelf();
+    }
+
+    /**
+     * La luz de un botón de marca pulsado (lote 1c): de 0, en reposo, a 1, pulsado del todo. El brillo y la
      * media luna se pintan otra vez encima con LUZ_PULSADO de su alfa por esa fracción: el brillo
      * pasa del 20 % al 32 % y la media luna del 40 % al 58 %. Los dos acaban por encima de la
      * mitad del botón, así que el naranja de abajo no cambia (ContrasteCristalTest). En los
      * demás cristales no hace nada.
      */
     void ponerLuz(float fraccion) {
-        if (tipo != VIVO_ACCION || luzPulsado == fraccion) return;
+        if (tipo != MARCA || luzPulsado == fraccion) return;
         luzPulsado = fraccion;
         invalidateSelf();
     }
@@ -279,9 +276,9 @@ public class Cristal extends Drawable {
         luzBajaForma.op(forma, corrida, Path.Op.DIFFERENCE);
 
         prepararReflejo(r);
-        prepararAccion();
+        prepararMarca();
         relleno.setShader(degradado());
-        sombra = tipo == LENTE && sombraColor >>> 24 != 0 && !caja.isEmpty()
+        sombra = (tipo == LENTE || tipo == MARCA) && sombraColor >>> 24 != 0 && !caja.isEmpty()
                 ? SombraCristal.de(r, sombraDifuminado, sombraBaja) : null;
     }
 
@@ -292,7 +289,7 @@ public class Cristal extends Drawable {
                 Math.max(0, r - dentro), Math.max(0, r - dentro), Path.Direction.CW);
     }
 
-    // La media luna del reflejo del «+»: la forma metida reflejoDentro, menos ella misma bajada
+    // La media luna del reflejo de un botón de marca: la forma metida reflejoDentro, menos ella misma bajada
     // hasta el cuarto de arriba. Queda ancha arriba y en punta hacia los lados, y se apaga de
     // arriba abajo (llega transparente a su canto de abajo, que así no se ve). Acaba antes de
     // donde empieza el icono (CristalTest).
@@ -312,24 +309,45 @@ public class Cristal extends Drawable {
                 reflejoColor, reflejoColor & 0x00FFFFFF, Shader.TileMode.CLAMP));
     }
 
-    // El brillo radial y el borde en degradado del «+»: dependen de la caja.
-    private void prepararAccion() {
-        if (tipo != VIVO_ACCION || caja.isEmpty()) return;
+    // El brillo radial y el borde en degradado de un botón de marca: dependen de la caja.
+    private void prepararMarca() {
+        if (tipo != MARCA || caja.isEmpty()) return;
         // Muy difuminado: del 20 % en su centro a nada en su radio, con un tramo intermedio al
         // 40 % de su alfa para que no se lea como un disco. Tres paradas, no más (DEC-070).
-        float radioBrillo = Math.max(1f, Math.min(caja.width(), caja.height()) * BRILLO_RADIO);
+        float[] b = brilloMarca(caja.width(), caja.height());
+        float cx = caja.left + b[0], cy = caja.top + b[1];
         int alfaMedio = Math.round((brilloRadialColor >>> 24) * 0.4f);
         int medio = (alfaMedio << 24) | (brilloRadialColor & 0x00FFFFFF);
-        brilloRadial.setShader(new RadialGradient(caja.left + caja.width() * BRILLO_X,
-                caja.top + caja.height() * BRILLO_Y, radioBrillo,
+        RadialGradient radial = new RadialGradient(cx, cy, b[2],
                 new int[]{brilloRadialColor, medio, brilloRadialColor & 0x00FFFFFF},
-                new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP));
+                new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP);
+        // La elipse: el círculo de radio horizontal, aplastado en vertical sobre su centro.
+        if (b[3] != b[2]) {
+            Matrix aplastar = new Matrix();
+            aplastar.setScale(1f, b[3] / b[2], cx, cy);
+            radial.setLocalMatrix(aplastar);
+        }
+        brilloRadial.setShader(radial);
         trazo.setShader(new LinearGradient(0, caja.top, 0, caja.bottom, bordeAlto, bordeBajo,
                 Shader.TileMode.CLAMP));
     }
 
+    /**
+     * Dónde va el brillo radial de un botón de marca y cuánto mide, en px dentro de su caja:
+     * {centro x, centro y, semieje horizontal, semieje vertical}. En el «+» (redondo), un círculo
+     * pequeño arriba a la izquierda; en un botón ancho, una elipse centrada de en torno al 60 %
+     * de su ancho, con la misma altura y el mismo alto.
+     */
+    static float[] brilloMarca(float ancho, float alto) {
+        float vertical = Math.max(1f, Math.min(ancho, alto) * BRILLO_RADIO);
+        if (ancho > alto * ANCHO_DESDE) {
+            return new float[]{ancho * 0.5f, alto * BRILLO_Y, Math.max(vertical, ancho * BRILLO_ANCHO), vertical};
+        }
+        return new float[]{ancho * BRILLO_X, alto * BRILLO_Y, vertical, vertical};
+    }
+
     // El degradado del relleno sobre la caja: a 160° con tono medio, de lado a lado (oro) o
-    // radial (el «+» opaco).
+    // vertical (un botón de marca).
     @Nullable
     private Shader degradado() {
         if (caja.isEmpty() || (alto == bajo && (medio == 0 || medio == alto))) {
@@ -339,9 +357,8 @@ public class Cristal extends Drawable {
         if (tipo == ORO) {
             return new LinearGradient(caja.left, 0, caja.right, 0, alto, bajo, Shader.TileMode.CLAMP);
         }
-        if (tipo == VIVO_ACCION_OPACO) {
-            return new RadialGradient(caja.left + caja.width() * RADIAL_X, caja.top + caja.height() * RADIAL_Y,
-                    Math.max(1f, radialRadio), alto, bajo, Shader.TileMode.CLAMP);
+        if (tipo == MARCA) {
+            return new LinearGradient(0, caja.top, 0, caja.bottom, alto, bajo, Shader.TileMode.CLAMP);
         }
         // Como en CSS: la línea pasa por el centro y mide |ancho·sen| + |alto·cos|.
         double rad = Math.toRadians(ANGULO);
@@ -359,19 +376,14 @@ public class Cristal extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         if (caja.isEmpty()) return;
-        if (tipo == BRILLO) {
-            // Al pulsar, el botón cambia de forma (BotonExpresivo): el brillo se quita mientras.
-            if (!pulsado) canvas.drawPath(luzForma, luz);
-            return;
-        }
         if (sombra != null) {
             canvas.save();
             canvas.translate(caja.left, caja.top);
             sombra.pintar(canvas, caja.width(), caja.height(), sombraColor);
             canvas.restore();
         }
-        if (tipo == VIVO_ACCION) {
-            pintarAccion(canvas);
+        if (tipo == MARCA) {
+            pintarMarca(canvas);
             return;
         }
         canvas.drawPath(forma, relleno);
@@ -381,11 +393,9 @@ public class Cristal extends Drawable {
         if (luzBaja.getColor() != 0) canvas.drawPath(luzBajaForma, luzBaja);
     }
 
-    // El «+» de cristal, de abajo arriba: suelo de luz, tinte, brillo radial, borde y reflejo.
-    // Pulsado, el brillo y el reflejo otra vez encima, con la fracción de luz que toque.
-    private void pintarAccion(@NonNull Canvas canvas) {
-        // El suelo de luz solo se pinta si lo hay: con el tinte de la marca no hace falta.
-        if (suelo.getAlpha() != 0) canvas.drawPath(forma, suelo);
+    // Un botón de marca, de abajo arriba (la sombra ya está): relleno, brillo radial, borde y
+    // reflejo. Pulsado, el brillo y el reflejo otra vez encima, con la fracción de luz que toque.
+    private void pintarMarca(@NonNull Canvas canvas) {
         canvas.drawPath(forma, relleno);
         canvas.drawPath(forma, brilloRadial);
         canvas.drawPath(bordeForma, trazo);
@@ -400,22 +410,6 @@ public class Cristal extends Drawable {
             canvas.drawPath(reflejoForma, reflejo);
             reflejo.setAlpha(255);
         }
-    }
-
-    @Override
-    public boolean isStateful() {
-        return tipo == BRILLO;
-    }
-
-    @Override
-    protected boolean onStateChange(@NonNull int[] estado) {
-        if (tipo != BRILLO) return false;
-        boolean ahora = false;
-        for (int e : estado) if (e == android.R.attr.state_pressed) ahora = true;
-        if (ahora == pulsado) return false;
-        pulsado = ahora;
-        invalidateSelf();
-        return true;
     }
 
     @Override

@@ -27,8 +27,8 @@ Distribución de Android (Google, octubre de 2026): API 33+ ≈ 68 % · API 31�
 - **Cristal vivo (barra):** degradado `rgba(40,42,48,.55)` → `rgba(20,22,26,.40)` sobre desenfoque 22 dp con saturación 180 %; mismo borde y brillo.
 - **Selección «lente» (pestaña activa, día elegido, serie en curso):** cápsula blanco 14 % con brillo superior blanco 40 % y resplandor interior blanco 8 %; icono y etiqueta en `#FF8A3D`.
 - **Radios:** tarjeta héroe 30 dp · tarjetas 26–28 dp · tiles 22 dp · chips y botones en píldora.
-- **Botón principal:** `#FF6A00` con texto `#1A0E00` y brillo superior blanco 45 %. Secundario: cristal estático.
-- **«+»:** círculo de 64 dp, degradado radial `#FFB27A` → `#FF6A00`, icono `#1A0E00`. **Desde el 27-11-2026 es cristal vivo teñido de naranja** (abajo, «El «+», en cristal»); el macizo queda para el nivel 3.
+- **Botón principal:** `#FF6A00` con texto `#1A0E00` y brillo superior blanco 45 %. Secundario: cristal estático. **Desde el 27-11-2026, el principal y el «+» son el botón de marca** (abajo, «Botones de acción»).
+- **«+»:** círculo de 64 dp, degradado radial `#FFB27A` → `#FF6A00`, icono `#1A0E00`. El 27-11-2026 pasó a cristal vivo teñido de naranja (abajo, «El «+», en cristal») y, en el cierre del lote 1c, **al botón de marca, el mismo que el principal** (abajo, «Botones de acción»).
 - **Barra:** cápsula flotante de 64 dp a 16 dp de los lados y 26 dp del borde inferior (más el hueco de gestos), con el «+» separado a su derecha. El contenido pasa por debajo.
 - **Texto:** principal `#F2F2F3`; secundario `#C9CDD6`; acento `#FFB27A`/`#FF8A3D`. Títulos y cifras en Barlow Condensed 700–800; texto en Barlow.
 - **Récord:** fila con degradado dorado `rgba(232,184,75,.28)` → `.08` y brillo `rgba(255,236,190,.4)`; dorado `#E8B84B`.
@@ -113,6 +113,17 @@ Contraste del icono (`ContrasteCristalTest`, el tinte sobre todo lo que puede qu
 | Niveles 1 y 2, peor punto (el más oscuro) | 4,92:1 | 6,05:1 |
 | Niveles 1 y 2, punto más claro | 6,20:1 | 7,51:1 |
 | Nivel 3 | 6,61:1 | 6,61:1 |
+
+## Botones de acción (cierre del lote 1c, 27-11-2026; opción B del propietario)
+
+**Regla: el principal y el «+» son sólidos de marca con acabado; el secundario, cristal estático; nunca dos principales en la misma vista.** Si todo fuera del mismo material, el usuario no distinguiría la acción principal. Ningún botón cambia de forma al pulsarlo.
+
+| Botón | Material | Pulsado |
+|---|---|---|
+| Principal y «+» (`BotonMarca`, `bg_marca`) | **No es cristal.** `#FF6A00` macizo con acabado: degradado vertical muy suave `#FF7514` → `#F06000` (ΔE76 5,8 y 5,5), brillo radial blanco 20 % arriba (en el «+», pequeño a la izquierda; en el principal, una elipse centrada de en torno al 60 % de su ancho, pedido del propietario en el cierre), borde 1,5 dp blanco 70 % → 15 %, media luna blanca 40 % → transparente en el cuarto de arriba y sombra suave naranja al 35 % (10 dp de difuminado, 3 hacia abajo). Igual en los dos temas y en los tres niveles. Texto e icono `#1A0E00`, 5,76:1 en el peor punto | Se hunde a 0,94 en 120 ms (curva estándar) y el brillo pasa al 32 % y la media luna al 58 %; sin capa de pulsado. Con «Quitar animaciones», solo la luz |
+| Secundario (`BotonCristal`) | Cristal estático en píldora con los tokens de las tarjetas (relleno a 160°, borde 1 dp, filo de luz arriba), sin desenfoque. En el nivel 3, la superficie opaca del cristal vivo. Texto `gp_cristal_texto`, 4,5:1 o más sobre lo más claro que pueda quedar detrás | Se hunde a 0,94; con «Quitar animaciones», nada |
+
+Se aplica en lo que ya es Liquid Glass (Inicio y la barra). Las demás pantallas los adoptan con su lote; el estilo global de los botones no cambia hasta entonces. Los círculos naranjas de las filas son iconos, no botones.
 
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 

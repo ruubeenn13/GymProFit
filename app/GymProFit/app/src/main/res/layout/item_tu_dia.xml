@@ -2,8 +2,10 @@
 <!--
   item_tu_dia — un tile de «Tu día» en Inicio (GP-216, tablero 13; en Liquid Glass desde GP-285):
   calorías, proteína o agua. Rótulo con su icono, la cifra, su apoyo y, abajo, una barra con lo
-  que va del objetivo. Los tres van a lo ancho con el mismo alto: si un rótulo parte en dos
+  que va del objetivo. Los tres van a lo ancho con el mismo alto: si un texto pasa a dos
   líneas, el hueco de antes de la barra absorbe la diferencia y las tres barras quedan en línea.
+  Los tres textos son TextoSinPartir (GP-288): con letra grande encogen antes que partir una
+  palabra o cortar la cifra, nunca por debajo de su tamaño a letra 1,0.
   Lo rellena InicioTuDia. Es pulsable: lleva a Nutrición.
 -->
 <es.pmdm.gymprofit.ui.cristal.TarjetaCristal xmlns:android="http://schemas.android.com/apk/res/android"
@@ -36,7 +38,7 @@
                 android:layout_marginTop="1dp"
                 android:importantForAccessibility="no" />
 
-            <TextView
+            <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                 android:id="@+id/tvRotuloDia"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -45,14 +47,14 @@
                 android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
         </LinearLayout>
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvCifraDia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/espacio_4"
             android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvApoyoDia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

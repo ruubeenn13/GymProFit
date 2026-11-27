@@ -200,13 +200,205 @@ En API 24 (nivel 3) el «+» no cambia respecto al 1b: es la referencia de que e
   - Batería: 1.433 unitarios; fallan solo los 4 `*WebTest` locales. Lint limpio.
 - **Revisor de UI (Opus), API 36, claro y oscuro:** ni altos, ni medios, ni bajos. Pulsado mide 158 px (60,2 dp) y es un círculo; ΔE de la mitad de abajo, reposo → pulsado: oscuro 11,4 → 11,7, claro 10,0 → 10,0; icono a 5,37:1 (oscuro) y 7,10:1 (claro); la luz acaba 7,6 dp por encima del icono. Sin animaciones, 64 dp pulsado y ΔE 11,8 / 10,0. Capturas en `Desktop\GymProFit6-11-27-gp285-lote-1c\pulsado\`.
 
+## Cierre: botones de acción en Liquid Glass (opción B; rama `gp-285-botones`, PR #148)
+
+Llegó con la PR #147 ya fusionada: va en rama y PR propias.
+
+**Commits.** `916f72cf` (componentes y aplicación en Inicio), `63682498` («Empezar» no se corta a letra grande), `413ab3f4` (sombra cortada por abajo), `153b3047` (canto de «Cambiar» en claro).
+
+**Qué hay.**
+- **Principal y «+», el mismo material** (`bg_marca`, `Cristal.MARCA`): naranja macizo con degradado vertical `#FF7514` → `#F06000`, brillo 20 % pequeño arriba, borde 1,5 dp en degradado, media luna y sombra naranja al 35 % (10 dp, 3 hacia abajo). El «+» deja de ser cristal vivo. Igual en los tres niveles. La media luna, que la decisión no enumera, se queda: era parte del acabado aprobado del «+» y así hay una sola fuente.
+- **Secundario** (`BotonCristal`): cristal estático en píldora con los tokens de las tarjetas; en el nivel 3, la superficie opaca del cristal vivo; en claro, borde de tinta al 20 % (`gp_cristal_boton_borde`).
+- **Pulsado** (`Hundir`, una sola fuente): se hunden a 0,94 en 120 ms (curva estándar) y, en los de marca, suben brillo y media luna. Sin capa de pulsado. Con «Quitar animaciones», sin escala, solo la luz. `BotonMarca` y `BotonCristal` son `BotonExpresivo` que no cambian de forma (`cambiaForma()`); los demás `BotonExpresivo` siguen igual.
+- **`FilaBotones`**: si el principal no cabe entero al lado del secundario, van uno sobre otro a todo el ancho.
+- Solo Inicio y la barra. Fuera: `brillo_boton`, `Cristal.BRILLO`, `gp_mas_*`, `cristalAccion`, `VIVO_ACCION*`, `barra_mas_radio` y `MasPulsadoTest` (sustituido).
+
+**Tests vistos en rojo.**
+- `PulsadoSinCambioDeFormaTest` (instrumentado): con `main`, la esquina de «Empezar» pulsado pasaba de 3.094 a 3.731 px macizos (cambio de forma).
+- `BotonesHoySinCorteTest`: con el código anterior, a letra 2,0 «Empezar» llevaba 5 de 7 letras en su línea.
+- `BotonMarcaSombraTest`: el contenido de la tarjeta recortaba a su relleno.
+- `ContrasteCristalTest.el_canto_del_boton_secundario_se_ve_sobre_la_tarjeta`: 1,05:1 con el borde blanco.
+- Nuevos y en verde: `el_boton_de_marca_se_lee_y_sigue_en_la_marca`, `el_boton_secundario_se_lee_en_los_tres_niveles` y `CristalTest.el_principal_y_el_mas_comparten_el_boton_de_marca`.
+- Batería: 1.433 unitarios; fallan solo los 4 `*WebTest` locales. Instrumentados de `ui.widget` (19) en verde en API 36; los tres nuevos, también en API 24. Lint sin errores.
+
+**Contrastes medidos.**
+
+| | Test (peor punto) | Captura API 36 | Captura API 24 |
+|---|---|---|---|
+| Texto e icono de marca `#1A0E00` | 5,76:1 (sobre `#F06000`) | 5,83–6,60:1 | 6,41:1 (≈5,8 abajo) |
+| ΔE76 del relleno de marca | 5,8 arriba · 5,5 abajo | 4,3–5,2 | 4,1–4,3 |
+| Secundario, oscuro | 7,59:1 | 8,01–9,44:1 | 13,5–13,9:1 (nivel 3) |
+| Secundario, claro | 12,08:1 (16,94 sobre lo más claro) | 15,1–15,8:1 | 16,9:1 (nivel 3) |
+| Canto del secundario sobre la tarjeta | 1,48:1 claro · 1,60:1 oscuro | — | 1,28:1 en claro en el píxel más marcado (antes 1,18, y blanco) · 3,83:1 en oscuro |
+
+**Revisor de UI (Opus).**
+- API 36, pasada 1: un **alto** («Empezar» cortado a letra 2,0), arreglado en `63682498`.
+- API 36, pasada 2: sin altos. Dos medios:
+  - **Sombra cortada por abajo**: arreglada en `413ab3f4`. Medida a mano en oscuro, letra 1,0: bajo el botón pasa de `#502F1B` al fondo en unos 30 px, sin línea recta.
+  - **Letra 1,5: los botones quedan bajo la barra** (−49 dp): sin tocar (ver «Dudas»).
+- API 24: sin altos. Un **medio**, «Cambiar» casi invisible en claro: arreglado en `153b3047` y medido a mano (tabla de arriba).
+- Ningún botón cambia de forma al pulsarse en ninguna combinación; se hunden entre 0,93 y 0,946.
+
+**Capturas.** En `Desktop\GymProFit\2026-11-27-gp285-lote-1c\botones\`: API 36 y API 24, claro y oscuro, letra 1,0 y 2,0 (y 1,3 y 1,5 en API 36), reposo y pulsado de los tres, y sin animaciones. Las de API 36 son de antes de los dos últimos arreglos (sombra y canto); `API24_claro_letra1.0_reposo_canto-cambiar.png` ya lleva el canto nuevo.
+
+**Fotogramas lentos de Inicio (API 36).** **Sin medida válida.**
+
+- **Montaje:** el guion fijo del lote 1, las dos variantes compiladas desde cero en worktrees (`main` `f6518eae` y la rama `153b3047`, 24,95 y 24,97 MB) y el emulador recién arrancado en frío. Antes de medir, 90 s de espera y carga por debajo de 1,5; después, calentamiento y dos rondas alternando las variantes.
+- **Primera tanda:** `main` 6,67 % y 8,33 %, rama 9,21 % y 7,46 %.
+- **Segunda tanda:** `main` 8,31 % y 6,25 %, rama 8,11 % y 8,35 %. En las dos, el p50 es de 28 ms (el 27-11 por la mañana era de 17).
+
+`main`, que no lleva el cambio, no sale estable entre rondas y queda muy por encima de su 1,57 % de la mañana: las tandas no valen. El equipo no estaba quieto:
+- había un `python` huérfano de una revisión (PID 18884, desde las 17:34) gastando casi un núcleo, que auto mode no me dejó parar;
+- estaban abiertos el navegador y la API local.
+
+Entre `main` y la rama no hay diferencia por encima del ruido, pero el «≤ 2 %» queda **sin comprobar**. Hay que repetir con el equipo sin usar.
+
+**Inventario de botones de las pantallas sin rediseñar** (no se tocan; 60 principales y 26 secundarios).
+
+- **Lote 2 · Sesión en vivo** (13 P · 8 S):
+  - Apuntar entreno: `btnComoUltima` P, `btnAnadirEjercicios` S, `btnGuardar` P expresivo.
+  - Resumen: `btnHechoResumen` P expresivo.
+  - Sesión en vivo: `btnTerminar` P, `btnReintentar` P, `btnDescartarGuardado` S.
+  - Descanso: `btnDescansoMenos`, `btnDescansoMas` y `btnDescansoSaltar`, los tres P.
+  - Final de la lista: `btnReintentarCarga` S, `btnAnadirEjercicio` S.
+  - Cronómetro: `btnParar` P, `btnCancelarCrono` S.
+  - Terminar sesión: `btnGuardar` P, `btnAjustar` S, `btnSeguir` S.
+  - Permiso del descanso: `btnDarPermiso` P.
+  - Ya hay sesión: `btnVolverA` P, `btnDescartarYEmpezar` S.
+  - Duración: `btnListoDuracion` P.
+- **Lote 3 · Nutrición** (11 P · 6 S):
+  - Añadir: `btnHecho` P expresivo.
+  - Comida: `btnAnadirComida` P, `btnHoyNo` S, `btnSiCopiar` P.
+  - Reciente: `btnCopiarReciente` P, uno por fila.
+  - «No lo encuentras»: `btnEscanealo` S, `btnCrealo` S.
+  - Crear alimento: `btnGuardarAnadir` P.
+  - Plato: `btnGuardarPlato` P, `btnHojaAnadirRacion` P.
+  - Escáner: `btnAjustesCamara` P, `btnHojaPrincipal` P, `btnHojaSecundario` S.
+  - Ficha: `btnAnadirFicha` P, `btnUnidadVarias` S.
+  - Semana: `btnVerMas` S.
+  - Agua: `btnVaso` P (`UnelevatedButton`).
+- **Lote 4 · Entrenar y Progreso** (10 P · 1 S):
+  - Tu programa: `btnEmpezarHoy` P expresivo, `btnVolverASeguir` P, `btnDejarPrograma` S.
+  - Añadir ejercicios: `btnContinuar` P.
+  - Crear rutina: `btnElegirEjercicios` P.
+  - Tu rutina: `btnAnadirEjercicios` P, `btnGuardarRutina` P.
+  - Pauta: `btnAplicarPauta` P.
+  - Detalle de rutina: `btnEntrenarRutina` P.
+  - Programa: `btnSeguirPrograma` P.
+  - Seguir programa: `btnConfirmarSeguir` P.
+  - Progreso, historial, récords, logros, medidas y ejercicios no tienen botones propios.
+- **Lote 5 · El resto** (26 P · 11 S):
+  - Alta y bienvenida: `btnEmpezar`, `btnSiguientePaso` ×3, `btnGuardaPlan`, `btnListoHoja` ×2, `btnCrearCuenta`, `btnSeguirListo` y `btnActivarAvisos`, P; `btnIdioma` y `btnReintentarPrograma`, S.
+  - Entrar y recuperar: `btnEntrar`, `btnEnviarCodigo` y `btnRestablecer`, P.
+  - Verificar correo: `btnEnviarOtro` P, `btnAbrirCorreo` S, `btnPegar` S.
+  - Perfil y ajustes: `btnCambiarObjetivo` S, `btnCerrarSesion` S, `btnAccion` de la fila P, `btnGuardar` de Tus datos, Cambiar correo y Cambiar contraseña P, `btnPermisoAvisos` P, `btnEliminarCuenta` P.
+  - Admin: `btnGuardar` ×2 P, `btnDialogConfirmar` P, `btnDialogCancelar` S.
+  - Diálogos comunes: `dialog_custom` (confirmar P, cancelar S); tema e idioma (cancelar S).
+  - Arranque: `btnReintentar` P.
+  - `view_estado` (en unas 35 pantallas): `btnEstadoAccion` P, `btnEstadoReintentar` S.
+- **Choques con «nunca dos principales»**, para su lote:
+  - Tu rutina: `btnAnadirEjercicios` + `btnGuardarRutina`.
+  - Apuntar entreno: `btnComoUltima` + `btnGuardar`.
+  - Sesión en vivo: los tres P del descanso, más `btnTerminar`.
+  - Comida: `btnAnadirComida` + `btnSiCopiar`.
+  - Añadir: `btnHecho` + un `btnCopiarReciente` por fila.
+  - Plato: dos P.
+  - `view_estado`, sobre pantallas que ya tienen su propio P.
+- **Dudosos:** `btnEliminarCuenta` (acción destructiva con estilo de marca), `btnVaso` (fuera del sistema de estilos), `btnIdioma` (solo icono) y los «Cancelar» de los diálogos, que usan el contorno de Material y no el de la casa.
+
+## Cierre de noche: brillo, GP-288 y fotogramas (27-11, rama `gp-285-botones`)
+
+Con las dudas de los botones ya decididas por el propietario: la media luna se queda en el principal y, a letra 1,5, que «Empezar» y «Cambiar» queden detrás de la barra con el scroll arriba se acepta si se alcanzan con scroll y quedan enteros por encima.
+
+**Commits.** `74ca0bf2` (brillo de «Empezar») y `11b12ad4` (GP-288).
+
+**Qué cambia.**
+- **Brillo de «Empezar»:** en un botón ancho (más de 1,5 veces su alto) el brillo de arriba es una elipse centrada de en torno al 60 % de su ancho, con la misma altura y el mismo alto que el del «+» (`Cristal.brilloMarca`, `BRILLO_ANCHO`, `ANCHO_DESDE`). El «+» queda como estaba.
+- **GP-288, «Tu día» con letra grande:** rótulo, cifra y apoyo de los tres tiles son `TextoSinPartir`. Si la palabra más ancha no cabe en una línea, el texto encoge lo justo, nunca por debajo de su tamaño a letra 1,0, y sin guiones. Con varias palabras sigue pasando a otra línea, pero solo por los espacios. Los tres tiles llevan cada texto al mismo tamaño (`TextoSinPartir.igualar`, desde `InicioTuDia.igualarTextos`): si no, «Agua» salía más grande que «Calorías». Se eligió encoger antes que una tarjeta más alta porque el problema es el ancho: más alto no lo arregla. La elipsis tampoco servía: a letra 2,0 dejaba «Ca…».
+- **Letra 1,5, comprobado en API 36 (oscuro):** con scroll, «Empezar» y «Cambiar» quedan enteros por encima de la barra, con 75 px (unos 29 dp) de aire: botones hasta y = 1963, barra desde y = 2038. No hacía falta margen inferior.
+
+**Tests vistos en rojo.**
+- `TuDiaSinPartirTest` (instrumentado; letra 1,0, 1,3, 1,5 y 2,0, en ES y EN, a 360 dp, con las cifras más anchas de un día normal):
+  - sin el arreglo: `[es, letra 1.3] «Calorías»: parte una palabra en «Caloría»`;
+  - con `igualar` vacío: `«Proteína» a 15,6 dp y su hermano a 16,4`.
+  - La comprobación de tamaño lleva un dp de holgura: en Android 7 el reparto de pesos deja un tile un píxel más ancho y la cifra salía a 40,36 dp frente a 40,0.
+- `BrilloMarcaTest` (unitario): con el comportamiento anterior, 2 de 3 en rojo (centrado y ancho); el del «+» pasa igual.
+
+**Batería.**
+- Instrumentados: 39 de 39 en API 36, 32 y 24.
+- Unitarios: 1.437; fallan solo los 4 `*WebTest` locales de siempre.
+- Lint sin errores.
+
+**Fotogramas lentos de Inicio.** **Sin medida válida otra vez; la PR #148 no se fusiona.**
+- Antes de medir se pararon el `python` huérfano 18884 y un daemon de Gradle, con permiso del propietario. Ese `python` (y otro igual que apareció a las 18:00 desde otra sesión) era `python -` de Python 3.14: con la entrada vacía, su consola nueva (`_pyrepl`) entra en bucle y gasta un núcleo entero. Yo mismo lo reproduje dos veces y lo paré.
+- **Montaje:** el de siempre. Las dos variantes compiladas desde cero en worktrees: `main` `f6518eae`, 24,95 MB, y la rama `11b12ad4`, 24,97 MB. Emulador recién arrancado con `-gpu host`, 90 s y `loadavg` 1,24. Letra 1,0, oscuro y español. Calentamiento y dos rondas alternando las variantes.
+
+| API 36 | calentamiento | ronda 1 | ronda 2 | p50 |
+|---|---|---|---|---|
+| `main` | 14,76 % | 16,96 % | 13,71 % | 31–32 ms |
+| rama | 14,42 % | 18,91 % | 18,54 % | 32 ms |
+
+- `main` no sale estable entre rondas (17,0 → 13,7 %) y está muy lejos de su 1,57 % de la mañana del 27-11, con el p50 al doble (32 ms frente a 17): la tanda no vale.
+- Dos causas a la vista:
+  - **el portátil iba con batería** (67 %, plan «Equilibrado»);
+  - **otra sesión de Claude trabajó durante la medida**: unos 51 s de CPU en esos 15 minutos.
+- Por la regla del propietario, no se midieron API 32 ni 24.
+- Entre `main` y la rama, la rama sale unos 2–5 puntos peor en las rondas que cuentan, pero con `main` así de inestable no se puede atribuir: queda **sin comprobar**.
+- Para repetir hacen falta: el cargador enchufado, ninguna otra sesión de Claude abierta trabajando y el navegador cerrado.
+
+**Capturas.** En `Desktop\GymProFit\2026-11-27-gp285-lote-1c\botones\`, sustituyendo las de API 36 y 24 de antes de `413ab3f4` y `153b3047`:
+- API 36 y API 24, claro y oscuro, letra 1,0 y 2,0, en reposo y con «Empezar» pulsado;
+- `API36_oscuro_letra1.5_*`: final del scroll, scroll arriba (detrás de la barra, aceptado) y botones llevados con scroll por encima de la barra;
+- `API36_{claro,oscuro}_letra2.0_tu-dia_{es,en}`.
+- «Cambiar» y el «+» pulsados no se volvieron a capturar (no se pidieron). Sus capturas viejas se borraron con las demás de API 36 y 24.
+
+## Cierre: el carrusel de «Hoy toca» sin partir palabras y la fusión de los botones (27-11, rama `gp-285-botones`)
+
+**Commit.** `3e473367` (GP-288, segunda parte).
+
+**Fotogramas lentos: la PR #148 se fusiona sin medida válida.** Decisión de planificación del propietario. Las dos tandas (ver «Cierre: botones de acción» y «Cierre de noche») fallaron por el equipo, no por la rama: otra sesión trabajando y el portátil con batería, con `main` inestable entre rondas. El cambio solo toca el dibujo de botones. **La medida no se da por buena ni se sustituye por otra**: la hará el lote 2, con `main` ya actualizado. En este cierre no se midió nada.
+
+**Qué cambia (GP-288, carrusel).**
+- A letra 2,0 las tarjetas del carrusel (118 dp) partían «Domina / s» y cortaban los nombres con elipsis a media palabra («mancue…»).
+- Nombre y pauta de cada tarjeta son `TextoSinPartir`, con la regla de `11b12ad4`: encogen lo justo para que quepa su palabra más ancha, nunca por debajo de su tamaño a letra 1,0 y sin guiones. Todas las tarjetas del carrusel van al mismo tamaño (`InicioHoyDetalle.igualarTextos`).
+- Más líneas antes que elipsis: el nombre pasa de tres líneas a cinco.
+- La elipsis sigue haciendo falta: el catálogo tiene nombres de hasta 82 caracteres («Elevaciones para deltoides posterior sentado con el torso inclinado con mancuernas»), que no caben en cinco líneas ni a letra 1,0. `TextoSinPartir` quita entonces palabras enteras y acaba en «…»: cae siempre tras una palabra completa. Vale para cualquier `TextoSinPartir` con `android:maxLines`; los de «Tu día» no lo llevan y no cambian.
+- Recortado, `getText()` da lo que se ve y `getTextoCompleto()` el nombre entero, que se pone de descripción: TalkBack lee el nombre completo.
+- Una palabra unida por guion que ya trae el nombre («Range-Of-Motion», «glúteo-femoral») puede pasar de línea tras su guion: no es un guion añadido.
+
+**Test visto en rojo.** `HoyTocaSinPartirTest` (instrumentado; letra 1,0, 1,3, 1,5 y 2,0, en ES y EN, seis nombres del catálogo por idioma, entre ellos el más largo de cada uno, y la pauta más ancha con su última marca). Se quitó cada pieza por separado:
+- sin encoger: `[es, letra 1.3] «Limpiaparabrisas isométrico» a 18.666666 dp: parte una palabra en «Limpiap»`;
+- sin el recorte por palabras: `[es, letra 1.0] «Elevaciones para deltoides posterior sentado con el torso inclinado con mancuernas» a 14.095238 dp: Android corta con elipsis en la línea 4`;
+- sin igualar las tarjetas: `[es, letra 1.3] «Limpiaparabrisas isométrico» a 15.619047 dp: no va al tamaño de sus hermanas expected:<49.0> but was:<41.0>`.
+
+**Batería.**
+- Instrumentados: 40 de 40 en API 36, 32 y 24 (los 39 de antes y `HoyTocaSinPartirTest`).
+- Unitarios: 1.437; fallan solo los 4 `*WebTest` locales de siempre.
+- Lint sin errores.
+
+**Capturas.** En `Desktop\GymProFit\2026-11-27-gp285-botones\`, Inicio en API 36 a letra 2,0 con la cuenta local `prueba`:
+- `API36_{claro,oscuro}_letra2.0_carrusel_{es,en}`: el carrusel a la vista;
+- `API36_{claro,oscuro}_letra2.0_carrusel-deslizado_{es,en}`: el resto de sus tarjetas.
+- En `botones-1c\`, las capturas de los botones que estaban en la carpeta del 1c, que se borra. Sus `letra2.0_reposo` son de antes de este arreglo y aún enseñan el carrusel partido.
+
+**Decisiones tomadas.**
+- Tope de cinco líneas para el nombre (antes tres). Sin tope, el nombre más largo ocuparía unas diez líneas a letra 2,0 y la tarjeta crecería unos 260 dp.
+- La pauta también es `TextoSinPartir`, igualada entre tarjetas: es el mismo bloque y la misma regla.
+- El hash de la fusión no puede ir en este informe, que viaja en la rama: va en el resumen al propietario.
+
 ## Pendiente
 
+- **Fotogramas lentos de los botones (PR #148):** sin medir. Lo mide el lote 2 con `main` ya actualizado, con el cargador enchufado y sin otras sesiones trabajando.
 - El «+» lo aprueba el propietario en el cierre: la PR #147 se fusiona con el CI en verde.
 - Carpeta `Desktop\GymProFit\2026-11-26-gp285-lote-1b\`: borrada el 27-11, a petición del propietario.
 - Los bajos del revisor de arriba.
 
 ## Dudas
+- Resuelto: la PR #148 se fusiona sin medida válida de fotogramas, por decisión de planificación; la medida pasa al lote 2 (ver el último cierre). No se da por buena.
+- Resuelto en el cierre de noche: a letra 1,5 se acepta que los botones queden detrás de la barra con el scroll arriba (se alcanzan con scroll y quedan enteros encima).
+- Resuelto en el cierre de noche: el brillo de «Empezar» va centrado y ancho (`74ca0bf2`).
+- Resuelto en `3e473367`: el carrusel de «Hoy toca» ya no parte «Domina / s» a letra 2,0.
+- **Botones:** a letra 2,0 el icono de «Empezar» no crece con el texto (24 dp fijos, como en todos los botones con icono).
 
 - Resuelto en el cierre: la capa de pulsado ya no existe y el «+» pulsado queda a ΔE ≤ 15.
 - En el peor punto del fondo (el más oscuro, en oscuro) el «+» queda a ΔE 15,3, en reposo y pulsado. La medida del propietario es la mediana (10,9); no se tocó el tinte aprobado.

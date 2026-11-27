@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_marca — el botón de marca (GP-285, lote 1c): el principal y el «+». El naranja macizo con
+     su acabado y su sombra; sin radio, píldora (en el «+», círculo). Lo dibuja Cristal (MARCA). -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="marca" />

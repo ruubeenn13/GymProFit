@@ -193,15 +193,12 @@
     <color name="gp_lente_resplandor">#14FFFFFF</color>
     <!-- La lente solo lleva sombra en claro. -->
     <color name="gp_lente_sombra">#00000000</color>
-    <!-- El «+» de cristal: tampoco lleva suelo de luz en oscuro: el icono llega a 3:1 sin él
-         (4,92:1) y la luz blanca es lo que apagaba el naranja de la marca. -->
-    <color name="gp_mas_luz">#00FFFFFF</color>
     <!-- Récord sobre cristal: degradado dorado 28 % → 8 % y brillo. -->
     <color name="gp_cristal_oro_alto">#47E8B84B</color>
     <color name="gp_cristal_oro_bajo">#14E8B84B</color>
     <color name="gp_cristal_oro_brillo">#66FFECBE</color>
-    <!-- Botón principal sobre cristal: brillo superior. -->
-    <color name="gp_boton_brillo">#73FFFFFF</color>
     <!-- Botón secundario y chip: cristal estático plano. -->
     <color name="gp_cristal_boton">#1FFFFFFF</color>
+    <!-- En oscuro el botón secundario lleva el borde del cristal (se ve: 3,8:1). -->
+    <color name="gp_cristal_boton_borde">#00000000</color>
 </resources>

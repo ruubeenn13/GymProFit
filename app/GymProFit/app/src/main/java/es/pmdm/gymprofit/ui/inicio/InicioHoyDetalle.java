@@ -32,6 +32,7 @@ import es.pmdm.gymprofit.network.EjercicioApi;
 import es.pmdm.gymprofit.network.RutinaApi;
 import es.pmdm.gymprofit.network.SesionApi;
 import es.pmdm.gymprofit.ui.widget.SiluetaMuscularView;
+import es.pmdm.gymprofit.ui.widget.TextoSinPartir;
 import es.pmdm.gymprofit.utils.Enumeracion;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Musculos;
@@ -140,10 +141,25 @@ public final class InicioHoyDetalle {
             tarjetas.put(re.getEjercicioId(), item);
             carrusel.addView(item);
         }
+        igualarTextos(carrusel);
         raiz.findViewById(R.id.scrollHoyEjercicios).setVisibility(View.VISIBLE);
 
         pedirZonas(esta, ejercicios, tarjetas, alInformar);
         pedirUltimaVez(esta, ejercicios, tarjetas, formatos);
+    }
+
+    /**
+     * Todas las tarjetas del carrusel llevan el nombre a un mismo tamaño, y la pauta a otro
+     * (GP-288): si con letra grande una tiene que encoger para no partir una palabra, las demás
+     * encogen igual. Se llama con las tarjetas ya añadidas.
+     */
+    public static void igualarTextos(@NonNull LinearLayout carrusel) {
+        int n = carrusel.getChildCount();
+        for (int texto : new int[]{R.id.tvNombreEjercicio, R.id.tvMetaEjercicio}) {
+            TextoSinPartir[] grupo = new TextoSinPartir[n];
+            for (int i = 0; i < n; i++) grupo[i] = carrusel.getChildAt(i).findViewById(texto);
+            TextoSinPartir.igualar(grupo);
+        }
     }
 
     // En el orden de la rutina.

@@ -23,6 +23,7 @@ import es.pmdm.gymprofit.network.ApiClient;
 import es.pmdm.gymprofit.network.ComidaApi;
 import es.pmdm.gymprofit.network.DiarioApi;
 import es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal;
+import es.pmdm.gymprofit.ui.widget.TextoSinPartir;
 import es.pmdm.gymprofit.utils.Agua;
 import es.pmdm.gymprofit.utils.ComidaQueToca;
 import es.pmdm.gymprofit.utils.DiaNutricion;
@@ -81,6 +82,20 @@ public final class InicioTuDia {
         rotuloColor(R.id.cardDiaProteina, R.drawable.ic_ms_egg_alt, R.color.gp_cristal_proteinas, R.string.inicio_dia_proteina);
         rotuloColor(R.id.cardDiaAgua, R.drawable.ic_ms_water_drop, R.color.gp_cristal_agua, R.string.inicio_dia_agua);
         pintarComidaQueToca(null);
+        igualarTextos(raiz);
+    }
+
+    /**
+     * Los tres tiles llevan cada texto al mismo tamaño (GP-288): si con letra grande uno tiene que
+     * encoger para no partir una palabra, sus dos hermanos encogen igual.
+     */
+    public static void igualarTextos(@NonNull View raiz) {
+        int[] tiles = {R.id.cardDiaKcal, R.id.cardDiaProteina, R.id.cardDiaAgua};
+        for (int texto : new int[]{R.id.tvRotuloDia, R.id.tvCifraDia, R.id.tvApoyoDia}) {
+            TextoSinPartir[] grupo = new TextoSinPartir[tiles.length];
+            for (int i = 0; i < tiles.length; i++) grupo[i] = raiz.findViewById(tiles[i]).findViewById(texto);
+            TextoSinPartir.igualar(grupo);
+        }
     }
 
     /** Pide las comidas de hoy y el agua del diario, y pinta. */

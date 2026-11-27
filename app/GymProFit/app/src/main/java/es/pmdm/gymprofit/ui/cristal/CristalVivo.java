@@ -1,7 +1,5 @@
 package es.pmdm.gymprofit.ui.cristal;
 
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -20,7 +18,6 @@ import android.graphics.RuntimeShader;
 import android.graphics.Shader;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -35,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.utils.Movimiento;
 
 // ============================================================
 // CristalVivo — el cristal con contenido que se mueve por debajo (GP-285, DEC-070).
@@ -49,8 +45,6 @@ import es.pmdm.gymprofit.utils.Movimiento;
 //   3 · nada de lo de detrás: una superficie opaca (al 98 % lo de detrás se entreveía, nítido).
 //
 // Con cristalGrueso el tinte tiene más cuerpo: la hoja del «+», que lleva texto secundario.
-// Con cristalAccion es el «+» de la barra: el tinte es el naranja de la acción principal, con
-// su reflejo, y en el nivel 3 queda como antes de ser cristal, macizo y sin sombra.
 //
 // En los tres lleva el borde y el brillo superior del cristal, y con cristalSombra una sombra
 // suave por fuera. Lo que hay dentro (pestañas, textos) es legible en los tres niveles: sus
@@ -86,8 +80,6 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     private static final int ESCALA_SOMBRA = 4;
     // Fotogramas que espera a que el lienzo tenga algo grabado antes de dejar de repintarse.
     private static final int ESPERAS_MAXIMAS = 5;
-    /** La escala del «+» pulsado del todo. */
-    public static final float HUNDIDO = 0.94f;
 
     private final Cristal tinte, opaco;
     private final Path forma = new Path();
@@ -95,12 +87,9 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     private final Paint pinturaSombra = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final int[] aqui = new int[2], alli = new int[2];
     private final float radio, sigma, sombraRadio, sombraBaja;
-    private final boolean conSombra, accion;
+    private final boolean conSombra;
 
     @Nullable private LienzoCristal lienzo;
-    // El «+»: lo pulsado que está (0 a 1) y lo que lo mueve.
-    private float pulsado;
-    @Nullable private ValueAnimator animadorPulsado;
     @NonNull private NivelCristal nivel = NivelCristal.OPACO;
     // Dónde está esta vista dentro del lienzo, en px.
     private int dx, dy;
@@ -119,14 +108,13 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         radio = a.getDimension(R.styleable.CristalVivo_cristalRadio, -1f);
         conSombra = a.getBoolean(R.styleable.CristalVivo_cristalSombra, false);
         boolean grueso = a.getBoolean(R.styleable.CristalVivo_cristalGrueso, false);
-        accion = a.getBoolean(R.styleable.CristalVivo_cristalAccion, false);
         a.recycle();
         sigma = getResources().getDimension(R.dimen.cristal_desenfoque);
         sombraRadio = getResources().getDimension(R.dimen.cristal_sombra_radio);
         sombraBaja = getResources().getDimension(R.dimen.cristal_sombra_baja);
         pinturaSombra.setColor(ContextCompat.getColor(context, R.color.gp_vivo_sombra));
-        tinte = new Cristal(context, accion ? Cristal.VIVO_ACCION : grueso ? Cristal.VIVO_GRUESO : Cristal.VIVO, radio);
-        opaco = new Cristal(context, accion ? Cristal.VIVO_ACCION_OPACO : Cristal.VIVO_OPACO, radio);
+        tinte = new Cristal(context, grueso ? Cristal.VIVO_GRUESO : Cristal.VIVO, radio);
+        opaco = new Cristal(context, Cristal.VIVO_OPACO, radio);
         desenfoque = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? new Desenfoque() : null;
         setWillNotDraw(false);
     }
@@ -150,7 +138,6 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
 
     @Override
     protected void onDetachedFromWindow() {
-        if (animadorPulsado != null) animadorPulsado.cancel();
         getViewTreeObserver().removeOnPreDrawListener(this);
         if (lienzo != null) lienzo.borrar(this);
         lienzo = null;
@@ -205,50 +192,6 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         return tinte.radioPara(getHeight());
     }
 
-    /**
-     * El «+» pulsado, como un botón de Liquid Glass (GP-285, lote 1c; DEC-070): no cambia de
-     * forma, sigue siendo un círculo en los tres niveles. Al tocarlo se hunde a HUNDIDO y su
-     * brillo y su media luna suben a la vez (Cristal.ponerLuz), en TOQUE ms con la curva
-     * estándar, el «se hunde al tocar» de DEC-039; al soltar vuelve igual, desde donde esté. No
-     * lleva capa de pulsado encima: alejaba el naranja de la marca. Con «Quitar animaciones» no
-     * se mueve ni se hunde: solo sube la luz, sin transición. No consume el toque: el clic, la
-     * vibración y la accesibilidad siguen su camino.
-     */
-    @SuppressLint("ClickableViewAccessibility")
-    public void hundirAlPulsar() {
-        setOnTouchListener((v, e) -> {
-            int accion = e.getActionMasked();
-            boolean baja = accion == MotionEvent.ACTION_DOWN;
-            if (baja || accion == MotionEvent.ACTION_UP || accion == MotionEvent.ACTION_CANCEL) {
-                moverPulsado(baja ? 1f : 0f);
-            }
-            return false;
-        });
-    }
-
-    // De lo pulsado que está ahora a lo pedido: la escala y la luz con la misma fracción.
-    private void moverPulsado(float hacia) {
-        if (animadorPulsado != null) animadorPulsado.cancel();
-        if (Movimiento.quieto(getContext())) {
-            ponerPulsado(hacia, true);
-            return;
-        }
-        animadorPulsado = ValueAnimator.ofFloat(pulsado, hacia);
-        animadorPulsado.setDuration(Movimiento.TOQUE);
-        animadorPulsado.setInterpolator(Movimiento.ESTANDAR);
-        animadorPulsado.addUpdateListener(a -> ponerPulsado((float) a.getAnimatedValue(), false));
-        animadorPulsado.start();
-    }
-
-    private void ponerPulsado(float fraccion, boolean quieto) {
-        pulsado = fraccion;
-        float escala = quieto ? 1f : 1f - (1f - HUNDIDO) * fraccion;
-        setScaleX(escala);
-        setScaleY(escala);
-        tinte.ponerLuz(fraccion);
-        invalidate();
-    }
-
     // El efecto del nodo, una vez por tamaño y nivel.
     private void prepararEfecto() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || desenfoque == null) return;
@@ -280,8 +223,7 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         // y con el lienzo de detrás ya grabado. Si no, la superficie opaca.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || nivel == NivelCristal.OPACO
                 || desenfoque == null || lienzo == null || !canvas.isHardwareAccelerated()) {
-            // El «+» opaco es el de antes de ser cristal, que no llevaba sombra.
-            if (!accion) pintarSombra(canvas);
+            pintarSombra(canvas);
             opaco.draw(canvas);
             return;
         }
