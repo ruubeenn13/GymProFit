@@ -8,6 +8,7 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `8e31b98f` | fix(android): al pulsar el «+» de la barra ya no se vuelve un cuadrado redondeado: sigue siendo un círculo, se hunde un poco y se le enciende la luz de arriba, y no se oscurece ni se aclara, así que sigue siendo el naranja de la marca (GP-285). |
 | `67fdde20` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el tinte final del «+», con las tres vueltas que se probaron, y que deje ver poco de lo de detrás es decisión del propietario (GP-285). |
 | `24e89260` | fix(android): el «+» de la barra pasa al naranja de la marca en los dos temas: el tinte de `#FF6A00` tapa más el fondo, ya no lleva luz blanca debajo y su brillo es pequeño y solo arriba. Se lee como el mismo naranja que «Empezar» (GP-285). |
 | `877bf4d5` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el «+» del lote 1c (GP-285). |

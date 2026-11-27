@@ -191,6 +191,15 @@ En API 24 (nivel 3) el «+» no cambia respecto al 1b: es la referencia de que e
 - «Empezar» bajo la barra a letra 1,3 en API 24 no se toca en este lote: está fuera de las restricciones y viene del 1b.
 - La prueba en producción, en el AVD de API 34 y no en uno de los tres de medir: la release no se instala encima de la debug sin desinstalarla, y se perdería la sesión local.
 
+## Cierre: el «+» pulsado (`8e31b98f`)
+
+- **Qué cambia.** Al pulsarlo, el «+» ya no pasa de círculo a cuadrado redondeado: un botón de cristal no cambia de forma (DEC-070). Se hunde a 0,94 y el brillo (20 → 32 %) y la media luna (40 → 58 %) suben a la vez, en `TOQUE` (120 ms) con la curva estándar; al soltar vuelve igual. Con «Quitar animaciones» no se hunde: solo sube la luz. La capa de pulsado (`capa_boton_acciones`) se borra. `BotonExpresivo.alPulsar` pasa a `CristalVivo.hundirAlPulsar`; los demás `BotonExpresivo` no cambian. Vibración y accesibilidad, igual.
+- **Tests.**
+  - `MasPulsadoTest` (instrumentado, API 36): **visto en rojo** con el código anterior, pulsado pasaba de 84 a 31,5 px de esquina. En verde con el nuevo, también con `animator_duration_scale 0`.
+  - `ContrasteCristalTest.el_mas_pulsado_sigue_en_el_naranja_de_la_marca`: **visto en rojo** con la capa de pulsado. Mediana del ΔE76 sobre todo lo que puede quedar detrás: 10,9 en oscuro y 9,8 en claro; peor punto, 15,3 y 14,7 (igual en reposo).
+  - Batería: 1.433 unitarios; fallan solo los 4 `*WebTest` locales. Lint limpio.
+- **Revisor de UI (Opus), API 36, claro y oscuro:** ni altos, ni medios, ni bajos. Pulsado mide 158 px (60,2 dp) y es un círculo; ΔE de la mitad de abajo, reposo → pulsado: oscuro 11,4 → 11,7, claro 10,0 → 10,0; icono a 5,37:1 (oscuro) y 7,10:1 (claro); la luz acaba 7,6 dp por encima del icono. Sin animaciones, 64 dp pulsado y ΔE 11,8 / 10,0. Capturas en `Desktop\GymProFit6-11-27-gp285-lote-1c\pulsado\`.
+
 ## Pendiente
 
 - **Aprobación del «+» por el propietario** y fusión de la PR #147.
@@ -199,4 +208,5 @@ En API 24 (nivel 3) el «+» no cambia respecto al 1b: es la referencia de que e
 
 ## Dudas
 
-- La capa de pulsado del «+» aleja el naranja de la marca mientras se pulsa (ΔE ~18). Si se quiere que también pulsado quede a 15 o menos, hay que cambiar `capa_boton_acciones` para que oscurezca un poco en los dos temas.
+- Resuelto en el cierre: la capa de pulsado ya no existe y el «+» pulsado queda a ΔE ≤ 15.
+- En el peor punto del fondo (el más oscuro, en oscuro) el «+» queda a ΔE 15,3, en reposo y pulsado. La medida del propietario es la mediana (10,9); no se tocó el tinte aprobado.
