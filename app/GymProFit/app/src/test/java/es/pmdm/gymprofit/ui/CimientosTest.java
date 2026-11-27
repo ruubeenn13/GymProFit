@@ -206,7 +206,7 @@ public class CimientosTest {
         assertTrue(leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BarraNavegacion.java")).contains("BotonExpresivo.alPulsar(btnAcciones)"));
         // El «+» es un círculo de 64 dp desde GP-285: su reposo son 32 dp, y al soltar vuelve a ellos.
         assertEquals("32dp", dimen(d, "barra_mas_radio"));
-        assertTrue(leer(RES.resolve("drawable/bg_boton_acciones.xml")).contains("@dimen/barra_mas_radio"));
+        assertTrue(leer(RES.resolve("layout/view_barra_navegacion.xml")).contains("app:cristalRadio=\"@dimen/barra_mas_radio\""));
         // El tiempo es el del toque, no un número escrito.
         String c = leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BotonExpresivo.java"));
         assertTrue(c.contains("Movimiento.TOQUE"));

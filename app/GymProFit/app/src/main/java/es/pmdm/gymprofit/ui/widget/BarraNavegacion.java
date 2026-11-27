@@ -7,7 +7,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.cristal.CristalVivo;
 import es.pmdm.gymprofit.utils.NavTabs;
 
 // ============================================================
@@ -32,7 +34,8 @@ import es.pmdm.gymprofit.utils.NavTabs;
 // más el hueco de la barra de gestos o de botones del sistema. La etiqueta se ve siempre; la
 // pestaña activa lleva la «lente» (bg_lente), el icono relleno y la etiqueta en negrita, los
 // dos en el acento; las demás, el icono en contorno. El «+» no es una pestaña: abre las
-// acciones rápidas y, abierto, gira a «×».
+// acciones rápidas y, abierto, gira a «×». Es del mismo cristal vivo que la cápsula, teñido de
+// naranja (cristalAccion): gira su icono, no el cristal, que lleva el reflejo arriba.
 //
 // Son vistas normales infladas de XML, no una vista dibujada a mano: cada pestaña es
 // un botón con su nombre, y lo que TalkBack no sabría deducir se le dice aquí —que es
@@ -69,7 +72,8 @@ public class BarraNavegacion extends LinearLayout {
             R.drawable.ic_ms_restaurant_fill, R.drawable.ic_ms_monitoring_fill};
 
     private final View[] pestanas = new View[NavTabs.TOTAL];
-    private ImageButton btnAcciones;
+    private CristalVivo btnAcciones;
+    private ImageView ivAcciones;
     private Oyente oyente;
     private int activa = -1;
     private boolean accionesAbiertas = false;
@@ -139,7 +143,17 @@ public class BarraNavegacion extends LinearLayout {
         fila.setContentDescription(c.getString(R.string.nav_principal));
 
         btnAcciones = findViewById(R.id.btnAcciones);
+        ivAcciones = findViewById(R.id.ivAcciones);
         btnAcciones.setOnClickListener(v -> { if (oyente != null) oyente.onAcciones(); });
+        // Su vista es el cristal, no un botón: a TalkBack se le dice que lo es.
+        ViewCompat.setAccessibilityDelegate(btnAcciones, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
+                                                          @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName(Button.class.getName());
+            }
+        });
         // El «+» no tiene etiqueta: su nombre, al mantenerlo pulsado, como las pestañas.
         TooltipCompat.setTooltipText(btnAcciones, btnAcciones.getContentDescription());
         BotonExpresivo.alPulsar(btnAcciones);
@@ -194,18 +208,36 @@ public class BarraNavegacion extends LinearLayout {
         return base * escalaEtiqueta(getResources().getConfiguration().fontScale, ancha, anchoPestana);
     }
 
-    // Con el ancho ya sabido, las etiquetas se ajustan a lo que cabe en una pestaña.
+    // Con el ancho ya repartido entre las pestañas, las etiquetas se ajustan a lo que cabe en una
+    // y se vuelve a medir en la misma pasada. Se decide al medir y no al colocar: si el tamaño
+    // del texto cambia durante la colocación, en Android 8 o menos AppCompat marca para medir
+    // solo la etiqueta, sin avisar a sus padres, y ninguna medida posterior baja hasta ella. Se
+    // quedaba con la caja del tamaño grande y el texto, ya encogido, descentrado dentro: se veía
+    // a letra 1,3 al recrearse la pantalla (cambiar de tema o de idioma, volver tras un rato).
     @Override
-    protected void onLayout(boolean cambia, int l, int t, int r, int b) {
-        super.onLayout(cambia, l, t, r, b);
-        if (pestanas[0] == null || pestanas[0].getWidth() == 0) return;
+    protected void onMeasure(int anchoSpec, int altoSpec) {
+        super.onMeasure(anchoSpec, altoSpec);
+        if (ajustarEtiquetas()) super.onMeasure(anchoSpec, altoSpec);
+    }
+
+    // Pone a las etiquetas el tamaño que cabe en una pestaña. Devuelve si lo ha cambiado: entonces
+    // deja marcadas para medir las etiquetas y todo lo que hay entre ellas y la barra.
+    private boolean ajustarEtiquetas() {
+        if (pestanas[0] == null || pestanas[0].getMeasuredWidth() == 0) return false;
         float aire = getResources().getDimension(R.dimen.espacio_4);
-        float tam = tamanoEtiqueta(pestanas[0].getWidth() - 2 * aire);
+        float tam = tamanoEtiqueta(pestanas[0].getMeasuredWidth() - 2 * aire);
         TextView primera = pestanas[0].findViewById(R.id.tvEtiqueta);
-        if (Math.abs(primera.getTextSize() - tam) < 0.5f) return;
+        if (Math.abs(primera.getTextSize() - tam) < 0.5f) return false;
         for (View p : pestanas) {
-            ((TextView) p.findViewById(R.id.tvEtiqueta)).setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
+            TextView etiqueta = p.findViewById(R.id.tvEtiqueta);
+            etiqueta.setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
+            // A mano y hasta la barra: lo que pida el cambio de tamaño depende de la versión.
+            for (ViewParent v = etiqueta.getParent(); v instanceof View && v != this; v = v.getParent()) {
+                ((View) v).forceLayout();
+            }
+            etiqueta.forceLayout();
         }
+        return true;
     }
 
     public void setOyente(Oyente oyente) { this.oyente = oyente; }
@@ -231,14 +263,14 @@ public class BarraNavegacion extends LinearLayout {
     public int getActiva() { return activa; }
 
     /**
-     * El «+» abierto o cerrado. Gira 45° —el «+» se convierte en «×»— con la duración
+     * El «+» abierto o cerrado. Su icono gira 45° —el «+» se convierte en «×»— con la duración
      * del sistema, así que con «Quitar animaciones» el cambio es inmediato.
      */
     public void setAccionesAbiertas(boolean abiertas) {
         if (abiertas == accionesAbiertas) return;
         accionesAbiertas = abiertas;
-        btnAcciones.animate().cancel();
-        btnAcciones.animate().rotation(abiertas ? 45f : 0f)
+        ivAcciones.animate().cancel();
+        ivAcciones.animate().rotation(abiertas ? 45f : 0f)
                 .setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime))
                 .start();
         pintarAcciones(abiertas);

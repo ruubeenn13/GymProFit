@@ -134,6 +134,9 @@ public final class InicioHoyDetalle {
                     re.getRepeticionesMin(), re.getRepeticionesMax(), re.getRepeticiones(), re.medidaEfectiva(),
                     re.getPorLado()));
             ((ImageView) item.findViewById(R.id.ivIconoEjercicio)).setImageResource(R.drawable.ic_ms_fitness_center);
+            // Cada ejercicio es una parada de TalkBack, que lee su nombre, su pauta y su última
+            // marca; sin esto, dentro de una tarjeta pulsable no se recorrían uno a uno.
+            androidx.core.view.ViewCompat.setScreenReaderFocusable(item, true);
             tarjetas.put(re.getEjercicioId(), item);
             carrusel.addView(item);
         }

@@ -73,14 +73,28 @@ public class SiluetaMuscularView extends View {
     public SiluetaMuscularView(Context c, @Nullable AttributeSet a) { super(c, a); init(); }
 
     private void init() {
-        colorMarca = attr(androidx.appcompat.R.attr.colorPrimary);
+        // El naranja de las zonas trabajadas también sale del tema: sobre cristal, en claro, el
+        // de la tarjeta opaca no se distinguía del cuerpo (GP-285, lote 1b).
+        colorMarca = attr(R.attr.gpSiluetaMarca);
         separacion = (int) (12 * getResources().getDisplayMetrics().density);
 
-        siluetaFrontal = ContextCompat.getDrawable(getContext(), R.drawable.ic_silueta_frontal);
-        siluetaDorsal  = ContextCompat.getDrawable(getContext(), R.drawable.ic_silueta_dorsal);
+        // El gris del cuerpo sale del tema: sobre cristal, en claro, el de la tarjeta opaca casi
+        // no se veía (GP-285, lote 1b). Los dos dibujos son de un solo color.
+        int cuerpo = attr(R.attr.gpSilueta);
+        siluetaFrontal = tenido(R.drawable.ic_silueta_frontal, cuerpo);
+        siluetaDorsal  = tenido(R.drawable.ic_silueta_dorsal, cuerpo);
 
         cargarMusculos(FRONTALES);
         cargarMusculos(DORSALES);
+    }
+
+    @Nullable
+    private Drawable tenido(int dibujo, int color) {
+        Drawable d = ContextCompat.getDrawable(getContext(), dibujo);
+        if (d == null) return null;
+        d = DrawableCompat.wrap(d.mutate());
+        DrawableCompat.setTint(d, color);
+        return d;
     }
 
     // Resuelve por nombre los vectores ic_musculo_* y los guarda listos para teñir.

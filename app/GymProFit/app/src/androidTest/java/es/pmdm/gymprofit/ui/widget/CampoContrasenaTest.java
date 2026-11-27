@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.InputType;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -34,6 +35,14 @@ import es.pmdm.gymprofit.R;
 // campo dentro, para que sea el delegado real de Material el que rellena el nodo. Se
 // pide el nodo como lo pide un servicio de accesibilidad (createAccessibilityNodeInfo)
 // y se mira su texto con la contraseña oculta y con el ojo abierto.
+//
+// GP-287: el nodo no es igual en todas las versiones. Desde Android 8 la pista tiene su
+// sitio (getHintText) y el texto del nodo es solo lo escrito. Antes no existía, y Material
+// la mete en el propio texto, detrás de lo escrito: «••••••••••••, Contraseña». La app ya
+// lo tenía en cuenta (CampoContrasena.enmascarar cambia solo lo escrito y conserva lo de
+// detrás); el que no, era este test, que esperaba en todas partes el nodo de Android 8 y
+// pedía getHintText donde no existe. Lo que importa es lo mismo en todas: lo escrito no
+// sale mientras está oculto, y la pista se sigue diciendo.
 // ============================================================
 @RunWith(AndroidJUnit4.class)
 public class CampoContrasenaTest {
@@ -56,6 +65,12 @@ public class CampoContrasenaTest {
                 InstrumentationRegistry.getInstrumentation().getTargetContext(), R.style.Theme_GymProFit);
     }
 
+    // El texto que lleva el nodo de un campo con eso escrito: lo escrito y, antes de Android 8,
+    // la pista detrás (así la añade Material donde el nodo no tiene sitio propio para ella).
+    private static String nodoCon(String escrito) {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? escrito : escrito + ", " + PISTA;
+    }
+
     private static String textoDelNodo(CampoContrasena campo) {
         AccessibilityNodeInfo nodo = campo.createAccessibilityNodeInfo();
         CharSequence t = nodo.getText();
@@ -72,11 +87,14 @@ public class CampoContrasenaTest {
             assertTrue("la contraseña debería empezar oculta", campo.oculta());
             String texto = textoDelNodo(campo);
             assertFalse("el nodo lleva la contraseña: " + texto, texto != null && texto.contains(CLAVE));
-            assertEquals("•".repeat(CLAVE.length()), texto);
-            // Sigue siendo un campo de contraseña, con su pista.
+            assertEquals(nodoCon("•".repeat(CLAVE.length())), texto);
+            // Sigue siendo un campo de contraseña, con su pista: en su sitio desde Android 8 y,
+            // antes, dentro del texto (ya comprobado arriba).
             AccessibilityNodeInfo nodo = campo.createAccessibilityNodeInfo();
             assertTrue(nodo.isPassword());
-            assertEquals(PISTA, nodo.getHintText().toString());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                assertEquals(PISTA, nodo.getHintText().toString());
+            }
         });
     }
 
@@ -90,12 +108,12 @@ public class CampoContrasenaTest {
             capa.findViewById(com.google.android.material.R.id.text_input_end_icon).performClick();
 
             assertFalse("el ojo debería haber mostrado la contraseña", campo.oculta());
-            assertEquals(CLAVE, textoDelNodo(campo));
+            assertEquals(nodoCon(CLAVE), textoDelNodo(campo));
 
             // Y al cerrarlo, vuelve a enmascararse.
             capa.findViewById(com.google.android.material.R.id.text_input_end_icon).performClick();
             assertTrue(campo.oculta());
-            assertEquals("•".repeat(CLAVE.length()), textoDelNodo(campo));
+            assertEquals(nodoCon("•".repeat(CLAVE.length())), textoDelNodo(campo));
         });
     }
 

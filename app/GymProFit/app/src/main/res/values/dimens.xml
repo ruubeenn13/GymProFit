@@ -23,6 +23,8 @@
     <!-- Etiqueta en mayúsculas sobre una cifra. Sustituye a 10 y 11 sp.
          Es el suelo de la escala: ningún texto de la app baja de 13 sp (GP-089). -->
     <dimen name="text_eyebrow">13sp</dimen>
+    <!-- Lo que mide text_eyebrow a letra 1,0, en dp: el suelo de un rótulo que encoge para caber. -->
+    <dimen name="text_eyebrow_minimo">13dp</dimen>
 
     <!-- Botones, chips y etiquetas de campo. Sustituye a 12 sp. -->
     <dimen name="text_label">14sp</dimen>
@@ -98,6 +100,10 @@
     <dimen name="aire_anillo_alto">4dp</dimen>
     <dimen name="aire_anillo_alto_fuera">-4dp</dimen>
     <dimen name="separacion_pestana">36dp</dimen>
+    <!-- Para un carrusel que lleva ese hueco como relleno propio (CarruselView): lo descuenta. -->
+    <dimen name="separacion_pestana_fuera">-36dp</dimen>
+    <!-- El fundido con el que un carrusel desvanece su último elemento a la vista. -->
+    <dimen name="carrusel_fundido">28dp</dimen>
     <dimen name="separacion_subpantalla">28dp</dimen>
     <dimen name="titulo_a_contenido">14dp</dimen>
     <!-- Logros de Progreso (GP-216, lote 4, tablero 16): medallón de 72 con borde de 3 y su
@@ -250,6 +256,13 @@
     <dimen name="radio_cristal_tile">22dp</dimen>
     <!-- Borde y brillo superior del cristal. -->
     <dimen name="cristal_borde">1dp</dimen>
+    <!-- Solo en claro: el filo oscuro del canto y la sombra del cristal estático (28 dp de
+         difuminado, como el «blur» de CSS, y 10 hacia abajo) y la de la lente de la barra. -->
+    <dimen name="cristal_filo">0.5dp</dimen>
+    <dimen name="cristal_estatico_sombra_difuminado">28dp</dimen>
+    <dimen name="cristal_estatico_sombra_baja">10dp</dimen>
+    <dimen name="lente_sombra_difuminado">6dp</dimen>
+    <dimen name="lente_sombra_baja">2dp</dimen>
     <!-- Desenfoque del cristal vivo: la desviación (σ), como el blur(22px) de la maqueta. -->
     <dimen name="cristal_desenfoque">22dp</dimen>
     <!-- La lente del borde (nivel 1): el ancho de la banda que refracta y lo que desplaza como mucho. -->
@@ -267,9 +280,14 @@
     <dimen name="barra_relleno">6dp</dimen>
     <dimen name="barra_lente_alto">52dp</dimen>
     <dimen name="barra_lente_radio">26dp</dimen>
-    <!-- El «+»: círculo de 64 (radio 32) con el degradado radial de 45 dp de radio. -->
+    <!-- El «+»: círculo de 64 (radio 32). De cristal (niveles 1 y 2), con una línea de reflejo
+         de 1,5 dp a 5 del canto, solo en su cuarto de arriba: el icono, a 19 del borde, queda
+         fuera de ella. Opaco (nivel 3), con el degradado radial de 45 dp de radio. -->
     <dimen name="barra_mas_radio">32dp</dimen>
     <dimen name="barra_mas_degradado">45dp</dimen>
+    <dimen name="barra_mas_icono_margen">19dp</dimen>
+    <dimen name="barra_mas_reflejo_dentro">5dp</dimen>
+    <dimen name="barra_mas_reflejo_grosor">1.5dp</dimen>
     <!-- La barra de la sesión va 8 por encima. -->
     <dimen name="barra_sesion_hueco">8dp</dimen>
     <!-- Margen mínimo entre el último botón de una tarjeta y la barra flotante: lo último de

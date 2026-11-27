@@ -748,6 +748,8 @@
     <string name="semana_error">Your week couldn\'t be loaded.</string>
     <string name="ultimo_record">Latest record</string>
     <string name="ultimo_record_sub">Before: %1$s · %2$s</string>
+    <!-- La línea de detalle del último récord de Inicio: «Último récord · hace 6 días · antes 95 × 12». -->
+    <string name="inicio_record_detalle">%1$s · before %2$s</string>
     <string name="nutricion_de_hoy">Today\'s nutrition</string>
     <string name="nutricion_de_kcal">of %1$s\u00A0kcal</string>
     <string name="macro_prot_corto">Protein %1$d/%2$d\u00A0g</string>

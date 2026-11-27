@@ -6,7 +6,7 @@
   líneas, el hueco de antes de la barra absorbe la diferencia y las tres barras quedan en línea.
   Lo rellena InicioTuDia. Es pulsable: lleva a Nutrición.
 -->
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<es.pmdm.gymprofit.ui.cristal.TarjetaCristal xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Widget.GymProFit.Card.Cristal.Tile"
     android:layout_width="0dp"
     android:layout_height="match_parent"
@@ -70,4 +70,4 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/espacio_8" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</es.pmdm.gymprofit.ui.cristal.TarjetaCristal>

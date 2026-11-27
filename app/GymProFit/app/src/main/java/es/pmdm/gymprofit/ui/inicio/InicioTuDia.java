@@ -78,8 +78,8 @@ public final class InicioTuDia {
         }
         raiz.findViewById(R.id.cardComidaQueToca).setOnClickListener(v -> apuntarComida.run());
         rotuloColor(R.id.cardDiaKcal, R.drawable.ic_ms_local_fire_department, R.color.gp_cristal_enlace, R.string.inicio_dia_calorias);
-        rotuloColor(R.id.cardDiaProteina, R.drawable.ic_ms_egg_alt, R.color.gp_macro_proteinas, R.string.inicio_dia_proteina);
-        rotuloColor(R.id.cardDiaAgua, R.drawable.ic_ms_water_drop, R.color.gp_agua, R.string.inicio_dia_agua);
+        rotuloColor(R.id.cardDiaProteina, R.drawable.ic_ms_egg_alt, R.color.gp_cristal_proteinas, R.string.inicio_dia_proteina);
+        rotuloColor(R.id.cardDiaAgua, R.drawable.ic_ms_water_drop, R.color.gp_cristal_agua, R.string.inicio_dia_agua);
         pintarComidaQueToca(null);
     }
 

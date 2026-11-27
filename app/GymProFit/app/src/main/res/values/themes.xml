@@ -47,6 +47,11 @@
         <item name="gpGraficoMarca">@color/gp_primary</item>
         <item name="gpGraficoTenue">@color/gp_stroke</item>
         <item name="gpGraficoOro">@color/gp_gold</item>
+        <item name="gpSilueta">@color/body_silhouette</item>
+        <item name="gpSiluetaMarca">@color/gp_primary</item>
+        <item name="gpGraficoKilos">@color/gp_primary</item>
+        <item name="gpGraficoKilosTenue">@color/gp_stroke</item>
+        <item name="gpGraficoKilosFilo">@android:color/transparent</item>
         <item name="colorError">@color/gp_error</item>
         <item name="android:colorBackground">@color/gp_background</item>
         <item name="android:windowBackground">@color/gp_background</item>

@@ -106,7 +106,7 @@
             </LinearLayout>
 
             <!-- Hoy toca -->
-            <com.google.android.material.card.MaterialCardView
+            <es.pmdm.gymprofit.ui.cristal.TarjetaCristal
                 android:id="@+id/cardHoyToca"
                 style="@style/Widget.GymProFit.Card.Cristal.Heroe"
                 android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                             android:orientation="vertical">
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal">
@@ -157,10 +157,18 @@
                                     android:src="@drawable/ic_ms_event_available"
                                     app:tint="@color/gp_cristal_acento" />
 
+                                <!-- Una línea siempre: junto a las siluetas, a letra 1,3, «HOY TOCA · DÍA
+                                     1 DE 4» dejaba el «4» solo en la segunda. Si no cabe, encoge, como
+                                     mucho hasta su tamaño a letra 1,0 (el mínimo de la app). Lo activa
+                                     InicioFragment con TextoQueEncoge: en el layout rompería la pantalla
+                                     a letra 1,0, donde no hay de dónde encoger. -->
                                 <TextView
                                     android:id="@+id/tvHoyEyebrow"
                                     style="@style/Widget.GymProFit.Seccion.Cristal"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
                                     android:layout_marginStart="@dimen/espacio_8"
+                                    android:maxLines="1"
                                     android:text="@string/hoy_toca" />
                             </LinearLayout>
 
@@ -215,17 +223,17 @@
                         android:maxLines="1"
                         android:visibility="gone" />
 
-                    <HorizontalScrollView
+                    <!-- Llega a los dos bordes de la tarjeta (el relleno alinea el primer ejercicio
+                         con el resto), funde el último a la vista y encaja por ejercicio. -->
+                    <es.pmdm.gymprofit.ui.widget.CarruselView
                         android:id="@+id/scrollHoyEjercicios"
                         android:focusable="false"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/espacio_12"
                         android:clipToPadding="false"
-                        android:overScrollMode="never"
                         android:paddingStart="@dimen/espacio_20"
                         android:paddingEnd="@dimen/espacio_20"
-                        android:scrollbars="none"
                         android:visibility="gone">
 
                         <LinearLayout
@@ -235,7 +243,7 @@
                             android:divider="@drawable/sep_carrusel"
                             android:orientation="horizontal"
                             android:showDividers="middle" />
-                    </HorizontalScrollView>
+                    </es.pmdm.gymprofit.ui.widget.CarruselView>
 
                     <LinearLayout
                         android:id="@+id/filaBotonesHoy"
@@ -264,11 +272,11 @@
                             android:text="@string/btn_cambiar" />
                     </LinearLayout>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
 
             <!-- Primeros pasos (GP-103): solo el primer día; se marcan solos, se pueden
                  ocultar y desaparecen al completarse. -->
-            <com.google.android.material.card.MaterialCardView
+            <es.pmdm.gymprofit.ui.cristal.TarjetaCristal
                 android:id="@+id/cardPrimerosPasos"
                 style="@style/Widget.GymProFit.Card.Cristal"
                 android:layout_width="match_parent"
@@ -317,7 +325,7 @@
                     <include android:id="@+id/pasoEntreno" layout="@layout/item_primer_paso" />
                     <include android:id="@+id/pasoComida" layout="@layout/item_primer_paso" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
 
             <!-- Tu día -->
             <LinearLayout
@@ -377,7 +385,7 @@
                 </LinearLayout>
 
                 <!-- La comida que toca ahora: apuntarla es un toque. -->
-                <com.google.android.material.card.MaterialCardView
+                <es.pmdm.gymprofit.ui.cristal.TarjetaCristal
                     android:id="@+id/cardComidaQueToca"
                     style="@style/Widget.GymProFit.Card.Cristal.Tile"
                     android:layout_width="match_parent"
@@ -430,12 +438,13 @@
                             android:layout_height="@dimen/fila_icono_circulo"
                             android:layout_marginStart="@dimen/espacio_12"
                             android:background="@drawable/bg_circulo_primario"
+                            android:backgroundTint="@color/gp_cristal_principal"
                             android:importantForAccessibility="no"
                             android:padding="9dp"
                             android:src="@drawable/ic_ms_add"
-                            app:tint="?attr/colorOnPrimary" />
+                            app:tint="@color/gp_cristal_sobre_principal" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
             </LinearLayout>
 
             <!-- Tus músculos esta semana -->
@@ -462,7 +471,7 @@
                     android:id="@+id/estadoMusculos"
                     layout="@layout/view_estado" />
 
-                <com.google.android.material.card.MaterialCardView
+                <es.pmdm.gymprofit.ui.cristal.TarjetaCristal
                     android:id="@+id/cardMusculos"
                     style="@style/Widget.GymProFit.Card.Cristal"
                     android:layout_width="match_parent"
@@ -505,7 +514,7 @@
                                 android:showDividers="middle" />
                         </LinearLayout>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
             </LinearLayout>
 
             <!-- Tu progreso -->
@@ -532,7 +541,7 @@
                     android:id="@+id/estadoProgreso"
                     layout="@layout/view_estado" />
 
-                <com.google.android.material.card.MaterialCardView
+                <es.pmdm.gymprofit.ui.cristal.TarjetaCristal
                     android:id="@+id/cardProgreso"
                     style="@style/Widget.GymProFit.Card.Cristal"
                     android:layout_width="match_parent"
@@ -581,79 +590,11 @@
                                 android:layout_marginTop="@dimen/espacio_12" />
                         </LinearLayout>
 
-                        <!-- El último récord: la tarjeta crece hasta la progresión de ese ejercicio. -->
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/cardRecordHome"
-                            style="@style/Widget.GymProFit.Card.Cristal.Oro"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/espacio_16"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:visibility="gone">
-
-                            <!-- Sobre el degradado dorado, las dos líneas van en el texto principal (el
-                                 secundario no llega a 4,5:1) y la marca en su dorado claro. -->
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_cristal_oro"
-                                android:gravity="center_vertical"
-                                android:minHeight="@dimen/fila_alto_min"
-                                android:orientation="horizontal"
-                                android:paddingStart="@dimen/espacio_16"
-                                android:paddingEnd="@dimen/espacio_16">
-
-                                <FrameLayout
-                                    android:layout_width="@dimen/fila_icono_circulo"
-                                    android:layout_height="@dimen/fila_icono_circulo"
-                                    android:background="@drawable/bg_circulo_oro"
-                                    android:importantForAccessibility="no">
-
-                                    <ImageView
-                                        android:layout_width="22dp"
-                                        android:layout_height="22dp"
-                                        android:layout_gravity="center"
-                                        android:importantForAccessibility="no"
-                                        android:src="@drawable/ic_ms_trophy_fill"
-                                        app:tint="@color/gp_gold_container" />
-                                </FrameLayout>
-
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:layout_marginStart="@dimen/fila_icono_a_texto"
-                                    android:orientation="vertical"
-                                    android:paddingTop="@dimen/espacio_8"
-                                    android:paddingBottom="@dimen/espacio_8">
-
-                                    <TextView
-                                        android:id="@+id/tvRecordEjercicio"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
-                                        android:textColor="?attr/colorOnSurface" />
-
-                                    <TextView
-                                        android:id="@+id/tvRecordAntes"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
-                                        android:textColor="?attr/colorOnSurface" />
-                                </LinearLayout>
-
-                                <TextView
-                                    android:id="@+id/tvRecordMarca"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/espacio_8"
-                                    android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena"
-                                    android:textColor="@color/gp_cristal_oro_cifra" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
+                        <!-- El último récord (view_record_inicio): nombre, detalle y marca, cada uno en
+                             su línea; la tarjeta crece hasta la progresión de ese ejercicio. -->
+                        <include layout="@layout/view_record_inicio" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
             </LinearLayout>
 
             <!-- Tus últimos entrenos -->
@@ -681,18 +622,22 @@
                     android:id="@+id/estadoEntrenos"
                     layout="@layout/view_estado" />
 
-                <HorizontalScrollView
+                <!-- Llega a los dos bordes de la pantalla, funde el último entreno a la vista y
+                     encaja por entreno. El hueco hasta el título y el de después van como relleno
+                     suyo (y el de después, descontado del margen): un carrusel recorta a su caja,
+                     y ahí cae la sombra que las tarjetas llevan en claro. -->
+                <es.pmdm.gymprofit.ui.widget.CarruselView
                     android:id="@+id/scrollEntrenos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margen_pantalla_fuera"
                     android:layout_marginEnd="@dimen/margen_pantalla_fuera"
-                    android:layout_marginTop="@dimen/titulo_a_contenido"
+                    android:layout_marginBottom="@dimen/separacion_pestana_fuera"
                     android:clipToPadding="false"
                     android:paddingStart="@dimen/margen_pantalla"
+                    android:paddingTop="@dimen/titulo_a_contenido"
                     android:paddingEnd="@dimen/margen_pantalla"
-                    android:overScrollMode="never"
-                    android:scrollbars="none"
+                    android:paddingBottom="@dimen/separacion_pestana"
                     android:visibility="gone">
 
                     <LinearLayout
@@ -702,7 +647,7 @@
                         android:divider="@drawable/sep_carrusel"
                         android:orientation="horizontal"
                         android:showDividers="middle" />
-                </HorizontalScrollView>
+                </es.pmdm.gymprofit.ui.widget.CarruselView>
             </LinearLayout>
 
             <!-- El fundador (GP-103): el primer día, con su texto; se oculta. -->

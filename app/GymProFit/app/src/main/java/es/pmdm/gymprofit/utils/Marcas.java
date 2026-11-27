@@ -75,6 +75,24 @@ public final class Marcas {
     }
 
     /**
+     * La marca que se superó, corta, para una línea estrecha: «95 × 12» (GP-285, lote 1b). Sin
+     * «kg»: va junto a la marca nueva, que ya dice la unidad. Las que no son de peso por
+     * repeticiones no tienen forma más corta y salen como en {@link #anteriorSolo}.
+     *
+     * @return el texto, o {@code null} si es una primera marca y no hay anterior.
+     */
+    @Nullable
+    public static String anteriorCorta(Context ctx, Record r) {
+        if (!r.tieneAnterior()) return null;
+        int reps = r.getRepeticionesAnterior() != null ? r.getRepeticionesAnterior() : 0;
+        if (r.esDeTiempo() || !r.esDePeso() || reps <= 0) return anteriorSolo(ctx, r);
+        double peso = r.getPesoAnterior() != null ? r.getPesoAnterior() : 0;
+        String kilos = peso == Math.floor(peso) ? String.valueOf((long) peso)
+                : String.format(FechaUtils.localeDeLaApp(ctx), "%.1f", peso);
+        return ctx.getString(R.string.record_peso_por_reps, kilos, reps);
+    }
+
+    /**
      * Pone el cronómetro delante de una marca por tiempo, del color del texto y a su
      * tamaño; en las demás, lo quita (la vista se recicla).
      */

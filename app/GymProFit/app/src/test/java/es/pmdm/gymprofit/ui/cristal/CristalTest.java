@@ -60,6 +60,53 @@ public class CristalTest {
         assertEquals(1.8f, CristalVivo.SATURACION, 0.0001f);
     }
 
+    // El «+» de la barra es del mismo cristal vivo que la cápsula, teñido (cristalAccion), con
+    // su sombra; su línea de reflejo se queda en el cuarto de arriba, por encima del icono; y lo
+    // que gira al abrirse es el icono, no el cristal, que giraría con su reflejo.
+    @Test
+    public void el_mas_es_cristal_vivo_y_solo_gira_su_icono() throws Exception {
+        Element mas = null;
+        NodeList vivos = xml(RES.resolve("layout/view_barra_navegacion.xml"))
+                .getElementsByTagName("es.pmdm.gymprofit.ui.cristal.CristalVivo");
+        for (int i = 0; i < vivos.getLength(); i++) {
+            Element e = (Element) vivos.item(i);
+            if ("@+id/btnAcciones".equals(e.getAttributeNS(ANDROID, "id"))) mas = e;
+        }
+        assertTrue("el «+» tiene que ser un CristalVivo", mas != null);
+        String app = "http://schemas.android.com/apk/res-auto";
+        assertEquals("true", mas.getAttributeNS(app, "cristalAccion"));
+        assertEquals("true", mas.getAttributeNS(app, "cristalSombra"));
+        assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_width"));
+        assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_height"));
+        // Sigue siendo pulsable y con nombre, y su icono no se lee aparte.
+        assertEquals("true", mas.getAttributeNS(ANDROID, "clickable"));
+        assertEquals("true", mas.getAttributeNS(ANDROID, "focusable"));
+        assertEquals("@string/acciones_rapidas", mas.getAttributeNS(ANDROID, "contentDescription"));
+        Element icono = (Element) mas.getElementsByTagName("ImageView").item(0);
+        assertEquals("@+id/ivAcciones", icono.getAttributeNS(ANDROID, "id"));
+        assertEquals("no", icono.getAttributeNS(ANDROID, "importantForAccessibility"));
+        assertEquals("@color/gp_mas_icono", icono.getAttributeNS(app, "tint"));
+        assertEquals("@dimen/barra_mas_icono_margen", icono.getAttributeNS(ANDROID, "padding"));
+
+        // El reflejo acaba antes de donde empieza el icono, y va por dentro del borde.
+        String d = leer(RES.resolve("values/dimens.xml"));
+        float alto = dp(d, "barra_alto"), margen = dp(d, "barra_mas_icono_margen");
+        assertTrue("el reflejo (" + alto * Cristal.REFLEJO_ALTO + " dp) pisa el icono (a " + margen + " dp)",
+                alto * Cristal.REFLEJO_ALTO < margen);
+        assertTrue("el reflejo va por dentro del borde", dp(d, "barra_mas_reflejo_dentro") > dp(d, "cristal_borde"));
+
+        String barra = leer(JAVA.resolve("ui/widget/BarraNavegacion.java"));
+        assertTrue(barra.contains("ivAcciones.animate().rotation("));
+        assertFalse("el cristal del «+» no gira", barra.contains("btnAcciones.animate()"));
+    }
+
+    // Un dimen en dp de dimens.xml.
+    private static float dp(String dimens, String nombre) {
+        Matcher m = Pattern.compile("<dimen name=\"" + nombre + "\">([0-9.]+)dp</dimen>").matcher(dimens);
+        assertTrue("falta el dimen " + nombre, m.find());
+        return Float.parseFloat(m.group(1));
+    }
+
     @Test
     public void el_cristal_vivo_va_fuera_de_su_lienzo() throws Exception {
         Document doc = xml(RES.resolve("layout/activity_main.xml"));
@@ -108,6 +155,66 @@ public class CristalTest {
         assertFalse(cuerpo(lienzo, "protected void dispatchDraw(").contains("invalidate"));
     }
 
+    // El desenfoque de la barra es el de la maqueta, y va en dp: se convierte a px con la densidad
+    // de cada pantalla (en px fijos, una pantalla densa lo vería a medio desenfocar). Nada de
+    // esto son cifras escritas aquí: la desviación y la saturación se leen de la maqueta aprobada.
+    @Test
+    public void el_desenfoque_va_en_dp_y_es_el_de_la_maqueta() throws IOException {
+        String maqueta = leer(Paths.get("..", "..", "..", "documentacion", "diseno", "2026-11-25-liquid-glass", "inicio.dc.html"));
+        Matcher css = Pattern.compile("blur\\((\\d+(?:\\.\\d+)?)px\\) saturate\\((\\d+)%\\)").matcher(maqueta);
+        assertTrue("la maqueta de Inicio ya no trae el desenfoque de la barra", css.find());
+        float sigmaMaqueta = Float.parseFloat(css.group(1));
+        assertEquals(Integer.parseInt(css.group(2)) / 100f, CristalVivo.SATURACION, 0.0001f);
+
+        Matcher dimen = Pattern.compile("<dimen name=\"cristal_desenfoque\">(\\d+(?:\\.\\d+)?)([a-z]+)</dimen>")
+                .matcher(leer(RES.resolve("values/dimens.xml")));
+        assertTrue(dimen.find());
+        assertEquals("el desenfoque va en dp, no en " + dimen.group(2), "dp", dimen.group(2));
+        assertEquals(sigmaMaqueta, Float.parseFloat(dimen.group(1)), 0.0001f);
+
+        // Quien lo usa lo lee como medida (ya en px de esta pantalla) y no reduce el lienzo antes
+        // de desenfocarlo: no hay radio que compensar.
+        String c = leer(JAVA.resolve("ui/cristal/CristalVivo.java"));
+        assertTrue(c.contains("sigma = getResources().getDimension(R.dimen.cristal_desenfoque)"));
+        assertTrue(cuerpo(c, "void preparar(").contains("radioDesenfoque(sigmaPx)"));
+        assertFalse(c.contains("createScaledBitmap") || c.contains("canvas.scale(1f /"));
+
+        // Y el «radio» que se le pide a Android da esa desviación en cualquier densidad: Android
+        // saca σ = radio · 0,57735 + 0,5.
+        for (float densidad : new float[]{ 1f, 1.5f, 2f, 2.625f, 2.75f, 3f, 4f }) {
+            float sigmaPx = sigmaMaqueta * densidad;
+            assertEquals("densidad " + densidad, sigmaPx, CristalVivo.radioDesenfoque(sigmaPx) * 0.57735f + 0.5f, 0.01f);
+        }
+    }
+
+    // El nivel 3 no desenfoca: si su superficie dejara pasar algo, lo de detrás se vería nítido
+    // a través (al 98 % se entreveía el texto: los «píxeles detrás» de Android 11 o menos).
+    @Test
+    public void el_nivel_3_es_opaco_del_todo() throws IOException {
+        for (String carpeta : new String[]{ "values", "values-night" }) {
+            String colores = leer(RES.resolve(carpeta + "/colors.xml"));
+            for (String token : new String[]{ "gp_vivo_opaco_alto", "gp_vivo_opaco_bajo" }) {
+                Matcher m = Pattern.compile("<color name=\"" + token + "\">#([0-9A-Fa-f]+)</color>").matcher(colores);
+                assertTrue(carpeta + ": falta " + token, m.find());
+                String hex = m.group(1);
+                assertTrue(carpeta + " " + token + " deja pasar lo de detrás: #" + hex,
+                        hex.length() == 6 || hex.toUpperCase().startsWith("FF"));
+            }
+        }
+    }
+
+    // Cada ejercicio del carrusel de «Hoy toca» es una parada de TalkBack: dentro de una tarjeta
+    // pulsable, sin esto, no se recorrían uno a uno. Los entrenos ya lo son (tarjetas pulsables
+    // con su descripción).
+    @Test
+    public void talkback_recorre_los_elementos_de_los_carruseles() throws IOException {
+        String hoy = leer(JAVA.resolve("ui/inicio/InicioHoyDetalle.java"));
+        assertTrue(hoy.contains("ViewCompat.setScreenReaderFocusable(item, true)"));
+        String entrenos = leer(JAVA.resolve("ui/inicio/InicioEntrenos.java"));
+        assertTrue(entrenos.contains("tarjeta.setContentDescription("));
+        assertTrue(leer(RES.resolve("layout/item_ultimo_entreno.xml")).contains("android:clickable=\"true\""));
+    }
+
     // La sombra del cristal vivo cae fuera de su vista. Antes de Android 8, recortar «todo menos
     // la forma» parte de la caja de la vista y la dejaba cortada en recto (dos orejas grises en
     // las esquinas de la barra, visto en Android 7). Ahí no se recorta: el cristal es opaco.
@@ -143,10 +250,14 @@ public class CristalTest {
         assertEquals("@style/ThemeOverlay.GymProFit.Cristal", doc.getDocumentElement().getAttributeNS(ANDROID, "theme"));
         assertEquals("sin fondo propio: detrás va el fondo ambiental",
                 "", doc.getDocumentElement().getAttributeNS(ANDROID, "background"));
-        for (String layout : new String[]{ "fragment_inicio", "item_tu_dia", "item_ultimo_entreno" }) {
+        for (String layout : new String[]{ "fragment_inicio", "item_tu_dia", "item_ultimo_entreno", "view_record_inicio" }) {
             Document d = xml(RES.resolve("layout/" + layout + ".xml"));
             List<Element> tarjetas = new ArrayList<>();
-            NodeList todas = d.getElementsByTagName("com.google.android.material.card.MaterialCardView");
+            // Toda tarjeta es TarjetaCristal (la MaterialCardView que en claro pinta su sombra por
+            // fuera): ninguna MaterialCardView a secas.
+            assertEquals(layout + " tiene tarjetas que no son TarjetaCristal", 0,
+                    d.getElementsByTagName("com.google.android.material.card.MaterialCardView").getLength());
+            NodeList todas = d.getElementsByTagName("es.pmdm.gymprofit.ui.cristal.TarjetaCristal");
             for (int i = 0; i < todas.getLength(); i++) tarjetas.add((Element) todas.item(i));
             assertFalse(layout + " no tiene tarjetas", tarjetas.isEmpty());
             for (Element t : tarjetas) {
@@ -161,6 +272,15 @@ public class CristalTest {
                         : estilo.endsWith(".Tile") ? "@drawable/bg_cristal_tile"
                         : estilo.endsWith(".Oro") ? "@drawable/bg_cristal_oro" : "@drawable/bg_cristal";
                 assertEquals(layout + " " + id, esperado, fondo);
+                // Una tarjeta dentro de otra (la fila del récord) va sin sombra: caería sobre el
+                // cristal de la de fuera.
+                // La del récord va en su propio layout, incluido dentro de «Tu progreso».
+                boolean dentroDeOtra = layout.equals("view_record_inicio");
+                for (Node p = t.getParentNode(); p instanceof Element; p = p.getParentNode()) {
+                    if (((Element) p).getTagName().endsWith("TarjetaCristal")) dentroDeOtra = true;
+                }
+                assertEquals(layout + " " + id + ", sombra", dentroDeOtra ? "false" : "",
+                        t.getAttributeNS("http://schemas.android.com/apk/res-auto", "cristalSombra"));
             }
         }
         // Los enlaces de sección van sobre el fondo: su naranja es el medido ahí.

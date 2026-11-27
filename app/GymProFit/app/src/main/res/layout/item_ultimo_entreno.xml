@@ -7,7 +7,7 @@
   InicioEntrenos. Pulsable: abre el resumen de esa sesión y la tarjeta crece hasta él.
   Desde GP-285 es un tile de cristal.
 -->
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<es.pmdm.gymprofit.ui.cristal.TarjetaCristal xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.GymProFit.Card.Cristal.Tile"
     android:layout_width="220dp"
@@ -70,4 +70,4 @@
             android:textStyle="bold"
             android:visibility="gone" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</es.pmdm.gymprofit.ui.cristal.TarjetaCristal>

@@ -41,7 +41,7 @@
             android:layout_marginEnd="@dimen/espacio_12"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_ms_timer"
-            app:tint="@color/gp_vivo_acento" />
+            app:tint="@color/gp_vivo_accion" />
 
         <TextView
             android:id="@+id/tvBarraSesion"
@@ -64,7 +64,7 @@
             android:minHeight="48dp"
             android:importantForAccessibility="no"
             android:text="@string/envivo_volver"
-            android:textColor="@color/gp_vivo_acento"
+            android:textColor="@color/gp_vivo_accion"
             android:textSize="@dimen/text_fila"
             app:rippleColor="@color/tarjeta_capa" />
     </LinearLayout>
