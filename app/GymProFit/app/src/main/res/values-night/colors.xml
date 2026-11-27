@@ -199,4 +199,6 @@
     <color name="gp_cristal_oro_brillo">#66FFECBE</color>
     <!-- Botón secundario y chip: cristal estático plano. -->
     <color name="gp_cristal_boton">#1FFFFFFF</color>
+    <!-- En oscuro el botón secundario lleva el borde del cristal (se ve: 3,8:1). -->
+    <color name="gp_cristal_boton_borde">#00000000</color>
 </resources>

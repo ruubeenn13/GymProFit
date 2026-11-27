@@ -222,6 +222,16 @@ public class Cristal extends Drawable {
     }
 
     /**
+     * Otro color para el borde (el botón secundario en claro, BotonCristal). Uno transparente no
+     * cambia nada: se queda el del cristal.
+     */
+    public void ponerBorde(@androidx.annotation.ColorInt int color) {
+        if (color >>> 24 == 0) return;
+        trazo.setColor(color);
+        invalidateSelf();
+    }
+
+    /**
      * La luz de un botón de marca pulsado (lote 1c): de 0, en reposo, a 1, pulsado del todo. El brillo y la
      * media luna se pintan otra vez encima con LUZ_PULSADO de su alfa por esa fracción: el brillo
      * pasa del 20 % al 32 % y la media luna del 40 % al 58 %. Los dos acaban por encima de la

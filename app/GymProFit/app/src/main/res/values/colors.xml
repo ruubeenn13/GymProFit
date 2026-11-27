@@ -326,6 +326,10 @@
     <color name="gp_cristal_oro_bajo">#24E8B84B</color>
     <color name="gp_cristal_oro_brillo">#CCFFFFFF</color>
     <color name="gp_cristal_boton">#99FFFFFF</color>
+    <!-- El borde del botón secundario de cristal (BotonCristal), solo en claro: tinta al 20 %. Con
+         el blanco de las tarjetas, sobre una tarjeta clara el botón casi no se veía (1,18:1); así
+         su canto se ve (≈1,5:1). En oscuro es transparente: vale el borde del cristal. -->
+    <color name="gp_cristal_boton_borde">#33171A1F</color>
     <!-- Botón principal sobre cristal: el naranja vivo con el texto casi negro en los dos temas
          (6,61:1), como el «+». En claro, el botón principal del resto de la app sigue siendo el
          naranja oscuro con texto blanco hasta que su pantalla pase a Liquid Glass. -->

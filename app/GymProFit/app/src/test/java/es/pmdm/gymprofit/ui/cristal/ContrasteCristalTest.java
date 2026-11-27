@@ -236,6 +236,30 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
+    // El canto del botón secundario se distingue de la tarjeta de cristal sobre la que va (revisor
+    // de UI, lote 1c: en claro, con el borde blanco del cristal, quedaba a 1,18:1 y el botón casi
+    // no se veía). Su borde (gp_cristal_boton_borde; transparente, el del cristal) compuesto sobre
+    // la tarjeta, frente a la tarjeta, en su peor punto: 1,4:1 o más. No es texto: lo que dice el
+    // botón ya pasa 4,5:1; esto es que se vea su forma.
+    @Test
+    public void el_canto_del_boton_secundario_se_ve_sobre_la_tarjeta() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        for (String tema : TEMAS) {
+            Tema t = new Tema(tema);
+            int borde = t.color("gp_cristal_boton_borde");
+            if (borde >>> 24 == 0) borde = t.color("gp_cristal_borde");
+            double peor = Double.MAX_VALUE;
+            for (int tarjeta : t.capas(t.fondo(), CRISTAL)) {
+                peor = Math.min(peor, contraste(Ambiente.sobre(borde, tarjeta), tarjeta));
+            }
+            INFORME.append(String.format(Locale.ROOT, "%s · canto del botón secundario sobre la tarjeta · %.2f:1%n",
+                    t.nombre, peor));
+            if (peor < 1.4) fallos.add(String.format(Locale.ROOT,
+                    "%s: el canto del botón secundario queda a %.2f:1 de la tarjeta", t.nombre, peor));
+        }
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
     // ── La cuenta ───────────────────────────────────────────────────────────
 
     // El naranja de la marca, del que el botón de marca no se aleja más de ΔE 15.
