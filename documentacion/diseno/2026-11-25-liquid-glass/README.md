@@ -28,7 +28,7 @@ Distribución de Android (Google, octubre de 2026): API 33+ ≈ 68 % · API 31�
 - **Selección «lente» (pestaña activa, día elegido, serie en curso):** cápsula blanco 14 % con brillo superior blanco 40 % y resplandor interior blanco 8 %; icono y etiqueta en `#FF8A3D`.
 - **Radios:** tarjeta héroe 30 dp · tarjetas 26–28 dp · tiles 22 dp · chips y botones en píldora.
 - **Botón principal:** `#FF6A00` con texto `#1A0E00` y brillo superior blanco 45 %. Secundario: cristal estático.
-- **«+»:** círculo de 64 dp, degradado radial `#FFB27A` → `#FF6A00`, icono `#1A0E00`.
+- **«+»:** círculo de 64 dp, degradado radial `#FFB27A` → `#FF6A00`, icono `#1A0E00`. **Desde el 27-11-2026 es cristal vivo teñido de naranja** (abajo, «El «+», en cristal»); el macizo queda para el nivel 3.
 - **Barra:** cápsula flotante de 64 dp a 16 dp de los lados y 26 dp del borde inferior (más el hueco de gestos), con el «+» separado a su derecha. El contenido pasa por debajo.
 - **Texto:** principal `#F2F2F3`; secundario `#C9CDD6`; acento `#FFB27A`/`#FF8A3D`. Títulos y cifras en Barlow Condensed 700–800; texto en Barlow.
 - **Récord:** fila con degradado dorado `rgba(232,184,75,.28)` → `.08` y brillo `rgba(255,236,190,.4)`; dorado `#E8B84B`.
@@ -57,6 +57,32 @@ No hay maqueta. El del lote 1 (cristal blanco casi opaco sobre un fondo lavado) 
 | Bordes de las barras del sistema y velo del «+» | con el tono del fondo nuevo, sin escalón | el borde es el propio fondo ambiental, con sus brillos; el velo, negro 35 %, los cubre igual que al resto |
 
 Otros dos ajustes por contraste, sobre valores que venían del lote 1: el dorado de texto sobre cristal, `#7A5C18` → `#745717` (4,19 → 4,53:1), y la acción de la barra de la sesión («Volver»), que en claro va en el texto de la barra y no en el acento (2,69 → 5,70:1).
+
+### El «+», en cristal (27-11-2026)
+
+El «+» macizo chirriaba junto a la barra de cristal, en los dos temas. Pasa a cristal vivo teñido de naranja: sigue siendo la acción principal, pero con el mismo material que la barra.
+
+| | Valor pedido | Implementado |
+|---|---|---|
+| Material | el componente y los niveles de la barra: refracción en API 33+, desenfoque en 31–32; en el nivel 3, macizo `#FF6A00` como hasta ahora | lo pedido; en el nivel 3 conserva su degradado radial `#FFB27A` → `#FF6A00`, sin sombra ni reflejo |
+| Tinte sobre el desenfoque | a 160°, naranja `#FF6A00` del 72 % al 55 % (oscuro) y del 78 % al 60 % (claro) | en claro, el pedido; en oscuro, **72 % → 65 %** (ver abajo) |
+| Borde | 1 dp blanco al 35 % (oscuro) y al 60 % (claro) | el pedido |
+| Brillo interior superior | blanco al 55 % | el pedido |
+| Reflejo | una línea en el cuarto superior que se lea como una cápsula de cristal | una línea blanca al 45 % de 1,5 dp, a 5 dp del canto, solo en el cuarto de arriba, que se apaga hacia sus extremos; no llega al icono (que empieza a 19 dp) |
+| Sombra | la suave de la barra, sin halo | la de la barra |
+| Icono «+» y «×» | `#1A0E00`, 3:1 o más (es un gráfico) en los dos temas y los tres niveles; si no llega, se sube el tinte | `#1A0E00`; cifras abajo |
+| 64 dp, giro a «×», velo y hoja | sin cambios | sin cambios; gira el icono y no el cristal, que giraría con su reflejo |
+
+Contraste del icono (`ContrasteCristalTest`, sobre todo lo que puede quedar detrás, con el velo de la hoja abierta incluido). El icono es casi negro, así que su punto más desfavorable es el más **oscuro** de lo de detrás, no el más claro; se dan los dos:
+
+| | Oscuro | Claro |
+|---|---|---|
+| Niveles 1 y 2, peor punto (el más oscuro) | 3,18:1 (con el 55 % pedido, 2,51:1) | 5,37:1 |
+| Niveles 1 y 2, punto más claro | 5,21:1 | 9,57:1 |
+| Nivel 3, peor punto | 6,61:1 | 6,61:1 |
+| Nivel 3, punto más claro | 10,75:1 | 10,75:1 |
+
+Medido además en captura, contra el cristal que rodea al icono: en API 36 y API 32, 3,67–4,11:1 cerrado y 3,38–3,76:1 abierto en oscuro, y 7,60–8,48:1 y 5,88–6,19:1 en claro; en API 24, 6,93–10,75:1.
 
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 

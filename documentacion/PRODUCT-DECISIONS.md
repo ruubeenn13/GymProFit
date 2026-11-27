@@ -1308,6 +1308,9 @@ En local, sin proxy delante, la última entrada es la que manda el cliente: así
 | Gráfica de kilos | barras en naranja al 28 % y la semana en curso en `#FF6A00` | los colores pedidos (1,22:1 y 1,93:1 contra el cristal) con un filo de 1 dp en `#A33800` en cada barra (4,53:1) |
 | Pistas de las barras de progreso | `rgba(21,23,27,.10)` | la pedida; los rellenos de proteína y agua, `#2C67C1` y `#0D7385` (2,82 y 2,71 → 3,05 y 3,06:1 contra ella) |
 | Bordes de las barras del sistema y velo del «+» | con el tono del fondo nuevo, sin escalón | el borde es el propio fondo ambiental, con sus brillos; el velo, negro 35 %, los cubre igual que al resto |
+| «+» de la barra (27-11-2026) | cristal vivo teñido de naranja, con los niveles de la barra: tinte a 160° de `#FF6A00`, 72 % → 55 % (oscuro) y 78 % → 60 % (claro), sobre el desenfoque; borde 1 dp blanco 35 % (oscuro) y 60 % (claro); brillo interior superior blanco 55 %; una línea de reflejo en el cuarto superior; la sombra de la barra, sin halo; icono `#1A0E00`; en el nivel 3, macizo como hasta ahora | lo pedido, salvo el tono de abajo en oscuro: **65 %** (al 55 %, el icono 2,51:1 con la hoja abierta → 3,18:1). En claro, 5,37:1; en el nivel 3, 6,61:1 en los dos temas. El icono es casi negro: su peor punto es el más oscuro de lo de detrás, no el más claro (sobre el más claro, 5,21 · 9,57). Al abrirse gira el icono, no el cristal |
+
+  El «+» macizo chirriaba junto a la barra de cristal en los dos temas: pasa a ser del mismo material, teñido, y sigue siendo la acción principal. Vale para oscuro y claro.
 
   Pendiente de aprobación con capturas. Si el propietario prefiere un valor pedido a la regla en algún par, se cambia el token y se apunta aquí como excepción, con su cifra.
 
