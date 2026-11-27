@@ -245,7 +245,7 @@
                             android:showDividers="middle" />
                     </es.pmdm.gymprofit.ui.widget.CarruselView>
 
-                    <LinearLayout
+                    <es.pmdm.gymprofit.ui.widget.FilaBotones
                         android:id="@+id/filaBotonesHoy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -270,7 +270,7 @@
                             android:layout_width="wrap_content"
                             android:layout_marginStart="@dimen/espacio_8"
                             android:text="@string/btn_cambiar" />
-                    </LinearLayout>
+                    </es.pmdm.gymprofit.ui.widget.FilaBotones>
                 </LinearLayout>
             </es.pmdm.gymprofit.ui.cristal.TarjetaCristal>
 

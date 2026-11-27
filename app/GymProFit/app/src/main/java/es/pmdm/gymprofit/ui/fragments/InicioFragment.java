@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.widget.FilaBotones;
 import es.pmdm.gymprofit.model.comida.Comida;
 import es.pmdm.gymprofit.model.programa.ProgramaQueSigue;
 import es.pmdm.gymprofit.model.record.Records;
@@ -574,22 +575,11 @@ public class InicioFragment extends BaseFragment {
         return unir(partes);
     }
 
-    // Los dos botones de Hoy toca, en fila (Empezar · Cambiar) o uno sobre otro.
+    // Los dos botones de Hoy toca, uno sobre otro a la fuerza (dos textos largos). Si no se
+    // fuerza, la fila los apila sola cuando el principal no cabe entero (FilaBotones).
     private void apilarBotones(boolean apilar) {
-        LinearLayout fila = findViewById(R.id.filaBotonesHoy);
-        fila.setOrientation(apilar ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
-        int margen = getResources().getDimensionPixelSize(R.dimen.espacio_8);
-        LinearLayout.LayoutParams p1 = (LinearLayout.LayoutParams)
-                findViewById(R.id.btnHoyPrincipal).getLayoutParams();
-        p1.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : 0;
-        p1.weight = apilar ? 0 : 1;
-        LinearLayout.LayoutParams p2 = (LinearLayout.LayoutParams)
-                findViewById(R.id.btnHoySecundario).getLayoutParams();
-        p2.width = apilar ? ViewGroup.LayoutParams.MATCH_PARENT : ViewGroup.LayoutParams.WRAP_CONTENT;
-        p2.setMarginStart(apilar ? 0 : margen);
-        p2.leftMargin = apilar ? 0 : margen;
-        p2.topMargin = apilar ? margen : 0;
-        fila.requestLayout();
+        FilaBotones fila = findViewById(R.id.filaBotonesHoy);
+        fila.forzarApilado(apilar);
     }
 
     // El último botón de «Hoy toca» frente a la barra flotante (EncajeHeroe): si con el scroll
