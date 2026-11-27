@@ -73,7 +73,9 @@ public class SiluetaMuscularView extends View {
     public SiluetaMuscularView(Context c, @Nullable AttributeSet a) { super(c, a); init(); }
 
     private void init() {
-        colorMarca = attr(androidx.appcompat.R.attr.colorPrimary);
+        // El naranja de las zonas trabajadas también sale del tema: sobre cristal, en claro, el
+        // de la tarjeta opaca no se distinguía del cuerpo (GP-285, lote 1b).
+        colorMarca = attr(R.attr.gpSiluetaMarca);
         separacion = (int) (12 * getResources().getDisplayMetrics().density);
 
         // El gris del cuerpo sale del tema: sobre cristal, en claro, el de la tarjeta opaca casi

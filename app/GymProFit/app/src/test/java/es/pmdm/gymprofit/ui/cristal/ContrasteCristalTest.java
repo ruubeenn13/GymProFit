@@ -130,6 +130,21 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
+    // La silueta muscular sobre cristal, en claro: su cuerpo se ve contra el cristal (arriba) y la
+    // zona trabajada, a pleno color, se distingue del cuerpo por su luminosidad y no solo por el
+    // tono (DEC-019). Al oscurecer el cuerpo para que se viera, el naranja de la tarjeta opaca se
+    // quedó a 1,2:1 de él (revisor de UI). En oscuro la silueta es la de antes del rediseño
+    // (cuerpo claro y zona a 1,3:1): no entra en este lote y por eso no se mide aquí.
+    @Test
+    public void en_claro_la_zona_trabajada_de_la_silueta_se_distingue_del_cuerpo() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        Tema t = new Tema("values");
+        Set<Integer> cuerpo = new LinkedHashSet<>();
+        cuerpo.add(t.color("gp_cristal_silueta"));
+        t.medir("zona trabajada sobre el cuerpo", "gp_cristal_silueta_marca", cuerpo, GRANDE, fallos);
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
     // ── Regla 3: cristal vivo, en los tres niveles ───────────────────────────
 
     @Test
