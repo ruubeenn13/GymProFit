@@ -306,6 +306,52 @@ Entre `main` y la rama no hay diferencia por encima del ruido, pero el «≤ 2 %
   - `view_estado`, sobre pantallas que ya tienen su propio P.
 - **Dudosos:** `btnEliminarCuenta` (acción destructiva con estilo de marca), `btnVaso` (fuera del sistema de estilos), `btnIdioma` (solo icono) y los «Cancelar» de los diálogos, que usan el contorno de Material y no el de la casa.
 
+## Cierre de noche: brillo, GP-288 y fotogramas (27-11, rama `gp-285-botones`)
+
+Con las dudas de los botones ya decididas por el propietario: la media luna se queda en el principal y, a letra 1,5, que «Empezar» y «Cambiar» queden detrás de la barra con el scroll arriba se acepta si se alcanzan con scroll y quedan enteros por encima.
+
+**Commits.** `74ca0bf2` (brillo de «Empezar») y `11b12ad4` (GP-288).
+
+**Qué cambia.**
+- **Brillo de «Empezar»:** en un botón ancho (más de 1,5 veces su alto) el brillo de arriba es una elipse centrada de en torno al 60 % de su ancho, con la misma altura y el mismo alto que el del «+» (`Cristal.brilloMarca`, `BRILLO_ANCHO`, `ANCHO_DESDE`). El «+» queda como estaba.
+- **GP-288, «Tu día» con letra grande:** rótulo, cifra y apoyo de los tres tiles son `TextoSinPartir`. Si la palabra más ancha no cabe en una línea, el texto encoge lo justo, nunca por debajo de su tamaño a letra 1,0, y sin guiones. Con varias palabras sigue pasando a otra línea, pero solo por los espacios. Los tres tiles llevan cada texto al mismo tamaño (`TextoSinPartir.igualar`, desde `InicioTuDia.igualarTextos`): si no, «Agua» salía más grande que «Calorías». Se eligió encoger antes que una tarjeta más alta porque el problema es el ancho: más alto no lo arregla. La elipsis tampoco servía: a letra 2,0 dejaba «Ca…».
+- **Letra 1,5, comprobado en API 36 (oscuro):** con scroll, «Empezar» y «Cambiar» quedan enteros por encima de la barra, con 75 px (unos 29 dp) de aire: botones hasta y = 1963, barra desde y = 2038. No hacía falta margen inferior.
+
+**Tests vistos en rojo.**
+- `TuDiaSinPartirTest` (instrumentado; letra 1,0, 1,3, 1,5 y 2,0, en ES y EN, a 360 dp, con las cifras más anchas de un día normal):
+  - sin el arreglo: `[es, letra 1.3] «Calorías»: parte una palabra en «Caloría»`;
+  - con `igualar` vacío: `«Proteína» a 15,6 dp y su hermano a 16,4`.
+  - La comprobación de tamaño lleva un dp de holgura: en Android 7 el reparto de pesos deja un tile un píxel más ancho y la cifra salía a 40,36 dp frente a 40,0.
+- `BrilloMarcaTest` (unitario): con el comportamiento anterior, 2 de 3 en rojo (centrado y ancho); el del «+» pasa igual.
+
+**Batería.**
+- Instrumentados: 39 de 39 en API 36, 32 y 24.
+- Unitarios: 1.437; fallan solo los 4 `*WebTest` locales de siempre.
+- Lint sin errores.
+
+**Fotogramas lentos de Inicio.** **Sin medida válida otra vez; la PR #148 no se fusiona.**
+- Antes de medir se pararon el `python` huérfano 18884 y un daemon de Gradle, con permiso del propietario. Ese `python` (y otro igual que apareció a las 18:00 desde otra sesión) era `python -` de Python 3.14: con la entrada vacía, su consola nueva (`_pyrepl`) entra en bucle y gasta un núcleo entero. Yo mismo lo reproduje dos veces y lo paré.
+- **Montaje:** el de siempre. Las dos variantes compiladas desde cero en worktrees: `main` `f6518eae`, 24,95 MB, y la rama `11b12ad4`, 24,97 MB. Emulador recién arrancado con `-gpu host`, 90 s y `loadavg` 1,24. Letra 1,0, oscuro y español. Calentamiento y dos rondas alternando las variantes.
+
+| API 36 | calentamiento | ronda 1 | ronda 2 | p50 |
+|---|---|---|---|---|
+| `main` | 14,76 % | 16,96 % | 13,71 % | 31–32 ms |
+| rama | 14,42 % | 18,91 % | 18,54 % | 32 ms |
+
+- `main` no sale estable entre rondas (17,0 → 13,7 %) y está muy lejos de su 1,57 % de la mañana del 27-11, con el p50 al doble (32 ms frente a 17): la tanda no vale.
+- Dos causas a la vista:
+  - **el portátil iba con batería** (67 %, plan «Equilibrado»);
+  - **otra sesión de Claude trabajó durante la medida**: unos 51 s de CPU en esos 15 minutos.
+- Por la regla del propietario, no se midieron API 32 ni 24.
+- Entre `main` y la rama, la rama sale unos 2–5 puntos peor en las rondas que cuentan, pero con `main` así de inestable no se puede atribuir: queda **sin comprobar**.
+- Para repetir hacen falta: el cargador enchufado, ninguna otra sesión de Claude abierta trabajando y el navegador cerrado.
+
+**Capturas.** En `Desktop\GymProFit\2026-11-27-gp285-lote-1c\botones\`, sustituyendo las de API 36 y 24 de antes de `413ab3f4` y `153b3047`:
+- API 36 y API 24, claro y oscuro, letra 1,0 y 2,0, en reposo y con «Empezar» pulsado;
+- `API36_oscuro_letra1.5_*`: final del scroll, scroll arriba (detrás de la barra, aceptado) y botones llevados con scroll por encima de la barra;
+- `API36_{claro,oscuro}_letra2.0_tu-dia_{es,en}`.
+- «Cambiar» y el «+» pulsados no se volvieron a capturar (no se pidieron). Sus capturas viejas se borraron con las demás de API 36 y 24.
+
 ## Pendiente
 
 - El «+» lo aprueba el propietario en el cierre: la PR #147 se fusiona con el CI en verde.
@@ -313,9 +359,10 @@ Entre `main` y la rama no hay diferencia por encima del ruido, pero el «≤ 2 %
 - Los bajos del revisor de arriba.
 
 ## Dudas
-- **Botones, fotogramas:** sin medida válida (ver arriba). Para repetirla hace falta el equipo quieto y el `python` huérfano parado.
-- **Botones, letra 1,5:** con el scroll arriba, «Empezar» y «Cambiar» quedan detrás de la barra flotante (−49 dp; `EncajeHeroe` solo puede ceder 24). La regla vigente dice que, si ceder no basta, la tarjeta no se toca, así que no se ha cambiado. ¿Se acepta o se busca otra salida?
-- **Botones:** el brillo pequeño de «Empezar» va al 32 % del ancho, como en el «+», y en una píldora ancha se lee como un punto a la izquierda (revisor, bajo). Está dentro de lo pedido; se puede centrar si se prefiere.
+- **Botones, fotogramas:** sin medida válida en dos noches seguidas (ver «Cierre de noche»). La PR #148 sigue en borrador hasta repetirla con el cargador enchufado y sin otras sesiones de Claude trabajando.
+- Resuelto en el cierre de noche: a letra 1,5 se acepta que los botones queden detrás de la barra con el scroll arriba (se alcanzan con scroll y quedan enteros encima).
+- Resuelto en el cierre de noche: el brillo de «Empezar» va centrado y ancho (`74ca0bf2`).
+- **Inicio, fuera de GP-288:** a letra 2,0 el carrusel de «Hoy toca» parte «Domina / s» (Dominadas) en API 36. Es el mismo fallo que el de «Tu día», pero en otro bloque: no se tocó. ¿Se le aplica `TextoSinPartir` en el lote siguiente?
 - **Botones:** a letra 2,0 el icono de «Empezar» no crece con el texto (24 dp fijos, como en todos los botones con icono).
 
 - Resuelto en el cierre: la capa de pulsado ya no existe y el «+» pulsado queda a ΔE ≤ 15.

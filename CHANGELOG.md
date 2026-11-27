@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `11b12ad4` | fix(android): con la letra grande, «Tu día» de Inicio ya no parte palabras («Calori / as») ni corta la cifra: el texto encoge lo justo, nunca por debajo de su tamaño normal, y los tres tiles van al mismo tamaño (GP-288). |
+| `74ca0bf2` | fix(android): el brillo de «Empezar» en Inicio va centrado y ancho, no como un punto a la izquierda; el del «+» de la barra no cambia (GP-285). |
 | `153b3047` | fix(android): en el tema claro, el botón «Cambiar» de Inicio se distingue de la tarjeta: su borde se ve (GP-285). |
 | `413ab3f4` | fix(android): la sombra naranja de «Empezar» ya no se corta en recto por debajo (GP-285). |
 | `63682498` | fix(android): con la letra grande, «Empezar» ya no se corta: si no cabe al lado de «Cambiar», van uno sobre otro (GP-285). |
