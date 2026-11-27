@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -47,7 +48,8 @@ import es.pmdm.gymprofit.R;
 //                  naranja de la marca macizo con acabado, igual en los tres niveles. De abajo
 //                  arriba: una sombra suave del propio naranja por fuera, el relleno en degradado
 //                  vertical muy suave (gp_marca_alto → _bajo, los dos a ΔE ≤ 15 de #FF6A00), un
-//                  brillo radial pequeño en el tercio de arriba, el borde de 1,5 dp en degradado
+//                  brillo radial pequeño en el tercio de arriba (en un botón ancho, una elipse
+//                  centrada de en torno al 60 % de su ancho), el borde de 1,5 dp en degradado
 //                  (claro arriba, tenue abajo) y el reflejo de arriba, una media luna que se apaga
 //                  hacia abajo. Pulsado, el brillo y la media luna suben (ponerLuz, Hundir).
 //
@@ -73,6 +75,11 @@ public class Cristal extends Drawable {
     // radio, del lado corto). Pequeño y solo en el tercio de arriba: más grande, aclaraba todo
     // el botón y lo alejaba del naranja de la marca.
     static final float BRILLO_X = 0.32f, BRILLO_Y = 0.14f, BRILLO_RADIO = 0.19f;
+    // En un botón ancho (el principal, «Empezar»), el brillo es una elipse centrada que ocupa en
+    // torno al 60 % de su ancho (BRILLO_ANCHO es su semieje, en fracción del ancho), con el mismo
+    // alto y la misma altura que el del «+»: con el centro del redondo se leía como un punto a
+    // la izquierda (propietario, 27-11). Ancho es más de ANCHO_DESDE veces su alto.
+    static final float BRILLO_ANCHO = 0.30f, ANCHO_DESDE = 1.5f;
     // Cuánto del brillo y de la media luna se pinta otra vez encima con el botón pulsado del todo.
     static final float LUZ_PULSADO = 0.75f;
 
@@ -307,15 +314,36 @@ public class Cristal extends Drawable {
         if (tipo != MARCA || caja.isEmpty()) return;
         // Muy difuminado: del 20 % en su centro a nada en su radio, con un tramo intermedio al
         // 40 % de su alfa para que no se lea como un disco. Tres paradas, no más (DEC-070).
-        float radioBrillo = Math.max(1f, Math.min(caja.width(), caja.height()) * BRILLO_RADIO);
+        float[] b = brilloMarca(caja.width(), caja.height());
+        float cx = caja.left + b[0], cy = caja.top + b[1];
         int alfaMedio = Math.round((brilloRadialColor >>> 24) * 0.4f);
         int medio = (alfaMedio << 24) | (brilloRadialColor & 0x00FFFFFF);
-        brilloRadial.setShader(new RadialGradient(caja.left + caja.width() * BRILLO_X,
-                caja.top + caja.height() * BRILLO_Y, radioBrillo,
+        RadialGradient radial = new RadialGradient(cx, cy, b[2],
                 new int[]{brilloRadialColor, medio, brilloRadialColor & 0x00FFFFFF},
-                new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP));
+                new float[]{0f, 0.45f, 1f}, Shader.TileMode.CLAMP);
+        // La elipse: el círculo de radio horizontal, aplastado en vertical sobre su centro.
+        if (b[3] != b[2]) {
+            Matrix aplastar = new Matrix();
+            aplastar.setScale(1f, b[3] / b[2], cx, cy);
+            radial.setLocalMatrix(aplastar);
+        }
+        brilloRadial.setShader(radial);
         trazo.setShader(new LinearGradient(0, caja.top, 0, caja.bottom, bordeAlto, bordeBajo,
                 Shader.TileMode.CLAMP));
+    }
+
+    /**
+     * Dónde va el brillo radial de un botón de marca y cuánto mide, en px dentro de su caja:
+     * {centro x, centro y, semieje horizontal, semieje vertical}. En el «+» (redondo), un círculo
+     * pequeño arriba a la izquierda; en un botón ancho, una elipse centrada de en torno al 60 %
+     * de su ancho, con la misma altura y el mismo alto.
+     */
+    static float[] brilloMarca(float ancho, float alto) {
+        float vertical = Math.max(1f, Math.min(ancho, alto) * BRILLO_RADIO);
+        if (ancho > alto * ANCHO_DESDE) {
+            return new float[]{ancho * 0.5f, alto * BRILLO_Y, Math.max(vertical, ancho * BRILLO_ANCHO), vertical};
+        }
+        return new float[]{ancho * BRILLO_X, alto * BRILLO_Y, vertical, vertical};
     }
 
     // El degradado del relleno sobre la caja: a 160° con tono medio, de lado a lado (oro) o
