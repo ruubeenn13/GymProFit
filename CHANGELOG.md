@@ -8,6 +8,10 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `153b3047` | fix(android): en el tema claro, el botón «Cambiar» de Inicio se distingue de la tarjeta: su borde se ve (GP-285). |
+| `413ab3f4` | fix(android): la sombra naranja de «Empezar» ya no se corta en recto por debajo (GP-285). |
+| `63682498` | fix(android): con la letra grande, «Empezar» ya no se corta: si no cabe al lado de «Cambiar», van uno sobre otro (GP-285). |
+| `916f72cf` | feat(android): los botones de Inicio se ven como Liquid Glass sin confundir cuál es el principal: «Empezar» y el «+» de la barra son el mismo naranja macizo con brillo y sombra, y «Cambiar», de cristal. Al pulsarlos se hunden, sin cambiar de forma (GP-285). |
 | `8e31b98f` | fix(android): al pulsar el «+» de la barra ya no se vuelve un cuadrado redondeado: sigue siendo un círculo, se hunde un poco y se le enciende la luz de arriba, y no se oscurece ni se aclara, así que sigue siendo el naranja de la marca (GP-285). |
 | `67fdde20` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el tinte final del «+», con las tres vueltas que se probaron, y que deje ver poco de lo de detrás es decisión del propietario (GP-285). |
 | `24e89260` | fix(android): el «+» de la barra pasa al naranja de la marca en los dos temas: el tinte de `#FF6A00` tapa más el fondo, ya no lleva luz blanca debajo y su brillo es pequeño y solo arriba. Se lee como el mismo naranja que «Empezar» (GP-285). |
