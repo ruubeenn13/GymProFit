@@ -84,6 +84,30 @@ Contraste del icono (`ContrasteCristalTest`, sobre todo lo que puede quedar detr
 
 Medido además en captura, contra el cristal que rodea al icono: en API 36 y API 32, 3,67–4,11:1 cerrado y 3,38–3,76:1 abierto en oscuro, y 7,60–8,48:1 y 5,88–6,19:1 en claro; en API 24, 6,93–10,75:1.
 
+### El «+» con más vida (lote 1c, 27-11-2026)
+
+**Esto sustituye a la tabla de arriba en los niveles 1 y 2.** En oscuro, el tinte al 65 % sobre el fondo oscuro daba un naranja apagado, casi marrón, que se leía macizo, y el reflejo era una línea fina. El naranja tiene que ser el de la marca sea cual sea el fondo, y tiene que parecer cristal.
+
+| Capa (de abajo arriba, sobre el desenfoque o la refracción) | Valor pedido | Implementado |
+|---|---|---|
+| Suelo de luz | blanco al 14 % (oscuro) y al 8 % (claro) | el pedido (`gp_mas_luz`) |
+| Tinte | `#FF7A1A` del 58 % al 46 % a 160°, en los dos temas | **del 82 % al 70 %** (`gp_mas_tinte_alto`/`_bajo`), ver abajo |
+| Brillo radial interior | en el tercio superior izquierdo, blanco al 35 %, muy difuminado | centrado al 30 % · 28 % de la caja, radio del 60 % del lado, del 35 % a nada con un tramo al 40 % de su alfa en la mitad (`gp_mas_brillo_interior`) |
+| Borde | 1,5 dp, degradado blanco del 70 % arriba al 15 % abajo | el pedido (`gp_mas_borde_alto`/`_bajo`, `barra_mas_borde`) |
+| Reflejo de arriba | una media luna ancha, no una línea, blanco del 40 % a transparente | la forma metida 3 dp, menos ella misma bajada hasta el cuarto de arriba: ancha arriba y en punta a los lados, del 40 % a nada de arriba abajo; acaba a 16 dp, antes del icono (19 dp) (`gp_mas_reflejo`, `barra_mas_reflejo_dentro`) |
+| Nivel 3 | macizo `#FF6A00` | sin cambios: el degradado radial `#FFB27A` → `#FF6A00` de siempre |
+| Icono | `#1A0E00`, 3:1 o más en el peor punto; si no llega, se sube la luz, no el tinte | `#1A0E00`; cifras abajo |
+
+**El tinte.** Con el 58 % → 46 % pedido el «+» salía más luminoso que el del lote 1b, pero no más naranja: a través de medio cristal se ve el fondo, y la saturación bajaba de 0,80 a 0,40 (salmón en oscuro, melocotón en claro; medido en captura en API 32). Y en oscuro el icono no llegaba: 2,86:1 con la luz al 14 % (2,15:1 sin ella); había que subir la luz al 20 % (3,21:1), lo que lo lavaba más. Con capturas de las dos variantes, **el propietario eligió subir el tinte a 82 % → 70 %** y dejar la luz en lo pedido. Ese tinte ya no necesita la luz para el contraste (sin ella, 3,90:1 en oscuro); la luz se queda porque levanta el naranja sobre un fondo oscuro.
+
+Contraste del icono (`ContrasteCristalTest`, luz y tinte sobre todo lo que puede quedar detrás, con el velo de la hoja abierta; el brillo, el borde y el reflejo solo aclaran, y el icono es oscuro):
+
+| | Oscuro | Claro |
+|---|---|---|
+| Niveles 1 y 2, peor punto (el más oscuro) | 4,44:1 | 6,37:1 |
+| Niveles 1 y 2, punto más claro | 6,42:1 | 9,39:1 |
+| Nivel 3 | 6,61:1 | 6,61:1 |
+
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 
 Donde un valor de arriba chocaba con una regla de legibilidad, manda la regla (DEC-070). Los valores que valen son los de `app/GymProFit/DESIGN.md` («Liquid Glass») y `colors.xml`; cada uno está medido en `ContrasteCristalTest`. Para los lotes siguientes:
