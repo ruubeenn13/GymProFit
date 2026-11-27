@@ -152,7 +152,7 @@ Mismo guion que en el lote 1 (24 deslizamientos en Inicio, debug compilada enter
 
 El criterio para separar una pasada válida de una estropeada no mira el resultado: es la **mediana del tiempo de fotograma**. En una pasada estropeada todos los fotogramas van lentos (p50 de 23 a 36 ms), también los de `main`; en una válida de API 36 el p50 es de 17–18 ms.
 
-De API 32 y API 24 no se deduce ni que el lote cumpla ni que no: no hay regresión a la vista (en API 24, la mejor pasada de cada variante es 0,00 % y 0,15 %; y en el nivel 3 el «+» sigue macizo, como estaba), pero tampoco cifra. Queda en «Pendiente»: es una orden y unos 35 minutos con el equipo sin usar.
+De API 32 y API 24 no se deduce ni que el lote cumpla ni que no: no hay regresión a la vista (en API 24, la mejor pasada de cada variante es 0,00 % y 0,15 %; y en el nivel 3 el «+» sigue macizo, como estaba), pero tampoco cifra. **El lote se fusiona así, con API 32 y API 24 sin medida válida**: se miden en el lote 1c, con el equipo sin usar, comparando `main` (ya con el 1b) y la rama del 1c.
 
 Lo aprendido al medir: cada tanda, con el emulador recién arrancado, con 3 GB, **y sin nadie usando el equipo**; y si `main` no sale estable entre rondas, la tanda no vale.
 
@@ -243,8 +243,8 @@ Bajos que quedan anotados, sin arreglar: en claro, la semana en curso a 0 kg no 
 
 ## Pendiente
 
-- **Aprobación de las capturas por el propietario** y fusión de la PR #145 (sigue en borrador).
-- **Fotogramas lentos del código final en API 32 y API 24**: tres intentos el 27-11, ninguno válido porque el equipo estaba en uso (ver «Fotogramas lentos»). Hay que medirlos con el equipo sin usar: unos 35 minutos. API 36, el nivel más caro, sí está medido y dentro del 2 %; en API 32 el «+» también desenfoca, y esa es la cifra que más falta.
+- Capturas aprobadas por el propietario el 27-11; la PR #145 se fusiona en `main`.
+- **Fotogramas lentos del código final en API 32 y API 24: sin medida válida al fusionar.** Tres intentos el 27-11, ninguno válido porque el equipo estaba en uso (ver «Fotogramas lentos»). Se miden en el lote 1c (GP-285), con el equipo sin usar. API 36, el nivel más caro, sí está medido y dentro del 2 %.
 
 ## Dudas
 
