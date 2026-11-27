@@ -202,8 +202,8 @@ En API 24 (nivel 3) el «+» no cambia respecto al 1b: es la referencia de que e
 
 ## Pendiente
 
-- **Aprobación del «+» por el propietario** y fusión de la PR #147.
-- La carpeta `Desktop\GymProFit\2026-11-26-gp285-lote-1b\`: el lote está fusionado y aprobado, así que según la regla de entregas toca borrarla. Se pregunta antes.
+- El «+» lo aprueba el propietario en el cierre: la PR #147 se fusiona con el CI en verde.
+- Carpeta `Desktop\GymProFit\2026-11-26-gp285-lote-1b\`: borrada el 27-11, a petición del propietario.
 - Los bajos del revisor de arriba.
 
 ## Dudas
