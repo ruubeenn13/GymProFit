@@ -79,27 +79,30 @@
     </style>
 
     <!-- ══ Botones ═══════════════════════════════════════════════════════════
-         El principal: el naranja de siempre con el brillo superior del cristal (brillo_boton,
-         que se quita mientras se pulsa). Sin halo: la maqueta lo traía, la sombra de Android no
-         lo da y no se pinta (retirado de la referencia). Cambia de forma al pulsar, como todo
-         botón principal (BotonExpresivo). -->
-    <style name="Widget.GymProFit.BotonPildora.Expresivo.Cristal">
-        <item name="android:foreground">@drawable/brillo_boton</item>
-        <!-- El naranja vivo con el texto casi negro en los dos temas (6,61:1): en claro, el
-             botón principal de la tarjeta opaca es el naranja oscuro con texto blanco. -->
-        <item name="backgroundTint">@color/gp_cristal_principal</item>
-        <item name="android:textColor">@color/gp_cristal_sobre_principal</item>
-        <item name="iconTint">@color/gp_cristal_sobre_principal</item>
+         Regla (DEC-070): el principal y el «+» son sólidos de marca con acabado; el secundario,
+         cristal estático; nunca dos principales en la misma vista. Ninguno cambia de forma al
+         pulsarlo: se hunde a 0,94 (Hundir). Solo en lo que ya es Liquid Glass: el resto de la
+         app los adopta con su lote.
+
+         El principal (BotonMarca): el naranja macizo con su acabado y su sombra (bg_marca),
+         texto e icono casi negros en los dos temas. Sin el fondo propio de Material. -->
+    <style name="Widget.GymProFit.Boton.Marca" parent="Widget.GymProFit.BotonPildora.Expresivo">
+        <item name="android:background">@drawable/bg_marca</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textColor">@color/gp_marca_texto</item>
+        <item name="iconTint">@color/gp_marca_texto</item>
     </style>
 
-    <!-- El secundario: cristal estático plano con su borde y su brillo. -->
-    <style name="Widget.GymProFit.BotonPildora.Cristal" parent="Widget.GymProFit.BotonPildora.Contorno">
-        <item name="backgroundTint">@color/gp_cristal_boton</item>
-        <item name="strokeColor">@color/gp_cristal_borde</item>
-        <item name="strokeWidth">@dimen/cristal_borde</item>
+    <!-- El secundario (BotonCristal): cristal estático en píldora, con los tokens de las
+         tarjetas; en el nivel 3, la superficie opaca del cristal vivo. El fondo lo pone la
+         vista según el nivel. -->
+    <style name="Widget.GymProFit.Boton.Cristal" parent="Widget.GymProFit.BotonPildora.Contorno">
+        <item name="backgroundTint">@null</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
         <item name="android:textColor">@color/gp_cristal_texto</item>
         <item name="iconTint">@color/gp_cristal_texto</item>
-        <item name="android:foreground">@drawable/brillo_boton</item>
     </style>
 
     <!-- ══ Cabecera de sección sobre el fondo ambiental ═══════════════════════

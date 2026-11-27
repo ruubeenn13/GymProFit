@@ -19,7 +19,7 @@ import es.pmdm.gymprofit.utils.Movimiento;
 // estándar (Movimiento.TOQUE) y vuelven al soltar. Es un MaterialButton normal: el radio de
 // reposo lo da cornerRadius (Widget.GymProFit.Button.Expresivo, 26 dp) y el de pulsado el
 // dimen boton_radio_pulsado. Lo usan «Empezar» y «Hecho». El «+» de la barra no: es cristal,
-// y un botón de cristal no cambia de forma al pulsarlo (CristalVivo.hundirAlPulsar, GP-285).
+// y un botón de cristal no cambia de forma al pulsarlo (Hundir, BotonMarca, GP-285).
 //
 // Material 1.14 trae su propio cambio de forma, pero lo mueve con un resorte que no da los
 // 120 ms de DEC-039; aquí el tiempo es el de Movimiento y no hay nada nuevo que añadir.
@@ -47,7 +47,7 @@ public class BotonExpresivo extends MaterialButton {
     public void setPressed(boolean pulsado) {
         boolean cambia = pulsado != isPressed();
         super.setPressed(pulsado);
-        if (cambia) moverForma(pulsado ? radioPulsado : getResources().getDimensionPixelSize(R.dimen.boton_radio_reposo));
+        if (cambia && cambiaForma()) moverForma(pulsado ? radioPulsado : getResources().getDimensionPixelSize(R.dimen.boton_radio_reposo));
     }
 
     // De la esquina de ahora a la de destino, en TOQUE ms. Si ya iba hacia otra, parte de donde estaba.
@@ -58,6 +58,14 @@ public class BotonExpresivo extends MaterialButton {
         animador.setInterpolator(Movimiento.ESTANDAR);
         animador.addUpdateListener(a -> setCornerRadius((int) a.getAnimatedValue()));
         animador.start();
+    }
+
+    /**
+     * Si cambia de forma al pulsarlo (Material 3 Expressive, DEC-039). Los botones de Liquid
+     * Glass (BotonMarca, BotonCristal) no: se hunden (Hundir, DEC-070).
+     */
+    protected boolean cambiaForma() {
+        return true;
     }
 
     @Override

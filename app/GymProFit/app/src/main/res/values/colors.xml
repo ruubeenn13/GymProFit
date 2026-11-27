@@ -325,34 +325,25 @@
     <color name="gp_cristal_oro_alto">#59E8B84B</color>
     <color name="gp_cristal_oro_bajo">#24E8B84B</color>
     <color name="gp_cristal_oro_brillo">#CCFFFFFF</color>
-    <color name="gp_boton_brillo">#59FFFFFF</color>
     <color name="gp_cristal_boton">#99FFFFFF</color>
     <!-- Botón principal sobre cristal: el naranja vivo con el texto casi negro en los dos temas
          (6,61:1), como el «+». En claro, el botón principal del resto de la app sigue siendo el
          naranja oscuro con texto blanco hasta que su pantalla pase a Liquid Glass. -->
     <color name="gp_cristal_principal">#FF6A00</color>
     <color name="gp_cristal_sobre_principal">#1A0E00</color>
-    <!-- El «+» de la barra: el naranja vivo con el icono casi negro en los dos temas (6,61:1),
-         como la tarjeta de «Tu objetivo». -->
-    <color name="gp_mas_claro">#FFB27A</color>
-    <color name="gp_mas_oscuro">#FF6A00</color>
-    <color name="gp_mas_icono">#1A0E00</color>
-    <!-- El «+» de cristal (niveles 1 y 2; el degradado de arriba queda para el nivel 3; lote 1c).
-         De abajo arriba, sobre el desenfoque: un suelo de luz blanca (gp_mas_luz, transparente:
-         con el tinte de la marca no hace falta, y es lo que aclaraba el naranja); el tinte, el
-         naranja de la marca #FF6A00 del 92 % al 85 % a 160°, igual en los dos temas; un brillo
-         radial blanco al 20 %, pequeño y solo en el tercio de arriba; el borde de 1,5 dp en
-         degradado blanco del 70 % arriba al 15 % abajo; y el reflejo de arriba, una media luna
-         blanca del 40 % a transparente. Así el «+» queda a ΔE 9–12 de #FF6A00 en captura en los
-         dos temas (pedido: 15 o menos). Lo de detrás casi no se ve: el cristal lo dan el borde,
-         el brillo y la media luna (decisión del propietario, DEC-070). El icono se mide sobre
-         el peor punto de lo que queda detrás (ContrasteCristalTest): si un día no llega, se
-         pone luz debajo, no más tinte. -->
-    <color name="gp_mas_luz">#00FFFFFF</color>
-    <color name="gp_mas_tinte_alto">#EBFF6A00</color>
-    <color name="gp_mas_tinte_bajo">#D9FF6A00</color>
-    <color name="gp_mas_brillo_interior">#33FFFFFF</color>
-    <color name="gp_mas_borde_alto">#B3FFFFFF</color>
-    <color name="gp_mas_borde_bajo">#26FFFFFF</color>
-    <color name="gp_mas_reflejo">#66FFFFFF</color>
+    <!-- Botón de marca (Cristal.MARCA): el principal y el «+» de la barra, igual en los dos temas
+         y en los tres niveles (GP-285, lote 1c, DEC-070). No es cristal: el naranja de la marca
+         macizo con acabado. Degradado vertical muy suave, #FF7514 arriba y #F06000 abajo (ΔE76
+         5,8 y 5,5 de #FF6A00); brillo radial blanco al 20 %, pequeño y en el tercio de arriba;
+         borde de 1,5 dp en degradado, blanco del 70 % arriba al 15 % abajo; media luna arriba,
+         blanca del 40 % a transparente; y una sombra suave del propio naranja. Texto e icono
+         casi negros: 5,76:1 en el peor punto, el tono de abajo (ContrasteCristalTest). -->
+    <color name="gp_marca_alto">#FF7514</color>
+    <color name="gp_marca_bajo">#F06000</color>
+    <color name="gp_marca_texto">#1A0E00</color>
+    <color name="gp_marca_brillo">#33FFFFFF</color>
+    <color name="gp_marca_borde_alto">#B3FFFFFF</color>
+    <color name="gp_marca_borde_bajo">#26FFFFFF</color>
+    <color name="gp_marca_reflejo">#66FFFFFF</color>
+    <color name="gp_marca_sombra">#59FF6A00</color>
 </resources>

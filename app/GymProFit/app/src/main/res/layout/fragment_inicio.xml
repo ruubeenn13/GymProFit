@@ -256,17 +256,17 @@
                         android:paddingStart="@dimen/espacio_20"
                         android:paddingEnd="@dimen/espacio_20">
 
-                        <es.pmdm.gymprofit.ui.widget.BotonExpresivo
+                        <es.pmdm.gymprofit.ui.widget.BotonMarca
                             android:id="@+id/btnHoyPrincipal"
-                            style="@style/Widget.GymProFit.BotonPildora.Expresivo.Cristal"
+                            style="@style/Widget.GymProFit.Boton.Marca"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:text="@string/btn_empezar"
                             app:icon="@drawable/ic_ms_play_arrow_fill" />
 
-                        <com.google.android.material.button.MaterialButton
+                        <es.pmdm.gymprofit.ui.widget.BotonCristal
                             android:id="@+id/btnHoySecundario"
-                            style="@style/Widget.GymProFit.BotonPildora.Cristal"
+                            style="@style/Widget.GymProFit.Boton.Cristal"
                             android:layout_width="wrap_content"
                             android:layout_marginStart="@dimen/espacio_8"
                             android:text="@string/btn_cambiar" />

@@ -23,7 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import es.pmdm.gymprofit.R;
-import es.pmdm.gymprofit.ui.cristal.CristalVivo;
+import es.pmdm.gymprofit.ui.cristal.Hundir;
 import es.pmdm.gymprofit.utils.NavTabs;
 
 // ============================================================
@@ -34,8 +34,8 @@ import es.pmdm.gymprofit.utils.NavTabs;
 // más el hueco de la barra de gestos o de botones del sistema. La etiqueta se ve siempre; la
 // pestaña activa lleva la «lente» (bg_lente), el icono relleno y la etiqueta en negrita, los
 // dos en el acento; las demás, el icono en contorno. El «+» no es una pestaña: abre las
-// acciones rápidas y, abierto, gira a «×». Es del mismo cristal vivo que la cápsula, teñido de
-// naranja (cristalAccion): gira su icono, no el cristal, que lleva el reflejo arriba.
+// acciones rápidas y, abierto, gira a «×». Es el botón de marca, el mismo que el principal
+// (bg_marca, Hundir), no cristal: gira su icono, no el botón, que lleva la media luna arriba.
 //
 // Son vistas normales infladas de XML, no una vista dibujada a mano: cada pestaña es
 // un botón con su nombre, y lo que TalkBack no sabría deducir se le dice aquí —que es
@@ -72,7 +72,7 @@ public class BarraNavegacion extends LinearLayout {
             R.drawable.ic_ms_restaurant_fill, R.drawable.ic_ms_monitoring_fill};
 
     private final View[] pestanas = new View[NavTabs.TOTAL];
-    private CristalVivo btnAcciones;
+    private View btnAcciones;
     private ImageView ivAcciones;
     private Oyente oyente;
     private int activa = -1;
@@ -156,7 +156,7 @@ public class BarraNavegacion extends LinearLayout {
         });
         // El «+» no tiene etiqueta: su nombre, al mantenerlo pulsado, como las pestañas.
         TooltipCompat.setTooltipText(btnAcciones, btnAcciones.getContentDescription());
-        btnAcciones.hundirAlPulsar();
+        Hundir.alPulsar(btnAcciones);
         pintarAcciones(false);
     }
 

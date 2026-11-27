@@ -16,7 +16,7 @@
             <enum name="tarjeta" value="0" />
             <enum name="lente" value="1" />
             <enum name="oro" value="2" />
-            <enum name="brillo" value="3" />
+            <enum name="marca" value="7" />
         </attr>
     </declare-styleable>
 
@@ -41,9 +41,6 @@
         <attr name="cristalSombra" />
         <!-- Tinte con más cuerpo (gp_vivo_hoja_*): la hoja del «+», que lleva texto secundario. -->
         <attr name="cristalGrueso" format="boolean" />
-        <!-- El «+» de la barra: tinte naranja (gp_mas_tinte_*) con su reflejo; en el nivel 3, el
-             degradado macizo de siempre, sin sombra. -->
-        <attr name="cristalAccion" format="boolean" />
     </declare-styleable>
 
     <!-- La tarjeta de cristal estático. En claro lleva sombra por fuera, salvo que vaya dentro

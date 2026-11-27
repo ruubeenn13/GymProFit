@@ -47,7 +47,7 @@ public class CristalTest {
                 {"radio_cristal_heroe", "30dp"}, {"radio_cristal", "26dp"}, {"radio_cristal_tile", "22dp"},
                 {"cristal_borde", "1dp"}, {"cristal_desenfoque", "22dp"},
                 {"barra_alto", "64dp"}, {"barra_margen_lado", "16dp"}, {"barra_margen_abajo", "26dp"},
-                {"barra_hueco_mas", "10dp"}, {"barra_mas_radio", "32dp"},
+                {"barra_hueco_mas", "10dp"},
         };
         for (String[] m : medidas) {
             assertTrue(m[0] + " tiene que valer " + m[1],
@@ -60,22 +60,20 @@ public class CristalTest {
         assertEquals(1.8f, CristalVivo.SATURACION, 0.0001f);
     }
 
-    // El «+» de la barra es del mismo cristal vivo que la cápsula, teñido (cristalAccion), con
-    // su sombra; su línea de reflejo se queda en el cuarto de arriba, por encima del icono; y lo
-    // que gira al abrirse es el icono, no el cristal, que giraría con su reflejo.
+    // El «+» de la barra es el botón de marca, el mismo que el principal (DEC-070): no es cristal,
+    // es bg_marca. Su media luna se queda en el cuarto de arriba, por encima del icono; y lo que
+    // gira al abrirse es el icono, no el botón, que giraría con su media luna.
     @Test
-    public void el_mas_es_cristal_vivo_y_solo_gira_su_icono() throws Exception {
+    public void el_mas_es_el_boton_de_marca_y_solo_gira_su_icono() throws Exception {
         Element mas = null;
-        NodeList vivos = xml(RES.resolve("layout/view_barra_navegacion.xml"))
-                .getElementsByTagName("es.pmdm.gymprofit.ui.cristal.CristalVivo");
-        for (int i = 0; i < vivos.getLength(); i++) {
-            Element e = (Element) vivos.item(i);
+        NodeList marcos = xml(RES.resolve("layout/view_barra_navegacion.xml")).getElementsByTagName("FrameLayout");
+        for (int i = 0; i < marcos.getLength(); i++) {
+            Element e = (Element) marcos.item(i);
             if ("@+id/btnAcciones".equals(e.getAttributeNS(ANDROID, "id"))) mas = e;
         }
-        assertTrue("el «+» tiene que ser un CristalVivo", mas != null);
+        assertTrue("el «+» tiene que ser un FrameLayout con el botón de marca de fondo", mas != null);
         String app = "http://schemas.android.com/apk/res-auto";
-        assertEquals("true", mas.getAttributeNS(app, "cristalAccion"));
-        assertEquals("true", mas.getAttributeNS(app, "cristalSombra"));
+        assertEquals("@drawable/bg_marca", mas.getAttributeNS(ANDROID, "background"));
         assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_width"));
         assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_height"));
         // Sigue siendo pulsable y con nombre, y su icono no se lee aparte.
@@ -85,31 +83,48 @@ public class CristalTest {
         Element icono = (Element) mas.getElementsByTagName("ImageView").item(0);
         assertEquals("@+id/ivAcciones", icono.getAttributeNS(ANDROID, "id"));
         assertEquals("no", icono.getAttributeNS(ANDROID, "importantForAccessibility"));
-        assertEquals("@color/gp_mas_icono", icono.getAttributeNS(app, "tint"));
+        assertEquals("@color/gp_marca_texto", icono.getAttributeNS(app, "tint"));
         assertEquals("@dimen/barra_mas_icono_margen", icono.getAttributeNS(ANDROID, "padding"));
 
-        // El reflejo acaba antes de donde empieza el icono, y va por dentro del borde.
+        // La media luna acaba antes de donde empieza el icono, y va por dentro del borde.
         String d = leer(RES.resolve("values/dimens.xml"));
         float alto = dp(d, "barra_alto"), margen = dp(d, "barra_mas_icono_margen");
         assertTrue("el reflejo (" + alto * Cristal.REFLEJO_ALTO + " dp) pisa el icono (a " + margen + " dp)",
                 alto * Cristal.REFLEJO_ALTO < margen);
-        assertTrue("el reflejo va por dentro del borde", dp(d, "barra_mas_reflejo_dentro") > dp(d, "barra_mas_borde"));
+        assertTrue("el reflejo va por dentro del borde", dp(d, "marca_reflejo_dentro") > dp(d, "marca_borde"));
 
-        // Las capas del cristal del «+», de abajo arriba (lote 1c): el suelo de luz va debajo del
-        // tinte, que es lo que mide ContrasteCristalTest; el brillo, el borde y el reflejo, encima.
+        String barra = leer(JAVA.resolve("ui/widget/BarraNavegacion.java"));
+        assertTrue(barra.contains("ivAcciones.animate().rotation("));
+        assertFalse("el «+» no gira", barra.contains("btnAcciones.animate()"));
+        assertTrue("el «+» se hunde como el principal", barra.contains("Hundir.alPulsar(btnAcciones)"));
+    }
+
+    // El botón de marca, de abajo arriba: la sombra por fuera, el relleno macizo, el brillo, el
+    // borde y la media luna; pulsado, el brillo y la media luna otra vez encima. Es el mismo
+    // dibujo para el principal (Widget.GymProFit.Boton.Marca) y para el «+»: una sola fuente.
+    @Test
+    public void el_principal_y_el_mas_comparten_el_boton_de_marca() throws IOException {
         String cristal = leer(JAVA.resolve("ui/cristal/Cristal.java"));
-        String pinta = cristal.substring(cristal.indexOf("private void pintarAccion("));
-        pinta = pinta.substring(0, pinta.indexOf("\n    }"));
-        String[] orden = {"(forma, suelo)", "(forma, relleno)", "(forma, brilloRadial)", "(bordeForma, trazo)",
-                "(reflejoForma, reflejo)"};
+        String dibujar = cuerpo(cristal, "public void draw(");
+        assertTrue("la sombra va antes que el botón",
+                dibujar.indexOf("sombra.pintar(") < dibujar.indexOf("pintarMarca(canvas)"));
+        String pinta = cuerpo(cristal, "private void pintarMarca(");
+        String[] orden = {"(forma, relleno)", "(forma, brilloRadial)", "(bordeForma, trazo)", "(reflejoForma, reflejo)"};
         for (int i = 1; i < orden.length; i++) {
             assertTrue(orden[i - 1] + " va debajo de " + orden[i],
                     pinta.indexOf(orden[i - 1]) >= 0 && pinta.indexOf(orden[i - 1]) < pinta.indexOf(orden[i]));
         }
-
-        String barra = leer(JAVA.resolve("ui/widget/BarraNavegacion.java"));
-        assertTrue(barra.contains("ivAcciones.animate().rotation("));
-        assertFalse("el cristal del «+» no gira", barra.contains("btnAcciones.animate()"));
+        String estilos = leer(RES.resolve("values/estilos_cristal.xml"));
+        String marca = estilo(estilos, "Widget.GymProFit.Boton.Marca");
+        assertTrue(marca.contains("<item name=\"android:background\">@drawable/bg_marca</item>"));
+        assertTrue(leer(RES.resolve("drawable/bg_marca.xml")).contains("app:cristalTipo=\"marca\""));
+        // El secundario es cristal estático, y en el nivel 3, la superficie opaca.
+        String secundario = leer(JAVA.resolve("ui/widget/BotonCristal.java"));
+        assertTrue(secundario.contains("Cristal.VIVO_OPACO : Cristal.TARJETA"));
+        // Inicio usa los dos.
+        String inicio = leer(RES.resolve("layout/fragment_inicio.xml"));
+        assertTrue(inicio.contains("<es.pmdm.gymprofit.ui.widget.BotonMarca\n                            android:id=\"@+id/btnHoyPrincipal\""));
+        assertTrue(inicio.contains("<es.pmdm.gymprofit.ui.widget.BotonCristal\n                            android:id=\"@+id/btnHoySecundario\""));
     }
 
     // Un dimen en dp de dimens.xml.

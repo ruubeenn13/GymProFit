@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,11 +56,8 @@ public class ContrasteCristalTest {
     // La hoja del «+», con más tinte que la barra (en oscuro, el mismo).
     private static final String[] HOJA = { "gp_vivo_hoja_alto", "gp_vivo_hoja_bajo" };
     private static final String[] ORO = { "gp_cristal_oro_alto", "gp_cristal_oro_bajo" };
-    // El «+»: los dos tonos de su tinte de cristal y los dos de su degradado opaco.
-    private static final String[] MAS = { "gp_mas_tinte_alto", "gp_mas_tinte_bajo" };
-    // El suelo de luz que el «+» pinta bajo su tinte (lote 1c): sin él, el naranja se apaga.
-    private static final String[] MAS_LUZ = { "gp_mas_luz" };
-    private static final String[] MAS_OPACO = { "gp_mas_claro", "gp_mas_oscuro" };
+    // El botón de marca (el principal y el «+»): los dos extremos de su relleno macizo.
+    private static final String[] MARCA_RELLENO = { "gp_marca_alto", "gp_marca_bajo" };
 
     private static final double TEXTO = 4.5, GRANDE = 3.0;
 
@@ -181,89 +177,68 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
-    // El botón principal sobre cristal: el mismo naranja vivo y el mismo texto en los dos temas.
+    // El botón de marca (DEC-070): el principal y el «+», macizos, iguales en los dos temas y en
+    // los tres niveles. Su texto y su icono (casi negros) pasan 4,5:1 sobre todo su relleno, del
+    // tono de arriba al de abajo, también donde el brillo y la media luna lo aclaran, en reposo y
+    // pulsado del todo (algo claro encima solo sube el contraste de algo oscuro, pero se mide).
+    // Y su relleno se queda a ΔE76 de 15 o menos de #FF6A00 de arriba abajo: es macizo, no
+    // depende de lo que haya detrás. Pulsado no lleva capa encima (la de siempre, boton_capa, lo
+    // dejaba a ΔE ~18): solo suben el brillo y la media luna, que acaban por encima de la mitad.
     @Test
-    public void el_boton_principal_se_lee_en_los_dos_temas() throws IOException {
-        List<String> fallos = new ArrayList<>();
-        for (String tema : TEMAS) {
-            Tema t = new Tema(tema);
-            Set<Integer> boton = new LinkedHashSet<>();
-            boton.add(t.color("gp_cristal_principal"));
-            t.medir("botón principal", "gp_cristal_sobre_principal", boton, TEXTO, fallos);
-        }
-        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
-    }
-
-    // El «+» es cristal vivo teñido de naranja: su icono («+» y «×», un gráfico: 3:1) se mide en
-    // los dos temas y los tres niveles. En los niveles 1 y 2, sobre su tinte compuesto encima de
-    // todo lo que puede quedar detrás (lo mismo que la barra, con el velo de la hoja abierta
-    // incluido, que es cuando se ve la «×»), con su suelo de luz debajo del tinte si lo lleva
-    // (hoy no: el tinte de la marca llega solo); si un día no llega, se pone luz, no más tinte,
-    // que es lo que lo alejaría del naranja de la marca; en el 3, sobre su degradado
-    // macizo. El icono es casi negro, así que su peor punto es el más oscuro de lo de detrás,
-    // no el más claro: se apuntan los dos. El brillo, el borde y el reflejo solo aclaran: no
-    // bajan el contraste de algo oscuro.
-    @Test
-    public void el_mas_de_cristal_se_lee_en_los_tres_niveles() throws IOException {
-        List<String> fallos = new ArrayList<>();
-        for (String tema : TEMAS) {
-            Tema t = new Tema(tema);
-            // La luz solo se pone donde hace falta (en claro puede ser transparente): sin capa,
-            // el tinte va directo sobre lo de detrás.
-            Set<Integer> detras = saturados(t.detrasDelVivo());
-            Set<Integer> suelo = t.color(MAS_LUZ[0]) >>> 24 == 0 ? detras : t.capas(detras, MAS_LUZ);
-            Set<Integer> cristal = t.capas(suelo, MAS);
-            t.medir("el «+», niveles 1 y 2", "gp_mas_icono", cristal, GRANDE, fallos);
-            t.medir("el «+», 1 y 2, lo más claro", "gp_mas_icono", masClaro(cristal), GRANDE, fallos);
-            Set<Integer> opaco = new LinkedHashSet<>();
-            for (String tono : MAS_OPACO) opaco.add(t.color(tono));
-            t.medir("el «+», nivel 3", "gp_mas_icono", opaco, GRANDE, fallos);
-            t.medir("el «+», nivel 3, lo más claro", "gp_mas_icono", masClaro(opaco), GRANDE, fallos);
-        }
-        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
-    }
-
-    // Pulsado, el «+» sigue en el naranja de la marca: ΔE76 de 15 o menos de #FF6A00 (DEC-070),
-    // medido donde lo mide el propietario, en el relleno de la mitad de abajo. Al pulsar no se le
-    // pone encima ninguna capa: la de siempre (boton_capa, el 10 % de colorOnPrimary) lo dejaba a
-    // ΔE ~18. Lo que sube son el brillo y la media luna, que acaban por encima de la mitad. Así
-    // la mitad de abajo pulsada es su tinte sobre lo que haya detrás, y eso es lo que se mide:
-    // los dos tonos del tinte sobre todo lo que puede quedar detrás. Cuenta la mediana, que es lo
-    // que mide el propietario en captura (la mediana del relleno); el peor punto (el fondo más
-    // oscuro, en oscuro: 15,3, igual que en reposo) se apunta en el informe.
-    @Test
-    public void el_mas_pulsado_sigue_en_el_naranja_de_la_marca() throws IOException {
+    public void el_boton_de_marca_se_lee_y_sigue_en_la_marca() throws IOException {
         String barra = new String(Files.readAllBytes(RES.resolve("layout/view_barra_navegacion.xml")),
                 StandardCharsets.UTF_8);
         int desde = barra.indexOf("android:id=\"@+id/btnAcciones\"");
         String mas = barra.substring(desde, barra.indexOf('>', desde));
         assertFalse("el «+» no lleva capa de pulsado encima: lo aleja de la marca",
                 mas.contains("android:foreground"));
-        assertTrue("el brillo del «+» acaba por encima de la mitad",
-                Cristal.BRILLO_Y + Cristal.BRILLO_RADIO < 0.5f);
-        assertTrue("la media luna del «+» acaba por encima de la mitad", Cristal.REFLEJO_ALTO < 0.5f);
+        assertTrue("el brillo acaba por encima de la mitad", Cristal.BRILLO_Y + Cristal.BRILLO_RADIO < 0.5f);
+        assertTrue("la media luna acaba por encima de la mitad", Cristal.REFLEJO_ALTO < 0.5f);
 
         List<String> fallos = new ArrayList<>();
         for (String tema : TEMAS) {
             Tema t = new Tema(tema);
-            Set<Integer> detras = saturados(t.detrasDelVivo());
-            Set<Integer> suelo = t.color(MAS_LUZ[0]) >>> 24 == 0 ? detras : t.capas(detras, MAS_LUZ);
-            List<Double> distancias = new ArrayList<>();
-            for (int c : t.capas(suelo, MAS)) distancias.add(deltaE(c, MARCA));
-            Collections.sort(distancias);
-            double mediana = distancias.get(distancias.size() / 2);
-            double peor = distancias.get(distancias.size() - 1);
-            INFORME.append(String.format(Locale.ROOT,
-                    "%s · el «+» pulsado, mitad de abajo · ΔE76 mediana %.1f, peor punto %.1f%n", t.nombre, mediana, peor));
-            if (mediana > 15) fallos.add(String.format(Locale.ROOT,
-                    "%s: el «+» pulsado queda a ΔE %.1f de #FF6A00", t.nombre, mediana));
+            Set<Integer> relleno = new LinkedHashSet<>();
+            for (String tono : MARCA_RELLENO) relleno.add(t.color(tono));
+            Set<Integer> superficie = new LinkedHashSet<>(relleno);
+            float luz = 1f + Cristal.LUZ_PULSADO;
+            for (String capa : new String[]{ "gp_marca_brillo", "gp_marca_reflejo" }) {
+                int c = t.color(capa);
+                int pulsada = (Math.min(255, Math.round((c >>> 24) * luz)) << 24) | (c & 0xFFFFFF);
+                for (int r : relleno) {
+                    superficie.add(Ambiente.sobre(c, r));
+                    superficie.add(Ambiente.sobre(pulsada, r));
+                }
+            }
+            t.medir("botón de marca", "gp_marca_texto", superficie, TEXTO, fallos);
+            for (String tono : MARCA_RELLENO) {
+                double d = deltaE(t.color(tono), MARCA);
+                INFORME.append(String.format(Locale.ROOT, "%s · botón de marca, %s · ΔE76 %.1f%n", t.nombre, tono, d));
+                if (d > 15) fallos.add(String.format(Locale.ROOT, "%s: %s queda a ΔE %.1f de #FF6A00", t.nombre, tono, d));
+            }
+        }
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
+    // El botón secundario (BotonCristal): cristal estático en píldora, con los tokens de las
+    // tarjetas, sobre cualquier punto del fondo (también el más claro); en el nivel 3, la
+    // superficie opaca del cristal vivo. Su texto pasa 4,5:1 en los dos casos y los dos temas.
+    @Test
+    public void el_boton_secundario_se_lee_en_los_tres_niveles() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        for (String tema : TEMAS) {
+            Tema t = new Tema(tema);
+            Set<Integer> cristal = t.capas(t.fondo(), CRISTAL);
+            t.medir("botón secundario", "gp_cristal_texto", cristal, TEXTO, fallos);
+            t.medir("botón secundario, lo más claro", "gp_cristal_texto", masClaro(cristal), TEXTO, fallos);
+            t.medir("botón secundario, nivel 3", "gp_cristal_texto", t.capas(t.fondo(), VIVO_OPACO), TEXTO, fallos);
         }
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
     // ── La cuenta ───────────────────────────────────────────────────────────
 
-    // El naranja de la marca, del que el «+» no se aleja más de ΔE 15.
+    // El naranja de la marca, del que el botón de marca no se aleja más de ΔE 15.
     private static final int MARCA = 0xFFFF6A00;
 
     // ΔE76: la distancia en CIELAB (D65) entre dos colores opacos.
