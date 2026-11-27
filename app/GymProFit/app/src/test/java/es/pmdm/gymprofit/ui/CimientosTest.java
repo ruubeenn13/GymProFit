@@ -203,8 +203,9 @@ public class CimientosTest {
             Matcher m = Pattern.compile("<es\\.pmdm\\.gymprofit\\.ui\\.widget\\.BotonExpresivo[^>]*android:id=\"@\\+id/" + b[1] + "\"").matcher(x);
             assertTrue(b[1] + " tiene que ser un BotonExpresivo", m.find());
         }
-        assertTrue(leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BarraNavegacion.java")).contains("BotonExpresivo.alPulsar(btnAcciones)"));
-        // El «+» es un círculo de 64 dp desde GP-285: su reposo son 32 dp, y al soltar vuelve a ellos.
+        // El «+» de la barra no cambia de forma: es cristal, y se hunde (GP-285, lote 1c; MasPulsadoTest).
+        assertTrue(leer(JAVA.resolve("es/pmdm/gymprofit/ui/widget/BarraNavegacion.java")).contains("btnAcciones.hundirAlPulsar()"));
+        // El «+» es un círculo de 64 dp desde GP-285: sus esquinas son 32 dp, también pulsado.
         assertEquals("32dp", dimen(d, "barra_mas_radio"));
         assertTrue(leer(RES.resolve("layout/view_barra_navegacion.xml")).contains("app:cristalRadio=\"@dimen/barra_mas_radio\""));
         // El tiempo es el del toque, no un número escrito.

@@ -84,6 +84,36 @@ Contraste del icono (`ContrasteCristalTest`, sobre todo lo que puede quedar detr
 
 Medido además en captura, contra el cristal que rodea al icono: en API 36 y API 32, 3,67–4,11:1 cerrado y 3,38–3,76:1 abierto en oscuro, y 7,60–8,48:1 y 5,88–6,19:1 en claro; en API 24, 6,93–10,75:1.
 
+### El «+» con más vida (lote 1c, 27-11-2026)
+
+**Esto sustituye a la tabla de arriba en los niveles 1 y 2.** En oscuro, el tinte al 65 % sobre el fondo oscuro daba un naranja apagado, casi marrón, que se leía macizo, y el reflejo era una línea fina. El naranja tiene que ser el de la marca sea cual sea el fondo, y tiene que parecer cristal.
+
+| Capa (de abajo arriba, sobre el desenfoque o la refracción) | Valor pedido | Implementado |
+|---|---|---|
+| Suelo de luz | blanco al 14 % (oscuro) y al 8 % (claro) | **ninguno** (`gp_mas_luz` transparente), ver abajo |
+| Tinte | `#FF7A1A` del 58 % al 46 % a 160°, en los dos temas | **`#FF6A00` del 92 % al 85 %** (`gp_mas_tinte_alto`/`_bajo`), ver abajo |
+| Brillo radial interior | en el tercio superior izquierdo, blanco al 35 %, muy difuminado | **blanco al 20 %, pequeño y solo en el tercio de arriba**: centrado al 32 % · 14 % de la caja, radio del 19 % del lado, a nada con un tramo al 40 % de su alfa en la mitad (`gp_mas_brillo_interior`) |
+| Borde | 1,5 dp, degradado blanco del 70 % arriba al 15 % abajo | el pedido (`gp_mas_borde_alto`/`_bajo`, `barra_mas_borde`) |
+| Reflejo de arriba | una media luna ancha, no una línea, blanco del 40 % a transparente | la forma metida 3 dp, menos ella misma bajada hasta el cuarto de arriba: ancha arriba y en punta a los lados, del 40 % a nada de arriba abajo; acaba a 16 dp, antes del icono (19 dp) (`gp_mas_reflejo`, `barra_mas_reflejo_dentro`) |
+| Nivel 3 | macizo `#FF6A00` | sin cambios: el degradado radial `#FFB27A` → `#FF6A00` de siempre |
+| Icono | `#1A0E00`, 3:1 o más en el peor punto; si no llega, se sube la luz, no el tinte | `#1A0E00`; cifras abajo |
+
+**El tinte, en tres vueltas con el propietario.**
+
+1. Con lo pedido (`#FF7A1A` 58 % → 46 % sobre la luz) el «+» salía más luminoso que el del lote 1b, pero no más naranja: a través de medio cristal se ve el fondo y la saturación bajaba de 0,80 a 0,40 (salmón en oscuro, melocotón en claro, medido en captura en API 32). Y en oscuro el icono no llegaba: 2,86:1 con la luz al 14 % (2,15:1 sin ella; 3,21:1 con la luz al 20 %).
+2. El propietario eligió `#FF7A1A` 82 % → 70 % con la luz pedida (icono 4,44 · 6,37:1). El revisor de UI en API 36 lo midió a ΔE 32–40 de `#FF6A00` (terracota en oscuro, melocotón en claro) y dejando ver lo de detrás 3–4 veces menos que la barra.
+3. El propietario pidió el tinte de la marca, la luz solo hasta el 3:1 y ΔE 15 o menos. `#FF6A00` 82 % → 70 % sin luz (el icono ya daba 3,57:1) se quedaba en ΔE 26–28: en oscuro lo oscurece el fondo que se ve por el 18–30 % que deja pasar, y en claro lo aclaran el brillo radial y el fondo claro. **Lo final: `#FF6A00` 92 % → 85 %, sin luz, y el brillo radial al 20 %, pequeño y solo en el tercio de arriba.** En captura en API 36 (mediana alrededor del icono, mitad de abajo): **ΔE 11,7 en oscuro y 9,2–10,1 en claro** (peor píxel, 12,4).
+
+Que casi no deje ver lo de detrás es **decisión del propietario** (DEC-070): el «+» es la acción principal y manda el color de la marca; el cristal lo dan el borde, el brillo y la media luna, como en los botones teñidos de Liquid Glass.
+
+Contraste del icono (`ContrasteCristalTest`, el tinte sobre todo lo que puede quedar detrás, con el velo de la hoja abierta; el brillo, el borde y el reflejo solo aclaran, y el icono es oscuro):
+
+| | Oscuro | Claro |
+|---|---|---|
+| Niveles 1 y 2, peor punto (el más oscuro) | 4,92:1 | 6,05:1 |
+| Niveles 1 y 2, punto más claro | 6,20:1 | 7,51:1 |
+| Nivel 3 | 6,61:1 | 6,61:1 |
+
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 
 Donde un valor de arriba chocaba con una regla de legibilidad, manda la regla (DEC-070). Los valores que valen son los de `app/GymProFit/DESIGN.md` («Liquid Glass») y `colors.xml`; cada uno está medido en `ContrasteCristalTest`. Para los lotes siguientes:

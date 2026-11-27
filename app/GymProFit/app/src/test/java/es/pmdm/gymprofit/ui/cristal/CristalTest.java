@@ -93,7 +93,19 @@ public class CristalTest {
         float alto = dp(d, "barra_alto"), margen = dp(d, "barra_mas_icono_margen");
         assertTrue("el reflejo (" + alto * Cristal.REFLEJO_ALTO + " dp) pisa el icono (a " + margen + " dp)",
                 alto * Cristal.REFLEJO_ALTO < margen);
-        assertTrue("el reflejo va por dentro del borde", dp(d, "barra_mas_reflejo_dentro") > dp(d, "cristal_borde"));
+        assertTrue("el reflejo va por dentro del borde", dp(d, "barra_mas_reflejo_dentro") > dp(d, "barra_mas_borde"));
+
+        // Las capas del cristal del «+», de abajo arriba (lote 1c): el suelo de luz va debajo del
+        // tinte, que es lo que mide ContrasteCristalTest; el brillo, el borde y el reflejo, encima.
+        String cristal = leer(JAVA.resolve("ui/cristal/Cristal.java"));
+        String pinta = cristal.substring(cristal.indexOf("private void pintarAccion("));
+        pinta = pinta.substring(0, pinta.indexOf("\n    }"));
+        String[] orden = {"(forma, suelo)", "(forma, relleno)", "(forma, brilloRadial)", "(bordeForma, trazo)",
+                "(reflejoForma, reflejo)"};
+        for (int i = 1; i < orden.length; i++) {
+            assertTrue(orden[i - 1] + " va debajo de " + orden[i],
+                    pinta.indexOf(orden[i - 1]) >= 0 && pinta.indexOf(orden[i - 1]) < pinta.indexOf(orden[i]));
+        }
 
         String barra = leer(JAVA.resolve("ui/widget/BarraNavegacion.java"));
         assertTrue(barra.contains("ivAcciones.animate().rotation("));
