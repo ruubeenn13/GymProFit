@@ -1,5 +1,7 @@
 package es.pmdm.gymprofit.ui.cristal;
 
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -16,11 +18,9 @@ import android.graphics.RenderEffect;
 import android.graphics.RenderNode;
 import android.graphics.RuntimeShader;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.utils.Movimiento;
 
 // ============================================================
 // CristalVivo — el cristal con contenido que se mueve por debajo (GP-285, DEC-070).
@@ -85,6 +86,8 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     private static final int ESCALA_SOMBRA = 4;
     // Fotogramas que espera a que el lienzo tenga algo grabado antes de dejar de repintarse.
     private static final int ESPERAS_MAXIMAS = 5;
+    /** La escala del «+» pulsado del todo. */
+    public static final float HUNDIDO = 0.94f;
 
     private final Cristal tinte, opaco;
     private final Path forma = new Path();
@@ -95,6 +98,9 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     private final boolean conSombra, accion;
 
     @Nullable private LienzoCristal lienzo;
+    // El «+»: lo pulsado que está (0 a 1) y lo que lo mueve.
+    private float pulsado;
+    @Nullable private ValueAnimator animadorPulsado;
     @NonNull private NivelCristal nivel = NivelCristal.OPACO;
     // Dónde está esta vista dentro del lienzo, en px.
     private int dx, dy;
@@ -144,6 +150,7 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
 
     @Override
     protected void onDetachedFromWindow() {
+        if (animadorPulsado != null) animadorPulsado.cancel();
         getViewTreeObserver().removeOnPreDrawListener(this);
         if (lienzo != null) lienzo.borrar(this);
         lienzo = null;
@@ -199,24 +206,46 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     }
 
     /**
-     * Cambia el radio de las esquinas (px): el «+», que cambia de forma mientras se pulsa
-     * (BotonExpresivo). Con refracción rehace el efecto, que lleva el radio dentro: pasa en los
-     * pocos fotogramas de un toque, nunca al desplazar el contenido. Si su primer plano es una onda
-     * con máscara de esquinas redondeadas, la máscara cambia con él.
+     * El «+» pulsado, como un botón de Liquid Glass (GP-285, lote 1c; DEC-070): no cambia de
+     * forma, sigue siendo un círculo en los tres niveles. Al tocarlo se hunde a HUNDIDO y su
+     * brillo y su media luna suben a la vez (Cristal.ponerLuz), en TOQUE ms con la curva
+     * estándar, el «se hunde al tocar» de DEC-039; al soltar vuelve igual, desde donde esté. No
+     * lleva capa de pulsado encima: alejaba el naranja de la marca. Con «Quitar animaciones» no
+     * se mueve ni se hunde: solo sube la luz, sin transición. No consume el toque: el clic, la
+     * vibración y la accesibilidad siguen su camino.
      */
-    public void ponerRadioEsquinas(float px) {
-        tinte.ponerRadio(px);
-        opaco.ponerRadio(px);
-        float r = radioEsquinas();
-        forma.rewind();
-        forma.addRoundRect(caja, r, r, Path.Direction.CW);
-        // La capa de pulsado (el primer plano: una onda con su máscara) sigue a la forma.
-        Drawable capa = getForeground();
-        if (capa instanceof RippleDrawable) {
-            Drawable mascara = ((RippleDrawable) capa.mutate()).findDrawableByLayerId(android.R.id.mask);
-            if (mascara instanceof GradientDrawable) ((GradientDrawable) mascara).setCornerRadius(r);
+    @SuppressLint("ClickableViewAccessibility")
+    public void hundirAlPulsar() {
+        setOnTouchListener((v, e) -> {
+            int accion = e.getActionMasked();
+            boolean baja = accion == MotionEvent.ACTION_DOWN;
+            if (baja || accion == MotionEvent.ACTION_UP || accion == MotionEvent.ACTION_CANCEL) {
+                moverPulsado(baja ? 1f : 0f);
+            }
+            return false;
+        });
+    }
+
+    // De lo pulsado que está ahora a lo pedido: la escala y la luz con la misma fracción.
+    private void moverPulsado(float hacia) {
+        if (animadorPulsado != null) animadorPulsado.cancel();
+        if (Movimiento.quieto(getContext())) {
+            ponerPulsado(hacia, true);
+            return;
         }
-        if (nivel == NivelCristal.REFRACCION) prepararEfecto();
+        animadorPulsado = ValueAnimator.ofFloat(pulsado, hacia);
+        animadorPulsado.setDuration(Movimiento.TOQUE);
+        animadorPulsado.setInterpolator(Movimiento.ESTANDAR);
+        animadorPulsado.addUpdateListener(a -> ponerPulsado((float) a.getAnimatedValue(), false));
+        animadorPulsado.start();
+    }
+
+    private void ponerPulsado(float fraccion, boolean quieto) {
+        pulsado = fraccion;
+        float escala = quieto ? 1f : 1f - (1f - HUNDIDO) * fraccion;
+        setScaleX(escala);
+        setScaleY(escala);
+        tinte.ponerLuz(fraccion);
         invalidate();
     }
 

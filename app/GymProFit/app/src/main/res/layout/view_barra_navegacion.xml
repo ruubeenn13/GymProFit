@@ -42,7 +42,6 @@
         android:clickable="true"
         android:contentDescription="@string/acciones_rapidas"
         android:focusable="true"
-        android:foreground="@drawable/capa_boton_acciones"
         app:cristalAccion="true"
         app:cristalRadio="@dimen/barra_mas_radio"
         app:cristalSombra="true">

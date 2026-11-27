@@ -72,6 +72,8 @@ public class Cristal extends Drawable {
     // el tercio de arriba (se apaga antes de un tercio del alto): más grande, aclaraba todo el
     // botón y lo alejaba del naranja de la marca.
     static final float BRILLO_X = 0.32f, BRILLO_Y = 0.14f, BRILLO_RADIO = 0.19f;
+    // Cuánto del brillo y de la media luna se pinta otra vez encima con el «+» pulsado del todo.
+    static final float LUZ_PULSADO = 0.75f;
     // El centro del degradado radial del «+» opaco, en fracción de su caja.
     private static final float RADIAL_X = 0.35f, RADIAL_Y = 0.30f;
 
@@ -102,6 +104,8 @@ public class Cristal extends Drawable {
     // opaco, el brillo radial y los dos extremos del degradado de su borde.
     private int reflejoColor, brilloRadialColor, bordeAlto, bordeBajo;
     private float reflejoDentro, radialRadio;
+    // El «+»: lo pulsado que está, de 0 a 1 (ponerLuz).
+    private float luzPulsado;
 
     /** Para <drawable class=…>: los atributos llegan en inflate(). */
     public Cristal() {
@@ -237,11 +241,16 @@ public class Cristal extends Drawable {
         return radio < 0 ? altoPx / 2f : Math.min(radio, altoPx / 2f);
     }
 
-    /** Cambia el radio de las esquinas (px; negativo, píldora): el «+», mientras se pulsa. */
-    void ponerRadio(float px) {
-        if (radio == px) return;
-        radio = px;
-        onBoundsChange(getBounds());
+    /**
+     * La luz del «+» pulsado (lote 1c): de 0, en reposo, a 1, pulsado del todo. El brillo y la
+     * media luna se pintan otra vez encima con LUZ_PULSADO de su alfa por esa fracción: el brillo
+     * pasa del 20 % al 32 % y la media luna del 40 % al 58 %. Los dos acaban por encima de la
+     * mitad del botón, así que el naranja de abajo no cambia (ContrasteCristalTest). En los
+     * demás cristales no hace nada.
+     */
+    void ponerLuz(float fraccion) {
+        if (tipo != VIVO_ACCION || luzPulsado == fraccion) return;
+        luzPulsado = fraccion;
         invalidateSelf();
     }
 
@@ -373,6 +382,7 @@ public class Cristal extends Drawable {
     }
 
     // El «+» de cristal, de abajo arriba: suelo de luz, tinte, brillo radial, borde y reflejo.
+    // Pulsado, el brillo y el reflejo otra vez encima, con la fracción de luz que toque.
     private void pintarAccion(@NonNull Canvas canvas) {
         // El suelo de luz solo se pinta si lo hay: con el tinte de la marca no hace falta.
         if (suelo.getAlpha() != 0) canvas.drawPath(forma, suelo);
@@ -380,6 +390,16 @@ public class Cristal extends Drawable {
         canvas.drawPath(forma, brilloRadial);
         canvas.drawPath(bordeForma, trazo);
         if (!reflejoForma.isEmpty()) canvas.drawPath(reflejoForma, reflejo);
+        int alfa = Math.round(255 * LUZ_PULSADO * luzPulsado);
+        if (alfa == 0) return;
+        brilloRadial.setAlpha(alfa);
+        canvas.drawPath(forma, brilloRadial);
+        brilloRadial.setAlpha(255);
+        if (!reflejoForma.isEmpty()) {
+            reflejo.setAlpha(alfa);
+            canvas.drawPath(reflejoForma, reflejo);
+            reflejo.setAlpha(255);
+        }
     }
 
     @Override

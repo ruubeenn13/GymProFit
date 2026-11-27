@@ -1,6 +1,7 @@
 package es.pmdm.gymprofit.ui.cristal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -221,7 +223,74 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
+    // Pulsado, el «+» sigue en el naranja de la marca: ΔE76 de 15 o menos de #FF6A00 (DEC-070),
+    // medido donde lo mide el propietario, en el relleno de la mitad de abajo. Al pulsar no se le
+    // pone encima ninguna capa: la de siempre (boton_capa, el 10 % de colorOnPrimary) lo dejaba a
+    // ΔE ~18. Lo que sube son el brillo y la media luna, que acaban por encima de la mitad. Así
+    // la mitad de abajo pulsada es su tinte sobre lo que haya detrás, y eso es lo que se mide:
+    // los dos tonos del tinte sobre todo lo que puede quedar detrás. Cuenta la mediana, que es lo
+    // que mide el propietario en captura (la mediana del relleno); el peor punto (el fondo más
+    // oscuro, en oscuro: 15,3, igual que en reposo) se apunta en el informe.
+    @Test
+    public void el_mas_pulsado_sigue_en_el_naranja_de_la_marca() throws IOException {
+        String barra = new String(Files.readAllBytes(RES.resolve("layout/view_barra_navegacion.xml")),
+                StandardCharsets.UTF_8);
+        int desde = barra.indexOf("android:id=\"@+id/btnAcciones\"");
+        String mas = barra.substring(desde, barra.indexOf('>', desde));
+        assertFalse("el «+» no lleva capa de pulsado encima: lo aleja de la marca",
+                mas.contains("android:foreground"));
+        assertTrue("el brillo del «+» acaba por encima de la mitad",
+                Cristal.BRILLO_Y + Cristal.BRILLO_RADIO < 0.5f);
+        assertTrue("la media luna del «+» acaba por encima de la mitad", Cristal.REFLEJO_ALTO < 0.5f);
+
+        List<String> fallos = new ArrayList<>();
+        for (String tema : TEMAS) {
+            Tema t = new Tema(tema);
+            Set<Integer> detras = saturados(t.detrasDelVivo());
+            Set<Integer> suelo = t.color(MAS_LUZ[0]) >>> 24 == 0 ? detras : t.capas(detras, MAS_LUZ);
+            List<Double> distancias = new ArrayList<>();
+            for (int c : t.capas(suelo, MAS)) distancias.add(deltaE(c, MARCA));
+            Collections.sort(distancias);
+            double mediana = distancias.get(distancias.size() / 2);
+            double peor = distancias.get(distancias.size() - 1);
+            INFORME.append(String.format(Locale.ROOT,
+                    "%s · el «+» pulsado, mitad de abajo · ΔE76 mediana %.1f, peor punto %.1f%n", t.nombre, mediana, peor));
+            if (mediana > 15) fallos.add(String.format(Locale.ROOT,
+                    "%s: el «+» pulsado queda a ΔE %.1f de #FF6A00", t.nombre, mediana));
+        }
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
     // ── La cuenta ───────────────────────────────────────────────────────────
+
+    // El naranja de la marca, del que el «+» no se aleja más de ΔE 15.
+    private static final int MARCA = 0xFFFF6A00;
+
+    // ΔE76: la distancia en CIELAB (D65) entre dos colores opacos.
+    static double deltaE(int a, int b) {
+        double[] la = lab(a), lb = lab(b);
+        return Math.sqrt(Math.pow(la[0] - lb[0], 2) + Math.pow(la[1] - lb[1], 2) + Math.pow(la[2] - lb[2], 2));
+    }
+
+    private static double[] lab(int color) {
+        double r = lineal((color >> 16) & 0xFF), g = lineal((color >> 8) & 0xFF), b = lineal(color & 0xFF);
+        double x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047;
+        double y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        double z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
+        double fx = f(x), fy = f(y), fz = f(z);
+        return new double[]{ 116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz) };
+    }
+
+    private static double f(double t) {
+        return t > 216.0 / 24389 ? Math.cbrt(t) : (24389.0 / 27 * t + 16) / 116;
+    }
+
+    // Que la distancia es la de CIELAB: de blanco a negro, 100; un color consigo mismo, 0.
+    @Test
+    public void la_cuenta_del_delta_e_es_la_de_cielab() {
+        assertEquals(100.0, deltaE(0xFFFFFFFF, 0xFF000000), 0.01);
+        assertEquals(0.0, deltaE(MARCA, MARCA), 0.0);
+    }
 
     // Que la cuenta de este test es la de siempre: blanco sobre negro, 21:1, y el par que
     // PaletaContrasteTest ya tiene medido (#1A0E00 sobre #FF6A00, 6,61:1).
