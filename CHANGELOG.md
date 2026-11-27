@@ -8,6 +8,10 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `67fdde20` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el tinte final del «+», con las tres vueltas que se probaron, y que deje ver poco de lo de detrás es decisión del propietario (GP-285). |
+| `24e89260` | fix(android): el «+» de la barra pasa al naranja de la marca en los dos temas: el tinte de `#FF6A00` tapa más el fondo, ya no lleva luz blanca debajo y su brillo es pequeño y solo arriba. Se lee como el mismo naranja que «Empezar» (GP-285). |
+| `877bf4d5` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el «+» del lote 1c (GP-285). |
+| `24170d90` | feat(android): el «+» de cristal se lee como cristal: brillo difuminado arriba, borde que se apaga hacia abajo y un reflejo en media luna en vez de una línea fina; en oscuro deja de verse marrón (GP-285). |
 | `4e6b181e` | fix(android): en el tema claro, las zonas trabajadas de la silueta muscular de Inicio vuelven a distinguirse del cuerpo: el cuerpo va en tinta y la zona en el naranja vivo (GP-285). |
 | `8b683df9` | fix(android): en Android 8 o menos, con letra grande, las etiquetas de la barra ya no quedan descentradas al recrearse la pantalla (al cambiar de tema o de idioma, o al volver tras un rato); y al pulsar el «+», su capa de pulsado sigue la forma del botón (GP-285). |
 | `79662ec5` | docs(decisiones,documentacion): DEC-070 y la referencia de Liquid Glass recogen el «+» de cristal, con sus valores y sus contrastes (GP-285). |
