@@ -60,6 +60,53 @@ public class CristalTest {
         assertEquals(1.8f, CristalVivo.SATURACION, 0.0001f);
     }
 
+    // El «+» de la barra es del mismo cristal vivo que la cápsula, teñido (cristalAccion), con
+    // su sombra; su línea de reflejo se queda en el cuarto de arriba, por encima del icono; y lo
+    // que gira al abrirse es el icono, no el cristal, que giraría con su reflejo.
+    @Test
+    public void el_mas_es_cristal_vivo_y_solo_gira_su_icono() throws Exception {
+        Element mas = null;
+        NodeList vivos = xml(RES.resolve("layout/view_barra_navegacion.xml"))
+                .getElementsByTagName("es.pmdm.gymprofit.ui.cristal.CristalVivo");
+        for (int i = 0; i < vivos.getLength(); i++) {
+            Element e = (Element) vivos.item(i);
+            if ("@+id/btnAcciones".equals(e.getAttributeNS(ANDROID, "id"))) mas = e;
+        }
+        assertTrue("el «+» tiene que ser un CristalVivo", mas != null);
+        String app = "http://schemas.android.com/apk/res-auto";
+        assertEquals("true", mas.getAttributeNS(app, "cristalAccion"));
+        assertEquals("true", mas.getAttributeNS(app, "cristalSombra"));
+        assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_width"));
+        assertEquals("@dimen/barra_alto", mas.getAttributeNS(ANDROID, "layout_height"));
+        // Sigue siendo pulsable y con nombre, y su icono no se lee aparte.
+        assertEquals("true", mas.getAttributeNS(ANDROID, "clickable"));
+        assertEquals("true", mas.getAttributeNS(ANDROID, "focusable"));
+        assertEquals("@string/acciones_rapidas", mas.getAttributeNS(ANDROID, "contentDescription"));
+        Element icono = (Element) mas.getElementsByTagName("ImageView").item(0);
+        assertEquals("@+id/ivAcciones", icono.getAttributeNS(ANDROID, "id"));
+        assertEquals("no", icono.getAttributeNS(ANDROID, "importantForAccessibility"));
+        assertEquals("@color/gp_mas_icono", icono.getAttributeNS(app, "tint"));
+        assertEquals("@dimen/barra_mas_icono_margen", icono.getAttributeNS(ANDROID, "padding"));
+
+        // El reflejo acaba antes de donde empieza el icono, y va por dentro del borde.
+        String d = leer(RES.resolve("values/dimens.xml"));
+        float alto = dp(d, "barra_alto"), margen = dp(d, "barra_mas_icono_margen");
+        assertTrue("el reflejo (" + alto * Cristal.REFLEJO_ALTO + " dp) pisa el icono (a " + margen + " dp)",
+                alto * Cristal.REFLEJO_ALTO < margen);
+        assertTrue("el reflejo va por dentro del borde", dp(d, "barra_mas_reflejo_dentro") > dp(d, "cristal_borde"));
+
+        String barra = leer(JAVA.resolve("ui/widget/BarraNavegacion.java"));
+        assertTrue(barra.contains("ivAcciones.animate().rotation("));
+        assertFalse("el cristal del «+» no gira", barra.contains("btnAcciones.animate()"));
+    }
+
+    // Un dimen en dp de dimens.xml.
+    private static float dp(String dimens, String nombre) {
+        Matcher m = Pattern.compile("<dimen name=\"" + nombre + "\">([0-9.]+)dp</dimen>").matcher(dimens);
+        assertTrue("falta el dimen " + nombre, m.find());
+        return Float.parseFloat(m.group(1));
+    }
+
     @Test
     public void el_cristal_vivo_va_fuera_de_su_lienzo() throws Exception {
         Document doc = xml(RES.resolve("layout/activity_main.xml"));

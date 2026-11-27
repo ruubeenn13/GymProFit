@@ -2,9 +2,11 @@
 <!--
   view_barra_navegacion — contenido de BarraNavegacion (GP-105; Liquid Glass en GP-285).
   Una cápsula de cristal vivo de 64 dp con las cuatro pestañas —Inicio · Entrenar · Nutrición ·
-  Progreso— y, separado 10 dp a su derecha, el «+» en un círculo de 64 dp. Los márgenes de la
-  barra (16 a los lados, 26 abajo más el hueco de gestos) los pone BarraNavegacion como relleno.
-  La cápsula lleva sombra por fuera: ni ella ni la barra recortan a sus hijos.
+  Progreso— y, separado 10 dp a su derecha, el «+» en un círculo de 64 dp, del mismo cristal
+  vivo teñido de naranja (cristalAccion). Los márgenes de la barra (16 a los lados, 26 abajo
+  más el hueco de gestos) los pone BarraNavegacion como relleno. La cápsula y el «+» llevan
+  sombra por fuera: ni ellos ni la barra recortan a sus hijos. Del «+» gira el icono, no el
+  cristal: su reflejo se queda arriba.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -32,15 +34,27 @@
         </LinearLayout>
     </es.pmdm.gymprofit.ui.cristal.CristalVivo>
 
-    <ImageButton
+    <es.pmdm.gymprofit.ui.cristal.CristalVivo
         android:id="@+id/btnAcciones"
         android:layout_width="@dimen/barra_alto"
         android:layout_height="@dimen/barra_alto"
         android:layout_marginStart="@dimen/barra_hueco_mas"
-        android:background="@drawable/bg_boton_acciones"
+        android:clickable="true"
         android:contentDescription="@string/acciones_rapidas"
-        android:padding="19dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_ms_add"
-        app:tint="@color/gp_mas_icono" />
+        android:focusable="true"
+        android:foreground="@drawable/capa_boton_acciones"
+        app:cristalAccion="true"
+        app:cristalRadio="@dimen/barra_mas_radio"
+        app:cristalSombra="true">
+
+        <ImageView
+            android:id="@+id/ivAcciones"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:padding="@dimen/barra_mas_icono_margen"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_ms_add"
+            app:tint="@color/gp_mas_icono" />
+    </es.pmdm.gymprofit.ui.cristal.CristalVivo>
 </merge>

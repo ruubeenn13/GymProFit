@@ -45,6 +45,8 @@ import es.pmdm.gymprofit.R;
 //   3 · nada de lo de detrás: una superficie opaca (al 98 % lo de detrás se entreveía, nítido).
 //
 // Con cristalGrueso el tinte tiene más cuerpo: la hoja del «+», que lleva texto secundario.
+// Con cristalAccion es el «+» de la barra: el tinte es el naranja de la acción principal, con
+// su reflejo, y en el nivel 3 queda como antes de ser cristal, macizo y sin sombra.
 //
 // En los tres lleva el borde y el brillo superior del cristal, y con cristalSombra una sombra
 // suave por fuera. Lo que hay dentro (pestañas, textos) es legible en los tres niveles: sus
@@ -87,7 +89,7 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     private final Paint pinturaSombra = new Paint(Paint.FILTER_BITMAP_FLAG);
     private final int[] aqui = new int[2], alli = new int[2];
     private final float radio, sigma, sombraRadio, sombraBaja;
-    private final boolean conSombra;
+    private final boolean conSombra, accion;
 
     @Nullable private LienzoCristal lienzo;
     @NonNull private NivelCristal nivel = NivelCristal.OPACO;
@@ -108,13 +110,14 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         radio = a.getDimension(R.styleable.CristalVivo_cristalRadio, -1f);
         conSombra = a.getBoolean(R.styleable.CristalVivo_cristalSombra, false);
         boolean grueso = a.getBoolean(R.styleable.CristalVivo_cristalGrueso, false);
+        accion = a.getBoolean(R.styleable.CristalVivo_cristalAccion, false);
         a.recycle();
         sigma = getResources().getDimension(R.dimen.cristal_desenfoque);
         sombraRadio = getResources().getDimension(R.dimen.cristal_sombra_radio);
         sombraBaja = getResources().getDimension(R.dimen.cristal_sombra_baja);
         pinturaSombra.setColor(ContextCompat.getColor(context, R.color.gp_vivo_sombra));
-        tinte = new Cristal(context, grueso ? Cristal.VIVO_GRUESO : Cristal.VIVO, radio);
-        opaco = new Cristal(context, Cristal.VIVO_OPACO, radio);
+        tinte = new Cristal(context, accion ? Cristal.VIVO_ACCION : grueso ? Cristal.VIVO_GRUESO : Cristal.VIVO, radio);
+        opaco = new Cristal(context, accion ? Cristal.VIVO_ACCION_OPACO : Cristal.VIVO_OPACO, radio);
         desenfoque = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ? new Desenfoque() : null;
         setWillNotDraw(false);
     }
@@ -187,6 +190,26 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         prepararEfecto();
     }
 
+    /** El radio de sus esquinas ahora, en px. */
+    public float radioEsquinas() {
+        return tinte.radioPara(getHeight());
+    }
+
+    /**
+     * Cambia el radio de las esquinas (px): el «+», que cambia de forma mientras se pulsa
+     * (BotonExpresivo). Con refracción rehace el efecto, que lleva el radio dentro: pasa en los
+     * pocos fotogramas de un toque, nunca al desplazar el contenido.
+     */
+    public void ponerRadioEsquinas(float px) {
+        tinte.ponerRadio(px);
+        opaco.ponerRadio(px);
+        float r = radioEsquinas();
+        forma.rewind();
+        forma.addRoundRect(caja, r, r, Path.Direction.CW);
+        if (nivel == NivelCristal.REFRACCION) prepararEfecto();
+        invalidate();
+    }
+
     // El efecto del nodo, una vez por tamaño y nivel.
     private void prepararEfecto() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || desenfoque == null) return;
@@ -214,14 +237,16 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        pintarSombra(canvas);
         // Solo desenfoca en Android 12 o más, con un nivel que lo pida, en un lienzo acelerado
         // y con el lienzo de detrás ya grabado. Si no, la superficie opaca.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || nivel == NivelCristal.OPACO
                 || desenfoque == null || lienzo == null || !canvas.isHardwareAccelerated()) {
+            // El «+» opaco es el de antes de ser cristal, que no llevaba sombra.
+            if (!accion) pintarSombra(canvas);
             opaco.draw(canvas);
             return;
         }
+        pintarSombra(canvas);
         LienzoCristal.Captura captura = lienzo.captura();
         if (captura != null && captura.lista()) {
             desenfoque.pintar(canvas, captura, dx, dy, forma);

@@ -333,4 +333,13 @@
     <color name="gp_mas_claro">#FFB27A</color>
     <color name="gp_mas_oscuro">#FF6A00</color>
     <color name="gp_mas_icono">#1A0E00</color>
+    <!-- El «+» de cristal (niveles 1 y 2; el degradado de arriba queda para el nivel 3): el
+         naranja como tinte sobre el desenfoque, a 160°, del 78 % al 60 %; borde blanco al 60 %,
+         brillo interior de arriba al 55 % y la línea de reflejo del cuarto superior. El icono se
+         mide sobre el peor punto de lo que queda detrás (ContrasteCristalTest). -->
+    <color name="gp_mas_tinte_alto">#C7FF6A00</color>
+    <color name="gp_mas_tinte_bajo">#99FF6A00</color>
+    <color name="gp_mas_borde">#99FFFFFF</color>
+    <color name="gp_mas_brillo">#8CFFFFFF</color>
+    <color name="gp_mas_reflejo">#73FFFFFF</color>
 </resources>

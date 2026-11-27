@@ -55,6 +55,9 @@ public class ContrasteCristalTest {
     // La hoja del «+», con más tinte que la barra (en oscuro, el mismo).
     private static final String[] HOJA = { "gp_vivo_hoja_alto", "gp_vivo_hoja_bajo" };
     private static final String[] ORO = { "gp_cristal_oro_alto", "gp_cristal_oro_bajo" };
+    // El «+»: los dos tonos de su tinte de cristal y los dos de su degradado opaco.
+    private static final String[] MAS = { "gp_mas_tinte_alto", "gp_mas_tinte_bajo" };
+    private static final String[] MAS_OPACO = { "gp_mas_claro", "gp_mas_oscuro" };
 
     private static final double TEXTO = 4.5, GRANDE = 3.0;
 
@@ -134,15 +137,9 @@ public class ContrasteCristalTest {
         List<String> fallos = new ArrayList<>();
         for (String tema : TEMAS) {
             Tema t = new Tema(tema);
-            // Lo que puede quedar detrás de un cristal vivo: el fondo, con o sin una tarjeta
-            // encima, y eso mismo con la saturación del desenfoque.
-            Set<Integer> detras = new LinkedHashSet<>(t.fondo());
-            detras.addAll(t.capas(t.fondo(), CRISTAL));
-            // Y todo eso con el velo del «+» encima: con la hoja abierta, la hoja y la barra
-            // desenfocan el contenido ya oscurecido.
-            detras.addAll(t.capas(detras, new String[]{ "gp_velo_cristal" }));
-            Set<Integer> saturado = new LinkedHashSet<>(detras);
-            for (int c : detras) saturado.add(saturar(c, CristalVivo.SATURACION));
+            // Lo que puede quedar detrás, y eso mismo con la saturación del desenfoque.
+            Set<Integer> detras = t.detrasDelVivo();
+            Set<Integer> saturado = saturados(detras);
 
             String[][] barras = { VIVO, VIVO_OPACO }, hojas = { HOJA, VIVO_OPACO };
             String[] nombres = { "niveles 1 y 2", "nivel 3" };
@@ -178,15 +175,24 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
+    // El «+» es cristal vivo teñido de naranja: su icono («+» y «×», un gráfico: 3:1) se mide en
+    // los dos temas y los tres niveles. En los niveles 1 y 2, sobre su tinte compuesto encima de
+    // todo lo que puede quedar detrás (lo mismo que la barra, con el velo de la hoja abierta
+    // incluido, que es cuando se ve la «×»); en el 3, sobre su degradado macizo. El icono es
+    // casi negro, así que su peor punto es el más oscuro de lo de detrás, no el más claro: se
+    // apuntan los dos.
     @Test
-    public void el_mas_se_lee_sobre_su_degradado() throws IOException {
+    public void el_mas_de_cristal_se_lee_en_los_tres_niveles() throws IOException {
         List<String> fallos = new ArrayList<>();
         for (String tema : TEMAS) {
             Tema t = new Tema(tema);
-            Set<Integer> mas = new LinkedHashSet<>();
-            mas.add(t.color("gp_mas_claro"));
-            mas.add(t.color("gp_mas_oscuro"));
-            t.medir("el «+»", "gp_mas_icono", mas, GRANDE, fallos);
+            Set<Integer> cristal = t.capas(saturados(t.detrasDelVivo()), MAS);
+            t.medir("el «+», niveles 1 y 2", "gp_mas_icono", cristal, GRANDE, fallos);
+            t.medir("el «+», 1 y 2, lo más claro", "gp_mas_icono", masClaro(cristal), GRANDE, fallos);
+            Set<Integer> opaco = new LinkedHashSet<>();
+            for (String tono : MAS_OPACO) opaco.add(t.color(tono));
+            t.medir("el «+», nivel 3", "gp_mas_icono", opaco, GRANDE, fallos);
+            t.medir("el «+», nivel 3, lo más claro", "gp_mas_icono", masClaro(opaco), GRANDE, fallos);
         }
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
@@ -263,6 +269,18 @@ public class ContrasteCristalTest {
         }
 
         /**
+         * Lo que puede quedar detrás de un cristal vivo: el fondo, con o sin una tarjeta encima,
+         * y todo eso con el velo del «+»: con la hoja abierta, la hoja, la barra y el propio «+»
+         * desenfocan el contenido ya oscurecido.
+         */
+        Set<Integer> detrasDelVivo() {
+            Set<Integer> detras = new LinkedHashSet<>(fondo());
+            detras.addAll(capas(fondo(), CRISTAL));
+            detras.addAll(capas(detras, new String[]{ "gp_velo_cristal" }));
+            return detras;
+        }
+
+        /**
          * Cada color de debajo con cada una de las capas compuesta encima. Una capa transparente
          * (un token que en ese tema no se pinta) no cuenta: no hay tal capa.
          */
@@ -321,6 +339,28 @@ public class ContrasteCristalTest {
             }
             if (peor < minimo) fallos.add(linea);
         }
+    }
+
+    // Esos colores y, además, cada uno con la saturación que les sube el desenfoque.
+    private static Set<Integer> saturados(Set<Integer> colores) {
+        Set<Integer> todos = new LinkedHashSet<>(colores);
+        for (int c : colores) todos.add(saturar(c, CristalVivo.SATURACION));
+        return todos;
+    }
+
+    // El más luminoso de esos colores, solo.
+    private static Set<Integer> masClaro(Set<Integer> colores) {
+        int claro = 0;
+        double mayor = -1;
+        for (int c : colores) {
+            if (luminancia(c) > mayor) {
+                mayor = luminancia(c);
+                claro = c;
+            }
+        }
+        Set<Integer> uno = new LinkedHashSet<>();
+        uno.add(claro);
+        return uno;
     }
 
     // La matriz de saturación de Android (ColorMatrix.setSaturation), sobre un color opaco.

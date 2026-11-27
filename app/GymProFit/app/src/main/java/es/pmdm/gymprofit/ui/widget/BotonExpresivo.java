@@ -1,13 +1,10 @@
 package es.pmdm.gymprofit.ui.widget;
 
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +12,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.button.MaterialButton;
 
 import es.pmdm.gymprofit.R;
+import es.pmdm.gymprofit.ui.cristal.CristalVivo;
 import es.pmdm.gymprofit.utils.Movimiento;
 
 // ============================================================
@@ -65,42 +63,31 @@ public class BotonExpresivo extends MaterialButton {
     }
 
     /**
-     * Lo mismo para un botón que no es un MaterialButton y cuyo fondo es una forma con esquinas
-     * (el «+» de la barra, un ImageButton con bg_boton_acciones): al tocarlo, sus esquinas pasan de
-     * las que trae su forma (en el «+», 32 dp: un círculo; GP-285) a boton_radio_pulsado en TOQUE ms,
-     * y vuelven al soltar. No consume el toque.
+     * Lo mismo para un botón que no es un MaterialButton sino una pieza de cristal vivo (el «+»
+     * de la barra): al tocarlo, sus esquinas pasan de las que tiene en reposo (en el «+», 32 dp:
+     * un círculo; GP-285) a boton_radio_pulsado en TOQUE ms, y vuelven al soltar. No consume el
+     * toque: el clic sigue su camino (por eso no hace falta performClick aquí).
      */
-    public static void alPulsar(@NonNull View boton) {
-        GradientDrawable forma = formaDe(boton.getBackground());
-        if (forma == null) return;
-        forma = (GradientDrawable) forma.mutate();
-        GradientDrawable f = forma;
-        float reposo = f.getCornerRadius();
+    @SuppressLint("ClickableViewAccessibility")
+    public static void alPulsar(@NonNull CristalVivo boton) {
         float pulsado = boton.getResources().getDimension(R.dimen.boton_radio_pulsado);
         ValueAnimator[] animador = new ValueAnimator[1];
+        // Las esquinas de reposo, tal como están la primera vez que se toca (ya con su medida).
+        float[] reposo = {-1f};
         boton.setOnTouchListener((v, e) -> {
             int accion = e.getActionMasked();
             boolean baja = accion == MotionEvent.ACTION_DOWN;
             if (baja || accion == MotionEvent.ACTION_UP || accion == MotionEvent.ACTION_CANCEL) {
+                if (reposo[0] < 0) reposo[0] = boton.radioEsquinas();
                 if (animador[0] != null) animador[0].cancel();
-                animador[0] = ValueAnimator.ofFloat(f.getCornerRadius(), baja ? pulsado : reposo);
+                animador[0] = ValueAnimator.ofFloat(boton.radioEsquinas(), baja ? pulsado : reposo[0]);
                 animador[0].setDuration(Movimiento.TOQUE);
                 animador[0].setInterpolator(Movimiento.ESTANDAR);
-                animador[0].addUpdateListener(a -> f.setCornerRadius((float) a.getAnimatedValue()));
+                animador[0].addUpdateListener(a -> boton.ponerRadioEsquinas((float) a.getAnimatedValue()));
                 animador[0].start();
             }
             return false;
         });
-    }
-
-    // La forma de un fondo, tanto si es la forma sola como si va dentro de una onda o de capas.
-    @Nullable
-    private static GradientDrawable formaDe(@Nullable Drawable fondo) {
-        if (fondo instanceof GradientDrawable) return (GradientDrawable) fondo;
-        if (fondo instanceof LayerDrawable && ((LayerDrawable) fondo).getNumberOfLayers() > 0) {
-            return formaDe(((LayerDrawable) fondo).getDrawable(0));
-        }
-        return null;
     }
 
     @Override
