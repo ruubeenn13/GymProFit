@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   capa_boton_acciones — la capa de pulsado del «+» de la barra (GP-285): el 10 % de siempre
-  (boton_capa), dentro de su círculo. Va como primer plano del cristal vivo, que no tiene fondo:
-  el «+» lo pinta CristalVivo (cristalAccion).
+  (boton_capa), dentro de su forma. Va como primer plano del cristal vivo, que no tiene fondo:
+  el «+» lo pinta CristalVivo (cristalAccion), que al cambiar de forma mientras se pulsa le
+  cambia también las esquinas a esta máscara (ponerRadioEsquinas): si no, se veía un círculo
+  dentro del cuadrado redondeado.
 -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/boton_capa">
     <item android:id="@android:id/mask">
-        <shape android:shape="oval">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/barra_mas_radio" />
             <solid android:color="@android:color/white" />
         </shape>
     </item>

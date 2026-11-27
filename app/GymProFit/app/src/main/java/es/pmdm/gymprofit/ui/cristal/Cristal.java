@@ -196,6 +196,10 @@ public class Cristal extends Drawable {
                 borde = R.color.gp_cristal_brillo;
                 brillo = brilloBajo = canto = 0;
                 radialRadio = r.getDimension(R.dimen.barra_mas_degradado);
+                // Su borde, en píxeles enteros, como el de la forma que lo pintaba antes: con el
+                // grosor en décimas (2,75 px a 440 ppp) el canto salía en dos líneas.
+                grosor = r.getDimensionPixelSize(R.dimen.cristal_borde);
+                trazo.setStrokeWidth(grosor);
                 break;
             default:
                 break;

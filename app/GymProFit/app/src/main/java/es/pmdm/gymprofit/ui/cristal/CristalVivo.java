@@ -16,6 +16,9 @@ import android.graphics.RenderEffect;
 import android.graphics.RenderNode;
 import android.graphics.RuntimeShader;
 import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -198,7 +201,8 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
     /**
      * Cambia el radio de las esquinas (px): el «+», que cambia de forma mientras se pulsa
      * (BotonExpresivo). Con refracción rehace el efecto, que lleva el radio dentro: pasa en los
-     * pocos fotogramas de un toque, nunca al desplazar el contenido.
+     * pocos fotogramas de un toque, nunca al desplazar el contenido. Si su primer plano es una onda
+     * con máscara de esquinas redondeadas, la máscara cambia con él.
      */
     public void ponerRadioEsquinas(float px) {
         tinte.ponerRadio(px);
@@ -206,6 +210,12 @@ public class CristalVivo extends FrameLayout implements ViewTreeObserver.OnPreDr
         float r = radioEsquinas();
         forma.rewind();
         forma.addRoundRect(caja, r, r, Path.Direction.CW);
+        // La capa de pulsado (el primer plano: una onda con su máscara) sigue a la forma.
+        Drawable capa = getForeground();
+        if (capa instanceof RippleDrawable) {
+            Drawable mascara = ((RippleDrawable) capa.mutate()).findDrawableByLayerId(android.R.id.mask);
+            if (mascara instanceof GradientDrawable) ((GradientDrawable) mascara).setCornerRadius(r);
+        }
         if (nivel == NivelCristal.REFRACCION) prepararEfecto();
         invalidate();
     }

@@ -4,10 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -87,6 +90,35 @@ public class BarraNavegacionRecorteTest {
                 View p = barra.findViewById(id);
                 assertTrue("pestaña de " + p.getWidth() / dp + " dp de ancho", p.getWidth() >= 48 * dp);
                 assertTrue("pestaña de " + p.getHeight() / dp + " dp de alto", p.getHeight() >= 48 * dp);
+            }
+        });
+    }
+
+    // A letra 1,3 las etiquetas no caben a su tamaño entero en un móvil estrecho, y encogen. La
+    // caja de cada una tiene que ser la de su texto ya encogido. Si encogen al colocarse, en
+    // Android 8 o menos se quedan con la caja del tamaño grande (ahí AppCompat marca para medir
+    // solo la etiqueta, no a sus padres, y ninguna medida posterior llega hasta ella) y el texto
+    // sale descentrado: se veía al recrearse la pantalla (revisor de UI, GP-285).
+    @Test
+    public void a_letra_grande_la_caja_de_cada_etiqueta_es_la_de_su_texto() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Context base = tema();
+            Configuration grande = new Configuration(base.getResources().getConfiguration());
+            grande.fontScale = 1.3f;
+            Context c = new ContextThemeWrapper(base.createConfigurationContext(grande), R.style.Theme_GymProFit);
+            float dp = c.getResources().getDisplayMetrics().density;
+            BarraNavegacion barra = barra(c, Math.round(360 * dp), 0);
+
+            TypedValue valor = new TypedValue();
+            c.getResources().getValue(R.dimen.text_eyebrow, valor, true);
+            float entero = TypedValue.complexToFloat(valor.data) * dp * BarraNavegacion.ESCALA_MAXIMA_ETIQUETA;
+            for (int id : new int[]{ R.id.tabInicio, R.id.tabEntrenar, R.id.tabNutricion, R.id.tabProgreso }) {
+                TextView etiqueta = barra.findViewById(id).findViewById(R.id.tvEtiqueta);
+                // La prueba vale porque encogen: a 360 dp de ancho no caben a 1,3.
+                assertTrue("«" + etiqueta.getText() + "» no ha encogido", etiqueta.getTextSize() < entero - 0.5f);
+                float texto = etiqueta.getPaint().measureText(etiqueta.getText().toString());
+                assertEquals("ancho de la caja de «" + etiqueta.getText() + "» frente al de su texto",
+                        texto, etiqueta.getWidth(), 1.5f);
             }
         });
     }

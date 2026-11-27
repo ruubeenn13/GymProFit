@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -207,22 +208,36 @@ public class BarraNavegacion extends LinearLayout {
         return base * escalaEtiqueta(getResources().getConfiguration().fontScale, ancha, anchoPestana);
     }
 
-    // Con el ancho ya sabido, las etiquetas se ajustan a lo que cabe en una pestaña.
+    // Con el ancho ya repartido entre las pestañas, las etiquetas se ajustan a lo que cabe en una
+    // y se vuelve a medir en la misma pasada. Se decide al medir y no al colocar: si el tamaño
+    // del texto cambia durante la colocación, en Android 8 o menos AppCompat marca para medir
+    // solo la etiqueta, sin avisar a sus padres, y ninguna medida posterior baja hasta ella. Se
+    // quedaba con la caja del tamaño grande y el texto, ya encogido, descentrado dentro: se veía
+    // a letra 1,3 al recrearse la pantalla (cambiar de tema o de idioma, volver tras un rato).
     @Override
-    protected void onLayout(boolean cambia, int l, int t, int r, int b) {
-        super.onLayout(cambia, l, t, r, b);
-        if (pestanas[0] == null || pestanas[0].getWidth() == 0) return;
+    protected void onMeasure(int anchoSpec, int altoSpec) {
+        super.onMeasure(anchoSpec, altoSpec);
+        if (ajustarEtiquetas()) super.onMeasure(anchoSpec, altoSpec);
+    }
+
+    // Pone a las etiquetas el tamaño que cabe en una pestaña. Devuelve si lo ha cambiado: entonces
+    // deja marcadas para medir las etiquetas y todo lo que hay entre ellas y la barra.
+    private boolean ajustarEtiquetas() {
+        if (pestanas[0] == null || pestanas[0].getMeasuredWidth() == 0) return false;
         float aire = getResources().getDimension(R.dimen.espacio_4);
-        float tam = tamanoEtiqueta(pestanas[0].getWidth() - 2 * aire);
+        float tam = tamanoEtiqueta(pestanas[0].getMeasuredWidth() - 2 * aire);
         TextView primera = pestanas[0].findViewById(R.id.tvEtiqueta);
-        if (Math.abs(primera.getTextSize() - tam) < 0.5f) return;
+        if (Math.abs(primera.getTextSize() - tam) < 0.5f) return false;
         for (View p : pestanas) {
-            ((TextView) p.findViewById(R.id.tvEtiqueta)).setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
+            TextView etiqueta = p.findViewById(R.id.tvEtiqueta);
+            etiqueta.setTextSize(TypedValue.COMPLEX_UNIT_PX, tam);
+            // A mano y hasta la barra: lo que pida el cambio de tamaño depende de la versión.
+            for (ViewParent v = etiqueta.getParent(); v instanceof View && v != this; v = v.getParent()) {
+                ((View) v).forceLayout();
+            }
+            etiqueta.forceLayout();
         }
-        // El tamaño cambia a mitad de una colocación, y la medida que eso pide se pierde: cada
-        // etiqueta se quedaba con la caja del tamaño anterior y su texto descentrado (visto a
-        // letra 1,3 al volver a la app). Se pide otra en cuanto acaba esta.
-        post(this::requestLayout);
+        return true;
     }
 
     public void setOyente(Oyente oyente) { this.oyente = oyente; }
