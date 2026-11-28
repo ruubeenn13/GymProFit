@@ -183,9 +183,22 @@
     <!-- Sesión en vivo (GP-012): hueco libre al final de la lista para el descanso (GP-013). -->
     <dimen name="envivo_hueco_descanso">160dp</dimen>
     <!-- La cuenta atrás del descanso: grande, se lee de un vistazo (GP-013). -->
-    <dimen name="envivo_descanso_numero">46sp</dimen>
+    <dimen name="envivo_descanso_numero">40sp</dimen>
+    <!-- El panel del descanso flota (GP-285, lote 2): 12 a los lados y 22 sobre el hueco del sistema. -->
+    <dimen name="envivo_descanso_lado">12dp</dimen>
+    <dimen name="envivo_descanso_abajo">22dp</dimen>
+    <!-- Botones del descanso: letra y relleno contenidos, para que «−15 s», «+15 s» y «Saltar»
+         quepan en una fila también con letra 2,0 en un móvil de 360 dp. -->
+    <dimen name="envivo_descanso_boton_texto">14sp</dimen>
+    <dimen name="envivo_descanso_boton_relleno">12dp</dimen>
+    <!-- Hueco que la lista deja arriba para la cabecera flotante mientras esta no se ha medido. -->
+    <dimen name="envivo_hueco_cabecera">180dp</dimen>
+    <!-- Radio de la fila de una serie resaltada (la que toca, la del récord) y del aviso del récord. -->
+    <dimen name="radio_fila_serie">16dp</dimen>
     <!-- Ancho de la columna del número de serie. 48 y no 40: con letra 1,3 «SERIE» tocaba a «ANTERIOR». -->
     <dimen name="envivo_col_serie">48dp</dimen>
+    <!-- Margen de la Sesión en vivo a los lados de la pantalla: 16, como en la maqueta (GP-285, lote 2). -->
+    <dimen name="envivo_margen">16dp</dimen>
     <!-- GP-216: el anillo de la cámara del avatar de Perfil y el borde de una opción de la hoja de elegir. -->
     <dimen name="avatar_camara_anillo">3dp</dimen>
     <dimen name="opcion_borde">2dp</dimen>

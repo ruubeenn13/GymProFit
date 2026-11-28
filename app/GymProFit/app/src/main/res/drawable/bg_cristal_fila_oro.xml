@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal_fila_oro — la serie que batió un récord en la Sesión en vivo, y su aviso (GP-285, lote 2): el tinte dorado del diseño sobre un surco oscuro, radio 16. Lo dibuja Cristal (ORO_FILA). -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="oro_fila"
+    app:cristalRadio="@dimen/radio_fila_serie" />

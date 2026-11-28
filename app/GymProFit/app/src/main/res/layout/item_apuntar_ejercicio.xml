@@ -61,8 +61,11 @@
                 app:tint="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
-        <!-- Rótulos de las columnas. Solo para la vista: cada fila se lee entera. -->
-        <LinearLayout
+        <!-- Rótulos de las columnas. Solo para la vista: cada fila se lee entera. Son
+             TextoSinPartir (GP-286): con letra grande «SERIE» y «ANTERIOR» no cabían en su
+             columna y se partían por la mitad; ahora encogen lo justo, nunca por debajo de su
+             tamaño a letra 1,0, y los cuatro al mismo tamaño (FilaRotulos). -->
+        <es.pmdm.gymprofit.ui.widget.FilaRotulos
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/espacio_8"
@@ -72,7 +75,7 @@
             android:paddingStart="@dimen/espacio_12"
             android:paddingEnd="@dimen/espacio_8">
 
-            <TextView
+            <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                 android:layout_width="@dimen/envivo_col_serie"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -81,7 +84,7 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="@dimen/text_eyebrow" />
 
-            <TextView
+            <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.3"
@@ -92,7 +95,7 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="@dimen/text_eyebrow" />
 
-            <TextView
+            <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                 android:id="@+id/tvRotuloKg"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -103,7 +106,7 @@
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="@dimen/text_eyebrow" />
 
-            <TextView
+            <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                 android:id="@+id/tvRotuloReps"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -117,7 +120,7 @@
             <Space
                 android:layout_width="@dimen/zona_tactil"
                 android:layout_height="1dp" />
-        </LinearLayout>
+        </es.pmdm.gymprofit.ui.widget.FilaRotulos>
 
         <LinearLayout
             android:id="@+id/contenedorSeries"

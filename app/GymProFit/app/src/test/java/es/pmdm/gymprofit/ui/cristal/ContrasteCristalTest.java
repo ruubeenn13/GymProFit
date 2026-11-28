@@ -56,6 +56,8 @@ public class ContrasteCristalTest {
     // La hoja del «+», con más tinte que la barra (en oscuro, el mismo).
     private static final String[] HOJA = { "gp_vivo_hoja_alto", "gp_vivo_hoja_bajo" };
     private static final String[] ORO = { "gp_cristal_oro_alto", "gp_cristal_oro_bajo" };
+    // El cristal vivo de la Sesión en vivo (la cabecera, el resumen y el descanso): el de la barra.
+    private static final String[] VIVO_SESION = VIVO;
     // El botón de marca (el principal y el «+»): los dos extremos de su relleno macizo.
     private static final String[] MARCA_RELLENO = { "gp_marca_alto", "gp_marca_bajo" };
 
@@ -260,6 +262,97 @@ public class ContrasteCristalTest {
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
+    // ── La Sesión en vivo (lote 2) ───────────────────────────────────────────
+
+    // La Sesión en vivo tiene su propio fondo (naranja, dorado y azul: Ambiente.sesion) y sus
+    // propias superficies: la tarjeta de un ejercicio, la fila de la serie en curso (la lente),
+    // la fila dorada de un récord y el campo de kg o de repeticiones (un surco). Cada texto pasa
+    // 4,5:1 sobre el peor punto de todo lo que puede tener debajo, y cada gráfico (el aro de una
+    // serie sin marcar, el borde de un campo, el trofeo) 3:1.
+    @Test
+    public void la_sesion_en_vivo_se_lee_en_los_dos_temas() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        for (String tema : TEMAS) {
+            Tema t = new Tema(tema);
+            Set<Integer> fondo = t.fondoSesion();
+            // Sobre el fondo, sin cristal: el estado de la carga y «Descartar la sesión».
+            t.medir("sesión, sobre el fondo", "gp_cristal_texto", fondo, TEXTO, fallos);
+            t.medir("sesión, sobre el fondo", "gp_cristal_texto_2", fondo, TEXTO, fallos);
+            t.medir("sesión, sobre el fondo", "gp_cristal_error", fondo, TEXTO, fallos);
+            // La tarjeta de un ejercicio.
+            Set<Integer> tarjeta = t.capas(fondo, CRISTAL);
+            for (String texto : new String[]{ "gp_cristal_texto", "gp_cristal_texto_2", "gp_cristal_oro" }) {
+                t.medir("sesión, tarjeta", texto, tarjeta, TEXTO, fallos);
+            }
+            for (String grafico : new String[]{ "gp_cristal_grafico", "gp_cristal_exito" }) {
+                t.medir("sesión, gráfico en la tarjeta", grafico, tarjeta, GRANDE, fallos);
+            }
+            // El aro de una serie sin marcar, el borde de un campo y el de «Añadir serie».
+            t.medirCompuesto("sesión, aro y borde de campo", "gp_cristal_barra_tenue", tarjeta, GRANDE, fallos);
+            // La serie en curso: la lente. Lo que tenía hecho la última vez va en el texto
+            // principal (el secundario no llega sobre la lente) y su número, sus kilos y su aro,
+            // en el acento de la lente.
+            Set<Integer> lente = t.capas(tarjeta, new String[]{ "gp_lente" });
+            for (String texto : new String[]{ "gp_cristal_texto", "gp_cristal_lente_acento" }) {
+                t.medir("sesión, serie en curso", texto, lente, TEXTO, fallos);
+            }
+            // El récord en dorado: el número de la serie y «¡Récord!» en la fila dorada, y el
+            // título del aviso. Texto pequeño: 4,5:1 en los dos temas. La fila es el tinte dorado
+            // del diseño sobre un surco oscuro (en claro no hay surco).
+            Set<Integer> oro = t.capas(t.color("gp_cristal_oro_surco") >>> 24 == 0 ? tarjeta
+                    : t.capas(tarjeta, new String[]{ "gp_cristal_oro_surco" }), ORO);
+            t.medir("sesión, récord en dorado", "gp_cristal_oro_fila", oro, TEXTO, fallos);
+            t.medir("sesión, texto sobre el récord", "gp_cristal_texto", oro, TEXTO, fallos);
+            // Los botones de marcar: el check sobre el círculo de una serie hecha y el trofeo
+            // sobre el círculo dorado de la del récord (gráficos: 3:1).
+            t.medir("sesión, check de la serie hecha", "gp_cristal_exito",
+                    t.capas(tarjeta, new String[]{ "gp_cristal_exito_fondo" }), GRANDE, fallos);
+            t.medir("sesión, trofeo de la serie del récord", "gp_cristal_oro_fila",
+                    t.capas(oro, new String[]{ "gp_cristal_oro_alto" }), GRANDE, fallos);
+            // Los campos: un surco sobre la tarjeta, sobre la lente o sobre la fila dorada. Lo
+            // escrito va en el texto principal y la pista (lo de la última vez), en el secundario;
+            // en la fila dorada, donde el secundario no llega, la pista va también en el principal.
+            Set<Integer> debajoDelCampo = new LinkedHashSet<>(tarjeta);
+            debajoDelCampo.addAll(lente);
+            String[] surco = { "gp_cristal_pista" };
+            Set<Integer> campo = t.capas(debajoDelCampo, surco);
+            t.medir("sesión, campo", "gp_cristal_texto", campo, TEXTO, fallos);
+            t.medir("sesión, pista del campo", "gp_cristal_texto_2", campo, TEXTO, fallos);
+            t.medir("sesión, campo en el récord", "gp_cristal_texto", t.capas(oro, surco), TEXTO, fallos);
+        }
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
+    // El cristal vivo de la Sesión en vivo: la cabecera (el título y «Terminar»), el resumen
+    // (tiempo, volumen y series) y el panel del descanso. Detrás puede pasar el fondo, una
+    // tarjeta, la serie en curso o la fila dorada de un récord. En los tres niveles: con el
+    // tinte sobre lo desenfocado (1 y 2) y con la superficie opaca (3).
+    @Test
+    public void el_cristal_vivo_de_la_sesion_se_lee_en_los_tres_niveles() throws IOException {
+        List<String> fallos = new ArrayList<>();
+        for (String tema : TEMAS) {
+            Tema t = new Tema(tema);
+            Set<Integer> detras = t.detrasDelVivoEnLaSesion();
+            Set<Integer> saturado = saturados(detras);
+            String[][] tintes = { VIVO_SESION, VIVO_OPACO };
+            String[] nombres = { "niveles 1 y 2", "nivel 3" };
+            for (int n = 0; n < tintes.length; n++) {
+                Set<Integer> vivo = t.capas(n == 0 ? saturado : detras, tintes[n]);
+                String donde = "sesión, cristal vivo, " + nombres[n];
+                t.medir(donde, "gp_cristal_texto", vivo, TEXTO, fallos);
+                t.medir(donde, "gp_cristal_texto_2", vivo, TEXTO, fallos);
+                t.medir(donde, "gp_vivo_accion", vivo, TEXTO, fallos);
+                // «−15 s» y «+15 s»: cristal estático encima del panel, en los tres niveles.
+                t.medir(donde + ", secundario", "gp_cristal_texto", t.capas(vivo, CRISTAL), TEXTO, fallos);
+                // La barra que se vacía (y la de la sesión): su relleno contra su pista.
+                Set<Integer> pista = t.capas(vivo, new String[]{ "gp_cristal_pista" });
+                t.medir(donde + ", barra contra su pista", "gp_cristal_descanso_alto", pista, GRANDE, fallos);
+                t.medir(donde + ", barra contra su pista", "gp_cristal_descanso_bajo", pista, GRANDE, fallos);
+            }
+        }
+        if (!fallos.isEmpty()) fail(String.join("\n", fallos));
+    }
+
     // ── La cuenta ───────────────────────────────────────────────────────────
 
     // El naranja de la marca, del que el botón de marca no se aleja más de ΔE 15.
@@ -358,6 +451,36 @@ public class ContrasteCristalTest {
                 }
             }
             return colores;
+        }
+
+        /** Lo mismo para el fondo de la Sesión en vivo (naranja, dorado y azul). */
+        Set<Integer> fondoSesion() {
+            Ambiente.Brillo[] brillos = Ambiente.sesion(color("gp_ambiente_sesion_1"),
+                    color("gp_ambiente_sesion_2"), color("gp_ambiente_sesion_3"));
+            int base = color("gp_ambiente_base");
+            Set<Integer> colores = new LinkedHashSet<>();
+            for (float[] p : PANTALLAS) {
+                for (float y = 0; y <= p[1]; y += 2) {
+                    for (float x = 0; x <= p[0]; x += 2) {
+                        colores.add(Ambiente.colorEn(x, y, p[0], p[1], base, brillos));
+                    }
+                }
+            }
+            return colores;
+        }
+
+        /**
+         * Lo que puede pasar por detrás del cristal vivo de la Sesión en vivo: su fondo, con o sin
+         * la tarjeta de un ejercicio, y sobre la tarjeta la serie en curso o la fila de un récord.
+         * Aquí no hay velo: el descanso no oscurece la lista.
+         */
+        Set<Integer> detrasDelVivoEnLaSesion() {
+            Set<Integer> detras = new LinkedHashSet<>(fondoSesion());
+            Set<Integer> tarjeta = capas(fondoSesion(), CRISTAL);
+            detras.addAll(tarjeta);
+            detras.addAll(capas(tarjeta, new String[]{ "gp_lente" }));
+            detras.addAll(capas(tarjeta, ORO));
+            return detras;
         }
 
         /**

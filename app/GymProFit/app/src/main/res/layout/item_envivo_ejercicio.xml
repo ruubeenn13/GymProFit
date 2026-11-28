@@ -4,17 +4,18 @@
   (GP-012): nombre, pauta y notas como en el detalle de la rutina, la última vez
   (GP-014), «Tu récord» y el aviso del récord (GP-210), el menú del ejercicio y los rótulos
   de las columnas de las series.
+  En Liquid Glass (GP-285, lote 2) no lleva fondo: la tarjeta de cristal de cada ejercicio la
+  pinta la lista de una pieza, detrás de su cabecera, sus series y su pie (TarjetaEjercicioCristal).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
+    android:layout_marginStart="@dimen/envivo_margen"
+    android:layout_marginEnd="@dimen/envivo_margen"
     android:layout_marginTop="16dp"
-    android:background="@drawable/bg_envivo_arriba"
     android:orientation="vertical"
-    android:paddingTop="12dp">
+    android:paddingTop="@dimen/espacio_16">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="no"
                 android:textAppearance="@style/TextAppearance.GymProFit.Display"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="@dimen/text_headline" />
 
             <TextView
@@ -58,7 +60,8 @@
                 android:textSize="@dimen/text_caption"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- «Tu récord: 85 kg × 7», con su trofeo dorado, o «Primera vez» (GP-210). -->
+            <!-- «Tu récord: 85 kg × 7», con su trofeo, en el dorado de texto sobre cristal
+                 (4,5:1 en los dos temas), o «Primera vez», en neutro (GP-210). -->
             <TextView
                 android:id="@+id/tvRecord"
                 android:layout_width="match_parent"
@@ -66,9 +69,9 @@
                 android:layout_marginTop="4dp"
                 app:drawableStartCompat="@drawable/ic_ms_trophy"
                 android:drawablePadding="5dp"
-                app:drawableTint="@color/gp_gold"
+                app:drawableTint="@color/gp_cristal_oro"
                 android:importantForAccessibility="no"
-                android:textColor="@color/gp_gold_text"
+                android:textColor="@color/gp_cristal_oro"
                 android:textSize="@dimen/text_caption"
                 android:visibility="gone" />
 
@@ -89,7 +92,9 @@
             app:tint="?attr/colorOnSurfaceVariant" />
     </LinearLayout>
 
-    <!-- El aviso del récord (GP-210, momento 25): baja con el trofeo, las chispas y el brillo. -->
+    <!-- El aviso del récord (GP-210, momento 25): baja con el trofeo, las chispas y el brillo.
+         Sobre cristal, la fila dorada (el tinte del diseño sobre su surco); el título, en el
+         dorado que pasa 4,5:1 ahí, y la marca de antes, en el texto principal. -->
     <LinearLayout
         android:id="@+id/avisoRecord"
         android:layout_width="match_parent"
@@ -97,7 +102,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="12dp"
-        android:background="@drawable/bg_aviso_record"
+        android:background="@drawable/bg_cristal_fila_oro"
         android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -120,7 +125,7 @@
                 android:layout_gravity="center"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_ms_trophy_fill"
-                app:tint="@color/gp_gold" />
+                app:tint="@color/gp_cristal_oro_fila" />
         </FrameLayout>
 
         <LinearLayout
@@ -136,7 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                android:textColor="@color/gp_gold_text"
+                android:textColor="@color/gp_cristal_oro_fila"
                 android:textSize="@dimen/text_title" />
 
             <TextView
@@ -144,13 +149,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="@dimen/text_caption" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Rótulos de las columnas. Solo para la vista: cada fila se lee entera. -->
-    <LinearLayout
+    <!-- Rótulos de las columnas, como en la maqueta: pequeños y en el texto secundario. Solo
+         para la vista: cada fila se lee entera. Son TextoSinPartir (GP-286): con letra grande
+         encogen lo justo para caber en su columna, nunca por debajo de su tamaño a letra 1,0, y
+         los cuatro al mismo tamaño (FilaRotulos). -->
+    <es.pmdm.gymprofit.ui.widget.FilaRotulos
         android:id="@+id/filaRotulos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -159,19 +167,18 @@
         android:importantForAccessibility="noHideDescendants"
         android:orientation="horizontal"
         android:paddingStart="12dp"
-        android:paddingEnd="8dp">
+        android:paddingEnd="8dp"
+        android:paddingBottom="@dimen/espacio_4">
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvRotuloSerie"
             android:layout_width="@dimen/envivo_col_serie"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/envivo_col_serie"
-            android:textAppearance="@style/TextAppearance.GymProFit.Label"
-            android:textSize="@dimen/text_eyebrow"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvRotuloAnterior"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -179,34 +186,28 @@
             android:paddingStart="@dimen/espacio_8"
             android:paddingEnd="@dimen/espacio_4"
             android:text="@string/envivo_col_anterior"
-            android:textAppearance="@style/TextAppearance.GymProFit.Label"
-            android:textSize="@dimen/text_eyebrow"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvRotuloKg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/envivo_col_kg"
-            android:textAppearance="@style/TextAppearance.GymProFit.Label"
-            android:textSize="@dimen/text_eyebrow"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
 
-        <TextView
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvRotuloReps"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/envivo_col_reps"
-            android:textAppearance="@style/TextAppearance.GymProFit.Label"
-            android:textSize="@dimen/text_eyebrow"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
 
         <Space
             android:layout_width="48dp"
             android:layout_height="1dp" />
-    </LinearLayout>
+    </es.pmdm.gymprofit.ui.widget.FilaRotulos>
 </LinearLayout>

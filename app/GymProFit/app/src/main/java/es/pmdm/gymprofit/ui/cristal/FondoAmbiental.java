@@ -25,7 +25,8 @@ import es.pmdm.gymprofit.R;
 // ============================================================
 // FondoAmbiental — el fondo de las pantallas Liquid Glass (GP-285, DEC-070).
 //
-// La base (#08090B en oscuro, #F2EDE8 en claro) con los brillos radiales difusos encima. Es
+// La base (#08090B en oscuro, #F2EDE8 en claro) con los brillos radiales difusos encima (los
+// de Inicio o, con sesion(), los de la Sesión en vivo: naranja, dorado y azul). Es
 // estático: se calcula una vez por tamaño, a resolución completa y con tramado propio
 // (Ambiente.pintar), y dibujarlo es pegar una imagen opaca; no se mueve con el scroll ni se
 // recalcula. El contenido, que sí se mueve, pasa por encima.
@@ -71,12 +72,25 @@ public class FondoAmbiental extends Drawable {
 
     /** El fondo de Inicio, con los colores del tema de ese contexto. */
     public FondoAmbiental(@NonNull Context context) {
-        base = ContextCompat.getColor(context, R.color.gp_ambiente_base);
-        brillos = Ambiente.inicio(
+        this(context, Ambiente.inicio(
                 ContextCompat.getColor(context, R.color.gp_ambiente_brillo_1),
                 ContextCompat.getColor(context, R.color.gp_ambiente_brillo_2),
                 ContextCompat.getColor(context, R.color.gp_ambiente_brillo_3),
-                ContextCompat.getColor(context, R.color.gp_ambiente_brillo_4));
+                ContextCompat.getColor(context, R.color.gp_ambiente_brillo_4)));
+    }
+
+    /** El fondo de la Sesión en vivo: naranja, dorado y azul (Ambiente.sesion). */
+    @NonNull
+    public static FondoAmbiental sesion(@NonNull Context context) {
+        return new FondoAmbiental(context, Ambiente.sesion(
+                ContextCompat.getColor(context, R.color.gp_ambiente_sesion_1),
+                ContextCompat.getColor(context, R.color.gp_ambiente_sesion_2),
+                ContextCompat.getColor(context, R.color.gp_ambiente_sesion_3)));
+    }
+
+    private FondoAmbiental(@NonNull Context context, @NonNull Ambiente.Brillo[] brillos) {
+        base = ContextCompat.getColor(context, R.color.gp_ambiente_base);
+        this.brillos = brillos;
         fundido = context.getResources().getInteger(android.R.integer.config_shortAnimTime);
     }
 

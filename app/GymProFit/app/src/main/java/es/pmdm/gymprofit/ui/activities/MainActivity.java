@@ -535,18 +535,9 @@ public class MainActivity extends BaseActivity implements PantallaArranque.Anfit
     // velo del «+» los cubre igual que al resto. Desde Android 10 el sistema pintaba además su
     // franja de contraste bajo los tres botones, por encima del velo (en claro quedaba más clara
     // que la pantalla): se apaga.
-    @SuppressWarnings("deprecation")
+    // Es lo mismo en toda pantalla Liquid Glass (la Sesión en vivo): VentanaCristal.
     private void barrasDelSistemaTransparentes() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            getWindow().setNavigationBarContrastEnforced(false);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) return;
-        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
-        // Android 7: los botones de navegación son siempre blancos. En claro (el tema que pide
-        // iconos oscuros) se quedan con un velo detrás para que se vean.
-        getWindow().setNavigationBarColor(BordesSistema.colorBarraNavegacion(Build.VERSION.SDK_INT,
-                getResources().getBoolean(R.bool.gp_iconos_barra_oscuros),
-                androidx.core.content.ContextCompat.getColor(this, R.color.gp_velo)));
+        es.pmdm.gymprofit.ui.cristal.VentanaCristal.barrasTransparentes(this);
     }
 
     /** Alto del pie (la barra flotante y, si hay sesión, la suya), que tapa el final de cada pestaña. */

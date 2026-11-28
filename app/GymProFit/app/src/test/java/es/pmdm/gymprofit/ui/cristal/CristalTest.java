@@ -105,7 +105,8 @@ public class CristalTest {
     @Test
     public void el_principal_y_el_mas_comparten_el_boton_de_marca() throws IOException {
         String cristal = leer(JAVA.resolve("ui/cristal/Cristal.java"));
-        String dibujar = cuerpo(cristal, "public void draw(");
+        // draw() solo decide si hace falta una capa (el dibujo a medias); lo pinta pintar().
+        String dibujar = cuerpo(cristal, "private void pintar(");
         assertTrue("la sombra va antes que el botón",
                 dibujar.indexOf("sombra.pintar(") < dibujar.indexOf("pintarMarca(canvas)"));
         String pinta = cuerpo(cristal, "private void pintarMarca(");

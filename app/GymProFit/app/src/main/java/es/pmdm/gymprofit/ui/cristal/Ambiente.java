@@ -71,6 +71,20 @@ public final class Ambiente {
         };
     }
 
+    /**
+     * La mezcla de la Sesión en vivo (lote 2): naranja en la esquina de arriba a la derecha,
+     * dorado a la izquierda algo por debajo de la mitad y azul abajo a la derecha. Las medidas
+     * son las de su maqueta de 390 × 844 (elipses de 380 × 300, 340 × 300 y 360 × 300).
+     */
+    @NonNull
+    public static Brillo[] sesion(int naranja, int dorado, int azul) {
+        return new Brillo[]{
+                new Brillo(1.00f, 0.00f, 380f / 390f, 300f / 390f, naranja),
+                new Brillo(0.00f, 0.60f, 340f / 390f, 300f / 390f, dorado),
+                new Brillo(0.90f, 0.95f, 360f / 390f, 300f / 390f, azul),
+        };
+    }
+
     /** El alfa (0 a 1) de un brillo en un punto de una pantalla de ese tamaño. */
     public static float alfaEn(@NonNull Brillo b, float x, float y, float ancho, float alto) {
         float lado = Math.min(ancho, alto);

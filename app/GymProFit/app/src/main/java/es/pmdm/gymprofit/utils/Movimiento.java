@@ -783,24 +783,6 @@ public final class Movimiento {
     public interface ValorPaso { void en(double valor); }
 
     /**
-     * 24 · La barra de la sesión avanza (o retrocede, si se desmarca) de {@code desde} a
-     * {@code hasta} en BARRA ms con la curva estándar. Con las animaciones quitadas, salta a
-     * {@code hasta}.
-     */
-    public static void llenarBarra(@NonNull com.google.android.material.progressindicator.BaseProgressIndicator<?> barra,
-                                   int desde, int hasta) {
-        if (quieto(barra.getContext()) || desde == hasta) {
-            barra.setProgress(hasta);
-            return;
-        }
-        ValueAnimator a = ValueAnimator.ofInt(desde, hasta);
-        a.setDuration(BARRA);
-        a.setInterpolator(ESTANDAR);
-        a.addUpdateListener(an -> barra.setProgress((int) an.getAnimatedValue()));
-        a.start();
-    }
-
-    /**
      * 25 · La fila del récord pasa a dorado: un destello a {@code pico} al 25 % y se asienta
      * en {@code fin} (los colores del lienzo, #3A2E12 y #2A2414), en ORO ms con la curva
      * estándar. Con las animaciones quitadas queda en {@code fin}.
@@ -818,6 +800,47 @@ public final class Movimiento {
                     ? mezclar(desde, pico, ESTANDAR.getInterpolation(t / 0.25f))
                     : mezclar(pico, fin, ESTANDAR.getInterpolation((t - 0.25f) / 0.75f));
             fila.setBackgroundColor(color);
+        });
+        a.start();
+    }
+
+    /**
+     * 25 · La fila del récord pasa a dorado, sobre cristal (GP-285): el fondo dorado aparece y
+     * un destello (el tinte otra vez encima) llega a su máximo al 25 % y se va, en ORO ms con
+     * la curva estándar en cada tramo, como {@link #dorarFila(View, int, int, int)}. Con las
+     * animaciones quitadas queda el fondo dorado, sin destello.
+     *
+     * @param oro      el fondo dorado de la fila (bg_cristal_fila_oro).
+     * @param destello el tinte que pasa por encima y se va (bg_cristal_fila_destello).
+     */
+    public static void dorarFila(@NonNull View fila, @NonNull android.graphics.drawable.Drawable oro,
+                                 @NonNull android.graphics.drawable.Drawable destello) {
+        oro.setAlpha(255);
+        fila.setBackground(oro);
+        if (quieto(fila.getContext())) return;
+        oro.setAlpha(0);
+        destello.setAlpha(0);
+        fila.setForeground(destello);
+        ValueAnimator a = ValueAnimator.ofFloat(0f, 1f);
+        a.setDuration(ORO);
+        a.setInterpolator(LINEAL);
+        a.addUpdateListener(an -> {
+            float t = (float) an.getAnimatedValue();
+            if (t < 0.25f) {
+                int alfa = Math.round(255 * ESTANDAR.getInterpolation(t / 0.25f));
+                oro.setAlpha(alfa);
+                destello.setAlpha(alfa);
+            } else {
+                oro.setAlpha(255);
+                destello.setAlpha(Math.round(255 * (1f - ESTANDAR.getInterpolation((t - 0.25f) / 0.75f))));
+            }
+        });
+        a.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationEnd(Animator animation) {
+                oro.setAlpha(255);
+                // Solo si sigue siendo el suyo: la fila puede haberse vuelto a pintar entretanto.
+                if (fila.getForeground() == destello) fila.setForeground(null);
+            }
         });
         a.start();
     }
@@ -849,7 +872,7 @@ public final class Movimiento {
             panel.setTranslationY(0f);
             return;
         }
-        panel.setTranslationY(panel.getHeight() > 0 ? panel.getHeight() : 120 * panel.getResources().getDisplayMetrics().density);
+        panel.setTranslationY(recorridoPanel(panel));
         panel.animate().translationY(0f).setStartDelay(0).setDuration(HOJA).setInterpolator(ENFATIZADA).start();
     }
 
@@ -866,12 +889,26 @@ public final class Movimiento {
             if (alFinal != null) alFinal.run();
             return;
         }
-        panel.animate().translationY(panel.getHeight()).setStartDelay(0).setDuration(BAJA)
+        panel.animate().translationY(recorridoPanel(panel)).setStartDelay(0).setDuration(BAJA)
                 .setInterpolator(ESTANDAR).withEndAction(() -> {
                     panel.setVisibility(View.GONE);
                     panel.setTranslationY(0f);
                     if (alFinal != null) alFinal.run();
                 }).start();
+    }
+
+    // Lo que el panel tiene que bajar para salir de la pantalla: su alto y, desde que flota
+    // (GP-285), lo que lo separa del borde de abajo (su margen y el hueco del sistema, que es
+    // el relleno de su contenedor).
+    private static float recorridoPanel(@NonNull View panel) {
+        float alto = panel.getHeight() > 0 ? panel.getHeight()
+                : 120 * panel.getResources().getDisplayMetrics().density;
+        android.view.ViewGroup.LayoutParams lp = panel.getLayoutParams();
+        if (lp instanceof android.view.ViewGroup.MarginLayoutParams) {
+            alto += ((android.view.ViewGroup.MarginLayoutParams) lp).bottomMargin;
+        }
+        if (panel.getParent() instanceof View) alto += ((View) panel.getParent()).getPaddingBottom();
+        return alto;
     }
 
     /** 26 · A falta de 10 s el número late una vez: crece a 1,08 al 40 % y vuelve (LATIDO). */

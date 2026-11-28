@@ -41,6 +41,9 @@ import es.pmdm.gymprofit.R;
 //   · TARJETA      tarjetas, tiles y chips (el radio lo da cristalRadio; sin él, píldora).
 //   · LENTE        la selección: la pestaña activa de la barra. En claro, con sombra.
 //   · ORO          la fila de un récord: degradado dorado de lado a lado y brillo.
+//   · ORO_FILA     la fila de la serie que batió un récord en la Sesión en vivo (lote 2): el
+//                  mismo dorado sobre un surco oscuro (gp_cristal_oro_surco; en claro no hay),
+//                  para que lo dorado que se escribe encima pase 4,5:1.
 //   · VIVO         el tinte que el cristal vivo pinta sobre su desenfoque (CristalVivo).
 //   · VIVO_OPACO   la superficie del cristal vivo cuando no desenfoca (nivel 3).
 //   · VIVO_GRUESO  el tinte de la hoja del «+», con más cuerpo que el de la barra.
@@ -62,7 +65,7 @@ import es.pmdm.gymprofit.R;
 // ============================================================
 public class Cristal extends Drawable {
 
-    public static final int TARJETA = 0, LENTE = 1, ORO = 2, VIVO = 4, VIVO_OPACO = 5, VIVO_GRUESO = 6;
+    public static final int TARJETA = 0, LENTE = 1, ORO = 2, ORO_FILA = 3, VIVO = 4, VIVO_OPACO = 5, VIVO_GRUESO = 6;
     public static final int MARCA = 7;
 
     /** El ángulo del degradado del relleno, como en CSS: 0 hacia arriba, 90 hacia la derecha. */
@@ -84,6 +87,8 @@ public class Cristal extends Drawable {
     static final float LUZ_PULSADO = 0.75f;
 
     private final Paint relleno = new Paint(Paint.ANTI_ALIAS_FLAG);
+    // El surco de la fila dorada: lo que oscurece la tarjeta bajo el tinte.
+    private final Paint surco = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint trazo = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint luz = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint luzBaja = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -110,10 +115,15 @@ public class Cristal extends Drawable {
     private float reflejoDentro;
     // El botón de marca: lo pulsado que está, de 0 a 1 (ponerLuz).
     private float luzPulsado;
+    // Lo que se ve del dibujo entero, de 0 a 255 (setAlpha).
+    private int alfa = 255;
 
     /** Para <drawable class=…>: los atributos llegan en inflate(). */
     public Cristal() {
         relleno.setStyle(Paint.Style.FILL);
+        // Un pincel nace negro opaco: el surco solo existe en la fila dorada (ORO_FILA).
+        surco.setStyle(Paint.Style.FILL);
+        surco.setColor(0);
         trazo.setStyle(Paint.Style.STROKE);
         luz.setStyle(Paint.Style.FILL);
         luzBaja.setStyle(Paint.Style.FILL);
@@ -170,6 +180,9 @@ public class Cristal extends Drawable {
                 sombraDifuminado = r.getDimension(R.dimen.lente_sombra_difuminado);
                 sombraBaja = r.getDimension(R.dimen.lente_sombra_baja);
                 break;
+            case ORO_FILA:
+                surco.setColor(ResourcesCompat.getColor(r, R.color.gp_cristal_oro_surco, theme));
+                // Sigue: el tinte es el del récord.
             case ORO:
                 a = R.color.gp_cristal_oro_alto;
                 b = R.color.gp_cristal_oro_bajo;
@@ -354,7 +367,7 @@ public class Cristal extends Drawable {
             relleno.setColor(alto);
             return null;
         }
-        if (tipo == ORO) {
+        if (tipo == ORO || tipo == ORO_FILA) {
             return new LinearGradient(caja.left, 0, caja.right, 0, alto, bajo, Shader.TileMode.CLAMP);
         }
         if (tipo == MARCA) {
@@ -375,7 +388,15 @@ public class Cristal extends Drawable {
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        if (caja.isEmpty()) return;
+        if (caja.isEmpty() || alfa == 0) return;
+        // A medias (la fila dorada que aparece, momento 25) se pinta en una capa: el dibujo
+        // entero, con su borde y su brillo, y no solo el relleno.
+        int capa = alfa < 255 ? canvas.saveLayerAlpha(caja, alfa) : -1;
+        pintar(canvas);
+        if (capa != -1) canvas.restoreToCount(capa);
+    }
+
+    private void pintar(@NonNull Canvas canvas) {
         if (sombra != null) {
             canvas.save();
             canvas.translate(caja.left, caja.top);
@@ -386,6 +407,7 @@ public class Cristal extends Drawable {
             pintarMarca(canvas);
             return;
         }
+        if (surco.getColor() >>> 24 != 0) canvas.drawPath(forma, surco);
         canvas.drawPath(forma, relleno);
         if (trazo.getColor() != 0) canvas.drawPath(bordeForma, trazo);
         if (filo.getColor() != 0) canvas.drawPath(filoForma, filo);
@@ -422,7 +444,15 @@ public class Cristal extends Drawable {
 
     @Override
     public void setAlpha(int alpha) {
-        relleno.setAlpha(alpha);
+        int a = Math.max(0, Math.min(255, alpha));
+        if (a == alfa) return;
+        alfa = a;
+        invalidateSelf();
+    }
+
+    @Override
+    public int getAlpha() {
+        return alfa;
     }
 
     @Override

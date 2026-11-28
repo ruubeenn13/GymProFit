@@ -1097,6 +1097,7 @@
     <string name="envivo_record_tu">Tu récord: %1$s</string>
     <string name="envivo_record_tu_hoy">Tu récord: %1$s, de hoy</string>
     <string name="envivo_record_aviso">¡Récord! %1$s</string>
+    <string name="envivo_record_fila">¡Récord!</string>
     <string name="envivo_record_aviso_antes">Tu mejor marca era %1$s</string>
     <string name="envivo_record_aviso_a11y">Récord. %1$s. Tu mejor marca era %2$s.</string>
     <string name="envivo_descanso_siguiente_serie">Siguiente: serie %1$d · %2$s</string>

@@ -250,6 +250,22 @@
     <color name="gp_ambiente_brillo_2">#4DFF606E</color>
     <color name="gp_ambiente_brillo_3">#5C507DFF</color>
     <color name="gp_ambiente_brillo_4">#423CBEA0</color>
+    <!-- Fondo de la Sesión en vivo (lote 2; Ambiente.sesion): naranja arriba a la derecha, dorado
+         a la izquierda y azul abajo a la derecha. No hay maqueta en claro. -->
+    <color name="gp_ambiente_sesion_1">#8CFF7A28</color>
+    <color name="gp_ambiente_sesion_2">#73E8B84B</color>
+    <color name="gp_ambiente_sesion_3">#5C507DFF</color>
+    <!-- «Descartar la sesión», texto sobre el fondo, sin cristal debajo. -->
+    <color name="gp_cristal_error">#9A1010</color>
+    <!-- La fila dorada de un récord en la Sesión en vivo: en claro no lleva surco, y lo que se
+         escribe encima va en un dorado más oscuro que el de la tarjeta. -->
+    <color name="gp_cristal_oro_surco">#00000000</color>
+    <color name="gp_cristal_oro_fila">#6B4F12</color>
+    <!-- El acento sobre la lente de la serie en curso (su número, sus kilos y su aro). -->
+    <color name="gp_cristal_lente_acento">@color/gp_cristal_acento</color>
+    <!-- La barra del descanso que se vacía. -->
+    <color name="gp_cristal_descanso_alto">#A33800</color>
+    <color name="gp_cristal_descanso_bajo">#A33800</color>
     <!-- Cristal estático: relleno a 160° blanco 62 % → 34 % (al 55 %) → 48 %, borde blanco 80 %,
          brillo superior blanco 100 %, línea inferior blanca 40 %, filo exterior de 0,5 dp y
          sombra suave (28 dp de difuminado, 10 hacia abajo), que en oscuro no hay. -->
@@ -271,6 +287,8 @@
     <color name="gp_cristal_acento">#A33800</color>
     <color name="gp_cristal_enlace">#8B3000</color>
     <color name="gp_cristal_exito">#12693A</color>
+    <!-- El relleno del círculo de una serie hecha sobre cristal: el mismo verde, tenue. -->
+    <color name="gp_cristal_exito_fondo">#2912693A</color>
     <!-- Dorado de texto sobre cristal: con el cristal nuevo, #7A5C18 se quedaba en 4,19:1. -->
     <color name="gp_cristal_oro">#745717</color>
     <color name="gp_cristal_oro_cifra">#7A5C18</color>

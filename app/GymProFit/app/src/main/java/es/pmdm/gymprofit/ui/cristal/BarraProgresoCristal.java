@@ -3,8 +3,10 @@ package es.pmdm.gymprofit.ui.cristal;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -27,8 +29,9 @@ import es.pmdm.gymprofit.utils.Movimiento;
 //
 // Es informativa y va siempre dentro de algo que ya dice el dato con palabras (un tile de «Tu
 // día», la fila de una zona): no se anuncia a TalkBack (DEC-019: el nombre lo lleva su grupo).
-// El progreso va de 0 a 100. La pista sale del tema (colorSurfaceVariant) y el relleno, del
-// naranja del tema hasta que se le dé otro.
+// El progreso va de 0 a 100 (o, con setFraccion, de 0 a 1 con decimales). La pista sale del tema
+// (colorSurfaceVariant) y el relleno, del naranja del tema hasta que se le dé otro, liso o en
+// degradado de lado a lado.
 // ============================================================
 public class BarraProgresoCristal extends View {
 
@@ -37,6 +40,8 @@ public class BarraProgresoCristal extends View {
     private final RectF caja = new RectF();
     private final int grosor;
     private float progreso;
+    private boolean conDegradado;
+    @ColorInt private int degradadoDesde, degradadoHasta;
     @Nullable private ValueAnimator animador;
 
     public BarraProgresoCristal(@NonNull Context context) {
@@ -53,6 +58,8 @@ public class BarraProgresoCristal extends View {
 
     /** El color del relleno (el de la macro, el de la zona…). */
     public void setColorRelleno(@ColorInt int color) {
+        conDegradado = false;
+        relleno.setShader(null);
         relleno.setColor(color);
         invalidate();
     }
@@ -80,6 +87,47 @@ public class BarraProgresoCristal extends View {
             invalidate();
         });
         animador.start();
+    }
+
+    /**
+     * Fija el progreso sin animarlo, con decimales: para quien lo mueve fotograma a fotograma
+     * (la barra del descanso, que se vacía en lineal: momento 26 de DEC-039).
+     *
+     * @param parte de 0 a 1; lo que se salga, se recorta.
+     */
+    public void setFraccion(float parte) {
+        if (animador != null) animador.cancel();
+        float hasta = Math.max(0f, Math.min(1f, parte));
+        if (hasta == progreso) return;
+        progreso = hasta;
+        invalidate();
+    }
+
+    /**
+     * El relleno en degradado de lado a lado de la barra (la del descanso: del acento claro al
+     * naranja). Con los dos colores iguales es un color liso. El degradado va sobre la barra
+     * entera y el relleno enseña su parte: se crea al cambiar de tamaño, nunca al dibujar.
+     */
+    public void setColoresRelleno(@ColorInt int desde, @ColorInt int hasta) {
+        degradadoDesde = desde;
+        degradadoHasta = hasta;
+        conDegradado = desde != hasta;
+        relleno.setColor(desde);
+        montarDegradado();
+        invalidate();
+    }
+
+    private void montarDegradado() {
+        float izq = getPaddingLeft(), der = getWidth() - getPaddingRight();
+        relleno.setShader(conDegradado && der > izq
+                ? new LinearGradient(izq, 0, der, 0, degradadoDesde, degradadoHasta, Shader.TileMode.CLAMP)
+                : null);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int antesW, int antesH) {
+        super.onSizeChanged(w, h, antesW, antesH);
+        montarDegradado();
     }
 
     /** El progreso de ahora, de 0 a 100. */

@@ -31,7 +31,8 @@ import androidx.appcompat.widget.AppCompatTextView;
 // TalkBack.
 //
 // Se decide en onMeasure, con el ancho que le dan, y se vuelve a decidir con cada texto nuevo:
-// un texto más corto recupera el tamaño pedido.
+// un texto más corto recupera el tamaño pedido. Se mide lo que se pinta: un rótulo en mayúsculas
+// (los de las columnas de una serie, GP-286) cuenta con sus mayúsculas.
 // ============================================================
 public class TextoSinPartir extends AppCompatTextView {
 
@@ -47,6 +48,9 @@ public class TextoSinPartir extends AppCompatTextView {
     private boolean recortando;
     // La descripción para TalkBack la puso el recorte (el texto entero), no quien usa la vista.
     private boolean descripcionDelRecorte;
+    // Un tope que le pone su fila (FilaRotulos), en px; 0, ninguno. Y el tamaño que eligió él
+    // solo, sin ese tope, la última vez que se midió.
+    private float tope, propio;
 
     /**
      * Pone varios textos hermanos, del mismo ancho y estilo, a un solo tamaño: el del que más
@@ -54,6 +58,24 @@ public class TextoSinPartir extends AppCompatTextView {
      */
     public static void igualar(@NonNull TextoSinPartir... textos) {
         for (TextoSinPartir t : textos) t.grupo = textos;
+    }
+
+    /**
+     * Un tope para su tamaño, además del suyo: el de otro texto de su fila que ha tenido que
+     * encoger más (FilaRotulos, con columnas de distinto ancho). Nunca baja del tamaño a letra
+     * 1,0. Cero lo quita.
+     *
+     * @param px el tamaño máximo, en px.
+     */
+    public void limitarA(float px) {
+        if (px == tope) return;
+        tope = px;
+        forceLayout();
+    }
+
+    /** El tamaño que eligió por su cuenta en su última medida (sin el tope de su fila), en px. */
+    public float tamanoPropio() {
+        return propio > 0f ? propio : getTextSize();
     }
 
     public TextoSinPartir(@NonNull Context context) {
@@ -102,6 +124,16 @@ public class TextoSinPartir extends AppCompatTextView {
         return completo == null ? "" : completo;
     }
 
+    // El texto entero tal como se pinta: un rótulo en mayúsculas (textAllCaps) es más ancho que
+    // lo que se le dio, y lo que tiene que caber es lo pintado (GP-286).
+    @NonNull
+    private CharSequence comoSePinta() {
+        CharSequence texto = getTextoCompleto();
+        android.text.method.TransformationMethod m = getTransformationMethod();
+        CharSequence pintado = m == null ? texto : m.getTransformation(texto, this);
+        return pintado == null ? texto : pintado;
+    }
+
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
@@ -118,16 +150,18 @@ public class TextoSinPartir extends AppCompatTextView {
             int ancho = View.MeasureSpec.getSize(widthMeasureSpec) - getCompoundPaddingLeft()
                     - getCompoundPaddingRight();
             medidor.set(getPaint());
-            float tamano = tamanoQueCabe(getTextoCompleto(), ancho, pedidoPx, minimoPx, medidor);
+            float tamano = tamanoQueCabe(comoSePinta(), ancho, pedidoPx, minimoPx, medidor);
             // En un grupo, todos al del que más tiene que encoger (los textos hermanos tienen
             // el mismo ancho): que «Agua» no salga más grande que «Calorías» a su lado.
             if (grupo != null) {
                 for (TextoSinPartir otro : grupo) {
                     if (otro == this) continue;
-                    tamano = Math.min(tamano, tamanoQueCabe(otro.getTextoCompleto(), ancho, pedidoPx,
+                    tamano = Math.min(tamano, tamanoQueCabe(otro.comoSePinta(), ancho, pedidoPx,
                             minimoPx, medidor));
                 }
             }
+            propio = tamano;
+            if (tope > 0f) tamano = Math.max(minimoPx, Math.min(tamano, tope));
             if (tamano != getTextSize()) super.setTextSize(TypedValue.COMPLEX_UNIT_PX, tamano);
             recortar(ancho, tamano);
         }

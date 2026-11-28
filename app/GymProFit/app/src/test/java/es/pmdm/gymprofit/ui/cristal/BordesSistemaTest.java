@@ -133,10 +133,16 @@ public class BordesSistemaTest {
 
         // Desde Android 10 el sistema pinta su franja de contraste bajo los tres botones, por
         // encima del velo (en claro quedaba más clara que la pantalla): se apaga, el fondo es el nuestro.
-        String barras = cuerpo(leer(JAVA.resolve("ui/activities/MainActivity.java")),
-                "private void barrasDelSistemaTransparentes(");
+        // Una sola fuente para toda pantalla Liquid Glass (VentanaCristal): la navegación
+        // principal y, desde el lote 2, la Sesión en vivo.
+        String barras = cuerpo(leer(JAVA.resolve("ui/cristal/VentanaCristal.java")),
+                "public static void barrasTransparentes(");
         assertTrue(barras.contains("setNavigationBarContrastEnforced(false)"));
         assertTrue(barras.contains("BordesSistema.colorBarraNavegacion("));
+        for (String pantalla : new String[]{ "MainActivity", "SesionEnVivoActivity" }) {
+            assertTrue(pantalla, leer(JAVA.resolve("ui/activities/" + pantalla + ".java"))
+                    .contains("VentanaCristal.barrasTransparentes(this)"));
+        }
     }
 
     @Test
