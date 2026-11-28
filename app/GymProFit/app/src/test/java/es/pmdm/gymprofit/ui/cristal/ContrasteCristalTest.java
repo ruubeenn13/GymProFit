@@ -56,7 +56,10 @@ public class ContrasteCristalTest {
     // La hoja del «+», con más tinte que la barra (en oscuro, el mismo).
     private static final String[] HOJA = { "gp_vivo_hoja_alto", "gp_vivo_hoja_bajo" };
     private static final String[] ORO = { "gp_cristal_oro_alto", "gp_cristal_oro_bajo" };
-    // El cristal vivo de la Sesión en vivo (la cabecera, el resumen y el descanso): el de la barra.
+    // El campo de una serie (kg, reps, tiempo): en claro, el cristal de las tarjetas; en oscuro,
+    // el surco de siempre.
+    private static final String[] CAMPO = { "gp_cristal_campo_alto", "gp_cristal_campo_medio", "gp_cristal_campo_bajo" };
+    // El cristal vivo de la Sesión en vivo (el resumen y el descanso): el de la barra.
     private static final String[] VIVO_SESION = VIVO;
     // El botón de marca (el principal y el «+»): los dos extremos de su relleno macizo.
     private static final String[] MARCA_RELLENO = { "gp_marca_alto", "gp_marca_bajo" };
@@ -314,21 +317,51 @@ public class ContrasteCristalTest {
             // en la fila dorada, donde el secundario no llega, la pista va también en el principal.
             Set<Integer> debajoDelCampo = new LinkedHashSet<>(tarjeta);
             debajoDelCampo.addAll(lente);
-            String[] surco = { "gp_cristal_pista" };
+            String[] surco = CAMPO;
             Set<Integer> campo = t.capas(debajoDelCampo, surco);
             t.medir("sesión, campo", "gp_cristal_texto", campo, TEXTO, fallos);
             t.medir("sesión, pista del campo", "gp_cristal_texto_2", campo, TEXTO, fallos);
             t.medir("sesión, campo en el récord", "gp_cristal_texto", t.capas(oro, surco), TEXTO, fallos);
             // En la serie en curso, los kilos (escritos o propuestos) van en el acento de la lente.
             t.medir("sesión, kilos de la serie en curso", "gp_cristal_lente_acento", t.capas(lente, surco), TEXTO, fallos);
+            // El borde del campo también contra lo de dentro: un control, 3:1.
+            t.medirCompuesto("sesión, borde del campo por dentro", "gp_cristal_barra_tenue", campo, GRANDE, fallos);
+            // Minimizar y «Terminar»: cristal estático sobre el fondo (nada pasa por detrás).
+            t.medir("sesión, «Terminar» en cristal estático", "gp_vivo_accion", tarjeta, TEXTO, fallos);
+            t.medir("sesión, minimizar en cristal estático", "gp_cristal_texto", tarjeta, GRANDE, fallos);
+            // En el nivel 3 el botón secundario es la superficie opaca del cristal vivo.
+            t.medir("sesión, «Terminar», nivel 3", "gp_vivo_accion", t.capas(fondo, VIVO_OPACO), TEXTO, fallos);
         }
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }
 
-    // El cristal vivo de la Sesión en vivo: la cabecera (el título y «Terminar»), el resumen
-    // (tiempo, volumen y series) y el panel del descanso. Detrás puede pasar el fondo, una
-    // tarjeta, la serie en curso o la fila dorada de un récord. En los tres niveles: con el
-    // tinte sobre lo desenfocado (1 y 2) y con la superficie opaca (3).
+    // Los campos de kg y reps en claro (remate del lote 2): eran un surco gris (la pista de las
+    // barras, tinta al 10 %) que sobre la tarjeta clara se leía como una caja gris opaca. Son
+    // cristal estático con los tokens de las tarjetas: relleno translúcido claro y canto de
+    // tinta. En oscuro no cambia: el surco de siempre.
+    @Test
+    public void los_campos_son_cristal_de_tarjeta_en_claro_y_el_surco_de_siempre_en_oscuro() throws IOException {
+        Tema claro = new Tema("values"), oscuro = new Tema("values-night");
+        for (int i = 0; i < CAMPO.length; i++) {
+            int relleno = claro.color(CAMPO[i]);
+            assertEquals("claro, " + CAMPO[i] + " es el de las tarjetas", claro.color(CRISTAL[i]), relleno);
+            assertTrue("claro, " + CAMPO[i] + " es translúcido", relleno >>> 24 < 0xFF && relleno >>> 24 > 0);
+            assertEquals("claro, " + CAMPO[i] + " es blanco, no tinta", 0xFFFFFF, relleno & 0xFFFFFF);
+            assertEquals("oscuro, " + CAMPO[i] + " no se toca", oscuro.color("gp_cristal_pista"), oscuro.color(CAMPO[i]));
+        }
+        // El dibujo: lo pinta Cristal (tipo «campo»), con el borde de siempre y el de foco.
+        String dibujo = new String(Files.readAllBytes(RES.resolve("drawable").resolve("bg_cristal_campo.xml")),
+                StandardCharsets.UTF_8).replaceAll("(?s)<!--.*?-->", "");
+        assertTrue("el campo lo pinta Cristal", dibujo.contains("app:cristalTipo=\"campo\""));
+        assertTrue("con foco, su borde de foco", dibujo.contains("android:state_focused=\"true\"")
+                && dibujo.contains("app:cristalTipo=\"campo_foco\""));
+        assertFalse("ya no es el surco liso", dibujo.contains("gp_cristal_pista"));
+    }
+
+    // El cristal vivo de la Sesión en vivo: el resumen (tiempo, volumen y series) y el panel del
+    // descanso. Detrás puede pasar el fondo, una tarjeta, la serie en curso o la fila dorada de
+    // un récord. En los tres niveles: con el tinte sobre lo desenfocado (1 y 2) y con la
+    // superficie opaca (3). Minimizar y «Terminar» ya no van aquí: son cristal estático (arriba).
     @Test
     public void el_cristal_vivo_de_la_sesion_se_lee_en_los_tres_niveles() throws IOException {
         List<String> fallos = new ArrayList<>();
@@ -343,7 +376,6 @@ public class ContrasteCristalTest {
                 String donde = "sesión, cristal vivo, " + nombres[n];
                 t.medir(donde, "gp_cristal_texto", vivo, TEXTO, fallos);
                 t.medir(donde, "gp_cristal_texto_2", vivo, TEXTO, fallos);
-                t.medir(donde, "gp_vivo_accion", vivo, TEXTO, fallos);
                 // «−15 s» y «+15 s»: cristal estático encima del panel, en los tres niveles.
                 t.medir(donde + ", secundario", "gp_cristal_texto", t.capas(vivo, CRISTAL), TEXTO, fallos);
                 // La barra que se vacía (y la de la sesión): su relleno contra su pista.

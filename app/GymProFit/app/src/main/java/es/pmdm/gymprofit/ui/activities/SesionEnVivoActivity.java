@@ -57,12 +57,14 @@ import es.pmdm.gymprofit.ui.adapters.SesionEnVivoAdapter;
 import es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal;
 import es.pmdm.gymprofit.ui.cristal.BordeSistema;
 import es.pmdm.gymprofit.ui.cristal.BordesSistema;
+import es.pmdm.gymprofit.ui.cristal.CantoVivo;
+import es.pmdm.gymprofit.ui.cristal.CristalVivo;
 import es.pmdm.gymprofit.ui.cristal.FondoAmbiental;
-import es.pmdm.gymprofit.ui.cristal.Hundir;
 import es.pmdm.gymprofit.ui.cristal.LienzoCristal;
 import es.pmdm.gymprofit.ui.cristal.VentanaCristal;
 import es.pmdm.gymprofit.ui.cristal.VigiaCristal;
 import es.pmdm.gymprofit.ui.widget.TextoSinPartir;
+import es.pmdm.gymprofit.ui.widget.TituloSesion;
 import es.pmdm.gymprofit.utils.InputDialog;
 import es.pmdm.gymprofit.utils.Marcas;
 import es.pmdm.gymprofit.utils.Movimiento;
@@ -91,9 +93,11 @@ import es.pmdm.gymprofit.utils.Valoracion;
 // «Reintentar» y «Descartar la sesión» si falló.
 //
 // Es una pantalla Liquid Glass (GP-285, lote 2; DEC-070): el fondo ambiental de la sesión y
-// la lista van en un LienzoCristal, y encima flotan, de cristal vivo, la cabecera, el resumen
-// y el descanso. La lista pasa por debajo: esta pantalla coloca sus márgenes del sistema
-// (InsetsUtils la deja) y le da a la lista el relleno de arriba y de abajo que hace falta.
+// la lista van en un LienzoCristal, y encima flotan la cabecera (minimizar y «Terminar», de
+// cristal estático: bajo ellos no pasa nada) y, de cristal vivo, el resumen y el descanso. La
+// lista pasa por debajo de estos dos y se desvanece antes de sus cantos (CantoVivo): esta
+// pantalla coloca sus márgenes del sistema (InsetsUtils la deja) y le da a la lista el relleno
+// de arriba y de abajo que hace falta.
 // ============================================================
 public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnVivoAdapter.Acciones {
 
@@ -105,7 +109,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
     private SesionEnCursoRepositorio repo;
     private SesionEnVivoAdapter adapter;
-    private TextView tvTitulo, tvSubtitulo;
+    private TituloSesion titulo;
     private TextView tvTiempo, tvSeries, tvVolumen;
     private View filaVolumen;
     private View filaResumen, cardGuardado, btnTerminar;
@@ -118,7 +122,9 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     @Nullable private VigiaCristal vigiaCristal;
     private FondoAmbiental fondo;
     private final BordeSistema bordeArriba = new BordeSistema(true), bordeAbajo = new BordeSistema(false);
-    private View cabecera, filaCabecera, bordeSuperior, bordeInferior;
+    // Los velos de los cantos (CantoVivo): bajo el último cristal de la cabecera y sobre el descanso.
+    private final BordeSistema veloArriba = new BordeSistema(true), veloAbajo = new BordeSistema(false);
+    private View cabecera, filaCabecera, bordeSuperior, bordeInferior, veloResumen, veloDescanso;
     // El hueco del sistema de abajo sin contar el teclado (lo que el borde de abajo tapa siempre).
     private int huecoSistema, huecoBarras;
 
@@ -182,9 +188,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         View btnMinimizar = findViewById(R.id.btnMinimizar);
         btnMinimizar.setOnClickListener(v -> salir());
         androidx.appcompat.widget.TooltipCompat.setTooltipText(btnMinimizar, btnMinimizar.getContentDescription());
-        tvTitulo = findViewById(R.id.tvTituloSesion);
-        tvSubtitulo = findViewById(R.id.tvSubtituloSesion);
-        ViewCompat.setAccessibilityHeading(tvTitulo, true);
+        titulo = findViewById(R.id.tituloSesion);
         tvTiempo = findViewById(R.id.tvTiempo);
         tvSeries = findViewById(R.id.tvSeries);
         tvVolumen = findViewById(R.id.tvVolumen);
@@ -200,12 +204,6 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         cardGuardado = findViewById(R.id.cardGuardado);
         btnTerminar = findViewById(R.id.btnTerminar);
         btnTerminar.setOnClickListener(v -> abrirTerminar());
-        // Minimizar y «Terminar» son cristal vivo, no botones: a TalkBack se le dice que lo son,
-        // y responden al dedo como los demás botones de Liquid Glass (se hunden, DEC-070).
-        for (View boton : new View[]{btnMinimizar, btnTerminar}) {
-            comoBoton(boton);
-            Hundir.alPulsar(boton);
-        }
         findViewById(R.id.btnReintentar).setOnClickListener(v -> repo.reintentar());
         findViewById(R.id.btnDescartarGuardado).setOnClickListener(v -> confirmarDescartar());
 
@@ -305,17 +303,21 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         fondo = FondoAmbiental.sesion(this);
         // Cuando hay imagen nueva (se calcula en un hilo aparte) los bordes la cogen, y siguen
         // el fundido con el que aparece.
+        BordeSistema[] bordes = { bordeArriba, bordeAbajo, veloArriba, veloAbajo };
         fondo.alCambiar(() -> {
-            bordeArriba.ponerFondo(fondo.imagen());
-            bordeAbajo.ponerFondo(fondo.imagen());
-            bordeArriba.mezcla(fondo.aparicion());
-            bordeAbajo.mezcla(fondo.aparicion());
+            for (BordeSistema borde : bordes) {
+                borde.ponerFondo(fondo.imagen());
+                borde.mezcla(fondo.aparicion());
+            }
         });
         findViewById(R.id.fondoAmbiental).setBackground(fondo);
-        bordeArriba.mezcla(0f);
-        bordeAbajo.mezcla(0f);
+        for (BordeSistema borde : bordes) borde.mezcla(0f);
         findViewById(R.id.bordeSuperior).setBackground(bordeArriba);
         findViewById(R.id.bordeInferior).setBackground(bordeAbajo);
+        veloResumen = findViewById(R.id.veloResumen);
+        veloDescanso = findViewById(R.id.veloDescanso);
+        veloResumen.setBackground(veloArriba);
+        veloDescanso.setBackground(veloAbajo);
         vigiaCristal = new VigiaCristal(this, lienzo);
         cabecera = findViewById(R.id.cabeceraSesion);
         filaCabecera = findViewById(R.id.filaCabecera);
@@ -323,10 +325,14 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         // La lista deja libre arriba lo que mida lo que flota (la cabecera, el resumen y, si
         // salen, el aviso de sin red y el estado del guardado), y el borde de arriba la
         // desvanece antes de la fila del título.
-        cabecera.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> v.post(() -> {
-            ajustarBordeSuperior();
-            ajustarHuecos();
-        }));
+        cabecera.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            // El velo va con su cristal en el mismo fotograma: solo cambia de sitio.
+            ajustarVeloResumen();
+            v.post(() -> {
+                ajustarBordeSuperior();
+                ajustarHuecos();
+            });
+        });
     }
 
     // Esta pantalla gestiona sus márgenes del sistema, como la navegación principal: a los
@@ -395,6 +401,61 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         bordeAbajo.poner(androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base), macizo);
     }
 
+    // Lo que pasa por detrás de un cristal vivo se ve desenfocado o se desvanece antes de su
+    // canto, nunca nítido y cortado (revisión de capturas del lote 2: bajo el resumen asomaba,
+    // entera, media línea de la tarjeta de debajo). Bajo el último cristal de la cabecera (el
+    // resumen o, si salió, el estado del guardado) hay un velo: el fondo ambiental, opaco desde
+    // un cuarto de radio por dentro del cristal hasta un par de dp por fuera, y de ahí a
+    // transparente hacia la lista (y también hacia dentro, para no acabar en seco: CantoVivo).
+    // Igual en los tres niveles: en el 3 el cristal es opaco y es lo único que suaviza el corte.
+    private void ajustarVeloResumen() {
+        if (cabecera == null || veloResumen == null) return;
+        CristalVivo ultimo = null;
+        android.view.ViewGroup pila = (android.view.ViewGroup) cabecera;
+        for (int i = 0; i < pila.getChildCount(); i++) {
+            View pieza = pila.getChildAt(i);
+            if (pieza instanceof CristalVivo && pieza.getVisibility() == View.VISIBLE) ultimo = (CristalVivo) pieza;
+        }
+        if (ultimo == null || ultimo.getHeight() == 0) return;
+        ponerVelo(veloResumen, veloArriba, CantoVivo.bajo(cabecera.getTop() + ultimo.getBottom(),
+                ultimo.radioEsquinas(), dimen(R.dimen.envivo_velo_margen), dimen(R.dimen.envivo_velo_rampa)));
+    }
+
+    // Lo mismo sobre el canto de arriba del descanso (o del aviso de su fin), mientras está.
+    private void ajustarVeloDescanso() {
+        if (veloDescanso == null || zonaDescanso == null) return;
+        CristalVivo pieza = piezaDescanso();
+        if (pieza == null || pieza.getHeight() == 0) {
+            veloDescanso.setVisibility(View.INVISIBLE);
+            return;
+        }
+        ponerVelo(veloDescanso, veloAbajo, CantoVivo.sobre(zonaDescanso.getTop() + pieza.getTop(),
+                pieza.radioEsquinas(), dimen(R.dimen.envivo_velo_margen), dimen(R.dimen.envivo_velo_rampa)));
+        veloDescanso.setVisibility(View.VISIBLE);
+    }
+
+    // El cristal que hay abajo ahora: el panel del descanso, el aviso de su fin o ninguno.
+    @Nullable
+    private CristalVivo piezaDescanso() {
+        if (panelDescanso.getVisibility() == View.VISIBLE) return (CristalVivo) panelDescanso;
+        if (avisoFin.getVisibility() == View.VISIBLE) return (CristalVivo) avisoFin;
+        return null;
+    }
+
+    // Un velo en su sitio. Se mueve sin pedir otra colocación (solo el alto la pide, y cambia
+    // con el radio del cristal, no con su sitio): va en el mismo fotograma que su cristal.
+    private void ponerVelo(View vista, BordeSistema velo, CantoVivo.Velo donde) {
+        ponerAlto(vista, donde.alto);
+        vista.setTranslationY(donde.arriba);
+        velo.ponerOrigen(Math.max(0, donde.arriba));
+        velo.ponerEntrada(donde.entrada);
+        velo.poner(androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base), donde.macizo);
+    }
+
+    private int dimen(int id) {
+        return getResources().getDimensionPixelSize(id);
+    }
+
     private static void ponerAlto(View v, int alto) {
         android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
         if (lp.height == alto) return;
@@ -404,17 +465,23 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
     // El relleno de la lista: arriba, lo que mide lo que flota; abajo, lo que ocupe el descanso
     // (con letra grande crece) o, sin él, el hueco de siempre, y nunca menos que el hueco del
-    // sistema (el teclado), para que la última serie no quede tapada.
+    // sistema (el teclado), para que la última serie no quede tapada. En los dos lados, además,
+    // lo que le falte a lo que ya separa la lista del cristal para que quepa su velo
+    // (CantoVivo.sitio): en reposo, ni la primera tarjeta ni la serie de encima del panel lo tocan.
     private void ajustarHuecos() {
         if (rv == null || cabecera == null || zonaDescanso == null) return;
         int hueco = getResources().getDimensionPixelSize(R.dimen.envivo_hueco_descanso);
         int margen = getResources().getDimensionPixelSize(R.dimen.espacio_16);
-        boolean conDescanso = panelDescanso.getVisibility() == View.VISIBLE || avisoFin.getVisibility() == View.VISIBLE;
+        CristalVivo pieza = piezaDescanso();
+        boolean conDescanso = pieza != null;
+        // Cero mientras la zona no se ha medido: hasta entonces no hay panel al que hacer sitio.
         int alto = conDescanso ? zonaDescanso.getHeight() : 0;
-        int abajo = Math.max(Math.max(hueco, alto), huecoSistema + margen);
-        int arriba = cabecera.getHeight();
+        int huecoVelo = CantoVivo.hueco(dimen(R.dimen.envivo_velo_margen), dimen(R.dimen.envivo_velo_rampa));
+        int velo = alto > 0 ? CantoVivo.sitio(huecoVelo, pieza.getTop()) : 0;
+        int abajo = Math.max(Math.max(hueco, alto + velo), huecoSistema + margen);
+        int arriba = cabecera.getHeight() + CantoVivo.sitio(huecoVelo, dimen(R.dimen.envivo_tarjeta_separacion));
         ajustarBordeInferior(conDescanso);
-        if (arriba > 0 && (rv.getPaddingTop() != arriba || rv.getPaddingBottom() != abajo)) {
+        if (cabecera.getHeight() > 0 && (rv.getPaddingTop() != arriba || rv.getPaddingBottom() != abajo)) {
             // Si la lista está arriba del todo, sigue arriba: su primer ejercicio, bajo la cabecera.
             boolean enCabeza = !rv.canScrollVertically(-1);
             rv.setPadding(rv.getPaddingLeft(), arriba, rv.getPaddingRight(), abajo);
@@ -429,18 +496,6 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             irASerie = -1;
             if (pos >= 0) rv.smoothScrollToPosition(pos);
         }
-    }
-
-    // Una vista de cristal que hace de botón: TalkBack la anuncia como tal.
-    private static void comoBoton(View vista) {
-        ViewCompat.setAccessibilityDelegate(vista, new androidx.core.view.AccessibilityDelegateCompat() {
-            @Override
-            public void onInitializeAccessibilityNodeInfo(@NonNull View host,
-                                                          @NonNull androidx.core.view.accessibility.AccessibilityNodeInfoCompat info) {
-                super.onInitializeAccessibilityNodeInfo(host, info);
-                info.setClassName(android.widget.Button.class.getName());
-            }
-        });
     }
 
     // «4.820 kg», «9 de 18»: la cifra y, más pequeño y en el texto secundario, su apoyo, en una
@@ -527,9 +582,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             if (!guardada) salir();
             return;
         }
-        tvTitulo.setText(EmpezarSesion.nombre(this, s.rutinaNombre));
-        tvSubtitulo.setText(s.programaNombre);
-        tvSubtitulo.setVisibility(s.programaNombre == null || s.programaNombre.isEmpty() ? View.GONE : View.VISIBLE);
+        titulo.poner(EmpezarSesion.nombre(this, s.rutinaNombre), s.programaNombre);
 
         pintarCifras(s);
         pintarReloj();
@@ -674,7 +727,11 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
 
         // La lista deja libre debajo de su final lo que ocupe el panel (con letra grande
         // crece), para que la última serie no quede tapada (ajustarHuecos).
-        zonaDescanso.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> rv.post(this::ajustarHuecos));
+        zonaDescanso.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            // El velo de encima del panel, en el mismo fotograma que él.
+            ajustarVeloDescanso();
+            rv.post(this::ajustarHuecos);
+        });
     }
 
     // Cada segundo y a cada cambio: la cuenta atrás, la barra, la serie que viene y el aviso del

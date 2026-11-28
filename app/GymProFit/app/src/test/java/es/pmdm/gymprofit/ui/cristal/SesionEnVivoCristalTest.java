@@ -54,7 +54,7 @@ public class SesionEnVivoCristalTest {
                     dentro(porId(pantalla, borde), lienzo));
         }
         NodeList vivos = pantalla.getElementsByTagName(VIVO);
-        assertTrue("la cabecera, el resumen y el guardado son cristal vivo", vivos.getLength() >= 4);
+        assertTrue("el aviso de sin red, el resumen y el guardado son cristal vivo", vivos.getLength() >= 3);
         for (int i = 0; i < vivos.getLength(); i++) {
             assertFalse("un cristal vivo dentro del lienzo se dibujaría a sí mismo",
                     dentro((Element) vivos.item(i), lienzo));
@@ -113,6 +113,45 @@ public class SesionEnVivoCristalTest {
             assertEquals(id + " no es una parada de foco", "false", pieza.getAttributeNS(ANDROID, "focusable"));
             assertEquals(id, "no", pieza.getAttributeNS(ANDROID, "importantForAccessibility"));
         }
+    }
+
+    // DEC-070 (remate del lote 2): un elemento flotante bajo el que nunca pasa contenido es
+    // cristal estático. La lista se desvanece antes de la fila del título, así que minimizar y
+    // «Terminar» no tienen nada que desenfocar: son el botón secundario de cristal, no cristal vivo.
+    @Test
+    public void minimizar_y_terminar_son_cristal_estatico_porque_nada_pasa_por_detras() throws Exception {
+        Document pantalla = xml("res/layout/activity_sesion_en_vivo.xml");
+        for (String id : new String[]{ "btnMinimizar", "btnTerminar" }) {
+            Element boton = porId(pantalla, id);
+            assertTrue(id + " es cristal estático (BotonCristal), no " + boton.getTagName(),
+                    boton.getTagName().endsWith(".BotonCristal"));
+            assertEquals(id, "@style/Widget.GymProFit.Boton.Cristal", boton.getAttribute("style"));
+        }
+        // Y la lista sigue sin pasar por detrás de esa fila: el borde de arriba es macizo hasta
+        // el primer cristal de debajo del título.
+        String codigo = leer("java/es/pmdm/gymprofit/ui/activities/SesionEnVivoActivity.java");
+        assertTrue(codigo.contains("macizo = cabecera.getTop() + pieza.getTop();"));
+    }
+
+    // Lo que pasa por detrás de un cristal vivo se ve desenfocado o se desvanece antes de su
+    // canto, nunca nítido y cortado (revisión de capturas del lote 2): bajo el resumen y sobre
+    // el descanso hay un velo, dentro del lienzo (el cristal desenfoca la lista ya desvanecida)
+    // y por encima de la lista.
+    @Test
+    public void la_lista_se_desvanece_antes_del_canto_del_resumen_y_del_descanso() throws Exception {
+        Document pantalla = xml("res/layout/activity_sesion_en_vivo.xml");
+        Element lienzo = (Element) pantalla.getElementsByTagName(LIENZO).item(0);
+        Element lista = porId(pantalla, "rvSesion");
+        for (String id : new String[]{ "veloResumen", "veloDescanso" }) {
+            Element velo = porId(pantalla, id);
+            assertTrue(id + " va dentro del lienzo", dentro(velo, lienzo));
+            assertTrue(id + " se pinta encima de la lista",
+                    (lista.compareDocumentPosition(velo) & Node.DOCUMENT_POSITION_FOLLOWING) != 0);
+            assertEquals(id + " no es de TalkBack", "no", velo.getAttributeNS(ANDROID, "importantForAccessibility"));
+        }
+        String codigo = leer("java/es/pmdm/gymprofit/ui/activities/SesionEnVivoActivity.java");
+        assertTrue("el velo de arriba sigue al último cristal de la cabecera", codigo.contains("CantoVivo.bajo("));
+        assertTrue("el de abajo, al panel del descanso o al aviso de su fin", codigo.contains("CantoVivo.sobre("));
     }
 
     private static String leer(String ruta) throws IOException {

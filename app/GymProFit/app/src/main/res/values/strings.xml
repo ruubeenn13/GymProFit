@@ -1076,6 +1076,8 @@
     <!-- Registro por tiempo y por lado (GP-125) -->
     <!-- Sesión en vivo (GP-012) y la última vez (GP-014) -->
     <string name="envivo_minimizar">Minimizar</string>
+    <!-- Lo que TalkBack lee del título de la sesión: la rutina y su programa. -->
+    <string name="envivo_titulo_a11y">%1$s, %2$s</string>
     <string name="envivo_terminar">Terminar</string>
     <string name="envivo_tiempo">Tiempo</string>
     <string name="envivo_series">Series</string>

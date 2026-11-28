@@ -55,6 +55,10 @@ import es.pmdm.gymprofit.R;
 //                  centrada de en torno al 60 % de su ancho), el borde de 1,5 dp en degradado
 //                  (claro arriba, tenue abajo) y el reflejo de arriba, una media luna que se apaga
 //                  hacia abajo. Pulsado, el brillo y la media luna suben (ponerLuz, Hundir).
+//   · CAMPO        el campo de una serie (kg, reps, tiempo) en la Sesión en vivo: el relleno
+//                  gp_cristal_campo_* (en claro, el de las tarjetas; en oscuro, el surco liso) con
+//                  el canto de un control (gp_cristal_barra_tenue, 3:1), sin brillos ni filo.
+//   · CAMPO_FOCO   el mismo con foco: el canto de 2 dp en el naranja de los gráficos.
 //
 // La sombra del cristal estático en claro no la pinta este dibujo sino su tarjeta
 // (TarjetaCristal), que es quien puede dibujar fuera de su caja; la de la lente sí, y por eso
@@ -67,6 +71,7 @@ public class Cristal extends Drawable {
 
     public static final int TARJETA = 0, LENTE = 1, ORO = 2, ORO_FILA = 3, VIVO = 4, VIVO_OPACO = 5, VIVO_GRUESO = 6;
     public static final int MARCA = 7;
+    public static final int CAMPO = 8, CAMPO_FOCO = 9;
 
     /** El ángulo del degradado del relleno, como en CSS: 0 hacia arriba, 90 hacia la derecha. */
     static final float ANGULO = 160f;
@@ -138,7 +143,7 @@ public class Cristal extends Drawable {
     /**
      * Desde código.
      *
-     * @param tipo  uno de TARJETA … VIVO_GRUESO.
+     * @param tipo  uno de TARJETA … CAMPO_FOCO.
      * @param radio radio de las esquinas en px; negativo, píldora.
      */
     public Cristal(@NonNull Context context, int tipo, float radio) {
@@ -222,6 +227,19 @@ public class Cristal extends Drawable {
                 sombraColor = ResourcesCompat.getColor(r, R.color.gp_marca_sombra, theme);
                 sombraDifuminado = r.getDimension(R.dimen.marca_sombra_difuminado);
                 sombraBaja = r.getDimension(R.dimen.marca_sombra_baja);
+                break;
+            case CAMPO_FOCO:
+                borde = R.color.gp_cristal_grafico;
+                grosor = r.getDimension(R.dimen.cristal_campo_foco);
+                trazo.setStrokeWidth(grosor);
+                // Sigue: el relleno es el del campo.
+            case CAMPO:
+                a = R.color.gp_cristal_campo_alto;
+                m = R.color.gp_cristal_campo_medio;
+                b = R.color.gp_cristal_campo_bajo;
+                if (tipo == CAMPO) borde = R.color.gp_cristal_barra_tenue;
+                // Un canto de tinta y nada más: el brillo blanco de arriba lo taparía.
+                brillo = brilloBajo = canto = 0;
                 break;
             default:
                 break;

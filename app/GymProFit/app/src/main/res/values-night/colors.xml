@@ -135,6 +135,10 @@
     <!-- La barra del descanso que se vacía: del acento claro al naranja, como en la maqueta. -->
     <color name="gp_cristal_descanso_alto">#FFB27A</color>
     <color name="gp_cristal_descanso_bajo">#FF6A00</color>
+    <!-- El campo de una serie: en oscuro, el surco de siempre (la pista de las barras). -->
+    <color name="gp_cristal_campo_alto">@color/gp_cristal_pista</color>
+    <color name="gp_cristal_campo_medio">@color/gp_cristal_pista</color>
+    <color name="gp_cristal_campo_bajo">@color/gp_cristal_pista</color>
     <!-- Cristal estático: relleno a 160° blanco 16 % → 5 % (al 55 %) → 9 %, borde 18 % y brillo
          superior 35 %. -->
     <color name="gp_cristal_alto">#29FFFFFF</color>

@@ -96,4 +96,31 @@ public final class BordesSistema {
         }
         return alfas;
     }
+
+
+    /**
+     * El alfa de cada fila de un velo que no va pegado a un canto de la pantalla (CantoVivo), de
+     * la punta transparente (fila 0) a su otro extremo. Dos diferencias con el borde del sistema:
+     * las últimas filas del tramo macizo, las más alejadas de la rampa, vuelven a transparente,
+     * para que el velo no acabe en seco por ese lado; y las dos rampas llevan una curva suave en
+     * sus dos extremos (3t² − 2t³), que a media rampa tapa la mitad. Sin entrada es el borde del
+     * sistema de siempre.
+     *
+     * @param entrada cuántas filas del macizo son esa rampa de vuelta, en px; 0, ninguna.
+     */
+    public static int[] alfas(int alto, int macizo, int entrada) {
+        int[] alfas = alfas(alto, macizo);
+        if (entrada <= 0) return alfas;
+        int opaco = Math.min(Math.max(0, macizo), alfas.length);
+        int rampa = alfas.length - opaco;
+        for (int y = 0; y < rampa; y++) alfas[y] = suave(y / (float) rampa);
+        int filas = Math.min(entrada, opaco);
+        for (int i = 0; i < filas; i++) alfas[alfas.length - 1 - i] = suave(i / (float) filas);
+        return alfas;
+    }
+
+    // De 0 a 255 con la curva 3t² − 2t³: plana al empezar y al acabar.
+    private static int suave(float t) {
+        return Math.round(255f * t * t * (3f - 2f * t));
+    }
 }

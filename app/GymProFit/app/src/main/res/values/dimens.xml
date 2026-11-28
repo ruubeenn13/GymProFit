@@ -275,6 +275,18 @@
     <!-- Solo en claro: el filo oscuro del canto y la sombra del cristal estático (28 dp de
          difuminado, como el «blur» de CSS, y 10 hacia abajo) y la de la lente de la barra. -->
     <dimen name="cristal_filo">0.5dp</dimen>
+    <!-- El canto de un campo con foco (bg_cristal_campo). -->
+    <dimen name="cristal_campo_foco">2dp</dimen>
+    <dimen name="radio_campo_serie">10dp</dimen>
+    <!-- El velo que desvanece la lista junto al canto de un cristal vivo bajo el que pasa (el
+         resumen y el descanso de la Sesión en vivo; CantoVivo): opaco desde un cuarto de radio
+         por dentro del cristal hasta envivo_velo_margen por fuera, y de ahí una rampa que da para
+         una línea de texto y media. La lista deja libre lo que les falte a los 16 dp que ya la
+         separan del resumen (envivo_tarjeta_separacion): en reposo el velo no toca la tarjeta. -->
+    <dimen name="envivo_velo_margen">2dp</dimen>
+    <dimen name="envivo_velo_rampa">22dp</dimen>
+    <!-- Lo que separa la tarjeta de un ejercicio de la anterior (y la primera, del resumen). -->
+    <dimen name="envivo_tarjeta_separacion">16dp</dimen>
     <dimen name="cristal_estatico_sombra_difuminado">28dp</dimen>
     <dimen name="cristal_estatico_sombra_baja">10dp</dimen>
     <dimen name="lente_sombra_difuminado">6dp</dimen>

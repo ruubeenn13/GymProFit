@@ -266,6 +266,12 @@
     <!-- La barra del descanso que se vacía. -->
     <color name="gp_cristal_descanso_alto">#A33800</color>
     <color name="gp_cristal_descanso_bajo">#A33800</color>
+    <!-- El campo de una serie (kg, reps, tiempo), remate del lote 2: cristal estático con el
+         relleno de las tarjetas (el surco, tinta al 10 %, se leía como una caja gris opaca). Su
+         canto sigue en tinta (gp_cristal_barra_tenue, 3:1). -->
+    <color name="gp_cristal_campo_alto">@color/gp_cristal_alto</color>
+    <color name="gp_cristal_campo_medio">@color/gp_cristal_medio</color>
+    <color name="gp_cristal_campo_bajo">@color/gp_cristal_bajo</color>
     <!-- Cristal estático: relleno a 160° blanco 62 % → 34 % (al 55 %) → 48 %, borde blanco 80 %,
          brillo superior blanco 100 %, línea inferior blanca 40 %, filo exterior de 0,5 dp y
          sombra suave (28 dp de difuminado, 10 hacia abajo), que en oscuro no hay. -->

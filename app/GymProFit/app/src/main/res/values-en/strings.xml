@@ -1056,6 +1056,8 @@
     <!-- Registro por tiempo y por lado (GP-125) -->
     <!-- Live workout (GP-012) and last time (GP-014) -->
     <string name="envivo_minimizar">Minimize</string>
+    <!-- Lo que TalkBack lee del título de la sesión: la rutina y su programa. -->
+    <string name="envivo_titulo_a11y">%1$s, %2$s</string>
     <string name="envivo_terminar">Finish</string>
     <string name="envivo_tiempo">Time</string>
     <string name="envivo_series">Sets</string>

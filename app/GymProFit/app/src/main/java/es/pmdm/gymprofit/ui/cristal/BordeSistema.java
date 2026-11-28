@@ -19,6 +19,11 @@ import androidx.annotation.Nullable;
 // Es el fondo de una vista sin más (bordeSuperior y bordeInferior en activity_main). Las
 // medidas y la rampa las da BordesSistema; aquí solo se pinta.
 //
+// También es el velo que desvanece la lista junto al canto de un cristal vivo (el resumen y el
+// descanso de la Sesión en vivo; CantoVivo): el mismo dibujo, a media pantalla. Como ahí la
+// vista no está pegada a un canto del lienzo, se le dice dónde está (ponerOrigen) para que coja
+// del fondo ambiental los píxeles de su sitio.
+//
 // «El fondo» es lo que la pestaña tiene detrás del contenido:
 //
 //   · Un color liso (gp_background) en las pestañas que aún no están en Liquid Glass. La rampa
@@ -43,8 +48,13 @@ public class BordeSistema extends Drawable {
     private final Paint pinturaFondo = new Paint();
     @ColorInt private int color;
     private int macizo;
+    // Cuánto del macizo, por su extremo, vuelve a transparente (un velo a media pantalla), en px.
+    private int entrada;
     @Nullable private Bitmap fondo;
     private float mezcla = 1f;
+    // Dónde está el canto de arriba de la vista dentro del fondo, en px; -1, pegada a su canto
+    // (el de arriba o el de abajo, según sea).
+    private int origen = -1;
     // La rampa en el color liso (1 px de ancho) y la del fondo ambiental (a todo el ancho).
     @Nullable private Bitmap rampa, rampaFondo;
 
@@ -68,6 +78,19 @@ public class BordeSistema extends Drawable {
     }
 
     /**
+     * Un velo a media pantalla no acaba en seco por el lado de su macizo: sus últimas filas
+     * vuelven a transparente ({@link BordesSistema#alfas(int, int, int)}).
+     *
+     * @param px cuántas filas del macizo son esa rampa de vuelta.
+     */
+    public void ponerEntrada(int px) {
+        if (px == entrada) return;
+        entrada = px;
+        montar();
+        invalidateSelf();
+    }
+
+    /**
      * El fondo ambiental de la pantalla, para desvanecer hacia él y no hacia un color liso.
      *
      * @param fondo la imagen de {@link FondoAmbiental#imagen()}, que ocupa el lienzo entero (el
@@ -76,6 +99,20 @@ public class BordeSistema extends Drawable {
     public void ponerFondo(@Nullable Bitmap fondo) {
         if (fondo == this.fondo) return;
         this.fondo = fondo;
+        montar();
+        invalidateSelf();
+    }
+
+    /**
+     * Dónde está la vista dentro del lienzo, cuando no va pegada a su canto de arriba o de abajo
+     * (el velo de un cristal vivo): de ahí salen los píxeles del fondo ambiental que enseña.
+     *
+     * @param y la y de su canto de arriba dentro del fondo, en px; negativo, pegada al canto.
+     */
+    public void ponerOrigen(int y) {
+        int o = y < 0 ? -1 : y;
+        if (o == origen) return;
+        origen = o;
         montar();
         invalidateSelf();
     }
@@ -102,7 +139,7 @@ public class BordeSistema extends Drawable {
         rampa = null;
         rampaFondo = null;
         if (alto <= 0) return;
-        int[] alfas = BordesSistema.alfas(alto, macizo);
+        int[] alfas = BordesSistema.alfas(alto, macizo, entrada);
         int rgb = color & 0x00FFFFFF;
         int[] filas = new int[alto];
         for (int y = 0; y < alto; y++) {
@@ -113,8 +150,11 @@ public class BordeSistema extends Drawable {
 
         // Con fondo ambiental: sus propios píxeles en este sitio, con el alfa de cada fila.
         if (fondo == null || ancho <= 0 || fondo.getWidth() != ancho || fondo.getHeight() < alto) return;
+        int desde = origen >= 0 ? origen : arriba ? 0 : fondo.getHeight() - alto;
+        // Fuera del fondo (un velo a medio colocar) no hay píxeles que coger: el color liso.
+        if (desde + alto > fondo.getHeight()) return;
         int[] px = new int[ancho * alto];
-        fondo.getPixels(px, 0, ancho, 0, arriba ? 0 : fondo.getHeight() - alto, ancho, alto);
+        fondo.getPixels(px, 0, ancho, 0, desde, ancho, alto);
         for (int y = 0; y < alto; y++) {
             int alfa = filas[y] & 0xFF000000;
             for (int i = y * ancho, fin = i + ancho; i < fin; i++) px[i] = alfa | (px[i] & 0x00FFFFFF);

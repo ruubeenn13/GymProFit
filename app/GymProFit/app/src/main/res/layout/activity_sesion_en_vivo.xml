@@ -7,9 +7,12 @@
   «Añadir ejercicio» y «Descartar»— y los dos bordes del sistema, que desvanecen la lista antes
   de los iconos de las barras. Ocupa toda la pantalla, también bajo la barra de estado.
 
-  Encima y fuera del lienzo, el cristal vivo, que desenfoca lo que la lista tiene en su sitio:
+  Encima y fuera del lienzo, lo que flota:
   · la cabecera: minimizar y «Terminar», con la rutina y su programa entre los dos, sueltos
-    sobre el fondo (la lista se desvanece antes de llegar a esa fila);
+    sobre el fondo. La lista se desvanece antes de llegar a esa fila, así que los dos botones
+    son cristal ESTÁTICO (DEC-070: un elemento flotante bajo el que nunca pasa contenido es
+    cristal estático);
+  y, de cristal vivo, que desenfoca lo que la lista tiene en su sitio:
   · el aviso de sin red (GP-223), si no la hay;
   · el resumen: el tiempo, el volumen y las series hechas de las totales (suman al marcar,
     momento 24), con la barra de progreso de la sesión (GP-210);
@@ -51,6 +54,26 @@
             android:paddingTop="@dimen/envivo_hueco_cabecera"
             android:paddingBottom="@dimen/envivo_hueco_descanso" />
 
+        <!-- Los velos de los cantos (CantoVivo): lo que pasa por detrás de un cristal vivo se ve
+             desenfocado o se desvanece antes de su canto, nunca nítido y cortado. Uno bajo el
+             último cristal de la cabecera (el resumen) y otro sobre el descanso, cuando está.
+             Dentro del lienzo, como los bordes del sistema: el cristal desenfoca la lista ya
+             desvanecida. Sitio y alto se los da la pantalla. -->
+        <View
+            android:id="@+id/veloResumen"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no" />
+
+        <View
+            android:id="@+id/veloDescanso"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no"
+            android:visibility="invisible" />
+
         <!-- Los bordes del sistema (BordesSistema), como en la navegación principal: dentro del
              lienzo, para que el cristal vivo desenfoque la lista ya desvanecida. El alto se lo
              da la pantalla con los márgenes del sistema. -->
@@ -81,9 +104,10 @@
         android:paddingStart="@dimen/envivo_margen"
         android:paddingEnd="@dimen/envivo_margen">
 
-        <!-- La cabecera, como en la maqueta: minimizar y «Terminar», de cristal vivo, y el título
-             suelto entre los dos. La lista no llega a pasar por detrás de esta fila: el borde
-             de arriba (bordeSuperior) la desvanece antes, y así el título se lee siempre. -->
+        <!-- La cabecera, como en la maqueta: minimizar y «Terminar» y el título suelto entre los
+             dos. La lista no llega a pasar por detrás de esta fila: el borde de arriba
+             (bordeSuperior) la desvanece antes, y así el título se lee siempre. Por eso los dos
+             botones son cristal estático (BotonCristal), no vivo: no hay nada que desenfocar. -->
         <LinearLayout
             android:id="@+id/filaCabecera"
             android:layout_width="match_parent"
@@ -92,42 +116,40 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <es.pmdm.gymprofit.ui.cristal.CristalVivo
+            <es.pmdm.gymprofit.ui.widget.BotonCristal
                 android:id="@+id/btnMinimizar"
+                style="@style/Widget.GymProFit.Boton.Cristal"
                 android:layout_width="@dimen/zona_tactil"
                 android:layout_height="@dimen/zona_tactil"
-                android:clickable="true"
                 android:contentDescription="@string/envivo_minimizar"
-                android:focusable="true"
-                android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
-                app:cristalSombra="true">
+                android:minWidth="0dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_ms_keyboard_arrow_down"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_ms_keyboard_arrow_down"
-                    app:tint="?attr/colorOnSurface" />
-            </es.pmdm.gymprofit.ui.cristal.CristalVivo>
-
-            <LinearLayout
+            <!-- La rutina y su programa (TituloSesion): el título, hasta dos líneas sin partir
+                 palabras (GP-288); el programa, desde letra 1,5, solo si no repite el título y
+                 cabe en una línea. TalkBack lee el grupo de una vez, con el programa siempre. -->
+            <es.pmdm.gymprofit.ui.widget.TituloSesion
+                android:id="@+id/tituloSesion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/espacio_8"
                 android:layout_marginEnd="@dimen/espacio_8"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:importantForAccessibility="yes"
                 android:minHeight="@dimen/zona_tactil"
                 android:orientation="vertical">
 
-                <!-- Hasta dos líneas cada uno, sin partir palabras (GP-288): con letra 2,0 el
-                     nombre de la rutina no cabe en una, y cortado a media palabra no se lee. -->
                 <es.pmdm.gymprofit.ui.widget.TextoSinPartir
                     android:id="@+id/tvTituloSesion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:importantForAccessibility="no"
                     android:maxLines="2"
                     android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila" />
 
@@ -136,36 +158,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:importantForAccessibility="no"
                     android:maxLines="2"
                     android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
                     android:visibility="gone" />
-            </LinearLayout>
+            </es.pmdm.gymprofit.ui.widget.TituloSesion>
 
             <!-- Secundario, como en la maqueta: el principal de la pantalla es «Saltar», en el
-                 descanso (DEC-070: nunca dos principales en la misma vista). -->
-            <es.pmdm.gymprofit.ui.cristal.CristalVivo
+                 descanso (DEC-070: nunca dos principales en la misma vista). Ancho el de su
+                 texto, entero y en una línea: es el título el que cede. -->
+            <es.pmdm.gymprofit.ui.widget.BotonCristal
                 android:id="@+id/btnTerminar"
+                style="@style/Widget.GymProFit.Boton.Cristal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:contentDescription="@string/envivo_terminar"
-                android:focusable="true"
-                android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
-                app:cristalSombra="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:importantForAccessibility="no"
-                    android:maxLines="1"
-                    android:minHeight="@dimen/zona_tactil"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="18dp"
-                    android:text="@string/envivo_terminar"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila"
-                    android:textColor="@color/gp_vivo_accion" />
-            </es.pmdm.gymprofit.ui.cristal.CristalVivo>
+                android:text="@string/envivo_terminar"
+                android:textColor="@color/gp_vivo_accion"
+                android:textSize="@dimen/text_fila" />
         </LinearLayout>
 
         <!-- Sin red (GP-223): el entreno se guarda en el móvil. Sale mientras no hay red. El
