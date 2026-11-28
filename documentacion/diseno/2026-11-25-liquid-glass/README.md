@@ -132,7 +132,7 @@ Lo que cambia al llevar `sesion-en-vivo.dc.html` a la app. Como en el lote 1: do
 | Valor de la maqueta | Problema medido | Implementado |
 |---|---|---|
 | Fondo: naranja `rgba(255,106,0,.5)` en 100 %, 0 %; dorado `rgba(232,184,75,.28)` en 0 %, 60 %; azul `rgba(60,90,200,.4)` en 90 %, 95 % | en oscuro, sobre una tarjeta que pasa por el brillo dorado, «Tu récord» (dorado) quedaba en 3,70:1 y el secundario en 4,28:1; con el naranja al 50 %, el secundario en 3,44:1 | las mismas elipses; naranja al **26 %**, dorado al **18 %** y azul al 40 %. En claro (sin maqueta): naranja `#FF7A28` al 55 %, dorado al 45 % y azul `#507DFF` al 36 % |
-| Cabecera: minimizar y «Terminar» de cristal, y el título suelto | con la lista pasando por detrás, el título suelto no se lee, y el texto asoma nítido entre las piezas | las dos piezas, de cristal vivo, y el título suelto, como en la maqueta; **la lista se desvanece antes de esa fila** (el borde de arriba es macizo hasta donde empieza el resumen y degrada 24 dp, ya detrás de él), como el contenido de Inicio bajo la barra de estado |
+| Cabecera: minimizar y «Terminar» de cristal, y el título suelto | con la lista pasando por detrás, el título suelto no se lee, y el texto asoma nítido entre las piezas | las dos piezas, de cristal (estático desde el remate, abajo), y el título suelto, como en la maqueta; **la lista se desvanece antes de esa fila** (el borde de arriba es macizo hasta donde empieza el resumen y degrada 24 dp, ya detrás de él), como el contenido de Inicio bajo la barra de estado |
 | Resumen con las tres cifras a 30 px | la escala de letra es la de la app (lote 1) | `Cifra.Pequena` (26 sp) y el apoyo («kg», «de 18») al 60 %; se conserva debajo la barra de la sesión, que la maqueta no trae |
 | Tarjeta de ejercicio: «La última vez, 80 × 8 · Tu récord: 82,5 × 6» en una línea | la app ya da cada dato en su línea, con la pauta y las notas | las líneas de siempre, con «Tu récord» en el dorado de texto (4,60 · 4,53:1) |
 | Fila del récord: tinte dorado 28 % → 8 %, número en `#E8B84B` y «¡Récord!» en `#F0DDA8` | dorado sobre dorado: `#E8B84B` da 3,88:1 sobre el tinte aun sin brillo detrás, 2,83:1 en el peor punto; `#F0DDA8`, 3,88:1 | el tinte de la maqueta **sobre un surco negro al 25 %**, y el número y «¡Récord!» en `#F0DDA8` (4,80:1). En claro, sin surco y en `#6B4F12` (4,76:1). «¡Récord!» va donde iba la marca anterior, como en la maqueta, y el trofeo, en el botón de marcar |
@@ -147,6 +147,17 @@ Lo que cambia al llevar `sesion-en-vivo.dc.html` a la app. Como en el lote 1: do
 | Con letra grande | la maqueta no lo dibuja | los botones del descanso bajan a su propia fila si no caben al lado de la cuenta; título y programa, hasta dos líneas sin partir palabras; los rótulos de columna encogen lo justo y los cuatro van al mismo tamaño (GP-286) |
 
 Las hojas inferiores de la pantalla (terminar, cronómetro, permiso de alarmas) no entran en este lote.
+
+### Remate del lote 2 (28-11-2026)
+
+Lo que cambió tras revisar el propietario las capturas. Las reglas, en DEC-070; el detalle, en `app/GymProFit/DESIGN.md` («Sesión en vivo»).
+
+| Antes | Problema | Ahora |
+|---|---|---|
+| Minimizar y «Terminar», de cristal vivo | la lista se desvanece antes de esa fila: no hay nada que desenfocar | **cristal estático** (`BotonCristal`). Regla: un elemento flotante bajo el que nunca pasa contenido es cristal estático |
+| La lista pasa bajo el resumen y bajo el descanso tal cual | el texto de la tarjeta de debajo asomaba nítido justo bajo el canto, con media línea ya tapada | **un velo junto al canto** (el fondo ambiental): opaco 2 dp por fuera del canto y una rampa de 22 dp hacia la lista; por dentro del cristal la lista sigue pasando desenfocada. En los tres niveles. La lista deja 8 dp más bajo el resumen para que en reposo no toque la primera tarjeta |
+| Campos de kg y reps en claro: un surco (tinta al 10 %) con borde | sobre la tarjeta clara se leían como cajas grises opacas | **cristal estático**: el relleno de las tarjetas (blanco 62 % → 34 % → 48 %) y canto de tinta al 50 % (3,10:1). Lo escrito, 13,85:1; la pista, 6,46:1. El oscuro no cambia |
+| Título y programa, hasta dos líneas cada uno | a letra 2,0, cuatro líneas («Cuerpo / completo C / Cuerpo / completo») que empujaban todo | el título, dos líneas como mucho, encogiendo lo justo para caber entero; **desde letra 1,5 el programa solo se ve si no repite el título y cabe en una línea** (TalkBack lo lee siempre). «Terminar» no se corta |
 
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 

@@ -11,6 +11,7 @@ Rama `gp-285-lote-2`, PR #149 **en borrador, sin fusionar**: primero se revisan 
 - **`CamposSerie` borrado**: no tenía ningún uso.
 - **Revisor de UI**: dos pasadas; la segunda, sin altos ni medios.
 - **Fotogramas lentos: SIN MEDIR.** El portátil iba con batería al llegar el momento de medir, y esa es la primera condición. No hay cifra ni se da nada por bueno (ver «Fotogramas lentos»).
+- **Remate (28-11, tarde), tras revisar el propietario las capturas**: cabecera con letra grande, campos de cristal en claro, la lista se desvanece antes del canto del resumen y del descanso, y minimizar y «Terminar» en cristal estático. Tercera pasada del revisor, sin altos ni medios. **Los fotogramas siguen sin medir** (otra vez con batería). Todo en la sección «Remate», al final.
 
 ## Commits
 
@@ -169,3 +170,121 @@ En las capturas de «descanso» en inglés de API 36 la sesión va una serie má
 2. **Medir los fotogramas lentos** (`main` → rama, API 36, 32 y 24, Sesión en vivo e Inicio) con el portátil enchufado y el equipo quieto.
 3. **Borrar a mano** la carpeta de las capturas de los botones del 27-11 (duda 5): no se me dejó.
 4. Las dudas de arriba.
+
+---
+
+## Remate (28-11-2026, tarde)
+
+Lo que pidió el propietario tras revisar las capturas del lote. La PR #149 sigue **en borrador y sin fusionar**: antes se revisan las capturas nuevas.
+
+### Commits
+
+| Hash | Qué |
+|---|---|
+| `1fc571fa` | las cuatro correcciones de la Sesión en vivo, con sus tests y DESIGN.md |
+| `bdef9a0f` | la regla de `python -` en `CLAUDE.md` |
+
+Después va el commit de documentación que trae esta sección (DEC-070, la referencia de diseño y el CHANGELOG).
+
+### Qué se ha hecho
+
+1. **Cabecera con letra grande.** A letra 2,0, «Cuerpo completo C» y su programa «Cuerpo completo» ocupaban cuatro líneas. Ahora (`ui/widget/TituloSesion`, la regla de GP-288): el título, como mucho en dos líneas y sin partir palabras; desde letra 1,5 el programa solo se ve si no repite el título y cabe entero en una línea. TalkBack lo lee siempre: el grupo es una sola parada, «Cuerpo completo C, Cuerpo completo». «Terminar» no se corta: cede el título. Medido por el revisor en API 36: a letra 2,0 la fila pasa a 71 dp con el título en dos líneas y «Terminar» entero (147 × 49 dp). En API 24 a letra 2,0, «Torso A» queda en una línea (antes, tres con su programa).
+   - **Salió al probarlo**: en un móvil de 360 dp a letra 2,0 el título se quedaba en «Cuerpo…» (tres palabras no caben en dos líneas si solo encoge hasta que cabe la palabra más ancha). El título encoge ahora lo justo para caber entero en sus dos líneas, nunca por debajo de su tamaño a letra 1,0, antes de recortar (`TextoSinPartir.encogerParaCaber`, solo para este título).
+2. **Campos de kg y reps en claro.** Eran un surco (tinta al 10 %) que sobre la tarjeta clara se leía como una caja gris opaca. Son cristal estático con el relleno de las tarjetas (blanco 62 % → 34 % → 48 %) y su canto de tinta (`Cristal`, tipos `campo` y `campo_foco`). Lo escrito, 13,85:1 en el peor punto (16,94:1 en captura); la pista, 6,46:1 (7,90:1); el canto, 3,10:1 contra la tarjeta y 3,22:1 contra lo de dentro. La serie en curso y el foco, como antes: lente, acento y canto de 2 dp (6,56:1 en captura). **El oscuro no cambia**: los tokens nuevos apuntan allí al surco de siempre; comparado con la captura anterior, el relleno es el mismo (`#111111`) y el canto difiere 1–7 niveles por el suavizado.
+3. **Scroll bajo el resumen.** Un velo (`ui/cristal/CantoVivo`, pintado por `BordeSistema` con el propio fondo ambiental) desvanece la lista antes del canto: opaco desde un cuarto de radio por dentro del cristal hasta 2 dp por fuera, y una rampa de 22 dp hacia la lista con una curva suave. Por dentro del cristal la lista sigue pasando desenfocada. **Igual en los tres niveles** (en el 3 el cristal es opaco y el velo es lo único que suaviza el corte); comprobado en captura en API 36, 32 y 24. Medido por el revisor en API 36, en 10–12 posiciones por combinación: lo que pasa queda a 1,07:1 o menos hasta 14 px bajo el canto y no llega a 4,5:1 hasta 35–40 px; en reposo la primera tarjeta, a 24 dp, no queda desvanecida; sin raya ni banda en los márgenes (salto máximo entre píxeles vecinos, 6 de 765).
+   - Dos vueltas antes de darlo por bueno: un velo que acababa en seco por dentro cortaba en una raya la sombra de la tarjeta en los márgenes de los lados (ahora también entra poco a poco por dentro); y con rampa de 14 dp y la curva de los bordes del sistema el texto llegaba al canto a medio ver (ahora 22 dp y curva suave, y la lista deja 8 dp más bajo el resumen para que en reposo no toque la primera tarjeta).
+   - **También sobre el descanso**, que es el mismo caso por arriba: la lista se desvanece antes del canto de arriba del panel.
+4. **Minimizar y «Terminar», de cristal vivo a cristal estático** (`BotonCristal`): bajo ellos no pasa nada. Son botones de verdad (ya no vistas a las que se les decía a TalkBack que lo eran) y se hunden a 0,94 sin cambiar de forma (medido: «Terminar» 261 → 247 px). Texto de «Terminar» 4,81 · 9,18:1 en el peor punto (7,32 · 10,04 en captura). La regla, en DEC-070: **un elemento flotante bajo el que nunca pasa contenido es cristal estático**.
+5. **`CLAUDE.md`**: nunca `python -` con la entrada vacía. Al acabar no queda ningún `python` vivo (comprobado a las 17:43).
+
+### Tests
+
+**Nuevos, todos vistos en rojo:**
+
+| Test | Rojo |
+|---|---|
+| `CabeceraSesionTest` (instrumentado, 5 casos) | con la regla quitada: `es a 2.0 en 411 dp, «Cuerpo completo C» / «Cuerpo completo»: el programa a la vista expected:<false> but was:<true>` (y a 1,5, y con un programa que no cabe). Y antes de que el título encogiera: `es a 2.0 en 360 dp …: el título va recortado expected:<Cuerpo[ completo C]> but was:<Cuerpo[…]>` |
+| `TituloSesionTest` (unitario, 4) | con la cuenta quitada: `repite el título` y `el_programa_repite_el_titulo_si_sus_palabras_ya_estan_en_el` |
+| `CantoVivoTest` (unitario, 5) | `expected:<448> but was:<480>`; sin la entrada por dentro, `tres cuartos de radio de entrada expected:<47> but was:<0>`; con la curva de antes, `a media rampa, medio velo: 60`; sin el sitio de la lista, `lo que falta expected:<21> but was:<0>` |
+| `SesionEnVivoCristalTest`, 2 casos nuevos | `btnMinimizar es cristal estático (BotonCristal), no …CristalVivo` y `no existe veloResumen` |
+| `ContrasteCristalTest`, 1 caso nuevo y 5 pares más | `no existe el color gp_cristal_campo_alto en el tema claro` (y en el oscuro) |
+
+**Batería.**
+- Unitarios: 1.456; fallan solo los 4 `*WebTest` locales de siempre.
+- Instrumentados: **56 de 56 en API 36, API 32 y API 24**, con el código final (los 51 de antes y los 5 de `CabeceraSesionTest`).
+- Lint sin errores. **CI en verde en `bdef9a0f`** (`android-build-test`, `api-build-test`, `app-release-r8`, `secretos`); el commit de documentación, ver la PR.
+
+### Revisor de UI (tercera pasada de la pantalla)
+
+API 36, las seis combinaciones de siempre y cuatro estados en cada una. **Sin altos ni medios.** Los cuatro puntos del remate, comprobados con medida (arriba). Tres bajos, sin tocar (a «Dudas»):
+
+- El canto de «Terminar», en claro, sobre el brillo naranja: 1,25–1,29:1 contra el fondo (minimizar, 1,46:1). Es el canto del botón secundario de DEC-070, la misma duda 6 de arriba; su texto pasa de sobra.
+- El canto del campo de kg en la fila dorada, en claro: 2,95–3,03:1 contra el dorado de fuera (3,30:1 contra lo de dentro), medido en una fila de píxeles. El color del canto no lo ha tocado el remate.
+- A letra 1,5 el título queda «Cuerpo completo / C», con la «C» sola. Cumple la regla.
+
+Y una observación que ya estaba en el lote: las filas que quedan bajo la cabecera siguen en el árbol de accesibilidad (sin TalkBack real no se sabe si el foco puede caer en una fila tapada).
+
+Sin comprobar por el revisor: los niveles 2 y 3 (los he mirado yo en captura en API 32 y 24), TalkBack real, el aviso del fin del descanso con su velo, y el velo con el estado del guardado como último cristal.
+
+### Fotogramas lentos: SIN MEDIR, otra vez
+
+No se cumplió la primera condición cuando tocaba medir. La cronología:
+
+| Hora (28-11) | Estado |
+|---|---|
+| 14:00, al empezar | con batería (`BatteryStatus` 1, 77 %); un lighthouse y su Chrome de otra sesión, vivos desde el 26-11; ningún `python -` |
+| 15:30 | enchufado (`BatteryStatus` 2, 61 %); los restos de la otra sesión, ahí. Pregunté al propietario y autorizó cerrarlos (abajo) |
+| 17:29, tras unas dos horas sin actividad de esta sesión | **otra vez con batería** (`BatteryStatus` 1, 85 %) |
+| 17:43, con el código final, los instrumentados y las capturas hechos | con batería, 79 % y bajando. **No se mide** |
+
+`main` (`76abc4f1`) sigue compilado desde cero de la sesión anterior y el guion es el mismo (`medir.py`): en cuanto el portátil esté enchufado y nadie lo use (unos 90 minutos para los tres emuladores), se mide `main` → rama en API 36, 32 y 24, en la Sesión en vivo y en Inicio. Arrastra también la medida de Inicio de los botones (`76abc4f1`).
+
+### Procesos de otra sesión que cerré, y por qué
+
+Para medir, el encargo pide que no haya restos de otra sesión de Claude (lighthouse, Chrome de pruebas). Los había: una pasada de lighthouse con su Chrome sin ventana, arrancada el 26-11 a las 10:31 por otra sesión (rama `un-dia-fase-4`) y colgada desde entonces (16 ms de CPU en 10 s, 83 MB). **No eran míos: pregunté antes de tocarlos y el propietario respondió «Mátalos y mide».** Los cerré el 28-11 a las 15:34 con `Stop-Process -Force`, comprobando antes que cada PID era de antes del 27-11 y que era de lighthouse o hijo de su Chrome (14 de 14):
+
+| PID | Proceso | Qué era |
+|---|---|---|
+| 35680, 19188 | `bash.exe` | `npx -y lighthouse@13.6.0 http://127.0.0.1:8302/beta …` |
+| 22792 | `node.exe` | `npx-cli.js` de esa orden |
+| 21288 | `cmd.exe` | `lighthouse http://127.0.0.1:8302/beta --quiet --output=json …` |
+| 12592 | `node.exe` | `lighthouse/cli/index.js` |
+| 33512 | `chrome.exe` | el Chrome sin ventana que lanzó lighthouse |
+| 32460, 33156, 15156, 22452, 31424, 35508, 17824, 3520 | `chrome.exe` | sus hijos (crashpad, GPU, red, almacenamiento, trazas y tres de página) |
+
+**Lo que pasó después, que no esperaba.** Esos procesos no estaban huérfanos del todo: colgaban de un guion de aquella sesión, `lh.sh` (PID 2140, `sh.exe`, vivo desde el 26-11 a las 10:23, en el scratchpad de la otra sesión), que es un bucle de 80 pasadas de lighthouse (8 páginas × 2 versiones × 5) y llevaba dos días parado en la que cerré. Al cerrarla, el bucle siguió: lanzó las pasadas que le quedaban entre las 15:34 y las 17:30. **No lo toqué** (la autorización era para los 14 de arriba). Lo leí para saber qué hacía: salta los resultados que ya existen, sus dos servidores locales (8301 y 8302) ya no escuchaban y su carpeta de salida (`Desktop\un-dia-fase-4\lighthouse`) ya no existe, así que cada pasada falló sin escribir nada, y el guion **acabó solo** poco después de las 17:30 (a las 17:29 iba por la sexta página de ocho; en la comprobación siguiente ya no estaba). A las 17:43 no quedaba ningún proceso suyo, ningún Chrome y ningún `python`. No ha tocado el repositorio (rama y ficheros, comprobados). Lo que sí: si aquella sesión esperaba esos resultados, no los tiene.
+
+### Capturas
+
+En `Desktop\GymProFit\2026-11-28-gp285-lote-2\remate\`, una carpeta por API. Nombre: `<tema>_es_letra<1.0|2.0>_<estado>.png`.
+
+- Estados: `cabecera` (la lista arriba del todo), `serie-en-curso`, `scroll-bajo-el-resumen` y `descanso`.
+- `API36` (16): claro y oscuro, letra 1,0 y 2,0, en español.
+- `API24` (4): claro a letra 1,0, con los campos (y los otros tres estados).
+- `API32` (4), de más: claro a letra 1,0, para ver el velo en el nivel 2.
+
+Con el build final (`1fc571fa`). Cuentas locales y API local. En las de API 36 la sesión va por la serie 4 o 5 de 13 (para abrir el descanso se marca una serie).
+
+### Decisiones tomadas
+
+1. **El velo, y no un desenfoque progresivo**: desvanecer hacia el fondo no cuesta nada por fotograma y vale igual en los tres niveles; un segundo desenfoque junto al canto habría sido un efecto nuevo de la GPU sin poder medirlo hoy.
+2. **El velo también sobre el descanso**, aunque la captura señalada era la del resumen: la regla es de todo cristal vivo, y el corte se veía igual en el canto de arriba del panel.
+3. **La lista deja 8 dp más bajo el resumen** (24 en vez de 16 hasta la primera tarjeta): es lo que necesita una rampa que desvanezca de verdad sin tocar la tarjeta en reposo.
+4. **«No cabe» es no caber en una línea**: desde letra 1,5 el programa ocupa una línea o ninguna. Y «repite el título» es que sus palabras ya estén, seguidas, en él (sin contar mayúsculas ni tildes).
+5. **TalkBack lee rutina y programa en una sola parada**, a cualquier tamaño de letra (antes eran dos).
+6. **«Terminar» conserva su color** (`gp_vivo_accion`: el acento en oscuro, como en la maqueta; tinta en claro), ahora medido sobre cristal estático.
+7. **El título encoge para caber entero** antes de recortar; solo este título, no los demás `TextoSinPartir`.
+
+### Dudas
+
+1. **El canto del botón secundario** («Terminar» y minimizar en claro sobre el brillo naranja, 1,25–1,46:1): es la duda 6 de arriba, ahora con dos botones más. Cuando eran cristal vivo llevaban sombra y se despegaban más del fondo.
+2. **El canto del campo sobre la fila dorada en claro**, 2,95:1 por fuera en captura: el token (`gp_cristal_barra_tenue`) es el de los aros y las barras apagadas; oscurecerlo es decisión de sistema, no de esta pantalla.
+3. **La «C» sola en la segunda línea a letra 1,5.**
+4. **Las filas bajo la cabecera en el árbol de accesibilidad**: pide una prueba con TalkBack real.
+5. **En Android 7 a letra 2,0 la lista se abre algo desplazada** (el sistema da el foco al primer campo y lo trae a la vista). Ya pasaba en el lote; no lo he tocado.
+
+### Pendiente
+
+1. **Revisar las capturas del remate** y decidir la fusión.
+2. **Medir los fotogramas** (lo de arriba).
+3. Las dudas.

@@ -8,6 +8,8 @@ Hasta publicar en Google Play los lotes no suben la versión (DEC-056): lo que s
 
 | Hash | Descripción |
 |---|---|
+| `bdef9a0f` | docs(reglas): `CLAUDE.md` prohíbe lanzar `python -` con la entrada vacía (con Python 3.14 se queda en bucle gastando un núcleo): el script, por heredoc o en un fichero (GP-285). |
+| `1fc571fa` | fix(android): en la Sesión en vivo, con la letra grande el título ya no ocupa cuatro líneas (dos como mucho, y el programa se oculta si repite el título o no cabe); en el tema claro los campos de kilos y repeticiones dejan de ser cajas grises y pasan a cristal; el texto de la lista se desvanece antes de llegar al borde del resumen y del descanso en vez de asomar cortado; y minimizar y «Terminar» son botones de cristal estático (GP-285). **Sin medida de fotogramas lentos**: el portátil volvió a estar con batería. |
 | `bcdd6365` | fix(android): con las animaciones del sistema quitadas, al empezar un descanso en la Sesión en vivo ya no se ve un instante la lista por debajo del panel (GP-285). |
 | `b9ff00e3` | fix(android): en la Sesión en vivo, el nombre de un ejercicio que ocupa dos líneas (letra grande) ya no deja una línea en blanco entre ellas (GP-285). |
 | `d38e8754` | fix(android): en la Sesión en vivo, con la letra grande los campos de kilos y repeticiones ya no cortan ni parten la cifra («12–15» salía «12–1»); con el descanso abierto, la lista ya no asoma por debajo del panel; TalkBack dice cuál es la serie del récord y cuál la siguiente; y en la serie en curso los kilos propuestos van resaltados (GP-285). |
