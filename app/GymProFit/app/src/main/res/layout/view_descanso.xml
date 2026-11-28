@@ -164,6 +164,7 @@
         android:layout_marginBottom="@dimen/envivo_descanso_abajo"
         android:accessibilityLiveRegion="polite"
         android:clickable="true"
+        android:focusable="false"
         android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
         android:visibility="gone"
         app:cristalRadio="@dimen/radio_cristal"

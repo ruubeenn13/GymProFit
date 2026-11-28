@@ -319,6 +319,8 @@ public class ContrasteCristalTest {
             t.medir("sesión, campo", "gp_cristal_texto", campo, TEXTO, fallos);
             t.medir("sesión, pista del campo", "gp_cristal_texto_2", campo, TEXTO, fallos);
             t.medir("sesión, campo en el récord", "gp_cristal_texto", t.capas(oro, surco), TEXTO, fallos);
+            // En la serie en curso, los kilos (escritos o propuestos) van en el acento de la lente.
+            t.medir("sesión, kilos de la serie en curso", "gp_cristal_lente_acento", t.capas(lente, surco), TEXTO, fallos);
         }
         if (!fallos.isEmpty()) fail(String.join("\n", fallos));
     }

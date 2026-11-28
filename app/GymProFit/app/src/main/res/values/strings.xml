@@ -1206,6 +1206,7 @@
     <string name="envivo_fin_texto">%1$s · se acabó el descanso</string>
     <string name="envivo_fin_cerrar">Cerrar el aviso</string>
     <string name="envivo_serie_siguiente_a11y">Serie %1$d, la siguiente</string>
+    <string name="envivo_serie_record_a11y">Serie %1$d, récord</string>
     <string name="envivo_barra_descanso">Descanso · %1$s · %2$s</string>
     <string name="envivo_barra_descanso_a11y">Descanso: quedan %1$s. %2$s. Volver a la sesión</string>
     <string name="envivo_barra_fin">%1$s · %2$s</string>

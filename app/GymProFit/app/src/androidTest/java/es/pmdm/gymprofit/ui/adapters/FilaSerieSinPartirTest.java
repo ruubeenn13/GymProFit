@@ -35,6 +35,7 @@ import es.pmdm.gymprofit.R;
 // grande crece menos), «¡Récord!» —lo que la fila dorada enseña donde iba la marca anterior—
 // salía partido en «¡Réc / ord!», y «80 × 10» dejaba el «10» solo en otra línea. Ahora es un
 // TextoSinPartir y la marca va unida con espacios duros: encoge lo justo y cabe en una línea.
+// Y lo mismo los campos de kg y de repeticiones (CampoQueEncoge), que cortaban la pista.
 // ============================================================
 @RunWith(AndroidJUnit4.class)
 public class FilaSerieSinPartirTest {
@@ -94,6 +95,45 @@ public class FilaSerieSinPartirTest {
             assertTrue(caso + ": «" + texto + "» mide " + lineas.getLineWidth(0) + " px y su columna es de " + hueco,
                     lineas.getLineWidth(0) <= hueco + 0.5f);
         });
+    }
+
+    // Los campos (revisor de UI, lote 2): con letra 2,0 la pauta «12–15» salía cortada en «12–1»,
+    // sin puntos suspensivos, y «102.5» escrito se partía en dos líneas. Son CampoQueEncoge: lo
+    // escrito y la pista caben enteros en su única línea.
+    private static void camposEnteros(float escala, String idioma) {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            View fila = (View) anterior(escala, idioma, false).getParent();
+            android.widget.EditText kg = fila.findViewById(R.id.etKg), reps = fila.findViewById(R.id.etReps);
+            kg.setText("1022.5");
+            reps.setHint("12–15");
+            int ancho = fila.getWidth();
+            ((View) fila.getParent()).measure(View.MeasureSpec.makeMeasureSpec(((View) fila.getParent()).getWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            ((View) fila.getParent()).layout(0, 0, ((View) fila.getParent()).getMeasuredWidth(), ((View) fila.getParent()).getMeasuredHeight());
+            String caso = idioma + " a " + escala;
+            assertTrue(caso + ": la fila ha cambiado de ancho", ancho == fila.getWidth());
+            // Lo escrito: una línea, entera.
+            Layout l = kg.getLayout();
+            assertEquals(caso + ": «1022.5» se parte en varias líneas", 1, l.getLineCount());
+            int huecoKg = kg.getWidth() - kg.getCompoundPaddingLeft() - kg.getCompoundPaddingRight();
+            assertTrue(caso + ": «1022.5» mide " + l.getLineWidth(0) + " px y su campo deja " + huecoKg,
+                    l.getLineWidth(0) <= huecoKg + 0.5f);
+            // La pista: cabe entera a la letra que tiene el campo.
+            int huecoReps = reps.getWidth() - reps.getCompoundPaddingLeft() - reps.getCompoundPaddingRight();
+            float pista = reps.getPaint().measureText("12–15");
+            assertTrue(caso + ": la pista «12–15» mide " + pista + " px y su campo deja " + huecoReps,
+                    pista <= huecoReps + 0.5f);
+            // Y ninguno ha crecido de alto: siguen en su línea.
+            assertEquals(caso + ": los dos campos, igual de altos", kg.getHeight(), reps.getHeight());
+        });
+    }
+
+    @Test
+    public void los_campos_no_cortan_ni_parten_lo_escrito_ni_la_pista() {
+        for (float escala : new float[]{ 1.0f, 1.3f, 1.5f, 2.0f }) {
+            camposEnteros(escala, "es");
+            camposEnteros(escala, "en");
+        }
     }
 
     @Test

@@ -1186,6 +1186,7 @@
     <string name="envivo_fin_texto">%1$s · rest is over</string>
     <string name="envivo_fin_cerrar">Dismiss</string>
     <string name="envivo_serie_siguiente_a11y">Set %1$d, up next</string>
+    <string name="envivo_serie_record_a11y">Set %1$d, record</string>
     <string name="envivo_barra_descanso">Rest · %1$s · %2$s</string>
     <string name="envivo_barra_descanso_a11y">Rest: %1$s left. %2$s. Back to the workout</string>
     <string name="envivo_barra_fin">%1$s · %2$s</string>

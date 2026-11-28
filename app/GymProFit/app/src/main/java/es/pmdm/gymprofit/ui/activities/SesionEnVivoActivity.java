@@ -118,8 +118,9 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     @Nullable private VigiaCristal vigiaCristal;
     private FondoAmbiental fondo;
     private final BordeSistema bordeArriba = new BordeSistema(true), bordeAbajo = new BordeSistema(false);
-    private View cabecera, filaCabecera, bordeSuperior;
-    private int huecoSistema;
+    private View cabecera, filaCabecera, bordeSuperior, bordeInferior;
+    // El hueco del sistema de abajo sin contar el teclado (lo que el borde de abajo tapa siempre).
+    private int huecoSistema, huecoBarras;
 
     private final Handler reloj = new Handler(Looper.getMainLooper());
     private final Runnable tic = new Runnable() {
@@ -335,10 +336,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
     private void aplicarInsets() {
         VentanaCristal.barrasTransparentes(this);
         View raiz = findViewById(R.id.raizSesion);
-        View bordeInferior = findViewById(R.id.bordeInferior);
+        bordeInferior = findViewById(R.id.bordeInferior);
         int arribaBase = getResources().getDimensionPixelSize(R.dimen.espacio_8);
-        int desvanecido = getResources().getDimensionPixelSize(R.dimen.borde_sistema_desvanecido);
-        int base = androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base);
         ViewCompat.setOnApplyWindowInsetsListener(raiz, (v, insets) -> {
             androidx.core.graphics.Insets barras = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
             androidx.core.graphics.Insets muesca = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.displayCutout());
@@ -351,9 +350,8 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
             // El teclado sustituye a la barra de navegación cuando está abierto: manda el mayor.
             huecoSistema = Math.max(abajo, teclado);
             zonaDescanso.setPadding(0, 0, 0, huecoSistema);
-            ponerAlto(bordeInferior, abajo + desvanecido);
-            bordeAbajo.poner(base, BordesSistema.macizoInferior(abajo));
-            // El de arriba depende de dónde quede la fila del título: al colocarse la cabecera.
+            huecoBarras = abajo;
+            // Los bordes dependen de dónde queden la cabecera y el descanso: al colocarse.
             ajustarHuecos();
             return insets;
         });
@@ -381,6 +379,22 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         bordeArriba.poner(androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base), macizo);
     }
 
+    // El borde de abajo es macizo en la franja de la barra del sistema y de ahí se desvanece.
+    // Con el descanso abierto (o el aviso de su fin) sube hasta el pie del panel: en los 22 dp
+    // que lo separan del borde, la línea de la lista que pasaba por debajo se leía como una
+    // línea más del panel, justo tras «Siguiente: …» (revisor de UI). La lista sigue pasando,
+    // desenfocada, por detrás del panel.
+    private void ajustarBordeInferior(boolean conDescanso) {
+        if (bordeInferior == null) return;
+        int macizo = BordesSistema.macizoInferior(huecoBarras);
+        if (conDescanso) {
+            macizo = zonaDescanso.getPaddingBottom()
+                    + getResources().getDimensionPixelSize(R.dimen.envivo_descanso_abajo);
+        }
+        ponerAlto(bordeInferior, macizo + getResources().getDimensionPixelSize(R.dimen.borde_sistema_desvanecido));
+        bordeAbajo.poner(androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base), macizo);
+    }
+
     private static void ponerAlto(View v, int alto) {
         android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
         if (lp.height == alto) return;
@@ -399,6 +413,7 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         int alto = conDescanso ? zonaDescanso.getHeight() : 0;
         int abajo = Math.max(Math.max(hueco, alto), huecoSistema + margen);
         int arriba = cabecera.getHeight();
+        ajustarBordeInferior(conDescanso);
         if (arriba > 0 && (rv.getPaddingTop() != arriba || rv.getPaddingBottom() != abajo)) {
             // Si la lista está arriba del todo, sigue arriba: su primer ejercicio, bajo la cabecera.
             boolean enCabeza = !rv.canScrollVertically(-1);

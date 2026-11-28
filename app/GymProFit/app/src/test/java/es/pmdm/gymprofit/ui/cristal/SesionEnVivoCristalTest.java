@@ -96,6 +96,25 @@ public class SesionEnVivoCristalTest {
         throw new AssertionError("la Sesión en vivo no está en el manifiesto");
     }
 
+    // Lo que una fila dice con su fondo lo dice también con palabras (DEC-019; revisor de UI):
+    // la del récord y la serie en curso tienen su nombre para TalkBack, en los dos idiomas.
+    @Test
+    public void la_fila_del_record_y_la_serie_en_curso_se_nombran_para_talkback() throws Exception {
+        String adapter = leer("java/es/pmdm/gymprofit/ui/adapters/SesionEnVivoAdapter.java");
+        assertTrue(adapter.contains("f.oro ? R.string.envivo_serie_record_a11y"));
+        assertTrue(adapter.contains("f.lente || (f.siguiente && !f.hecha) ? R.string.envivo_serie_siguiente_a11y"));
+        assertTrue(leer("res/values/strings.xml").contains("<string name=\"envivo_serie_record_a11y\">Serie %1$d, récord</string>"));
+        assertTrue(leer("res/values-en/strings.xml").contains("<string name=\"envivo_serie_record_a11y\">Set %1$d, record</string>"));
+        // Las piezas de cristal que solo se quedan los toques no son paradas de foco.
+        Document pantalla = xml("res/layout/activity_sesion_en_vivo.xml");
+        for (String id : new String[]{ "barraResumen", "cardGuardado" }) {
+            Element pieza = porId(pantalla, id);
+            assertEquals(id, "true", pieza.getAttributeNS(ANDROID, "clickable"));
+            assertEquals(id + " no es una parada de foco", "false", pieza.getAttributeNS(ANDROID, "focusable"));
+            assertEquals(id, "no", pieza.getAttributeNS(ANDROID, "importantForAccessibility"));
+        }
+    }
+
     private static String leer(String ruta) throws IOException {
         return new String(Files.readAllBytes(MAIN.resolve(ruta)), StandardCharsets.UTF_8);
     }

@@ -277,11 +277,17 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             SesionEnCurso.Marca nueva = LogicaRecordVivo.deSerie(e, s);
             if (nueva == null) return;
             String antes = textoMarca(e.marca);
-            f.avisoTitulo = ctx.getString(R.string.envivo_record_aviso, textoMarca(nueva));
-            f.avisoAntes = ctx.getString(R.string.envivo_record_aviso_antes, antes);
+            // En pantalla, cada marca es una pieza («62,5 kg × 10», con espacios duros): si no
+            // cabe tras el texto, baja entera a la línea siguiente, no deja el «10» solo.
+            f.avisoTitulo = ctx.getString(R.string.envivo_record_aviso, unaPieza(textoMarca(nueva)));
+            f.avisoAntes = ctx.getString(R.string.envivo_record_aviso_antes, unaPieza(antes));
             f.avisoA11y = ctx.getString(R.string.envivo_record_aviso_a11y, textoMarca(nueva), antes);
             return;
         }
+    }
+
+    private static String unaPieza(String marca) {
+        return marca.replace(' ', '\u00A0');
     }
 
     // «85 kg × 7», «12 reps» o «1:05», como en el resumen (Marcas).
@@ -626,6 +632,9 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             for (EditText et : new EditText[]{etKg, etReps, etTiempo}) {
                 et.setHintTextColor(f.oro ? texto : secundario);
             }
+            // En la serie en curso los kilos van en el acento también cuando son la propuesta
+            // (la pista), como en la maqueta: es lo que se va a apuntar si se marca tal cual.
+            if (f.lente) etKg.setHintTextColor(acento);
 
             // El botón (GP-252): hecha, el círculo relleno con borde y su check en verde; sin hacer,
             // un aro vacío, en el acento si es la que toca; la de un récord, el círculo dorado con
@@ -662,8 +671,11 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // TalkBack: «Serie 2. Anterior: 57,5 × 12» en el número, que es donde entra
             // en la fila; y «Quitar serie» como acción, que es lo que sustituye al gesto.
-            String nombre = ctx.getString(f.siguiente && !f.hecha
-                    ? R.string.envivo_serie_siguiente_a11y : R.string.envivo_serie_a11y, f.numero);
+            // Lo que la fila dice con su fondo, dicho también con palabras (DEC-019): la del
+            // récord, «Serie 1, récord»; la que lleva la lente, «Serie 2, la siguiente».
+            String nombre = ctx.getString(f.oro ? R.string.envivo_serie_record_a11y
+                    : f.lente || (f.siguiente && !f.hecha) ? R.string.envivo_serie_siguiente_a11y
+                    : R.string.envivo_serie_a11y, f.numero);
             tvNumero.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             tvNumero.setContentDescription(f.anteriorA11y == null ? nombre
                     : nombre + ". " + ctx.getString(R.string.envivo_anterior_a11y, f.anteriorA11y));
