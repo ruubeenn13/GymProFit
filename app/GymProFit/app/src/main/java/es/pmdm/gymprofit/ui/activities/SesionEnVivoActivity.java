@@ -685,12 +685,17 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         SesionEnCursoRepositorio.FinDescanso finDescanso = d == null ? repo.finDescanso() : null;
         boolean visible = panelDescanso.getVisibility() == View.VISIBLE && !bajandoPanel;
         avisoFin.setVisibility(finDescanso != null ? View.VISIBLE : View.GONE);
+        if (finDescanso != null) ajustarBordeInferior(true);
         if (d != null) {
             bajandoPanel = false;
             panelDescanso.animate().cancel();
             panelDescanso.setTranslationY(0f);
             if (panelDescanso.getVisibility() != View.VISIBLE) {
                 panelDescanso.setVisibility(View.VISIBLE);
+                // El borde de abajo sube con el panel en este mismo fotograma: esperando a que
+                // la zona se recoloque llegaba uno tarde y, con las animaciones quitadas, se
+                // veía un instante la lista bajo el panel (revisor de UI).
+                ajustarBordeInferior(true);
                 Movimiento.subirPanel(panelDescanso);
                 LogicaDescanso.Siguiente sig = LogicaDescanso.siguiente(s);
                 if (sig != null) irASerie = sig.serieId;
