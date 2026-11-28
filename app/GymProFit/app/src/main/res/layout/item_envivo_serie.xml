@@ -2,29 +2,36 @@
 <!--
   item_envivo_serie — una serie en la sesión en vivo (GP-012): número, «Anterior»
   (GP-014), kg y reps —o el tiempo y su cronómetro en una serie por tiempo— y el botón
-  de marcar: gris, del color principal si es la que toca y verde si está hecha (y lo dice
-  su estado, no solo el color); la serie de un récord lleva la fila dorada (GP-210).
+  de marcar: un aro si está sin hacer (en el acento si es la que toca) y el círculo relleno
+  con su check si está hecha (y lo dice su estado, no solo el color).
+  En Liquid Glass (GP-285, lote 2) la fila no lleva fondo —la tarjeta de cristal la pinta la
+  lista por detrás— salvo dos: la serie en curso, con la lente, y la de un récord, dorada
+  (GP-210), con «¡Récord!» donde iba la marca anterior y el trofeo en su botón. Los campos son
+  un surco con borde (bg_cristal_campo) y son CampoQueEncoge: con letra grande, lo escrito y la
+  pista encogen lo justo para caber en su línea (ni «12–1» por «12–15» ni «102.» / «5»).
   Se quita deslizándola, y con TalkBack desde sus acciones.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:background="@drawable/bg_envivo_medio">
+    android:layout_marginStart="@dimen/envivo_margen"
+    android:layout_marginEnd="@dimen/envivo_margen"
+    android:clipChildren="false">
 
     <LinearLayout
         android:id="@+id/filaSerie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
+        android:layout_marginStart="@dimen/espacio_4"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="@dimen/espacio_4"
+        android:layout_marginBottom="2dp"
         android:gravity="center_vertical"
         android:minHeight="56dp"
         android:orientation="horizontal"
-        android:paddingStart="11dp"
-        android:paddingEnd="7dp"
+        android:paddingStart="@dimen/espacio_8"
+        android:paddingEnd="@dimen/espacio_4"
         android:paddingTop="4dp"
         android:paddingBottom="4dp">
 
@@ -35,9 +42,12 @@
             android:gravity="center"
             android:importantForAccessibility="no"
             android:textAppearance="@style/TextAppearance.GymProFit.Number"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_fila" />
 
-        <TextView
+        <!-- Sin partir (GP-288): con letra grande, «¡Récord!» se partía por la mitad y «80 × 10»
+             dejaba el «10» solo en otra línea. Encoge lo justo para caber en su columna. -->
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvAnterior"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -48,13 +58,13 @@
             android:textSize="@dimen/text_body"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-        <EditText
+        <es.pmdm.gymprofit.ui.widget.CampoQueEncoge
             android:id="@+id/etKg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="6dp"
-            android:background="@drawable/bg_envivo_campo"
+            android:background="@drawable/bg_cristal_campo"
             android:gravity="center"
             android:imeOptions="actionNext"
             android:importantForAutofill="no"
@@ -64,15 +74,16 @@
             android:minHeight="48dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_fila"
             android:textColorHint="?attr/colorOnSurfaceVariant" />
 
-        <EditText
+        <es.pmdm.gymprofit.ui.widget.CampoQueEncoge
             android:id="@+id/etReps"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/bg_envivo_campo"
+            android:background="@drawable/bg_cristal_campo"
             android:gravity="center"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
@@ -81,16 +92,17 @@
             android:minHeight="48dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_fila"
             android:textColorHint="?attr/colorOnSurfaceVariant" />
 
         <!-- Por tiempo: los segundos («40» o «0:40») y el cronómetro. -->
-        <EditText
+        <es.pmdm.gymprofit.ui.widget.CampoQueEncoge
             android:id="@+id/etTiempo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.4"
-            android:background="@drawable/bg_envivo_campo"
+            android:background="@drawable/bg_cristal_campo"
             android:digits="0123456789:"
             android:gravity="center"
             android:imeOptions="actionDone"
@@ -100,6 +112,7 @@
             android:minHeight="48dp"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_fila"
             android:textColorHint="?attr/colorOnSurfaceVariant"
             android:visibility="gone" />
@@ -112,15 +125,13 @@
             android:minWidth="48dp"
             android:src="@drawable/ic_ms_timer"
             android:visibility="gone"
-            app:tint="?attr/colorPrimary" />
+            app:tint="?attr/gpGraficoMarca" />
 
         <ImageButton
             android:id="@+id/btnMarcar"
             style="@style/Widget.GymProFit.BotonIcono"
-            android:layout_marginStart="2dp"
-            android:background="@drawable/bg_check_pendiente"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_ms_check"
-            app:tint="?attr/colorOnSurfaceVariant" />
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_check_cristal_pendiente"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
     </LinearLayout>
 </FrameLayout>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_check_cristal_pendiente — el botón de marcar de una serie sin hacer, sobre cristal (GP-285, lote 2): el aro de 2 dp de bg_check_pendiente en gp_cristal_barra_tenue, que pasa 3:1 contra la tarjeta de cristal. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="@color/gp_cristal_barra_tenue" />
+</shape>

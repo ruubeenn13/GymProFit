@@ -28,10 +28,13 @@ import androidx.appcompat.widget.AppCompatTextView;
 // Con un tope de líneas (android:maxLines), lo que no cabe se quita por palabras enteras y se
 // acaba en «…»: la elipsis cae siempre tras una palabra completa, nunca a media («mancue…»).
 // getText() da entonces lo que se ve; el texto entero sigue en getTextoCompleto() y es lo que lee
-// TalkBack.
+// TalkBack. Con encogerParaCaber(), antes de quitar nada encoge (con el mismo suelo) hasta que
+// el texto entero cabe en sus líneas: el título de la Sesión en vivo, que a letra 2,0 en un
+// móvil estrecho se quedaba en «Cuerpo…».
 //
 // Se decide en onMeasure, con el ancho que le dan, y se vuelve a decidir con cada texto nuevo:
-// un texto más corto recupera el tamaño pedido.
+// un texto más corto recupera el tamaño pedido. Se mide lo que se pinta: un rótulo en mayúsculas
+// (los de las columnas de una serie, GP-286) cuenta con sus mayúsculas.
 // ============================================================
 public class TextoSinPartir extends AppCompatTextView {
 
@@ -47,6 +50,11 @@ public class TextoSinPartir extends AppCompatTextView {
     private boolean recortando;
     // La descripción para TalkBack la puso el recorte (el texto entero), no quien usa la vista.
     private boolean descripcionDelRecorte;
+    // Un tope que le pone su fila (FilaRotulos), en px; 0, ninguno. Y el tamaño que eligió él
+    // solo, sin ese tope, la última vez que se midió.
+    private float tope, propio;
+    // Con tope de líneas: encoge hasta caber entero en ellas antes de recortar.
+    private boolean hastaCaber;
 
     /**
      * Pone varios textos hermanos, del mismo ancho y estilo, a un solo tamaño: el del que más
@@ -54,6 +62,40 @@ public class TextoSinPartir extends AppCompatTextView {
      */
     public static void igualar(@NonNull TextoSinPartir... textos) {
         for (TextoSinPartir t : textos) t.grupo = textos;
+    }
+
+    /**
+     * Un tope para su tamaño, además del suyo: el de otro texto de su fila que ha tenido que
+     * encoger más (FilaRotulos, con columnas de distinto ancho). Nunca baja del tamaño a letra
+     * 1,0. Cero lo quita.
+     *
+     * @param px el tamaño máximo, en px.
+     */
+    public void limitarA(float px) {
+        if (px == tope) return;
+        tope = px;
+        forceLayout();
+    }
+
+    /** El tamaño que eligió por su cuenta en su última medida (sin el tope de su fila), en px. */
+    public float tamanoPropio() {
+        return propio > 0f ? propio : getTextSize();
+    }
+
+    /**
+     * Con un tope de líneas (android:maxLines), si el texto entero no cabe en ellas, encoge lo
+     * justo para que quepa, nunca por debajo de su tamaño a letra 1,0; solo si ni así cabe se
+     * recorta por palabras con «…».
+     */
+    public void encogerParaCaber(boolean si) {
+        if (si == hastaCaber) return;
+        hastaCaber = si;
+        requestLayout();
+    }
+
+    /** El tamaño que pide su estilo a la letra de ahora, sin encoger, en px. */
+    public float tamanoPedido() {
+        return pedidoPx;
     }
 
     public TextoSinPartir(@NonNull Context context) {
@@ -102,6 +144,16 @@ public class TextoSinPartir extends AppCompatTextView {
         return completo == null ? "" : completo;
     }
 
+    // El texto entero tal como se pinta: un rótulo en mayúsculas (textAllCaps) es más ancho que
+    // lo que se le dio, y lo que tiene que caber es lo pintado (GP-286).
+    @NonNull
+    private CharSequence comoSePinta() {
+        CharSequence texto = getTextoCompleto();
+        android.text.method.TransformationMethod m = getTransformationMethod();
+        CharSequence pintado = m == null ? texto : m.getTransformation(texto, this);
+        return pintado == null ? texto : pintado;
+    }
+
     @Override
     protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
         super.onTextChanged(text, start, lengthBefore, lengthAfter);
@@ -118,20 +170,38 @@ public class TextoSinPartir extends AppCompatTextView {
             int ancho = View.MeasureSpec.getSize(widthMeasureSpec) - getCompoundPaddingLeft()
                     - getCompoundPaddingRight();
             medidor.set(getPaint());
-            float tamano = tamanoQueCabe(getTextoCompleto(), ancho, pedidoPx, minimoPx, medidor);
+            float tamano = tamanoQueCabe(comoSePinta(), ancho, pedidoPx, minimoPx, medidor);
             // En un grupo, todos al del que más tiene que encoger (los textos hermanos tienen
             // el mismo ancho): que «Agua» no salga más grande que «Calorías» a su lado.
             if (grupo != null) {
                 for (TextoSinPartir otro : grupo) {
                     if (otro == this) continue;
-                    tamano = Math.min(tamano, tamanoQueCabe(otro.getTextoCompleto(), ancho, pedidoPx,
+                    tamano = Math.min(tamano, tamanoQueCabe(otro.comoSePinta(), ancho, pedidoPx,
                             minimoPx, medidor));
                 }
             }
+            if (hastaCaber) tamano = tamanoQueCabeEnLineas(comoSePinta(), ancho, getMaxLines(), tamano, minimoPx);
+            propio = tamano;
+            if (tope > 0f) tamano = Math.max(minimoPx, Math.min(tamano, tope));
             if (tamano != getTextSize()) super.setTextSize(TypedValue.COMPLEX_UNIT_PX, tamano);
             recortar(ancho, tamano);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    // El mayor tamaño, entre el mínimo y el dado, al que el texto entero cabe en ese número de
+    // líneas partiendo solo por los espacios; si ni al mínimo cabe, el mínimo (y se recortará).
+    private float tamanoQueCabeEnLineas(@NonNull CharSequence texto, int ancho, int lineas, float desde,
+                                        float minimo) {
+        if (lineas <= 0 || lineas == Integer.MAX_VALUE || ancho <= 0 || texto.length() == 0) return desde;
+        int estrategia = Build.VERSION.SDK_INT >= 23 ? getBreakStrategy() : 0;
+        float tamano = desde;
+        // De píxel en píxel, como tamanoQueCabe: pocos pasos y solo cuando no cabe.
+        while (true) {
+            medidor.setTextSize(tamano);
+            if (tamano <= minimo || colocar(texto, ancho, medidor, estrategia).getLineCount() <= lineas) return tamano;
+            tamano = Math.max(minimo, tamano - 1f);
+        }
     }
 
     // Con tope de líneas, deja a la vista las palabras enteras que caben y «…»; sin tope, o si

@@ -14,6 +14,7 @@ import es.pmdm.gymprofit.R;
 // (bg_check_hecha). Ninguno se tiñe por código: el tinte de fondo pinta el óvalo entero y
 // convertía el aro en un círculo relleno. TalkBack dice el estado («Hecha» o «Sin hacer») y el
 // botón se nombra por lo que hace. Lo usan la sesión en vivo (item_envivo_serie) y Apuntar entreno.
+// La sesión en vivo es Liquid Glass y usa los dibujos de cristal (fondoCristal).
 // ============================================================
 public final class MarcaSerie {
 
@@ -24,6 +25,17 @@ public final class MarcaSerie {
     public static int fondo(boolean hecha, boolean toca) {
         if (hecha) return R.drawable.bg_check_hecha;
         return toca ? R.drawable.bg_check_toca : R.drawable.bg_check_pendiente;
+    }
+
+    /**
+     * El fondo del botón sobre cristal (la Sesión en vivo, GP-285): las mismas formas con los
+     * colores medidos ahí. La serie de un récord, el círculo dorado, que lleva dentro el trofeo.
+     */
+    @DrawableRes
+    public static int fondoCristal(boolean hecha, boolean toca, boolean record) {
+        if (record) return R.drawable.bg_check_cristal_record;
+        if (hecha) return R.drawable.bg_check_cristal_hecha;
+        return toca ? R.drawable.bg_check_cristal_toca : R.drawable.bg_check_cristal_pendiente;
     }
 
     /** El estado que dice TalkBack. */

@@ -1,272 +1,408 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  activity_sesion_en_vivo — la sesión en vivo (GP-012).
-  Arriba, minimizar, la rutina y su programa, y «Terminar». Debajo, el tiempo en grande,
-  el volumen y las series hechas de las totales (suman al marcar, momento 24), con la
-  barra de progreso de la sesión (GP-210).
-  Si se intentó guardar, el estado del guardado. Luego la lista: una tarjeta por
-  ejercicio con una fila por serie, y al final «Añadir ejercicio» y «Descartar».
-  Abajo, sobre la lista, el descanso entre series (GP-013, view_descanso); la lista deja
-  debajo de su final el hueco que ocupa.
+  activity_sesion_en_vivo — la sesión en vivo (GP-012), en Liquid Glass (GP-285, lote 2; DEC-070).
+
+  Detrás, el lienzo (LienzoCristal): el fondo ambiental de la sesión (naranja, dorado y azul),
+  la lista —una tarjeta de cristal estático por ejercicio, con una fila por serie, y al final
+  «Añadir ejercicio» y «Descartar»— y los dos bordes del sistema, que desvanecen la lista antes
+  de los iconos de las barras. Ocupa toda la pantalla, también bajo la barra de estado.
+
+  Encima y fuera del lienzo, lo que flota:
+  · la cabecera: minimizar y «Terminar», con la rutina y su programa entre los dos, sueltos
+    sobre el fondo. La lista se desvanece antes de llegar a esa fila, así que los dos botones
+    son cristal ESTÁTICO (DEC-070: un elemento flotante bajo el que nunca pasa contenido es
+    cristal estático);
+  y, de cristal vivo, que desenfoca lo que la lista tiene en su sitio:
+  · el aviso de sin red (GP-223), si no la hay;
+  · el resumen: el tiempo, el volumen y las series hechas de las totales (suman al marcar,
+    momento 24), con la barra de progreso de la sesión (GP-210);
+  · si se intentó guardar, el estado del guardado;
+  · abajo, el descanso entre series (GP-013, view_descanso).
+  La lista pasa por debajo de todo ello: SesionEnVivoActivity le da el relleno de arriba (lo que
+  mide la cabecera) y el de abajo (lo que mide el descanso), y los márgenes del sistema.
+
+  Nada de aquí recorta a sus hijos: la sombra del cristal vivo se pinta fuera de él.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/raizSesion"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/android:colorBackground">
+    android:background="?attr/android:colorBackground"
+    android:clipChildren="false"
+    android:theme="@style/ThemeOverlay.GymProFit.Cristal">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        style="@style/Widget.GymProFit.Cabecera.Sesion"
+    <es.pmdm.gymprofit.ui.cristal.LienzoCristal
+        android:id="@id/lienzoCristal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/ic_ms_keyboard_arrow_down"
-        app:navigationContentDescription="@string/envivo_minimizar">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTerminar"
-            style="@style/Widget.GymProFit.BotonPildora"
-            android:layout_width="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="12dp"
-            android:backgroundTint="?attr/colorPrimaryContainer"
-            android:text="@string/envivo_terminar"
-            android:textColor="?attr/colorOnPrimaryContainer" />
-    </com.google.android.material.appbar.MaterialToolbar>
-
-    <!-- Sin red (GP-223): el entreno se guarda en el móvil. Sale mientras no hay red,
-         a 8 dp de la cabecera y de lo que sigue. -->
-    <include
-        android:id="@+id/avisoSinRed"
-        layout="@layout/view_aviso_superficie"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/espacio_16"
-        android:layout_marginTop="@dimen/espacio_8"
-        android:layout_marginEnd="@dimen/espacio_16"
-        android:layout_marginBottom="@dimen/espacio_8"
-        android:visibility="gone" />
-
-    <!-- Tiempo, series y ejercicios. TalkBack lo lee de una vez. -->
-    <LinearLayout
-        android:id="@+id/filaResumen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="12dp"
-        android:focusable="true"
-        android:importantForAccessibility="yes">
-
-        <LinearLayout
+        <View
+            android:id="@+id/fondoAmbiental"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:gravity="bottom"
-            android:importantForAccessibility="noHideDescendants"
-            android:orientation="horizontal">
-
-            <!-- El tiempo, en grande. A letra grande se encoge hasta caber, no se parte. -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvRotuloTiempo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/envivo_tiempo"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textSize="@dimen/text_eyebrow"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/tvTiempo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                    android:textSize="@dimen/text_number_hero" />
-            </LinearLayout>
-
-            <!-- Volumen y series: suman al marcar una serie (momento 24). -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:gravity="end"
-                android:orientation="vertical"
-                android:paddingBottom="4dp">
-
-                <!-- A peso corporal (sin kilos marcados ni la última vez) no sale nunca: nada de «Volumen 0» (GP-253). -->
-                <LinearLayout
-                    android:id="@+id/filaVolumen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:baselineAligned="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvRotuloVolumen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/envivo_volumen"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_eyebrow" />
-
-                    <TextView
-                        android:id="@+id/tvVolumen"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:accessibilityLiveRegion="none"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                        android:textSize="@dimen/text_display" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/envivo_unidad_kg"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_caption" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:baselineAligned="true"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvRotuloSeries"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/envivo_series"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_eyebrow" />
-
-                    <TextView
-                        android:id="@+id/tvSeries"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                        android:textSize="@dimen/text_headline" />
-
-                    <TextView
-                        android:id="@+id/tvSeriesDe"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="@dimen/text_caption" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/barraProgreso"
-            style="@style/Widget.GymProFit.BarraProgreso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_height="match_parent"
             android:importantForAccessibility="no" />
-    </LinearLayout>
 
-    <!-- Estado del guardado: solo desde el primer intento. -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardGuardado"
-        style="@style/Widget.GymProFit.Card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/ivGuardado"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/ic_ms_error"
-                    android:importantForAccessibility="no"
-                    app:tint="?attr/colorError" />
-
-                <com.google.android.material.loadingindicator.LoadingIndicator
-                    android:id="@+id/progresoGuardado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:importantForAccessibility="no" />
-
-                <TextView
-                    android:id="@+id/tvGuardadoTitulo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:accessibilityLiveRegion="polite"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Texto"
-                    android:textSize="@dimen/text_subtitle"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvGuardadoTexto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/envivo_error_texto"
-                android:textSize="@dimen/text_body"
-                android:textColor="?attr/colorOnSurfaceVariant" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReintentar"
-                style="@style/Widget.GymProFit.BotonPildora"
-                android:layout_width="match_parent"
-                android:layout_marginTop="12dp"
-                android:text="@string/btn_reintentar" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDescartarGuardado"
-                style="@style/Widget.GymProFit.BotonPildora.Contorno"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:text="@string/envivo_descartar" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- La lista y, encima de su parte de abajo, el descanso (GP-013). -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
+        <!-- Sin recortes: la sombra de las tarjetas (en claro) y la de la lente caen fuera de
+             sus filas, y la lista pasa por debajo de la cabecera y del descanso. -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSesion"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipChildren="false"
             android:clipToPadding="false"
+            android:paddingTop="@dimen/envivo_hueco_cabecera"
             android:paddingBottom="@dimen/envivo_hueco_descanso" />
 
-        <include layout="@layout/view_descanso" />
-    </FrameLayout>
-</LinearLayout>
+        <!-- Los velos de los cantos (CantoVivo): lo que pasa por detrás de un cristal vivo se ve
+             desenfocado o se desvanece antes de su canto, nunca nítido y cortado. Uno bajo el
+             último cristal de la cabecera (el resumen) y otro sobre el descanso, cuando está.
+             Dentro del lienzo, como los bordes del sistema: el cristal desenfoca la lista ya
+             desvanecida. Sitio y alto se los da la pantalla. -->
+        <View
+            android:id="@+id/veloResumen"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no" />
+
+        <View
+            android:id="@+id/veloDescanso"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no"
+            android:visibility="invisible" />
+
+        <!-- Los bordes del sistema (BordesSistema), como en la navegación principal: dentro del
+             lienzo, para que el cristal vivo desenfoque la lista ya desvanecida. El alto se lo
+             da la pantalla con los márgenes del sistema. -->
+        <View
+            android:id="@+id/bordeSuperior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="top"
+            android:importantForAccessibility="no" />
+
+        <View
+            android:id="@+id/bordeInferior"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:importantForAccessibility="no" />
+    </es.pmdm.gymprofit.ui.cristal.LienzoCristal>
+
+    <!-- Lo que flota arriba. El relleno de arriba (la barra de estado) lo pone la pantalla. -->
+    <LinearLayout
+        android:id="@+id/cabeceraSesion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/envivo_margen"
+        android:paddingEnd="@dimen/envivo_margen">
+
+        <!-- La cabecera, como en la maqueta: minimizar y «Terminar» y el título suelto entre los
+             dos. La lista no llega a pasar por detrás de esta fila: el borde de arriba
+             (bordeSuperior) la desvanece antes, y así el título se lee siempre. Por eso los dos
+             botones son cristal estático (BotonCristal), no vivo: no hay nada que desenfocar. -->
+        <LinearLayout
+            android:id="@+id/filaCabecera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <es.pmdm.gymprofit.ui.widget.BotonCristal
+                android:id="@+id/btnMinimizar"
+                style="@style/Widget.GymProFit.Boton.Cristal"
+                android:layout_width="@dimen/zona_tactil"
+                android:layout_height="@dimen/zona_tactil"
+                android:contentDescription="@string/envivo_minimizar"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                app:icon="@drawable/ic_ms_keyboard_arrow_down"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp" />
+
+            <!-- La rutina y su programa (TituloSesion): el título, hasta dos líneas sin partir
+                 palabras (GP-288); el programa, desde letra 1,5, solo si no repite el título y
+                 cabe en una línea. TalkBack lee el grupo de una vez, con el programa siempre. -->
+            <es.pmdm.gymprofit.ui.widget.TituloSesion
+                android:id="@+id/tituloSesion"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/espacio_8"
+                android:layout_marginEnd="@dimen/espacio_8"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:importantForAccessibility="yes"
+                android:minHeight="@dimen/zona_tactil"
+                android:orientation="vertical">
+
+                <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                    android:id="@+id/tvTituloSesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Seccion.Fila" />
+
+                <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                    android:id="@+id/tvSubtituloSesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:maxLines="2"
+                    android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno"
+                    android:visibility="gone" />
+            </es.pmdm.gymprofit.ui.widget.TituloSesion>
+
+            <!-- Secundario, como en la maqueta: el principal de la pantalla es «Saltar», en el
+                 descanso (DEC-070: nunca dos principales en la misma vista). Ancho el de su
+                 texto, entero y en una línea: es el título el que cede. -->
+            <es.pmdm.gymprofit.ui.widget.BotonCristal
+                android:id="@+id/btnTerminar"
+                style="@style/Widget.GymProFit.Boton.Cristal"
+                android:layout_width="wrap_content"
+                android:text="@string/envivo_terminar"
+                android:textColor="@color/gp_vivo_accion"
+                android:textSize="@dimen/text_fila" />
+        </LinearLayout>
+
+        <!-- Sin red (GP-223): el entreno se guarda en el móvil. Sale mientras no hay red. El
+             aviso es el de siempre, sin su fondo (se lo quita la pantalla): aquí va sobre cristal. -->
+        <es.pmdm.gymprofit.ui.cristal.CristalVivo
+            android:id="@+id/avisoSinRed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
+            android:visibility="gone"
+            app:cristalRadio="@dimen/radio_tarjeta_pequena"
+            app:cristalSombra="true">
+
+            <include
+                layout="@layout/view_aviso_superficie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </es.pmdm.gymprofit.ui.cristal.CristalVivo>
+
+        <!-- El resumen: tiempo, volumen y series. El cristal se queda los toques (la lista pasa
+             por debajo); TalkBack lee el grupo de dentro de una vez. -->
+        <es.pmdm.gymprofit.ui.cristal.CristalVivo
+            android:id="@+id/barraResumen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_12"
+            android:clickable="true"
+            android:focusable="false"
+            android:importantForAccessibility="no"
+            android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
+            app:cristalRadio="@dimen/radio_tarjeta"
+            app:cristalSombra="true">
+
+            <LinearLayout
+                android:id="@+id/filaResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:importantForAccessibility="yes"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/espacio_8"
+                android:paddingTop="@dimen/espacio_12"
+                android:paddingEnd="@dimen/espacio_8"
+                android:paddingBottom="@dimen/espacio_12">
+
+                <!-- Tres columnas iguales (dos, sin volumen), con una raya entre ellas. Cada texto
+                     es TextoSinPartir: con letra grande encoge lo justo y no se parte. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:divider="@drawable/divisor_cristal"
+                    android:importantForAccessibility="noHideDescendants"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/espacio_4"
+                        android:paddingEnd="@dimen/espacio_4">
+
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvRotuloTiempo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/envivo_tiempo"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvTiempo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+                    </LinearLayout>
+
+                    <!-- A peso corporal (sin kilos marcados ni la última vez) no sale nunca: nada de «Volumen 0» (GP-253). -->
+                    <LinearLayout
+                        android:id="@+id/filaVolumen"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/espacio_4"
+                        android:paddingEnd="@dimen/espacio_4">
+
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvRotuloVolumen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/envivo_volumen"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+
+                        <!-- La cifra y, más pequeña, su unidad: «4.820 kg» (suma al marcar, momento 24). -->
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvVolumen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:accessibilityLiveRegion="none"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/espacio_4"
+                        android:paddingEnd="@dimen/espacio_4">
+
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvRotuloSeries"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/envivo_series"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+
+                        <!-- Las hechas y, más pequeño, «de 18». -->
+                        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
+                            android:id="@+id/tvSeries"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.GymProFit.Cifra.Pequena" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal
+                    android:id="@+id/barraProgreso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/espacio_8"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="@dimen/espacio_8" />
+            </LinearLayout>
+        </es.pmdm.gymprofit.ui.cristal.CristalVivo>
+
+        <!-- Estado del guardado: solo desde el primer intento. Para entonces ya no hay descanso
+             (guardar lo borra), así que «Reintentar» es el único principal a la vista. -->
+        <es.pmdm.gymprofit.ui.cristal.CristalVivo
+            android:id="@+id/cardGuardado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/espacio_8"
+            android:clickable="true"
+            android:focusable="false"
+            android:importantForAccessibility="no"
+            android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
+            android:visibility="gone"
+            app:cristalRadio="@dimen/radio_cristal"
+            app:cristalSombra="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:padding="@dimen/espacio_16">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivGuardado"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="12dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ms_error"
+                        app:tint="@color/gp_cristal_error" />
+
+                    <com.google.android.material.loadingindicator.LoadingIndicator
+                        android:id="@+id/progresoGuardado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:importantForAccessibility="no" />
+
+                    <TextView
+                        android:id="@+id/tvGuardadoTitulo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:accessibilityLiveRegion="polite"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Texto"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvGuardadoTexto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/envivo_error_texto"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="@dimen/text_body" />
+
+                <es.pmdm.gymprofit.ui.widget.BotonMarca
+                    android:id="@+id/btnReintentar"
+                    style="@style/Widget.GymProFit.Boton.Marca"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/btn_reintentar" />
+
+                <es.pmdm.gymprofit.ui.widget.BotonCristal
+                    android:id="@+id/btnDescartarGuardado"
+                    style="@style/Widget.GymProFit.Boton.Cristal"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/envivo_descartar"
+                    app:cristalSobreVivo="true" />
+            </LinearLayout>
+        </es.pmdm.gymprofit.ui.cristal.CristalVivo>
+    </LinearLayout>
+
+    <!-- El descanso (GP-013), abajo, sobre la lista. -->
+    <include layout="@layout/view_descanso" />
+</FrameLayout>

@@ -40,8 +40,10 @@ public final class InsetsUtils {
     // Pantallas que colocan sus márgenes ellas mismas. MainActivity pinta la barra de
     // navegación bajo la barra de gestos (GP-105): con el padding común en la raíz, el
     // fondo de la barra quedaría cortado encima y debajo asomaría otro color.
+    // La Sesión en vivo (GP-285, lote 2) es Liquid Glass: su fondo ambiental sigue bajo las
+    // barras del sistema y su cabecera y su descanso flotan sobre la lista.
     private static final Set<String> CON_INSETS_PROPIOS = new HashSet<>(Arrays.asList(
-            "MainActivity"));
+            "MainActivity", "SesionEnVivoActivity"));
 
     /**
      * Desactiva el ajuste automático de la ventana y reserva, en la raíz del

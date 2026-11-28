@@ -294,8 +294,13 @@ public class CimientosTest {
         // «SERIE» y «ANTERIOR» ya no se pegan: la columna de la serie mide 48 dp.
         assertEquals("48dp", dimen(dimens(), "envivo_col_serie"));
         // La cabecera de la sesión en vivo usa su propio título de fila, no el de 22 sp de la barra.
-        assertTrue(leer(RES.resolve("layout/activity_sesion_en_vivo.xml")).contains("Widget.GymProFit.Cabecera.Sesion"));
-        assertTrue(leer(RES.resolve("values/themes.xml")).contains("TextAppearance.GymProFit.Seccion.Fila"));
+        // Desde GP-285 (lote 2) no es una barra de Material sino una píldora de cristal vivo: el
+        // título lleva ese estilo en el propio layout.
+        String sesion = leer(RES.resolve("layout/activity_sesion_en_vivo.xml"));
+        int titulo = sesion.indexOf("android:id=\"@+id/tvTituloSesion\"");
+        assertTrue(titulo >= 0);
+        assertTrue(sesion.substring(titulo, sesion.indexOf("/>", titulo))
+                .contains("@style/TextAppearance.GymProFit.Seccion.Fila"));
     }
 
     // GP-219 y el pendiente del encargo: los campos de la sesión en vivo tienen nombre y «SERIE»

@@ -16,7 +16,10 @@
             <enum name="tarjeta" value="0" />
             <enum name="lente" value="1" />
             <enum name="oro" value="2" />
+            <enum name="oro_fila" value="3" />
             <enum name="marca" value="7" />
+            <enum name="campo" value="8" />
+            <enum name="campo_foco" value="9" />
         </attr>
     </declare-styleable>
 
@@ -34,6 +37,12 @@
     <attr name="gpGraficoKilos" format="color" />
     <attr name="gpGraficoKilosTenue" format="color" />
     <attr name="gpGraficoKilosFilo" format="color" />
+
+    <!-- BotonCristal encima de un cristal vivo (el panel del descanso): cristal estático también
+         en el nivel 3, donde el panel ya es opaco y un botón opaco no se distinguiría de él. -->
+    <declare-styleable name="BotonCristal">
+        <attr name="cristalSobreVivo" format="boolean" />
+    </declare-styleable>
 
     <declare-styleable name="CristalVivo">
         <attr name="cristalRadio" />

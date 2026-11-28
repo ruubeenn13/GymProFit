@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   item_envivo_pie — cierre de la tarjeta de un ejercicio en la sesión en vivo (GP-012):
-  «Añadir serie», hasta 20, que es lo que admite la API.
+  «Añadir serie», hasta 20, que es lo que admite la API. En Liquid Glass (GP-285, lote 2) no
+  lleva fondo (la tarjeta de cristal la pinta la lista por detrás) y el botón es la píldora de
+  borde a trazos de la maqueta, con el texto principal: ni principal ni secundario, una acción
+  de la lista.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:background="@drawable/bg_envivo_abajo"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
+    android:layout_marginStart="@dimen/envivo_margen"
+    android:layout_marginEnd="@dimen/envivo_margen"
+    android:paddingStart="@dimen/espacio_12"
+    android:paddingEnd="@dimen/espacio_12"
     android:paddingTop="4dp"
-    android:paddingBottom="8dp">
+    android:paddingBottom="@dimen/espacio_8">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAnadirSerie"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_cristal_discontinuo"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         android:minHeight="48dp"
         android:text="@string/envivo_anadir_serie"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="@dimen/text_fila"
+        app:backgroundTint="@null"
         app:icon="@drawable/ic_ms_add"
-        app:iconGravity="textStart" />
+        app:iconGravity="textStart"
+        app:iconTint="?attr/colorOnSurface" />
 </FrameLayout>

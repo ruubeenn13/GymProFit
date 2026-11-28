@@ -369,13 +369,6 @@
         <item name="android:background">@drawable/fondo_pulsable_redondo</item>
     </style>
 
-    <!-- Cabecera de la sesión en vivo: el nombre de la rutina como título de fila (16, Barlow
-         SemiBold) y el programa debajo como apoyo, y no el título de 20 de la barra (GP-210). -->
-    <style name="Widget.GymProFit.Cabecera.Sesion">
-        <item name="titleTextAppearance">@style/TextAppearance.GymProFit.Seccion.Fila</item>
-        <item name="subtitleTextAppearance">@style/TextAppearance.GymProFit.Apoyo.Pequeno</item>
-    </style>
-
     <!-- Botón de icono dentro de una cabecera o fila: 48 dp de zona táctil (GP-062) -->
     <style name="Widget.GymProFit.BotonIcono" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">48dp</item>

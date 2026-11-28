@@ -19,7 +19,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.material.theme.MaterialComponentsViewInflater;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,31 +27,38 @@ import java.util.Locale;
 import es.pmdm.gymprofit.R;
 
 // ============================================================
-// FilaSerieRotulosTest — GP-133: los rótulos de las columnas de «Apuntar entreno» se leen
-// enteros, también con la letra grande.
+// FilaSerieRotulosTest — GP-133 y GP-286: los rótulos de las columnas de una serie («Serie»,
+// «Anterior», «kg», «Reps») se leen enteros, también con la letra grande, en «Apuntar entreno»
+// (item_apuntar_ejercicio) y en la Sesión en vivo (item_envivo_ejercicio).
 //
 // Nació sobre item_serie, la fila de una serie del formulario viejo, donde el rótulo era la
-// pista de cada campo. GP-241 rehízo la pantalla y borró esa fila: ahora los rótulos («Serie»,
-// «Anterior», «kg», «Reps») son una fila de textos encima de las series de cada ejercicio
-// (item_apuntar_ejercicio), y este test mira esa (GP-286: seguía apuntando a la fila borrada
-// y no compilaba).
+// pista de cada campo. GP-241 rehízo la pantalla y borró esa fila: ahora los rótulos son una
+// fila de textos encima de las series de cada ejercicio.
+//
+// Con letra 2,0 «SERIE» y «ANTERIOR» / «PREVIOUS» no cabían en su columna y Android los partía
+// por la mitad de la palabra (163 px en 126 y 281 px en 231, en un móvil de 1080 px a 420 ppp).
+// Desde GP-286 son TextoSinPartir, la regla de GP-288: si la palabra no cabe, el rótulo encoge lo
+// justo, nunca por debajo de su tamaño a letra 1,0, y no se parte. Y los cuatro van al mismo
+// tamaño (FilaRotulos): «Serie», en la columna más estrecha, encogía más que los demás.
 //
 // Se infla la tarjeta de un ejercicio con la escala de letra y el idioma pedidos y se mide al
 // ancho que tiene en la pantalla (el del móvil menos los márgenes de la pantalla). Un rótulo
 // se lee entero si no acaba en puntos suspensivos, si ninguna de sus palabras es más ancha que
 // su columna (se partiría por la mitad) y si su vista tiene el alto de todas sus líneas.
-//
-// A 1,0 y a 1,3 pasa. A 2,0 no, y ese caso está apartado con su porqué (ver abajo).
 // ============================================================
 @RunWith(AndroidJUnit4.class)
 public class FilaSerieRotulosTest {
 
-    private static ViewGroup filaDeRotulos(float escala, String idioma) {
+    private static ViewGroup filaDeRotulos(int layout, int margen, float escala, String idioma) {
         Context base = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Configuration conf = new Configuration(base.getResources().getConfiguration());
         conf.fontScale = escala;
         conf.setLocale(new Locale(idioma));
         Context c = new ContextThemeWrapper(base.createConfigurationContext(conf), R.style.Theme_GymProFit);
+        // La Sesión en vivo es una pantalla de Liquid Glass: sus vistas leen el tema de cristal.
+        if (layout == R.layout.item_envivo_ejercicio) {
+            c = new ContextThemeWrapper(c, R.style.ThemeOverlay_GymProFit_Cristal);
+        }
         // Como lo infla una pantalla de verdad: con las vistas de AppCompat y Material. Sin
         // eso, en Android 7 un TextView a secas no aplica la fuente del estilo (las fuentes de
         // res/font son de Android 8) y el rótulo sale en la del sistema, más ancha.
@@ -69,9 +75,9 @@ public class FilaSerieRotulosTest {
                 return onCreateView(null, nombre, contexto, atributos);
             }
         });
-        View tarjeta = inflador.inflate(R.layout.item_apuntar_ejercicio, null, false);
+        View tarjeta = inflador.inflate(layout, null, false);
         int ancho = c.getResources().getDisplayMetrics().widthPixels
-                - 2 * c.getResources().getDimensionPixelSize(R.dimen.margen_pantalla);
+                - 2 * c.getResources().getDimensionPixelSize(margen);
         tarjeta.measure(View.MeasureSpec.makeMeasureSpec(ancho, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         tarjeta.layout(0, 0, ancho, tarjeta.getMeasuredHeight());
@@ -97,18 +103,32 @@ public class FilaSerieRotulosTest {
                 lineas.getHeight() <= alto);
     }
 
+    // Las dos pantallas que llevan la fila: {layout de la tarjeta, margen de la pantalla}.
+    private static final int[][] PANTALLAS = {
+            { R.layout.item_apuntar_ejercicio, R.dimen.margen_pantalla },
+            { R.layout.item_envivo_ejercicio, R.dimen.envivo_margen },
+    };
+
     private static void comprobar(float escala, String idioma) {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
-            ViewGroup fila = filaDeRotulos(escala, idioma);
-            String caso = idioma + " a " + escala;
-            int rotulos = 0;
-            for (int i = 0; i < fila.getChildCount(); i++) {
-                if (!(fila.getChildAt(i) instanceof TextView)) continue;
-                rotuloEntero((TextView) fila.getChildAt(i), caso);
-                rotulos++;
+            for (int[] pantalla : PANTALLAS) {
+                ViewGroup fila = filaDeRotulos(pantalla[0], pantalla[1], escala, idioma);
+                String caso = fila.getResources().getResourceEntryName(pantalla[0]) + ", " + idioma + " a " + escala;
+                int rotulos = 0;
+                float tamano = -1f;
+                for (int i = 0; i < fila.getChildCount(); i++) {
+                    if (!(fila.getChildAt(i) instanceof TextView)) continue;
+                    TextView rotulo = (TextView) fila.getChildAt(i);
+                    rotuloEntero(rotulo, caso);
+                    // Los cuatro, al mismo tamaño: si uno encoge, encogen todos (FilaRotulos).
+                    if (tamano < 0f) tamano = rotulo.getTextSize();
+                    assertEquals(caso + ": «" + rotulo.getText() + "» va a otro tamaño que el primero",
+                            tamano, rotulo.getTextSize(), 0.01f);
+                    rotulos++;
+                }
+                // «Serie», «Anterior», «kg» y «Reps».
+                assertEquals(caso + ": columnas con rótulo", 4, rotulos);
             }
-            // «Serie», «Anterior», «kg» y «Reps».
-            assertEquals(caso + ": columnas con rótulo", 4, rotulos);
         });
     }
 
@@ -124,12 +144,12 @@ public class FilaSerieRotulosTest {
         comprobar(1.3f, "en");
     }
 
-    // Apartado, no arreglado (GP-286): con letra 2,0 la pantalla nueva parte «SERIE» (163 px en
-    // una columna de 126) y «ANTERIOR» / «PREVIOUS» (281 y 279 px en 231) por la mitad de la
-    // palabra, medido en un móvil de 1080 px a 420 ppp. Que pase exige tocar el layout de
-    // producción (item_apuntar_ejercicio), y eso lo decide el propietario: al arreglarlo se
-    // quita esta línea.
-    @Ignore("GP-286: a letra 2,0 «Serie» y «Anterior» no caben en su columna; pendiente de decidir el arreglo en producción")
+    @Test
+    public void a_1_5_en_espanol_y_en_ingles() {
+        comprobar(1.5f, "es");
+        comprobar(1.5f, "en");
+    }
+
     @Test
     public void a_2_0_en_espanol_y_en_ingles() {
         comprobar(2.0f, "es");

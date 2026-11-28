@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal_campo — el campo de kg, reps o tiempo de una serie sobre cristal (GP-285, lote 2).
+     Lo dibuja Cristal (tipo «campo»): en claro, cristal estático con el relleno de las tarjetas
+     (translúcido claro: el surco gris de antes se leía como una caja opaca); en oscuro, el surco
+     de siempre (la pista de las barras). En los dos, el canto de un control, gp_cristal_barra_tenue,
+     que pasa 3:1 contra la tarjeta y contra lo de dentro (ContrasteCristalTest). Con foco, el
+     canto en el naranja de los gráficos sobre cristal, de 2 dp, para que se vea dónde se escribe. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:state_focused="true">
+        <drawable
+            class="es.pmdm.gymprofit.ui.cristal.Cristal"
+            app:cristalRadio="@dimen/radio_campo_serie"
+            app:cristalTipo="campo_foco" />
+    </item>
+    <item>
+        <drawable
+            class="es.pmdm.gymprofit.ui.cristal.Cristal"
+            app:cristalRadio="@dimen/radio_campo_serie"
+            app:cristalTipo="campo" />
+    </item>
+</selector>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_check_cristal_record — el botón de marcar de la serie que batió un récord, sobre su fila dorada (GP-285, lote 2): el círculo relleno de dorado con su borde de 2 dp; dentro va el trofeo. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/gp_cristal_oro_alto" />
+    <stroke android:width="2dp" android:color="@color/gp_cristal_oro_fila" />
+</shape>

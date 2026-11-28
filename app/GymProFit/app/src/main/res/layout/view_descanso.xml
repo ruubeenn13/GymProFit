@@ -1,145 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  view_descanso — el descanso entre series (GP-013), abajo en la sesión en vivo, en el
-  hueco que dejó la 1.3.0. Nunca bloquea: la lista sigue debajo, se escribe y se marca.
-  · panelDescanso: el aro que se vacía, «Descanso», la cuenta atrás, qué serie viene
-    (GP-210), «−15 s», «+15 s» y «Saltar». TalkBack lo lee como un temporizador al llegar a él o tocarlo
-    (la descripción se calcula en ese momento; no se anuncia cada segundo).
+  view_descanso — el descanso entre series (GP-013), abajo en la sesión en vivo. Nunca bloquea:
+  la lista sigue debajo, se escribe y se marca. En Liquid Glass (GP-285, lote 2) es un panel de
+  cristal vivo que flota a 12 dp de los lados y 22 del hueco del sistema, como en la maqueta.
+  · panelDescanso: «Descanso» y la cuenta atrás; a su lado «−15 s», «+15 s» y «Saltar»; debajo,
+    la barra que se vacía (momento 26; antes, un aro) y qué serie viene (GP-210). Si los
+    botones no caben al lado de la cuenta (letra grande), bajan a su propia fila (FilaBotones).
+    TalkBack lee la cuenta como un temporizador al llegar a ella o tocarla (la descripción se
+    calcula en ese momento; no se anuncia cada segundo).
   · avisoFinDescanso: «¡A por la serie 3!» con el ejercicio y su cerrar; se va solo.
+
+  Un solo principal (DEC-070): «Saltar», que es el que avanza el entreno (lleva a la serie
+  siguiente). «−15 s» y «+15 s» ajustan la espera: secundarios, de cristal.
+  El relleno de abajo (el hueco del sistema o el teclado) lo pone la pantalla.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/zonaDescanso"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom">
+    android:layout_gravity="bottom"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
-    <LinearLayout
+    <es.pmdm.gymprofit.ui.cristal.CristalVivo
         android:id="@+id/panelDescanso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-1dp"
-        android:layout_marginEnd="-1dp"
-        android:layout_marginBottom="-1dp"
-        android:background="@drawable/bg_panel_descanso"
+        android:layout_marginStart="@dimen/envivo_descanso_lado"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:layout_marginEnd="@dimen/envivo_descanso_lado"
+        android:layout_marginBottom="@dimen/envivo_descanso_abajo"
         android:clickable="true"
         android:focusable="false"
-        android:orientation="vertical"
-        android:paddingStart="17dp"
-        android:paddingTop="14dp"
-        android:paddingEnd="17dp"
-        android:paddingBottom="16dp"
-        android:visibility="gone">
+        android:importantForAccessibility="no"
+        android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
+        android:visibility="gone"
+        app:cristalRadio="@dimen/radio_cristal_heroe"
+        app:cristalSombra="true">
 
         <LinearLayout
-            android:id="@+id/grupoCuentaAtras"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:importantForAccessibility="yes"
-            android:orientation="horizontal">
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/espacio_16"
+            android:paddingTop="14dp"
+            android:paddingEnd="@dimen/espacio_16"
+            android:paddingBottom="14dp">
 
-            <!-- El aro que se vacía (GP-210, momento 26): mil pasos para que baje sin saltos. -->
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/aroDescanso"
-                android:layout_width="wrap_content"
+            <es.pmdm.gymprofit.ui.widget.FilaBotones
+                android:id="@+id/filaDescanso"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:id="@+id/grupoCuentaAtras"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:importantForAccessibility="yes"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvDescansoRotulo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:text="@string/envivo_descanso"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
+
+                    <TextView
+                        android:id="@+id/tvDescansoTiempo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:includeFontPadding="false"
+                        android:textAppearance="@style/TextAppearance.GymProFit.Number"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/envivo_descanso_numero" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/botonesDescanso"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:orientation="horizontal">
+
+                    <!-- Ancho el de su texto, más su parte de lo que sobre: al lado de la cuenta no
+                         sobra nada; en su propia fila se reparten el ancho. -->
+                    <es.pmdm.gymprofit.ui.widget.BotonCristal
+                        android:id="@+id/btnDescansoMenos"
+                        style="@style/Widget.GymProFit.Boton.Cristal"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/envivo_descanso_menos_a11y"
+                        android:minWidth="@dimen/zona_tactil"
+                        android:paddingStart="@dimen/envivo_descanso_boton_relleno"
+                        android:paddingEnd="@dimen/envivo_descanso_boton_relleno"
+                        android:text="@string/envivo_descanso_menos"
+                        android:textSize="@dimen/envivo_descanso_boton_texto"
+                        app:cristalSobreVivo="true" />
+
+                    <es.pmdm.gymprofit.ui.widget.BotonCristal
+                        android:id="@+id/btnDescansoMas"
+                        style="@style/Widget.GymProFit.Boton.Cristal"
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="@dimen/espacio_8"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/envivo_descanso_mas_a11y"
+                        android:minWidth="@dimen/zona_tactil"
+                        android:paddingStart="@dimen/envivo_descanso_boton_relleno"
+                        android:paddingEnd="@dimen/envivo_descanso_boton_relleno"
+                        android:text="@string/envivo_descanso_mas"
+                        android:textSize="@dimen/envivo_descanso_boton_texto"
+                        app:cristalSobreVivo="true" />
+
+                    <es.pmdm.gymprofit.ui.widget.BotonMarca
+                        android:id="@+id/btnDescansoSaltar"
+                        style="@style/Widget.GymProFit.Boton.Marca"
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="@dimen/espacio_8"
+                        android:layout_weight="1"
+                        android:contentDescription="@string/envivo_descanso_saltar_a11y"
+                        android:minWidth="@dimen/zona_tactil"
+                        android:paddingStart="@dimen/espacio_16"
+                        android:paddingEnd="@dimen/espacio_16"
+                        android:text="@string/envivo_descanso_saltar"
+                        android:textSize="@dimen/envivo_descanso_boton_texto" />
+                </LinearLayout>
+            </es.pmdm.gymprofit.ui.widget.FilaBotones>
+
+            <!-- La barra que se vacía (GP-210, momento 26): la mueve la pantalla, en lineal. -->
+            <es.pmdm.gymprofit.ui.cristal.BarraProgresoCristal
+                android:id="@+id/barraDescanso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
+            <!-- Qué viene. TalkBack lo oye con la cuenta atrás, en su grupo. -->
+            <TextView
+                android:id="@+id/tvDescansoDespues"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/espacio_8"
                 android:importantForAccessibility="no"
-                android:max="1000"
-                android:progress="1000"
-                app:indicatorColor="?attr/colorPrimary"
-                app:indicatorSize="72dp"
-                app:trackColor="@color/gp_divider"
-                app:trackCornerRadius="4dp"
-                app:trackThickness="7dp" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_weight="1"
-                android:importantForAccessibility="noHideDescendants"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tvDescansoRotulo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/envivo_descanso"
-                    android:textAllCaps="true"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Label"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_eyebrow" />
-
-                <TextView
-                    android:id="@+id/tvDescansoTiempo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:importantForAccessibility="no"
-                    android:textAppearance="@style/TextAppearance.GymProFit.Number"
-                    android:textSize="@dimen/envivo_descanso_numero" />
-
-                <TextView
-                    android:id="@+id/tvDescansoDespues"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="@dimen/text_caption" />
-            </LinearLayout>
+                android:textAppearance="@style/TextAppearance.GymProFit.Apoyo.Pequeno" />
         </LinearLayout>
+    </es.pmdm.gymprofit.ui.cristal.CristalVivo>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDescansoMenos"
-                style="@style/Widget.GymProFit.BotonPildora"
-                android:layout_width="0dp"
-                android:backgroundTint="?attr/colorSurfaceVariant"
-                android:layout_weight="1"
-                android:textColor="?attr/colorOnSurface"
-                android:contentDescription="@string/envivo_descanso_menos_a11y"
-                android:minHeight="48dp"
-                android:text="@string/envivo_descanso_menos" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDescansoMas"
-                style="@style/Widget.GymProFit.BotonPildora"
-                android:layout_width="0dp"
-                android:backgroundTint="?attr/colorSurfaceVariant"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:textColor="?attr/colorOnSurface"
-                android:contentDescription="@string/envivo_descanso_mas_a11y"
-                android:minHeight="48dp"
-                android:text="@string/envivo_descanso_mas" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDescansoSaltar"
-                style="@style/Widget.GymProFit.BotonPildora"
-                android:layout_width="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:contentDescription="@string/envivo_descanso_saltar_a11y"
-                android:minHeight="48dp"
-                android:text="@string/envivo_descanso_saltar" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <com.google.android.material.card.MaterialCardView
+    <es.pmdm.gymprofit.ui.cristal.CristalVivo
         android:id="@+id/avisoFinDescanso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
+        android:layout_marginStart="@dimen/envivo_descanso_lado"
+        android:layout_marginTop="@dimen/espacio_8"
+        android:layout_marginEnd="@dimen/envivo_descanso_lado"
+        android:layout_marginBottom="@dimen/envivo_descanso_abajo"
         android:accessibilityLiveRegion="polite"
+        android:clickable="true"
+        android:focusable="false"
+        android:theme="@style/ThemeOverlay.GymProFit.CristalVivo"
         android:visibility="gone"
-        app:cardBackgroundColor="?attr/colorPrimary"
-        app:strokeWidth="0dp">
+        app:cristalRadio="@dimen/radio_cristal"
+        app:cristalSombra="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -157,7 +186,7 @@
                 android:layout_height="28dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_ms_notifications_active_fill"
-                app:tint="?attr/colorOnPrimary" />
+                app:tint="@color/gp_vivo_accion" />
 
             <LinearLayout
                 android:id="@+id/grupoFinDescanso"
@@ -173,14 +202,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.GymProFit.Headline"
-                    android:textColor="?attr/colorOnPrimary" />
+                    android:textColor="?attr/colorOnSurface" />
 
                 <TextView
                     android:id="@+id/tvFinTexto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textColor="?attr/colorOnPrimary"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="@dimen/text_body"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -192,7 +221,7 @@
                 android:layout_height="48dp"
                 android:contentDescription="@string/envivo_fin_cerrar"
                 android:src="@drawable/ic_ms_close"
-                app:tint="?attr/colorOnPrimary" />
+                app:tint="?attr/colorOnSurface" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </es.pmdm.gymprofit.ui.cristal.CristalVivo>
 </FrameLayout>

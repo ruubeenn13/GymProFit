@@ -128,12 +128,14 @@
         <activity
             android:name=".ui.activities.RegistrarSesionActivity"
             android:exported="false" />
-        <!-- La sesión en vivo (GP-012). singleTop: la notificación no abre otra encima. -->
+        <!-- La sesión en vivo (GP-012). singleTop: la notificación no abre otra encima.
+             stateHidden: en Android 8.1 o menos el sistema da el foco al primer campo al abrir la
+             pantalla y, sin esto, sacaba el teclado encima de la lista sin que nadie lo pidiera. -->
         <activity
             android:name=".ui.activities.SesionEnVivoActivity"
             android:exported="false"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".ui.activities.ResumenSesionActivity"
             android:exported="false" />

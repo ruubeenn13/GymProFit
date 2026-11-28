@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_check_cristal_toca — el botón de marcar de la serie que toca, sobre cristal (GP-285, lote 2): el mismo aro en el acento de la lente. En su propio dibujo, no teñido (MarcaSerie). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="@color/gp_cristal_lente_acento" />
+</shape>

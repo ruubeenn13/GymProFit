@@ -49,6 +49,9 @@ import es.pmdm.gymprofit.utils.TiempoRelativo;
 // serie tiene que ser un elemento de la lista para quitarla deslizándola. Al final va
 // el estado de la carga con «Añadir ejercicio» y «Descartar la sesión».
 //
+// En Liquid Glass (GP-285, lote 2) las piezas no llevan fondo: la tarjeta de cristal de cada
+// ejercicio la pinta la lista de una vez por detrás (tarjetas(), TarjetaEjercicioCristal).
+//
 // La lista se reconstruye con cada cambio de la sesión, pero con DiffUtil sobre una
 // FOTO de lo que se pinta: solo se repinta lo que cambió, y el campo en el que se está
 // escribiendo no pierde el foco al marcar otra serie. Teclear no repinta nada: el texto
@@ -92,6 +95,11 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         boolean toca;
         /** La serie que batió el récord del ejercicio: su fila va en dorado (GP-210). */
         boolean oro;
+        /**
+         * La serie en curso, que lleva la lente (GP-285): durante el descanso, la que viene
+         * después; si no, la primera sin marcar.
+         */
+        boolean lente;
         // Pie
         boolean puedeAnadir;
         // Final
@@ -115,6 +123,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     && Objects.equals(segundos, o.segundos) && Objects.equals(pistaPeso, o.pistaPeso)
                     && Objects.equals(pistaReps, o.pistaReps) && Objects.equals(pistaSegundos, o.pistaSegundos)
                     && hecha == o.hecha && editable == o.editable && siguiente == o.siguiente
+                    && lente == o.lente
                     && puedeAnadir == o.puedeAnadir
                     && carga == o.carga && vacia == o.vacia;
         }
@@ -139,6 +148,15 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.repo = repo;
         this.acciones = acciones;
         setHasStableIds(true);
+    }
+
+    /**
+     * Lo que pinta, detrás de las piezas de cada ejercicio, su tarjeta de cristal. Se le pone a
+     * la lista una vez, con su contexto (el que lleva el tema de cristal de la pantalla).
+     */
+    @NonNull
+    public static RecyclerView.ItemDecoration tarjetas(@NonNull Context contextoDeLaLista) {
+        return new TarjetaEjercicioCristal(contextoDeLaLista);
     }
 
     // ── Construir la foto ────────────────────────────────────
@@ -182,6 +200,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     f.toca = !tocaDada && !f.hecha;
                     tocaDada |= f.toca;
                     f.oro = f.hecha && e.recordSerieId != null && e.recordSerieId == f.id;
+                    f.lente = !f.hecha && (sig != null ? f.siguiente : f.toca);
                     nuevas.add(f);
                 }
                 Fila pie = new Fila(PIE, -e.id);
@@ -258,11 +277,17 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             SesionEnCurso.Marca nueva = LogicaRecordVivo.deSerie(e, s);
             if (nueva == null) return;
             String antes = textoMarca(e.marca);
-            f.avisoTitulo = ctx.getString(R.string.envivo_record_aviso, textoMarca(nueva));
-            f.avisoAntes = ctx.getString(R.string.envivo_record_aviso_antes, antes);
+            // En pantalla, cada marca es una pieza («62,5 kg × 10», con espacios duros): si no
+            // cabe tras el texto, baja entera a la línea siguiente, no deja el «10» solo.
+            f.avisoTitulo = ctx.getString(R.string.envivo_record_aviso, unaPieza(textoMarca(nueva)));
+            f.avisoAntes = ctx.getString(R.string.envivo_record_aviso_antes, unaPieza(antes));
             f.avisoA11y = ctx.getString(R.string.envivo_record_aviso_a11y, textoMarca(nueva), antes);
             return;
         }
+    }
+
+    private static String unaPieza(String marca) {
+        return marca.replace(' ', '\u00A0');
     }
 
     // «85 kg × 7», «12 reps» o «1:05», como en el resumen (Marcas).
@@ -423,9 +448,6 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvRotuloReps = v.findViewById(R.id.tvRotuloReps);
             grupo = v.findViewById(R.id.grupoCabecera);
             btnMenu = v.findViewById(R.id.btnMenuEjercicio);
-            for (int id : new int[]{R.id.tvRotuloSerie, R.id.tvRotuloAnterior, R.id.tvRotuloKg, R.id.tvRotuloReps}) {
-                es.pmdm.gymprofit.utils.Rotulos.limitar(v.findViewById(id));
-            }
         }
 
         void pintar(Fila f) {
@@ -463,7 +485,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void pintarRecord(Fila f) {
             texto(tvRecord, f.record);
             tvRecord.setTextColor(f.recordDorado
-                    ? ContextCompat.getColor(ctx, R.color.gp_gold_text)
+                    // El dorado de texto sobre cristal: 4,5:1 en los dos temas (ContrasteCristalTest).
+                    ? ContextCompat.getColor(ctx, R.color.gp_cristal_oro)
                     // «Primera vez», en neutro (DESIGN.md): el naranja es de lo que se pulsa.
                     : MaterialColors.getColor(tvRecord, com.google.android.material.R.attr.colorOnSurfaceVariant));
             tvRecord.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -478,7 +501,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             avisoRecord.setContentDescription(f.avisoA11y);
             if (f.id == recordEjercicioId && !yaVisible) {
                 recordEjercicioId = -1;
-                int oro = ContextCompat.getColor(ctx, R.color.gp_gold);
+                int oro = ContextCompat.getColor(ctx, R.color.gp_cristal_oro_fila);
                 Movimiento.bajarAviso(avisoRecord);
                 Movimiento.celebrarRecord((android.view.ViewGroup) avisoRecord, marcoTrofeo, oro, oro, 120);
             }
@@ -490,6 +513,8 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView tvNumero, tvAnterior;
         final EditText etKg, etReps, etTiempo;
         final ImageButton btnCronometro, btnMarcar;
+        // La letra de «Anterior» tal como viene: «¡Récord!» va en negrita y luego hay que volver.
+        final android.graphics.Typeface letraAnterior;
         long serieId = -1;
         boolean pintando;
         int accionQuitar = View.NO_ID;
@@ -499,6 +524,7 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             fila = v.findViewById(R.id.filaSerie);
             tvNumero = v.findViewById(R.id.tvNumero);
             tvAnterior = v.findViewById(R.id.tvAnterior);
+            letraAnterior = tvAnterior.getTypeface();
             etKg = v.findViewById(R.id.etKg);
             etReps = v.findViewById(R.id.etReps);
             etTiempo = v.findViewById(R.id.etTiempo);
@@ -553,7 +579,13 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             pintando = true;
             serieId = f.id;
             tvNumero.setText(String.valueOf(f.numero));
-            tvAnterior.setText(f.anterior);
+            // En la fila de un récord, «¡Récord!» donde iba la marca anterior, como en la maqueta
+            // (la marca de antes sigue en el aviso de arriba y en lo que lee TalkBack).
+            // Con espacios duros: «80 × 10» es una sola pieza, no se reparte en dos líneas.
+            tvAnterior.setText(f.oro ? ctx.getString(R.string.envivo_record_fila)
+                    : f.anterior == null ? null : f.anterior.replace(' ', '\u00A0'));
+            tvAnterior.setTypeface(letraAnterior, f.oro ? android.graphics.Typeface.BOLD
+                    : android.graphics.Typeface.NORMAL);
 
             etKg.setVisibility(f.porTiempo ? View.GONE : View.VISIBLE);
             etReps.setVisibility(f.porTiempo ? View.GONE : View.VISIBLE);
@@ -568,33 +600,58 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             rotular(etTiempo, ctx.getString(R.string.envivo_tiempo_a11y, f.numero), f.pistaSegundos);
             pintando = false;
 
-            // La fila: dorada si es la del récord (momento 25), con el borde del color principal
-            // si es la siguiente tras el descanso (GP-013), sin relleno en las demás.
+            // La fila (GP-285): dorada si es la del récord (momento 25), con la lente si es la
+            // serie en curso (durante el descanso, la que viene después: GP-013) y sin fondo en
+            // las demás, que dejan ver la tarjeta de cristal que la lista pinta por detrás.
             boolean marcadaAhora = f.hecha && f.id == marcadaSerieId;
+            fila.setForeground(null);
             if (f.oro) {
-                int oroFila = ContextCompat.getColor(ctx, R.color.gp_gold_fila);
-                if (marcadaAhora && marcadaEsRecord) {
-                    Movimiento.dorarFila(fila, MaterialColors.getColor(fila, com.google.android.material.R.attr.colorSurface),
-                            ContextCompat.getColor(ctx, R.color.gp_gold_container), oroFila);
-                } else {
-                    fila.setBackgroundColor(oroFila);
-                }
-            } else if (f.siguiente && !f.hecha) {
-                fila.setBackgroundResource(R.drawable.bg_serie_siguiente);
+                android.graphics.drawable.Drawable oro = ContextCompat.getDrawable(fila.getContext(),
+                        R.drawable.bg_cristal_fila_oro);
+                android.graphics.drawable.Drawable destello = marcadaAhora && marcadaEsRecord
+                        ? ContextCompat.getDrawable(fila.getContext(), R.drawable.bg_cristal_fila_destello) : null;
+                if (oro != null && destello != null) Movimiento.dorarFila(fila, oro, destello);
+                else fila.setBackground(oro);
+            } else if (f.lente) {
+                fila.setBackgroundResource(R.drawable.bg_cristal_fila_lente);
             } else {
-                fila.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                fila.setBackground(null);
             }
 
+            // Los textos, con los colores medidos sobre cada fondo (ContrasteCristalTest): en la
+            // fila dorada, el número y «¡Récord!» en su dorado; sobre la lente, el número y los
+            // kilos en su acento y la marca anterior en el texto principal (el secundario no
+            // llega ahí); en las demás, lo de siempre.
+            int texto = MaterialColors.getColor(fila, com.google.android.material.R.attr.colorOnSurface);
+            int secundario = MaterialColors.getColor(fila, com.google.android.material.R.attr.colorOnSurfaceVariant);
+            int acento = ContextCompat.getColor(ctx, R.color.gp_cristal_lente_acento);
+            int oroTexto = ContextCompat.getColor(ctx, R.color.gp_cristal_oro_fila);
+            tvNumero.setTextColor(f.oro ? oroTexto : f.lente ? acento : texto);
+            tvAnterior.setTextColor(f.oro ? oroTexto : f.lente ? texto : secundario);
+            etKg.setTextColor(f.lente ? acento : texto);
+            for (EditText et : new EditText[]{etKg, etReps, etTiempo}) {
+                et.setHintTextColor(f.oro ? texto : secundario);
+            }
+            // En la serie en curso los kilos van en el acento también cuando son la propuesta
+            // (la pista), como en la maqueta: es lo que se va a apuntar si se marca tal cual.
+            if (f.lente) etKg.setHintTextColor(acento);
+
             // El botón (GP-252): hecha, el círculo relleno con borde y su check en verde; sin hacer,
-            // el aro de Apuntar entreno, en gp_stroke o, si es la que toca, en el color principal.
-            // Cada forma es su dibujo, sin tinte de fondo (teñido, el aro salía relleno). La
-            // diferencia es de forma y TalkBack dice el estado, no solo el color (DEC-019).
-            btnMarcar.setImageResource(R.drawable.ic_ms_check);
+            // un aro vacío, en el acento si es la que toca; la de un récord, el círculo dorado con
+            // el trofeo. Cada forma es su dibujo, sin tinte de fondo (teñido, el aro salía
+            // relleno). La diferencia es de forma y TalkBack dice el estado, no solo el color
+            // (DEC-019).
             btnMarcar.setBackgroundTintList(null);
-            btnMarcar.setBackgroundResource(MarcaSerie.fondo(f.hecha, f.toca));
-            btnMarcar.setImageTintList(ColorStateList.valueOf(f.hecha ? ContextCompat.getColor(ctx, R.color.gp_success)
-                    : MaterialColors.getColor(btnMarcar, f.toca ? androidx.appcompat.R.attr.colorPrimary
-                    : com.google.android.material.R.attr.colorOnSurfaceVariant)));
+            btnMarcar.setBackgroundResource(MarcaSerie.fondoCristal(f.hecha, f.toca, f.oro));
+            if (f.oro) {
+                btnMarcar.setImageResource(R.drawable.ic_ms_trophy);
+                btnMarcar.setImageTintList(ColorStateList.valueOf(oroTexto));
+            } else if (f.hecha) {
+                btnMarcar.setImageResource(R.drawable.ic_ms_check);
+                btnMarcar.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.gp_cristal_exito)));
+            } else {
+                btnMarcar.setImageDrawable(null);
+            }
             // El círculo crece al marcar (momento 24).
             if (marcadaAhora) Movimiento.crecerMarca(btnMarcar, !marcadaEsRecord);
             if (f.id == marcadaSerieId) {
@@ -614,8 +671,11 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // TalkBack: «Serie 2. Anterior: 57,5 × 12» en el número, que es donde entra
             // en la fila; y «Quitar serie» como acción, que es lo que sustituye al gesto.
-            String nombre = ctx.getString(f.siguiente && !f.hecha
-                    ? R.string.envivo_serie_siguiente_a11y : R.string.envivo_serie_a11y, f.numero);
+            // Lo que la fila dice con su fondo, dicho también con palabras (DEC-019): la del
+            // récord, «Serie 1, récord»; la que lleva la lente, «Serie 2, la siguiente».
+            String nombre = ctx.getString(f.oro ? R.string.envivo_serie_record_a11y
+                    : f.lente || (f.siguiente && !f.hecha) ? R.string.envivo_serie_siguiente_a11y
+                    : R.string.envivo_serie_a11y, f.numero);
             tvNumero.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             tvNumero.setContentDescription(f.anteriorA11y == null ? nombre
                     : nombre + ". " + ctx.getString(R.string.envivo_anterior_a11y, f.anteriorA11y));

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal_fila_destello — el destello de la fila que pasa a dorado (momento 25 de DEC-039) sobre cristal: el tinte dorado otra vez encima, que aparece y se va. Lo dibuja Cristal (ORO). -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="oro"
+    app:cristalRadio="@dimen/radio_fila_serie" />

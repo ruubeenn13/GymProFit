@@ -119,6 +119,26 @@
     <color name="gp_ambiente_brillo_2">#73BE2814</color>
     <color name="gp_ambiente_brillo_3">#593C5AC8</color>
     <color name="gp_ambiente_brillo_4">#00000000</color>
+    <!-- Fondo de la Sesión en vivo (lote 2; Ambiente.sesion): naranja arriba a la derecha, dorado
+         a la izquierda y azul abajo a la derecha. -->
+    <color name="gp_ambiente_sesion_1">#42FF6A00</color>
+    <color name="gp_ambiente_sesion_2">#2EE8B84B</color>
+    <color name="gp_ambiente_sesion_3">#663C5AC8</color>
+    <!-- «Descartar la sesión», texto sobre el fondo, sin cristal debajo. -->
+    <color name="gp_cristal_error">@color/gp_error</color>
+    <!-- La fila dorada de un récord en la Sesión en vivo: un surco oscuro bajo el tinte dorado y
+         el dorado claro de la maqueta para lo que se escribe encima. -->
+    <color name="gp_cristal_oro_surco">#40000000</color>
+    <color name="gp_cristal_oro_fila">#F0DDA8</color>
+    <!-- El acento sobre la lente de la serie en curso (su número, sus kilos y su aro). -->
+    <color name="gp_cristal_lente_acento">#FFC9A3</color>
+    <!-- La barra del descanso que se vacía: del acento claro al naranja, como en la maqueta. -->
+    <color name="gp_cristal_descanso_alto">#FFB27A</color>
+    <color name="gp_cristal_descanso_bajo">#FF6A00</color>
+    <!-- El campo de una serie: en oscuro, el surco de siempre (la pista de las barras). -->
+    <color name="gp_cristal_campo_alto">@color/gp_cristal_pista</color>
+    <color name="gp_cristal_campo_medio">@color/gp_cristal_pista</color>
+    <color name="gp_cristal_campo_bajo">@color/gp_cristal_pista</color>
     <!-- Cristal estático: relleno a 160° blanco 16 % → 5 % (al 55 %) → 9 %, borde 18 % y brillo
          superior 35 %. -->
     <color name="gp_cristal_alto">#29FFFFFF</color>
@@ -151,6 +171,8 @@
     <color name="gp_cristal_proteinas">@color/gp_macro_proteinas</color>
     <color name="gp_cristal_agua">@color/gp_agua</color>
     <color name="gp_cristal_exito">#8FE3B0</color>
+    <!-- El relleno del círculo de una serie hecha sobre cristal: el mismo verde, tenue. -->
+    <color name="gp_cristal_exito_fondo">#298FE3B0</color>
     <!-- Dorado de texto sobre cristal (4,65:1) y la cifra de 26 sp sobre la fila de un récord
          (#E8B84B se quedaba en 2,85:1 sobre su propio degradado; #F0DDA8 da 3,90:1). -->
     <color name="gp_cristal_oro">#E8B84B</color>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_cristal_fila_lente — la serie en curso de la Sesión en vivo (GP-285, lote 2): la selección «lente» en una fila de radio 16. Lo dibuja Cristal. -->
+<drawable xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    class="es.pmdm.gymprofit.ui.cristal.Cristal"
+    app:cristalTipo="lente"
+    app:cristalRadio="@dimen/radio_fila_serie" />

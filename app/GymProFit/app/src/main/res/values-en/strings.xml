@@ -1056,6 +1056,8 @@
     <!-- Registro por tiempo y por lado (GP-125) -->
     <!-- Live workout (GP-012) and last time (GP-014) -->
     <string name="envivo_minimizar">Minimize</string>
+    <!-- Lo que TalkBack lee del título de la sesión: la rutina y su programa. -->
+    <string name="envivo_titulo_a11y">%1$s, %2$s</string>
     <string name="envivo_terminar">Finish</string>
     <string name="envivo_tiempo">Time</string>
     <string name="envivo_series">Sets</string>
@@ -1077,6 +1079,7 @@
     <string name="envivo_record_tu">Your record: %1$s</string>
     <string name="envivo_record_tu_hoy">Your record: %1$s, from today</string>
     <string name="envivo_record_aviso">New record! %1$s</string>
+    <string name="envivo_record_fila">Record!</string>
     <string name="envivo_record_aviso_antes">Your best mark was %1$s</string>
     <string name="envivo_record_aviso_a11y">New record. %1$s. Your best mark was %2$s.</string>
     <string name="envivo_descanso_siguiente_serie">Next: set %1$d · %2$s</string>
@@ -1185,6 +1188,7 @@
     <string name="envivo_fin_texto">%1$s · rest is over</string>
     <string name="envivo_fin_cerrar">Dismiss</string>
     <string name="envivo_serie_siguiente_a11y">Set %1$d, up next</string>
+    <string name="envivo_serie_record_a11y">Set %1$d, record</string>
     <string name="envivo_barra_descanso">Rest · %1$s · %2$s</string>
     <string name="envivo_barra_descanso_a11y">Rest: %1$s left. %2$s. Back to the workout</string>
     <string name="envivo_barra_fin">%1$s · %2$s</string>
