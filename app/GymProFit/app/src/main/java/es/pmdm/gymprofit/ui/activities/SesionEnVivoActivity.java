@@ -360,13 +360,22 @@ public class SesionEnVivoActivity extends AppCompatActivity implements SesionEnV
         ViewCompat.requestApplyInsets(raiz);
     }
 
-    // El borde de arriba es macizo hasta el pie de la fila del título (la barra de estado y la
-    // cabecera: el título va suelto sobre el fondo y la lista no puede pasarle por detrás) y de
-    // ahí se desvanece, como el de la navegación principal bajo la barra de estado. La lista sí
-    // pasa, ya a medio desvanecer, por detrás del resumen, que es cristal vivo.
+    // El borde de arriba es macizo hasta donde empieza el primer cristal de debajo del título
+    // (la barra de estado, la cabecera y el hueco que la separa del resumen: el título va suelto
+    // sobre el fondo y la lista no puede pasarle por detrás, ni asomar a medias justo debajo,
+    // donde con letra grande se leía como una línea más del título) y de ahí se desvanece, como
+    // el de la navegación principal bajo la barra de estado. La lista sí pasa por detrás del
+    // resumen, que es cristal vivo: aparece desenfocada bajo su canto de arriba.
     private void ajustarBordeSuperior() {
         if (cabecera == null || filaCabecera.getHeight() == 0) return;
         int macizo = cabecera.getTop() + filaCabecera.getBottom();
+        android.view.ViewGroup pila = (android.view.ViewGroup) cabecera;
+        for (int i = pila.indexOfChild(filaCabecera) + 1; i < pila.getChildCount(); i++) {
+            View pieza = pila.getChildAt(i);
+            if (pieza.getVisibility() != View.VISIBLE) continue;
+            macizo = cabecera.getTop() + pieza.getTop();
+            break;
+        }
         ponerAlto(bordeSuperior, BordesSistema.altoSuperior(macizo,
                 getResources().getDimensionPixelSize(R.dimen.borde_sistema_desvanecido)));
         bordeArriba.poner(androidx.core.content.ContextCompat.getColor(this, R.color.gp_ambiente_base), macizo);

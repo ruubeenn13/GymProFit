@@ -575,7 +575,9 @@ public class SesionEnVivoAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             tvNumero.setText(String.valueOf(f.numero));
             // En la fila de un récord, «¡Récord!» donde iba la marca anterior, como en la maqueta
             // (la marca de antes sigue en el aviso de arriba y en lo que lee TalkBack).
-            tvAnterior.setText(f.oro ? ctx.getString(R.string.envivo_record_fila) : f.anterior);
+            // Con espacios duros: «80 × 10» es una sola pieza, no se reparte en dos líneas.
+            tvAnterior.setText(f.oro ? ctx.getString(R.string.envivo_record_fila)
+                    : f.anterior == null ? null : f.anterior.replace(' ', '\u00A0'));
             tvAnterior.setTypeface(letraAnterior, f.oro ? android.graphics.Typeface.BOLD
                     : android.graphics.Typeface.NORMAL);
 

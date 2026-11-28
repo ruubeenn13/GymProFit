@@ -44,7 +44,9 @@
             android:textColor="?attr/colorOnSurface"
             android:textSize="@dimen/text_fila" />
 
-        <TextView
+        <!-- Sin partir (GP-288): con letra grande, «¡Récord!» se partía por la mitad y «80 × 10»
+             dejaba el «10» solo en otra línea. Encoge lo justo para caber en su columna. -->
+        <es.pmdm.gymprofit.ui.widget.TextoSinPartir
             android:id="@+id/tvAnterior"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
