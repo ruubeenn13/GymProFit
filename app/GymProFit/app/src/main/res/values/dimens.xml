@@ -197,6 +197,9 @@
     <dimen name="radio_fila_serie">16dp</dimen>
     <!-- Ancho de la columna del número de serie. 48 y no 40: con letra 1,3 «SERIE» tocaba a «ANTERIOR». -->
     <dimen name="envivo_col_serie">48dp</dimen>
+    <!-- Interlineado del nombre de un ejercicio en la Sesión en vivo: el estilo Display trae el de
+         su tamaño (40 sp) y, con el nombre a 20 sp en dos líneas, dejaba una línea en blanco entre ellas. -->
+    <dimen name="envivo_nombre_linea">26sp</dimen>
     <!-- Margen de la Sesión en vivo a los lados de la pantalla: 16, como en la maqueta (GP-285, lote 2). -->
     <dimen name="envivo_margen">16dp</dimen>
     <!-- GP-216: el anillo de la cámara del avatar de Perfil y el borde de una opción de la hoja de elegir. -->

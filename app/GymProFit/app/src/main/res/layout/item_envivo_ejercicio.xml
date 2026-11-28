@@ -40,7 +40,8 @@
                 android:importantForAccessibility="no"
                 android:textAppearance="@style/TextAppearance.GymProFit.Display"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="@dimen/text_headline" />
+                android:textSize="@dimen/text_headline"
+                app:lineHeight="@dimen/envivo_nombre_linea" />
 
             <TextView
                 android:id="@+id/tvPauta"
