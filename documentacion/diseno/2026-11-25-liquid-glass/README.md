@@ -125,6 +125,29 @@ Contraste del icono (`ContrasteCristalTest`, el tinte sobre todo lo que puede qu
 
 Se aplica en lo que ya es Liquid Glass (Inicio y la barra). Las demás pantallas los adoptan con su lote; el estilo global de los botones no cambia hasta entonces. Los círculos naranjas de las filas son iconos, no botones.
 
+## Lote 2: Sesión en vivo (28-11-2026)
+
+Lo que cambia al llevar `sesion-en-vivo.dc.html` a la app. Como en el lote 1: donde un valor de la maqueta choca con una regla de legibilidad, manda la regla (DEC-070), y queda con su cifra. Los valores que valen son los de `app/GymProFit/DESIGN.md` («Sesión en vivo») y `colors.xml`, medidos en `ContrasteCristalTest`. Pendiente de aprobación con capturas.
+
+| Valor de la maqueta | Problema medido | Implementado |
+|---|---|---|
+| Fondo: naranja `rgba(255,106,0,.5)` en 100 %, 0 %; dorado `rgba(232,184,75,.28)` en 0 %, 60 %; azul `rgba(60,90,200,.4)` en 90 %, 95 % | en oscuro, sobre una tarjeta que pasa por el brillo dorado, «Tu récord» (dorado) quedaba en 3,70:1 y el secundario en 4,28:1; con el naranja al 50 %, el secundario en 3,44:1 | las mismas elipses; naranja al **26 %**, dorado al **18 %** y azul al 40 %. En claro (sin maqueta): naranja `#FF7A28` al 55 %, dorado al 45 % y azul `#507DFF` al 36 % |
+| Cabecera: minimizar y «Terminar» de cristal, y el título suelto | con la lista pasando por detrás, el título suelto no se lee, y el texto asoma nítido entre las piezas | las dos piezas, de cristal vivo, y el título suelto, como en la maqueta; **la lista se desvanece antes de esa fila** (el borde de arriba es macizo hasta donde empieza el resumen y degrada 24 dp, ya detrás de él), como el contenido de Inicio bajo la barra de estado |
+| Resumen con las tres cifras a 30 px | la escala de letra es la de la app (lote 1) | `Cifra.Pequena` (26 sp) y el apoyo («kg», «de 18») al 60 %; se conserva debajo la barra de la sesión, que la maqueta no trae |
+| Tarjeta de ejercicio: «La última vez, 80 × 8 · Tu récord: 82,5 × 6» en una línea | la app ya da cada dato en su línea, con la pauta y las notas | las líneas de siempre, con «Tu récord» en el dorado de texto (4,60 · 4,53:1) |
+| Fila del récord: tinte dorado 28 % → 8 %, número en `#E8B84B` y «¡Récord!» en `#F0DDA8` | dorado sobre dorado: `#E8B84B` da 3,88:1 sobre el tinte aun sin brillo detrás, 2,83:1 en el peor punto; `#F0DDA8`, 3,88:1 | el tinte de la maqueta **sobre un surco negro al 25 %**, y el número y «¡Récord!» en `#F0DDA8` (4,80:1). En claro, sin surco y en `#6B4F12` (4,76:1). «¡Récord!» va donde iba la marca anterior, como en la maqueta, y el trofeo, en el botón de marcar |
+| Serie en curso: lente blanca 12 %, número y kilos en `#FFB27A`, la marca anterior en el secundario | la lente es la del sistema (7 %, lote 1); sobre ella `#FFB27A` da 3,95:1 y el secundario 4,37:1 | la lente del sistema en radio 16; número, kilos y aro en `#FFC9A3` (4,69:1); la marca anterior, en el texto principal |
+| Kilos y repeticiones sueltos, sin caja | son campos que se escriben: necesitan un borde que se vea y un estado de foco | un surco (la pista de las barras) con borde a 3,09:1; con foco, 2 dp en el naranja de los gráficos |
+| Serie hecha: solo el check verde; sin hacer: un aro blanco al 50 % | hecha y sin hacer no pueden distinguirse solo por el color (DEC-019), y el aro tiene que pasar 3:1 | hecha, círculo relleno con borde y check en `#8FE3B0`; sin hacer, aro vacío a 3,09:1; la del récord, círculo dorado con el trofeo |
+| Botones de 44 px | zona táctil de 48 dp | 48 dp |
+| «Añadir serie» con borde a trazos blanco 30 % | un control: su borde, a 3:1 | el borde a trazos, a 3,09:1, en una píldora de 40 dp dentro de 48 de zona táctil |
+| Tarjeta «Después» con el ejercicio siguiente, al 85 % | quitaría las tarjetas de los demás ejercicios, que la app enseña y deja editar | todas las tarjetas, como hasta ahora |
+| Descanso: «−15» y «+15» de cristal y «Saltar» naranja | — | lo de la maqueta, con los componentes de DEC-070: «Saltar» es el botón de marca (el único principal) y los otros dos, de cristal. Con sus textos de siempre («−15 s», «+15 s») |
+| Descanso: cuenta a 40 px, barra de 6 px en degradado `#FFB27A` → `#FF6A00`, «Siguiente: serie 4 · 85 kg» | en claro, `#FF6A00` contra su pista no llega a 3:1 | lo de la maqueta en oscuro; en claro, la barra en `#A33800` (3,52:1). Sustituye al aro que había: mismo tiempo y misma curva |
+| Con letra grande | la maqueta no lo dibuja | los botones del descanso bajan a su propia fila si no caben al lado de la cuenta; título y programa, hasta dos líneas sin partir palabras; los rótulos de columna encogen lo justo y los cuatro van al mismo tamaño (GP-286) |
+
+Las hojas inferiores de la pantalla (terminar, cronómetro, permiso de alarmas) no entran en este lote.
+
 ## Ajustes al implementar (GP-285, lote 1, 26-11-2026)
 
 Donde un valor de arriba chocaba con una regla de legibilidad, manda la regla (DEC-070). Los valores que valen son los de `app/GymProFit/DESIGN.md` («Liquid Glass») y `colors.xml`; cada uno está medido en `ContrasteCristalTest`. Para los lotes siguientes:
