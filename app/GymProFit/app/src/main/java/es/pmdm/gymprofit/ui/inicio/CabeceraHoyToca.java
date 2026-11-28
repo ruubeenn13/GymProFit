@@ -23,7 +23,7 @@ import es.pmdm.gymprofit.R;
 //
 // Son dos textos, uno en cada sitio, y solo se ve uno: tvHoySub (el que el resto del código
 // conoce y al que se le pone el texto) junto a las siluetas, y tvHoySubAncho debajo, que copia
-// lo que diga el otro. Se decide en cada medida, como CamposSerie: girar el móvil, cambiar la
+// lo que diga el otro. Se decide en cada medida: girar el móvil, cambiar la
 // letra o que lleguen las siluetas lo vuelve a decidir, sin parpadeo. Las líneas se cuentan
 // aparte (un StaticLayout al ancho de la columna), sin enseñar y esconder las vistas en cada
 // medida: eso pediría otra medida, y esa otra, sin fin.
